@@ -22,7 +22,7 @@ class _Signup2State extends State<Signup2> {
               Column(
                 children: [
                   SizedBox(
-                    height: 90,
+                    height: 50,
                   ),
                   Image(
                     image: AssetImage('assets/images/logo.png'),
@@ -42,9 +42,8 @@ class _Signup2State extends State<Signup2> {
                   Text("Signup for free tiral account",
                     style: TextStyle(color: Colors.black),),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
-                  //first name
                   Row(
                     children: [
                       SizedBox(width: MediaQuery.of(context).size.width *.099,),
@@ -65,7 +64,7 @@ class _Signup2State extends State<Signup2> {
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.all(10),
                                   prefixIcon: Icon(Icons.person_outline_outlined,size: 22,color: Colors.grey,),
-                                  hintText: "First Name",
+                                  hintText: "Alex",
                                 ),
                               ),
                             ),
@@ -78,7 +77,6 @@ class _Signup2State extends State<Signup2> {
                   SizedBox(
                     height: 10,
                   ),
-                  //last name
 
                   Row(
                     children: [
@@ -100,7 +98,7 @@ class _Signup2State extends State<Signup2> {
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.all(10),
                                   prefixIcon: Icon(Icons.person_outline_outlined,size: 22,color: Colors.grey,),
-                                  hintText: "First Name",
+                                  hintText: "Williams",
                                 ),
                               ),
                             ),
@@ -132,8 +130,8 @@ class _Signup2State extends State<Signup2> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.all(10),
-                                  prefixIcon: Icon(Icons.person_outline_outlined,size: 22,color: Colors.grey,),
-                                  hintText: "First Name",
+                                  prefixIcon: Icon(Icons.email_outlined,size: 22,color: Colors.grey,),
+                                  hintText: "Email",
                                 ),
                               ),
                             ),
@@ -165,8 +163,8 @@ class _Signup2State extends State<Signup2> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.all(10),
-                                  prefixIcon: Icon(Icons.person_outline_outlined,size: 22,color: Colors.grey,),
-                                  hintText: "First Name",
+                                  prefixIcon: Icon(Icons.home,size: 22,color: Colors.grey,),
+                                  hintText: "Company Name",
                                 ),
                               ),
                             ),
@@ -179,8 +177,104 @@ class _Signup2State extends State<Signup2> {
                   SizedBox(
                     height: 10,
                   ),
-                  Spacer(),
-                  //login button
+                  Row(
+                    children: [
+                      SizedBox(width: MediaQuery.of(context).size.width *.099,),
+                      Container(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          // color: Colors.blueGrey[50]
+                          color: Color.fromRGBO(196, 196, 196, .3),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: TextField(
+                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(10),
+                                  prefixIcon: Icon(Icons.phone,size: 22,color: Colors.grey,),
+                                  hintText: "Phone Number",
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 25,),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(width: MediaQuery.of(context).size.width *.099,),
+                      Container(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          // color: Colors.blueGrey[50]
+                          color: Color.fromRGBO(196, 196, 196, .3),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: TextField(
+                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(10),
+                                  prefixIcon: Icon(Icons.lock,size: 22,color: Colors.grey,),
+                                  suffixIcon: Icon(Icons.remove_red_eye_outlined,color: Colors.grey,size: 22),
+                                  hintText: "Password",
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 25,),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .099,
+                      ),
+                      Container(
+                        height: 15,
+                        width: 15,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: Colors.grey,
+                            )),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "i have read and accept 302 properties term and condition ",
+                        style: TextStyle(fontSize: 9, color: Colors.black),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .099,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Container(
                     height: MediaQuery.of(context).size.height * .06,
                     width: MediaQuery.of(context).size.width * 0.8,
@@ -196,10 +290,7 @@ class _Signup2State extends State<Signup2> {
                     )),
                   ),
                   SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    height: 100,
+                    height: height * .04,
                   ),
                 ],
               ),
