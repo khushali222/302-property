@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/screens/login_screen.dart';
 
 void main() {
-  runApp(DevicePreview(
+  runApp(
+    DevicePreview(
     enabled: true,
     tools: [
       ...DevicePreview.defaultTools,
