@@ -1,6 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:three_zero_two_property/screens/login_screen.dart';
+import 'package:three_zero_two_property/screens/splash_screen.dart';
 
 void main() {
   runApp(
@@ -13,6 +13,9 @@ void main() {
   ),);
 
 }
+//   void main(){
+//     runApp(MyApp());
+//   }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-     home:Login_Screen(),
+     home:SplashScreen(),
     );
   }
 }
