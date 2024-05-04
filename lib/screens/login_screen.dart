@@ -4,9 +4,10 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/screens/signup_main.dart';
 import 'package:three_zero_two_property/screens/signup_screen.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 import 'dashboard.dart';
+
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
 
@@ -16,16 +17,15 @@ class Login_Screen extends StatefulWidget {
 
 class _Login_ScreenState extends State<Login_Screen> {
   TextEditingController password = TextEditingController();
- // TextEditingController lastname = TextEditingController();
+  // TextEditingController lastname = TextEditingController();
   TextEditingController email = TextEditingController();
 
   bool passworderror = false;
   bool visiable_password = true;
   bool emailerror = false;
 
-
   String passwordmessage = "";
- // String lastnamemessage = "";
+  // String lastnamemessage = "";
   String emailmessage = "";
   final GlobalKey formkey = GlobalKey<FormState>();
   @override
@@ -34,7 +34,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     double height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
-
         body: Form(
           key: formkey,
           child: ListView(
@@ -91,26 +90,30 @@ class _Login_ScreenState extends State<Login_Screen> {
                       children: [
                         Positioned.fill(
                           child: TextField(
-                            onChanged: (value){
+                            onChanged: (value) {
                               setState(() {
-                                emailerror  = false;
+                                emailerror = false;
                               });
                             },
                             controller: email,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              enabledBorder: emailerror ?  OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.red), // Set border color here
-                              ):InputBorder.none,
-
+                              enabledBorder: emailerror
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
+                                  : InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
-                              prefixIcon:Container(
+                              prefixIcon: Container(
                                   height: 20,
                                   width: 20,
                                   padding: EdgeInsets.all(13),
-                                  child: Image.asset("assets/icons/email_icon.png")),
+                                  child: Image.asset(
+                                      "assets/icons/email_icon.png")),
                               hintText: "Business Email",
                             ),
                           ),
@@ -123,7 +126,13 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                 ],
               ),
-              emailerror ? Center(child: Text(emailmessage,style: TextStyle(color: Colors.red),)):Container(),
+              emailerror
+                  ? Center(
+                      child: Text(
+                      emailmessage,
+                      style: TextStyle(color: Colors.red),
+                    ))
+                  : Container(),
 
               SizedBox(
                 height: 25,
@@ -145,7 +154,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       children: [
                         Positioned.fill(
                           child: TextField(
-                            onChanged: (value){
+                            onChanged: (value) {
                               setState(() {
                                 passworderror = false;
                               });
@@ -154,11 +163,14 @@ class _Login_ScreenState extends State<Login_Screen> {
                             obscureText: visiable_password,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
-                              enabledBorder: passworderror ?  OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.red), // Set border color here
-                              ):InputBorder.none,
-
+                              enabledBorder: passworderror
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
+                                  : InputBorder.none,
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
                               prefixIcon: Icon(
@@ -168,13 +180,15 @@ class _Login_ScreenState extends State<Login_Screen> {
                               ),
                               hintText: "Password",
                               suffixIcon: InkWell(
-                                onTap: (){
+                                onTap: () {
                                   setState(() {
                                     visiable_password = !visiable_password;
                                   });
                                 },
                                 child: Icon(
-                                 visiable_password ? Icons.remove_red_eye_outlined:Icons.visibility_off_outlined,
+                                  visiable_password
+                                      ? Icons.remove_red_eye_outlined
+                                      : Icons.visibility_off_outlined,
                                   color: Colors.grey,
                                 ),
                               ),
@@ -189,7 +203,13 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                 ],
               ),
-              passworderror ? Center(child: Text(passwordmessage,style: TextStyle(color: Colors.red),)):Container(),
+              passworderror
+                  ? Center(
+                      child: Text(
+                      passwordmessage,
+                      style: TextStyle(color: Colors.red),
+                    ))
+                  : Container(),
 
               SizedBox(
                 height: 15,
@@ -235,44 +255,39 @@ class _Login_ScreenState extends State<Login_Screen> {
               ),
               GestureDetector(
                 onTap: () {
-                 setState(() {
-                   if(email.text.isEmpty){
-                     setState(() {
-                       emailerror = true;
-                       emailmessage = "Email is required";
-                     });
-                   }
-                   else if(!EmailValidator.validate(email.text)){
-                     setState(() {
-                       emailerror = true;
-                       emailmessage = "Email is not valid";
-                     });
-                   }
-                   else{
-                     setState(() {
-                       emailerror = false;
-                       //firstnamemessage = "Firstname is required";
-                     });
-                   }
-                   if(password.text.isEmpty){
-                     setState(() {
-                       passworderror = true;
-                       passwordmessage = "Password is required";
-                     });
-                   }
+                  setState(() {
+                    if (email.text.isEmpty) {
+                      setState(() {
+                        emailerror = true;
+                        emailmessage = "Email is required";
+                      });
+                    } else if (!EmailValidator.validate(email.text)) {
+                      setState(() {
+                        emailerror = true;
+                        emailmessage = "Email is not valid";
+                      });
+                    } else {
+                      setState(() {
+                        emailerror = false;
+                        //firstnamemessage = "Firstname is required";
+                      });
+                    }
+                    if (password.text.isEmpty) {
+                      setState(() {
+                        passworderror = true;
+                        passwordmessage = "Password is required";
+                      });
+                    } else {
+                      setState(() {
+                        passworderror = false;
+                        //firstnamemessage = "Firstname is required";
+                      });
+                    }
+                  });
 
-                   else{
-                     setState(() {
-                       passworderror = false;
-                       //firstnamemessage = "Firstname is required";
-                     });
-                   }
-                 });
-
-                 if(emailerror == false&& passworderror ==false){
-                   loginsubmit();
-
-                 }
+                  if (emailerror == false && passworderror == false) {
+                    loginsubmit();
+                  }
                   /* Navigator.push(
                       context, MaterialPageRoute(builder: (context) => Signup()));*/
                 },
@@ -348,18 +363,17 @@ class _Login_ScreenState extends State<Login_Screen> {
       ),
     );
   }
+
   Future<void> loginsubmit() async {
-    final response = await http.post(Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
-      body: {
-      "email":email.text,
-        "password":password.text
-      }
-    );
+    final response = await http.post(
+        Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
+        body: {"email": email.text, "password": password.text});
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       print(jsonData);
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashbaord()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashbaord()));
       /*final List<dynamic> data = jsonData['data'];
       List<String> urls = [];
       List<String> banners = [];

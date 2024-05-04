@@ -18,7 +18,6 @@ class _SignupState extends State<Signup> {
   bool lastnameerror = false;
   bool emailerror = false;
 
-
   String firstnamemessage = "";
   String lastnamemessage = "";
   String emailmessage = "";
@@ -260,7 +259,7 @@ class _SignupState extends State<Signup> {
       child: Scaffold(
         body: ListView(
           children: [
-            SizedBox(height: 90),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Image(
               image: AssetImage('assets/images/logo.png'),
               height: 40,
@@ -300,26 +299,30 @@ class _SignupState extends State<Signup> {
                       children: [
                         Positioned.fill(
                           child: TextField(
-                            onChanged: (value){
+                            onChanged: (value) {
                               setState(() {
-                                firstnameerror  = false;
+                                firstnameerror = false;
                               });
                             },
                             controller: firstname,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
-                              enabledBorder: firstnameerror ?  OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.red), // Set border color here
-                              ):InputBorder.none,
-
+                              enabledBorder: firstnameerror
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
+                                  : InputBorder.none,
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
-                              prefixIcon:Container(
+                              prefixIcon: Container(
                                   height: 20,
                                   width: 20,
                                   padding: EdgeInsets.all(13),
-                                  child: Image.asset("assets/icons/user_icon.png")),
+                                  child: Image.asset(
+                                      "assets/icons/user_icon.png")),
                               hintText: "First Name",
                             ),
                           ),
@@ -333,7 +336,13 @@ class _SignupState extends State<Signup> {
                 ),
               ],
             ),
-            firstnameerror ? Center(child: Text(firstnamemessage,style: TextStyle(color: Colors.red),)):Container(),
+            firstnameerror
+                ? Center(
+                    child: Text(
+                    firstnamemessage,
+                    style: TextStyle(color: Colors.red),
+                  ))
+                : Container(),
             SizedBox(height: 25),
             // Last name
             Row(
@@ -352,26 +361,30 @@ class _SignupState extends State<Signup> {
                       children: [
                         Positioned.fill(
                           child: TextField(
-                            onChanged: (value){
+                            onChanged: (value) {
                               setState(() {
-                                lastnameerror  = false;
+                                lastnameerror = false;
                               });
                             },
                             controller: lastname,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
-                              enabledBorder: lastnameerror ?  OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.red), // Set border color here
-                              ):InputBorder.none,
-
+                              enabledBorder: lastnameerror
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
+                                  : InputBorder.none,
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
-                              prefixIcon:Container(
+                              prefixIcon: Container(
                                   height: 20,
                                   width: 20,
                                   padding: EdgeInsets.all(13),
-                                  child: Image.asset("assets/icons/user_icon.png")),
+                                  child: Image.asset(
+                                      "assets/icons/user_icon.png")),
                               hintText: "Last Name",
                             ),
                           ),
@@ -385,7 +398,13 @@ class _SignupState extends State<Signup> {
                 ),
               ],
             ),
-            lastnameerror ? Center(child: Text(lastnamemessage,style: TextStyle(color: Colors.red),)):Container(),
+            lastnameerror
+                ? Center(
+                    child: Text(
+                    lastnamemessage,
+                    style: TextStyle(color: Colors.red),
+                  ))
+                : Container(),
 
             SizedBox(height: 25),
             // Business email
@@ -405,26 +424,30 @@ class _SignupState extends State<Signup> {
                       children: [
                         Positioned.fill(
                           child: TextField(
-                            onChanged: (value){
+                            onChanged: (value) {
                               setState(() {
-                                emailerror  = false;
+                                emailerror = false;
                               });
                             },
                             controller: email,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              enabledBorder: emailerror ?  OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.red), // Set border color here
-                              ):InputBorder.none,
-
+                              enabledBorder: emailerror
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
+                                  : InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
-                              prefixIcon:Container(
+                              prefixIcon: Container(
                                   height: 20,
                                   width: 20,
                                   padding: EdgeInsets.all(13),
-                                  child: Image.asset("assets/icons/email_icon.png")),
+                                  child: Image.asset(
+                                      "assets/icons/email_icon.png")),
                               hintText: "Business Email",
                             ),
                           ),
@@ -438,7 +461,13 @@ class _SignupState extends State<Signup> {
                 ),
               ],
             ),
-            emailerror ? Center(child: Text(emailmessage,style: TextStyle(color: Colors.red),)):Container(),
+            emailerror
+                ? Center(
+                    child: Text(
+                    emailmessage,
+                    style: TextStyle(color: Colors.red),
+                  ))
+                : Container(),
 
             // Spacer(),
             SizedBox(
@@ -447,50 +476,49 @@ class _SignupState extends State<Signup> {
             // Create your free trial
             GestureDetector(
               onTap: () {
-                if(firstname.text.isEmpty){
+                if (firstname.text.isEmpty) {
                   setState(() {
                     firstnameerror = true;
                     firstnamemessage = "Firstname is required";
                   });
-                }else{
+                } else {
                   setState(() {
                     firstnameerror = false;
                     //firstnamemessage = "Firstname is required";
                   });
                 }
-                if(lastname.text.isEmpty){
+                if (lastname.text.isEmpty) {
                   setState(() {
                     lastnameerror = true;
                     lastnamemessage = "Lastname is required";
                   });
-                }else{
+                } else {
                   setState(() {
                     lastnameerror = false;
                     //firstnamemessage = "Firstname is required";
                   });
                 }
-                if(email.text.isEmpty){
+                if (email.text.isEmpty) {
                   setState(() {
                     emailerror = true;
                     emailmessage = "Email is required";
                   });
-                }
-                else if(!EmailValidator.validate(email.text)){
+                } else if (!EmailValidator.validate(email.text)) {
                   setState(() {
                     emailerror = true;
                     emailmessage = "Email is not valid";
                   });
-                }
-                else{
+                } else {
                   setState(() {
                     emailerror = false;
                     //firstnamemessage = "Firstname is required";
                   });
                 }
                 //  print(EmailValidator.validate(email.text));
-                 /* Navigator.push(context,
+                /* Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Signup2(firstname: firstname.text,lastname: lastname.text,email: email.text,)));
-       */         },
+       */
+              },
               child: Center(
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -514,109 +542,126 @@ class _SignupState extends State<Signup> {
                 ),
               ),
             ),
-        SizedBox(height: 20,),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
+            SizedBox(
+              height: 20,
+            ),
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:  Colors.black ,
-                  ),
-                  child: Center(
-                    child: Text(
-                      "1",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "1",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Text('About you',
+                        style: TextStyle(fontSize: 10, fontFamily: 'muslish')),
+                  ],
                 ),
-                Text('About you',style: TextStyle(fontSize: 10,fontFamily: 'muslish')),
-              ],
-            ),
-            SizedBox(width: 2,),
-            Column(
-              children: [
-                Container(
-                  width: 50,
-                  height: 2,
-                  color: Colors.grey,
+                SizedBox(
+                  width: 2,
                 ),
-                SizedBox(height: 15,)
-              ],
-            ),
-            SizedBox(width: 2,),
-            Column(
-              children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey,
-                  ),
-                  child: Center(
-                    child: Text(
-                      "2",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                Column(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 2,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  width: 2,
+                ),
+                Column(
+                  children: [
+                    Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "2",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-
+                    Text(
+                      'Customize Trial',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 10, fontFamily: 'muslish'),
+                    ),
+                  ],
                 ),
-                Text('Customize Trial',textAlign:TextAlign.center,style: TextStyle(fontSize: 10,fontFamily: 'muslish'),),
-              ],
-            ),
-
-            SizedBox(width: 10,),
-            Column(
-
-              children: [
-                Container(
-                  width: 50,
-                  height: 2,
-                  color: Colors.grey,
+                SizedBox(
+                  width: 10,
                 ),
-                SizedBox(height: 15,)
-              ],
-            ),
-            SizedBox(width: 10,),
-            Column(
-              children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:  Colors.grey,
-                  ),
-                  child: Center(
-                    child: Text(
-                      "3",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                Column(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 2,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  children: [
+                    Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "3",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Text("Final",
+                        style: TextStyle(fontSize: 10, fontFamily: 'muslish'))
+                  ],
                 ),
-                Text("Final",style: TextStyle(fontSize: 10,fontFamily: 'muslish'))
               ],
             ),
-          ],
-        ),
 
-          /*  Row(
+            /*  Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 steps.length * 2 - 1,
@@ -663,7 +708,7 @@ class _SignupState extends State<Signup> {
               ),
             ),
             if (currentStep != -1) steps[currentStep].content,
-          */  // SizedBox(height: 90),
+          */ // SizedBox(height: 90),
           ],
         ),
       ),
