@@ -430,6 +430,7 @@ class _SignupState extends State<Signup> {
                               });
                             },
                             controller: email,
+                            keyboardType: TextInputType.emailAddress,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -514,9 +515,13 @@ class _SignupState extends State<Signup> {
                     //firstnamemessage = "Firstname is required";
                   });
                 }
-                //  print(EmailValidator.validate(email.text));
-                /* Navigator.push(context,
+
+                if(firstnameerror == false && lastnameerror == false && emailerror ==  false){
+                  Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Signup2(firstname: firstname.text,lastname: lastname.text,email: email.text,)));
+                }
+                //  print(EmailValidator.validate(email.text));
+                /*
        */
               },
               child: Center(

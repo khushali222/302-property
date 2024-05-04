@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/screens/signup_main.dart';
 import 'package:three_zero_two_property/screens/signup_screen.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +25,7 @@ class _Login_ScreenState extends State<Login_Screen> {
   bool visiable_password = true;
   bool emailerror = false;
 
+  bool loading = false;
   String passwordmessage = "";
   // String lastnamemessage = "";
   String emailmessage = "";
@@ -300,7 +302,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
-                      child: Row(
+                      child: loading ? CircularProgressIndicator(color: Colors.white,) : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -365,12 +367,16 @@ class _Login_ScreenState extends State<Login_Screen> {
   }
 
   Future<void> loginsubmit() async {
+    setState(() {
+      loading = true;
+    });
     final response = await http.post(
         Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
         body: {"email": email.text, "password": password.text});
+    print(response.statusCode);
+    final jsonData = json.decode(response.body);
+    if (jsonData["statusCode"] == 200) {
 
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
       print(jsonData);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashbaord()));
@@ -396,8 +402,14 @@ class _Login_ScreenState extends State<Login_Screen> {
         isLoading = false;
       });
       print(imageUrls);*/
+      setState(() {
+        loading = false;
+      });
     } else {
-      throw Exception('Failed to load banner images');
+      Fluttertoast.showToast(msg: jsonData["message"] );
+      setState(() {
+        loading  =false;
+      });
     }
   }
 }
