@@ -45,6 +45,8 @@ dependencies:
   flutter_stepindicator: ^0.1.7
   device_preview: ^1.1.0
   flutter_launcher_icons: ^0.13.1
+  email_validator: ^2.1.17
+  http:
 
 
 dev_dependencies:
@@ -85,6 +87,7 @@ flutter:
   assets:
      - assets/
      - assets/images/
+     - assets/icons/
      - assets/images/applogo.png
   #   - images/a_dot_ham.jpeg
 

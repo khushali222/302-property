@@ -1,7 +1,12 @@
+import 'dart:convert';
+
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/screens/signup_main.dart';
 import 'package:three_zero_two_property/screens/signup_screen.dart';
+import 'package:http/http.dart'as http;
 
+import 'dashboard.dart';
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
 
@@ -10,474 +15,375 @@ class Login_Screen extends StatefulWidget {
 }
 
 class _Login_ScreenState extends State<Login_Screen> {
+  TextEditingController password = TextEditingController();
+ // TextEditingController lastname = TextEditingController();
+  TextEditingController email = TextEditingController();
+
+  bool passworderror = false;
+  bool visiable_password = true;
+  bool emailerror = false;
+
+
+  String passwordmessage = "";
+ // String lastnamemessage = "";
+  String emailmessage = "";
+  final GlobalKey formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
-        // SingleChildScrollView(
-        //   child: Container(
-        //     // or SizedBox, or wrap with MediaQuery
-        //     height: MediaQuery.of(context).size.height, // or any fixed height
-        //     child: Column(
-        //       children: [
-        //         SizedBox(
-        //           height: 90,
-        //         ),
-        //         Image(
-        //           image: AssetImage('assets/images/logo.png'),
-        //           height: 40,
-        //           width: width * .9,
-        //         ),
-        //         SizedBox(
-        //           height: 20,
-        //         ),
-        //         //welcome
-        //         Text(
-        //           "Welcome to 302 Rentals",
-        //           style: TextStyle(
-        //               color: Colors.black,
-        //               fontWeight: FontWeight.bold,
-        //               fontSize: 19),
-        //         ),
-        //         SizedBox(
-        //           height: 10,
-        //         ),
-        //         //login text
-        //         Text(
-        //           "Please login here...",
-        //           style: TextStyle(color: Colors.black),
-        //         ),
-        //         SizedBox(
-        //           height: 20,
-        //         ),
-        //         //email
-        //         Row(
-        //           children: [
-        //             SizedBox(
-        //               width: MediaQuery.of(context).size.width * .099,
-        //             ),
-        //             Container(
-        //               height: 50,
-        //               width: MediaQuery.of(context).size.width * 0.8,
-        //               decoration: BoxDecoration(
-        //                 borderRadius: BorderRadius.circular(10),
-        //                 // color: Colors.blueGrey[50]
-        //                 color: Color.fromRGBO(196, 196, 196, .3),
-        //               ),
-        //               child: Stack(
-        //                 children: [
-        //                   Positioned.fill(
-        //                     child: TextField(
-        //                       cursorColor: Color.fromRGBO(21, 43, 81, 1),
-        //                       decoration: InputDecoration(
-        //                         border: InputBorder.none,
-        //                         contentPadding: EdgeInsets.all(10),
-        //                         prefixIcon: Icon(
-        //                           Icons.email_outlined,
-        //                           size: 22,
-        //                           color: Colors.grey,
-        //                         ),
-        //                         hintText: "Email",
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //             SizedBox(
-        //               width: 25,
-        //             ),
-        //           ],
-        //         ),
-        //         SizedBox(
-        //           height: 25,
-        //         ),
-        //         //password
-        //         Row(
-        //           children: [
-        //             SizedBox(
-        //               width: MediaQuery.of(context).size.width * .099,
-        //             ),
-        //             Container(
-        //               height: 50,
-        //               width: MediaQuery.of(context).size.width * 0.8,
-        //               decoration: BoxDecoration(
-        //                 borderRadius: BorderRadius.circular(10),
-        //                 // color: Colors.blueGrey[50],
-        //                 color: Color.fromRGBO(196, 196, 196, .3),
-        //               ),
-        //               child: Stack(
-        //                 children: [
-        //                   Positioned.fill(
-        //                     child: TextField(
-        //                       cursorColor: Color.fromRGBO(21, 43, 81, 1),
-        //                       decoration: InputDecoration(
-        //                         border: InputBorder.none,
-        //                         contentPadding: EdgeInsets.all(10),
-        //                         prefixIcon: Icon(
-        //                           Icons.lock_open,
-        //                           size: 22,
-        //                           color: Colors.grey,
-        //                         ),
-        //                         hintText: "Password",
-        //                         suffixIcon: Icon(
-        //                           Icons.remove_red_eye_outlined,
-        //                           color: Colors.grey,
-        //                         ),
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //             SizedBox(
-        //               width: 25,
-        //             ),
-        //           ],
-        //         ),
-        //         SizedBox(
-        //           height: 15,
-        //         ),
-        //         //forgot password
-        //         Row(
-        //           children: [
-        //             SizedBox(
-        //               width: MediaQuery.of(context).size.width * .099,
-        //             ),
-        //             Container(
-        //               height: 20,
-        //               width: 20,
-        //               decoration: BoxDecoration(
-        //                   color: Colors.white,
-        //                   borderRadius: BorderRadius.circular(5),
-        //                   border: Border.all(
-        //                     color: Colors.grey,
-        //                   )),
-        //             ),
-        //             SizedBox(
-        //               width: 10,
-        //             ),
-        //             Text(
-        //               "Remember me ",
-        //               style: TextStyle(fontSize: 12, color: Colors.black),
-        //             ),
-        //             Spacer(),
-        //             Text(
-        //               "Forgot password?",
-        //               style: TextStyle(fontSize: 12, color: Colors.blue),
-        //             ),
-        //             SizedBox(
-        //               width: MediaQuery.of(context).size.width * .099,
-        //             ),
-        //           ],
-        //         ),
-        //         Spacer(),
-        //         //login button
-        //         GestureDetector(
-        //           onTap: () {
-        //             Navigator.push(context,
-        //                 MaterialPageRoute(builder: (context) => Signup()));
-        //           },
-        //           child: Container(
-        //             height: MediaQuery.of(context).size.height * .06,
-        //             width: MediaQuery.of(context).size.width * 0.8,
-        //             decoration: BoxDecoration(
-        //               color: Colors.black,
-        //               borderRadius: BorderRadius.circular(10),
-        //             ),
-        //             child: Center(
-        //                 child: Row(
-        //               mainAxisAlignment: MainAxisAlignment.center,
-        //               children: [
-        //                 Text(
-        //                   "Login",
-        //                   style: TextStyle(
-        //                       color: Colors.white, fontWeight: FontWeight.bold),
-        //                 ),
-        //                 SizedBox(
-        //                   height: 10,
-        //                 ),
-        //                 Icon(
-        //                   Icons.keyboard_arrow_right_outlined,
-        //                   color: Colors.white,
-        //                   size: 20,
-        //                 ),
-        //               ],
-        //             )),
-        //           ),
-        //         ),
-        //         SizedBox(
-        //           height: 20,
-        //         ),
-        //         //Ragister now
-        //         Row(
-        //           mainAxisAlignment: MainAxisAlignment.center,
-        //           children: [
-        //             Text(
-        //               "Don't have an account ? ",
-        //               style: TextStyle(
-        //                 color: Colors.black,
-        //               ),
-        //             ),
-        //             GestureDetector(
-        //               onTap: (){
-        //                 Navigator.push(context, MaterialPageRoute(builder: (context)=>Signup()));
-        //               },
-        //               child: Container(
-        //                 child: Text(
-        //                   "Register now",
-        //                   style: TextStyle(
-        //                       fontWeight: FontWeight.bold, color: Colors.blue),
-        //                 ),
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //         SizedBox(
-        //           height: 90,
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-        body: ListView(
-          children: [
-            SizedBox(
-              height: 90,
-            ),
-            Image(
-              image: AssetImage('assets/images/logo.png'),
-              height: 40,
-              width: width * 0.9,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            // Welcome
-            Center(
-              child: Text(
-                "Welcome to 302 Rentals",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 19,
-                ),
+
+        body: Form(
+          key: formkey,
+          child: ListView(
+            children: [
+              SizedBox(
+                height: 90,
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            // Login text
-            Center(
-              child: Text(
-                "Please login here...",
-                style: TextStyle(color: Colors.black),
+              Image(
+                image: AssetImage('assets/images/logo.png'),
+                height: 40,
+                width: width * 0.9,
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            // Email
-            Row(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.099,
-                ),
-                Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(196, 196, 196, .3),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: TextField(
-                          cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(10),
-                            prefixIcon: Icon(
-                              Icons.email_outlined,
-                              size: 22,
-                              color: Colors.grey,
-                            ),
-                            hintText: "Email",
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 25,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            // Password
-            Row(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.099,
-                ),
-                Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(196, 196, 196, .3),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: TextField(
-                          cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(10),
-                            prefixIcon: Icon(
-                              Icons.lock_open,
-                              size: 22,
-                              color: Colors.grey,
-                            ),
-                            hintText: "Password",
-                            suffixIcon: Icon(
-                              Icons.remove_red_eye_outlined,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 25,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            // Forgot password
-            Row(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.099,
-                ),
-                Container(
-                  height: 20,
-                  width: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  "Remember me ",
-                  style: TextStyle(fontSize: 12, color: Colors.black),
-                ),
-                Spacer(),
-                Text(
-                  "Forgot password?",
-                  style: TextStyle(fontSize: 12, color: Colors.blue),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.099,
-                ),
-              ],
-            ),
-            Spacer(),
-            // Login button
-            SizedBox(
-              height: 150,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Signup()));
-              },
-              child: Center(
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.06,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  decoration: BoxDecoration(
+              SizedBox(
+                height: 20,
+              ),
+              // Welcome
+              Center(
+                child: Text(
+                  "Welcome to 302 Rentals",
+                  style: TextStyle(
                     color: Colors.black,
-                    borderRadius: BorderRadius.circular(10),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 19,
                   ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              // Login text
+              Center(
+                child: Text(
+                  "Please login here...",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              // Email
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.099,
+                  ),
+                  Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromRGBO(196, 196, 196, .3),
+                    ),
+                    child: Stack(
                       children: [
-                        Text(
-                          "Login",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                        Positioned.fill(
+                          child: TextField(
+                            onChanged: (value){
+                              setState(() {
+                                emailerror  = false;
+                              });
+                            },
+                            controller: email,
+                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              enabledBorder: emailerror ?  OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.red), // Set border color here
+                              ):InputBorder.none,
+
+                              contentPadding: EdgeInsets.all(10),
+                              prefixIcon:Container(
+                                  height: 20,
+                                  width: 20,
+                                  padding: EdgeInsets.all(13),
+                                  child: Image.asset("assets/icons/email_icon.png")),
+                              hintText: "Business Email",
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right_outlined,
-                          color: Colors.white,
-                          size: 20,
                         ),
                       ],
                     ),
                   ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            // Register now
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Don't have an account ? ",
-                  style: TextStyle(
-                    color: Colors.black,
+                  SizedBox(
+                    width: 25,
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Signup()));
-                  },
+                ],
+              ),
+              emailerror ? Center(child: Text(emailmessage,style: TextStyle(color: Colors.red),)):Container(),
+
+              SizedBox(
+                height: 25,
+              ),
+              // Password
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.099,
+                  ),
+                  Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromRGBO(196, 196, 196, .3),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: TextField(
+                            onChanged: (value){
+                              setState(() {
+                                passworderror = false;
+                              });
+                            },
+                            controller: password,
+                            obscureText: visiable_password,
+                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            decoration: InputDecoration(
+                              enabledBorder: passworderror ?  OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.red), // Set border color here
+                              ):InputBorder.none,
+
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.all(10),
+                              prefixIcon: Icon(
+                                Icons.lock_open,
+                                size: 22,
+                                color: Colors.grey,
+                              ),
+                              hintText: "Password",
+                              suffixIcon: InkWell(
+                                onTap: (){
+                                  setState(() {
+                                    visiable_password = !visiable_password;
+                                  });
+                                },
+                                child: Icon(
+                                 visiable_password ? Icons.remove_red_eye_outlined:Icons.visibility_off_outlined,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                ],
+              ),
+              passworderror ? Center(child: Text(passwordmessage,style: TextStyle(color: Colors.red),)):Container(),
+
+              SizedBox(
+                height: 15,
+              ),
+              // Forgot password
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.099,
+                  ),
+                  Container(
+                    height: 20,
+                    width: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "Remember me ",
+                    style: TextStyle(fontSize: 12, color: Colors.black),
+                  ),
+                  Spacer(),
+                  Text(
+                    "Forgot password?",
+                    style: TextStyle(fontSize: 12, color: Colors.blue),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.099,
+                  ),
+                ],
+              ),
+              Spacer(),
+              // Login button
+              SizedBox(
+                height: 150,
+              ),
+              GestureDetector(
+                onTap: () {
+                 setState(() {
+                   if(email.text.isEmpty){
+                     setState(() {
+                       emailerror = true;
+                       emailmessage = "Email is required";
+                     });
+                   }
+                   else if(!EmailValidator.validate(email.text)){
+                     setState(() {
+                       emailerror = true;
+                       emailmessage = "Email is not valid";
+                     });
+                   }
+                   else{
+                     setState(() {
+                       emailerror = false;
+                       //firstnamemessage = "Firstname is required";
+                     });
+                   }
+                   if(password.text.isEmpty){
+                     setState(() {
+                       passworderror = true;
+                       passwordmessage = "Password is required";
+                     });
+                   }
+
+                   else{
+                     setState(() {
+                       passworderror = false;
+                       //firstnamemessage = "Firstname is required";
+                     });
+                   }
+                 });
+
+                 if(emailerror == false&& passworderror ==false){
+                   loginsubmit();
+
+                 }
+                  /* Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => Signup()));*/
+                },
+                child: Center(
                   child: Container(
-                    child: Text(
-                      "Register now",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                    height: MediaQuery.of(context).size.height * 0.06,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Login",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_right_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-            // SizedBox(
-            //   height: 90,
-            // ),
-          ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              // Register now
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account ? ",
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Signup()));
+                    },
+                    child: Container(
+                      child: Text(
+                        "Register now",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // SizedBox(
+              //   height: 90,
+              // ),
+            ],
+          ),
         ),
       ),
     );
+  }
+  Future<void> loginsubmit() async {
+    final response = await http.post(Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
+      body: {
+      "email":email.text,
+        "password":password.text
+      }
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      print(jsonData);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashbaord()));
+      /*final List<dynamic> data = jsonData['data'];
+      List<String> urls = [];
+      List<String> banners = [];
+      List<bool> banner_status = [];
+      for (var item in data) {
+        urls.add(item['url']);
+        banners.add(item['id']);
+        banner_status.add(item['status']);
+      }
+      for (var i = 0 ; i < banner_status.length;i++){
+        setState(() {
+          if(banner_status[i])
+            selectedIndex = i;
+        });
+      }
+      setState(() {
+        imageUrls = urls;
+        bannerid = banners;
+        bannerstatus = banner_status;
+        isLoading = false;
+      });
+      print(imageUrls);*/
+    } else {
+      throw Exception('Failed to load banner images');
+    }
   }
 }

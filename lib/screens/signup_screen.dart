@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/screens/signup2_screen.dart';
 
@@ -8,6 +9,19 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   int currentStep = 0;
+
+  TextEditingController firstname = TextEditingController();
+  TextEditingController lastname = TextEditingController();
+  TextEditingController email = TextEditingController();
+
+  bool firstnameerror = false;
+  bool lastnameerror = false;
+  bool emailerror = false;
+
+
+  String firstnamemessage = "";
+  String lastnamemessage = "";
+  String emailmessage = "";
 
   List<Step> steps = [
     Step(title: Text('About You'), content: AboutYouForm()),
@@ -250,7 +264,7 @@ class _SignupState extends State<Signup> {
             Image(
               image: AssetImage('assets/images/logo.png'),
               height: 40,
-              width: width * .9,
+              width: width * .8,
             ),
             SizedBox(height: 20),
             Center(
@@ -286,15 +300,26 @@ class _SignupState extends State<Signup> {
                       children: [
                         Positioned.fill(
                           child: TextField(
+                            onChanged: (value){
+                              setState(() {
+                                firstnameerror  = false;
+                              });
+                            },
+                            controller: firstname,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
+                              enabledBorder: firstnameerror ?  OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.red), // Set border color here
+                              ):InputBorder.none,
+
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
-                              prefixIcon: Icon(
-                                Icons.person_outline_outlined,
-                                size: 22,
-                                color: Colors.grey,
-                              ),
+                              prefixIcon:Container(
+                                  height: 20,
+                                  width: 20,
+                                  padding: EdgeInsets.all(13),
+                                  child: Image.asset("assets/icons/user_icon.png")),
                               hintText: "First Name",
                             ),
                           ),
@@ -308,6 +333,7 @@ class _SignupState extends State<Signup> {
                 ),
               ],
             ),
+            firstnameerror ? Center(child: Text(firstnamemessage,style: TextStyle(color: Colors.red),)):Container(),
             SizedBox(height: 25),
             // Last name
             Row(
@@ -326,15 +352,26 @@ class _SignupState extends State<Signup> {
                       children: [
                         Positioned.fill(
                           child: TextField(
+                            onChanged: (value){
+                              setState(() {
+                                lastnameerror  = false;
+                              });
+                            },
+                            controller: lastname,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
+                              enabledBorder: lastnameerror ?  OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.red), // Set border color here
+                              ):InputBorder.none,
+
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
-                              prefixIcon: Icon(
-                                Icons.person_outline_outlined,
-                                size: 22,
-                                color: Colors.grey,
-                              ),
+                              prefixIcon:Container(
+                                  height: 20,
+                                  width: 20,
+                                  padding: EdgeInsets.all(13),
+                                  child: Image.asset("assets/icons/user_icon.png")),
                               hintText: "Last Name",
                             ),
                           ),
@@ -348,6 +385,8 @@ class _SignupState extends State<Signup> {
                 ),
               ],
             ),
+            lastnameerror ? Center(child: Text(lastnamemessage,style: TextStyle(color: Colors.red),)):Container(),
+
             SizedBox(height: 25),
             // Business email
             Row(
@@ -366,15 +405,26 @@ class _SignupState extends State<Signup> {
                       children: [
                         Positioned.fill(
                           child: TextField(
+                            onChanged: (value){
+                              setState(() {
+                                emailerror  = false;
+                              });
+                            },
+                            controller: email,
                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
                             decoration: InputDecoration(
                               border: InputBorder.none,
+                              enabledBorder: emailerror ?  OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.red), // Set border color here
+                              ):InputBorder.none,
+
                               contentPadding: EdgeInsets.all(10),
-                              prefixIcon: Icon(
-                                Icons.email_outlined,
-                                size: 22,
-                                color: Colors.grey,
-                              ),
+                              prefixIcon:Container(
+                                  height: 20,
+                                  width: 20,
+                                  padding: EdgeInsets.all(13),
+                                  child: Image.asset("assets/icons/email_icon.png")),
                               hintText: "Business Email",
                             ),
                           ),
@@ -388,6 +438,8 @@ class _SignupState extends State<Signup> {
                 ),
               ],
             ),
+            emailerror ? Center(child: Text(emailmessage,style: TextStyle(color: Colors.red),)):Container(),
+
             // Spacer(),
             SizedBox(
               height: height * .1,
@@ -395,9 +447,50 @@ class _SignupState extends State<Signup> {
             // Create your free trial
             GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Signup2()));
-              },
+                if(firstname.text.isEmpty){
+                  setState(() {
+                    firstnameerror = true;
+                    firstnamemessage = "Firstname is required";
+                  });
+                }else{
+                  setState(() {
+                    firstnameerror = false;
+                    //firstnamemessage = "Firstname is required";
+                  });
+                }
+                if(lastname.text.isEmpty){
+                  setState(() {
+                    lastnameerror = true;
+                    lastnamemessage = "Lastname is required";
+                  });
+                }else{
+                  setState(() {
+                    lastnameerror = false;
+                    //firstnamemessage = "Firstname is required";
+                  });
+                }
+                if(email.text.isEmpty){
+                  setState(() {
+                    emailerror = true;
+                    emailmessage = "Email is required";
+                  });
+                }
+                else if(!EmailValidator.validate(email.text)){
+                  setState(() {
+                    emailerror = true;
+                    emailmessage = "Email is not valid";
+                  });
+                }
+                else{
+                  setState(() {
+                    emailerror = false;
+                    //firstnamemessage = "Firstname is required";
+                  });
+                }
+                //  print(EmailValidator.validate(email.text));
+                 /* Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Signup2(firstname: firstname.text,lastname: lastname.text,email: email.text,)));
+       */         },
               child: Center(
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -421,7 +514,109 @@ class _SignupState extends State<Signup> {
                 ),
               ),
             ),
-            Row(
+        SizedBox(height: 20,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:  Colors.black ,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "1",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Text('About you',style: TextStyle(fontSize: 10,fontFamily: 'muslish')),
+              ],
+            ),
+            SizedBox(width: 2,),
+            Column(
+              children: [
+                Container(
+                  width: 50,
+                  height: 2,
+                  color: Colors.grey,
+                ),
+                SizedBox(height: 15,)
+              ],
+            ),
+            SizedBox(width: 2,),
+            Column(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "2",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                ),
+                Text('Customize Trial',textAlign:TextAlign.center,style: TextStyle(fontSize: 10,fontFamily: 'muslish'),),
+              ],
+            ),
+
+            SizedBox(width: 10,),
+            Column(
+
+              children: [
+                Container(
+                  width: 50,
+                  height: 2,
+                  color: Colors.grey,
+                ),
+                SizedBox(height: 15,)
+              ],
+            ),
+            SizedBox(width: 10,),
+            Column(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:  Colors.grey,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "3",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Text("Final",style: TextStyle(fontSize: 10,fontFamily: 'muslish'))
+              ],
+            ),
+          ],
+        ),
+
+          /*  Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 steps.length * 2 - 1,
@@ -468,7 +663,7 @@ class _SignupState extends State<Signup> {
               ),
             ),
             if (currentStep != -1) steps[currentStep].content,
-            // SizedBox(height: 90),
+          */  // SizedBox(height: 90),
           ],
         ),
       ),
