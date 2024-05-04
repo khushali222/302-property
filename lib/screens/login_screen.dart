@@ -19,11 +19,42 @@ class _Login_ScreenState extends State<Login_Screen> {
         ListView(
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            // Image(
+            //   image: AssetImage('assets/images/logo.png'),
+            //   height: MediaQuery.of(context).size.shortestSide < 600 // Check if the device width is less than 600 (typical for tablets)
+            //       ? MediaQuery.of(context).size.height * 0.15 // Use a larger size for tablets
+            //       : MediaQuery.of(context).size.height * 0.08, // Use a smaller size for phones
+            //   width: MediaQuery.of(context).size.width * 0.9,
+            //   alignment: Alignment.center,
+            // ),
+            // Center(
+            //   child: LayoutBuilder(
+            //     builder: (BuildContext context, BoxConstraints constraints) {
+            //       // You can adjust the width and height constraints based on device sizes
+            //       double width = constraints.maxWidth * 0.8; // Adjust as needed
+            //       double height = constraints.maxHeight * 0.8; // Adjust as needed
+            //
+            //       return Container(
+            //         width: width,
+            //         height: height,
+            //         child: Image.asset(
+            //           'assets/images/logo.png',
+            //           fit: BoxFit.contain, // Or any other BoxFit option you prefer
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
+              // FractionallySizedBox(
+              //   widthFactor: MediaQuery.of(context).size.width /9,
+              //   child: Image(
+              //     image: AssetImage('assets/images/logo.png'),
+              //   ),
+              // ),
             Image(
               image: AssetImage('assets/images/logo.png'),
-              height: MediaQuery.of(context).size.height * 0.08,
-              width: MediaQuery.of(context).size.width * 0.9,
-              alignment: Alignment.center,
+              height: 34,
+              width: width * 0.5,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Padding(
@@ -68,11 +99,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                           0.00),
                                   child: Center(
                                     child: TextField(
+                                      keyboardType: TextInputType.emailAddress,
                                       cursorColor:
                                       Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(17.0),
                                           child: Image.asset(
@@ -118,7 +150,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                       Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon:  Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(

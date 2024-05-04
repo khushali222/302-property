@@ -45,9 +45,8 @@ class _SignupState extends State<Signup> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Image(
               image: AssetImage('assets/images/logo.png'),
-              height: MediaQuery.of(context).size.height * 0.08,
-              width: MediaQuery.of(context).size.width * 0.9,
-              alignment: Alignment.center,
+              height: 34,
+              width: width * 0.5,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Padding(
@@ -76,7 +75,8 @@ class _SignupState extends State<Signup> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
+                        //  height: 60,
+                           height: MediaQuery.of(context).size.height * 0.07,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -96,7 +96,7 @@ class _SignupState extends State<Signup> {
                                       Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon:  Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -141,7 +141,7 @@ class _SignupState extends State<Signup> {
                                       Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon:  Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -182,11 +182,12 @@ class _SignupState extends State<Signup> {
                                           0.00),
                                   child: Center(
                                     child: TextField(
+                                      keyboardType: TextInputType.emailAddress,
                                       cursorColor:
                                       Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(17.0),
                                           child: Image.asset(

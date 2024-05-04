@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'dashboard.dart';
+
 class Signup2 extends StatefulWidget {
   const Signup2({super.key});
 
@@ -19,9 +21,8 @@ class _Signup2State extends State<Signup2> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Image(
               image: AssetImage('assets/images/logo.png'),
-              height: MediaQuery.of(context).size.height * 0.08,
-              width: MediaQuery.of(context).size.width * 0.9,
-              alignment: Alignment.center,
+              height: 34,
+              width: width * 0.5,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Padding(
@@ -70,7 +71,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon:
                                         Padding(
                                           padding: const EdgeInsets.all(15.0),
@@ -116,7 +117,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -157,11 +158,12 @@ class _Signup2State extends State<Signup2> {
                                               0.00),
                                   child: Center(
                                     child: TextField(
+                                      keyboardType: TextInputType.emailAddress,
                                       cursorColor:
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(18.0),
                                           child: Image.asset(
@@ -207,7 +209,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -249,11 +251,12 @@ class _Signup2State extends State<Signup2> {
                                               0.00),
                                   child: Center(
                                     child: TextField(
+                                      keyboardType: TextInputType.number,
                                       cursorColor:
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -298,12 +301,11 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(18),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
-
-                                                  'assets/icons/pasword.png'),
+                                              'assets/icons/pasword.png'),
                                         ),
                                         hintText: "Password",
                                         //  suffixIcon: Icon(),
@@ -347,7 +349,7 @@ class _Signup2State extends State<Signup2> {
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   GestureDetector(
                     onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(builder: (context)=>Signup2()));
+                       Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard_one()));
                     },
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.06,
