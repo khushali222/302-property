@@ -302,26 +302,30 @@ class _Login_ScreenState extends State<Login_Screen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
-                      child: loading ? CircularProgressIndicator(color: Colors.white,) : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Login",
-                            style: TextStyle(
+                      child: loading
+                          ? CircularProgressIndicator(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_right_outlined,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ],
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_right_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),
@@ -376,10 +380,9 @@ class _Login_ScreenState extends State<Login_Screen> {
     print(response.statusCode);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-
       print(jsonData);
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashbaord()));
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
       /*final List<dynamic> data = jsonData['data'];
       List<String> urls = [];
       List<String> banners = [];
@@ -406,9 +409,9 @@ class _Login_ScreenState extends State<Login_Screen> {
         loading = false;
       });
     } else {
-      Fluttertoast.showToast(msg: jsonData["message"] );
+      Fluttertoast.showToast(msg: jsonData["message"]);
       setState(() {
-        loading  =false;
+        loading = false;
       });
     }
   }

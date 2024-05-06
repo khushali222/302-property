@@ -14,17 +14,19 @@ void main() {
   );
 }
 
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-      //   //useMaterial3: true,
-      // ),
+      navigatorKey: navigatorKey,
+      theme: ThemeData(
+        iconTheme: IconThemeData(color: Colors.black),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
       home: SplashScreen(),
     );
   }

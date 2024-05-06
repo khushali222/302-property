@@ -516,9 +516,17 @@ class _SignupState extends State<Signup> {
                   });
                 }
 
-                if(firstnameerror == false && lastnameerror == false && emailerror ==  false){
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Signup2(firstname: firstname.text,lastname: lastname.text,email: email.text,)));
+                if (firstnameerror == false &&
+                    lastnameerror == false &&
+                    emailerror == false) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Signup2(
+                                firstname: firstname.text,
+                                lastname: lastname.text,
+                                email: email.text,
+                              )));
                 }
                 //  print(EmailValidator.validate(email.text));
                 /*

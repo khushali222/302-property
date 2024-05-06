@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/screens/plan_screen.dart';
 
 class widget_302 {
   static App_Bar(
       {var suffixIcon,
-        var leading,
-        var fontweight,
-        List<Widget>? actions,
-        var arrowNearText}) {
+      var leading,
+      var fontweight,
+      List<Widget>? actions,
+      var arrowNearText,
+      required BuildContext context,
+      }) {
     return AppBar(
       elevation: 5,
       backgroundColor: Colors.white,
@@ -21,27 +24,33 @@ class widget_302 {
         child: Icon(Icons.menu),
       ),
       actions: [
-        Material(
-          elevation: 3,
-          borderRadius: BorderRadius.circular(5),
-          child: Container(
-            width: 50,
-            height: 30,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(21, 43, 81, 1),
-              borderRadius: BorderRadius.circular(5),
+        InkWell(
+          onTap: (){
+
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
+          },
+          child: Material(
+            elevation: 3,
+            borderRadius: BorderRadius.circular(5),
+            child: Container(
+              width: 50,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(21, 43, 81, 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Center(
+                  child: Text(
+                "Buy",
+                style: TextStyle(color: Colors.white),
+              )),
             ),
-            child: Center(
-                child: Text(
-                  "Buy",
-                  style: TextStyle(color: Colors.white),
-                )),
           ),
         ),
         SizedBox(
           width: 10,
         ),
-       Icon(Icons.notifications_outlined),
+        Icon(Icons.notifications_outlined),
         SizedBox(
           width: 10,
         ),
@@ -57,9 +66,9 @@ class widget_302 {
             ),
             child: Center(
                 child: Text(
-                  "L",
-                  style: TextStyle(color: Colors.white),
-                )),
+              "L",
+              style: TextStyle(color: Colors.white),
+            )),
           ),
         ),
         SizedBox(

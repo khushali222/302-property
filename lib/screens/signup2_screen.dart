@@ -154,7 +154,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -201,7 +201,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(18.0),
                                           child: Image.asset(
@@ -260,7 +260,7 @@ class _Signup2State extends State<Signup2> {
                                         )
                                             : InputBorder.none,
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -328,7 +328,7 @@ class _Signup2State extends State<Signup2> {
                                         )
                                             : InputBorder.none,
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -401,6 +401,7 @@ class _Signup2State extends State<Signup2> {
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
                                               'assets/icons/pasword.png'),
+
                                         ),
 
                                         hintText: "Password",
@@ -794,7 +795,7 @@ class _Signup2State extends State<Signup2> {
               GestureDetector(
                 onTap: () {
                  // Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashbaord()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard()));
                 },
                 child: Container(
                   width: 134,
