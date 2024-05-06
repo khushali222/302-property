@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'dashboard.dart';
+import 'dashboard_one.dart';
 
 class Signup2 extends StatefulWidget {
   const Signup2({super.key});

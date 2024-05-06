@@ -52,8 +52,7 @@ class _Dashboard_oneState extends State<Dashboard_one> {
           Material(
             elevation: 4,
             child: Divider(
-              height: 5,
-              color: Colors.white,
+              color: Colors.transparent,
             ),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -87,7 +86,6 @@ class _Dashboard_oneState extends State<Dashboard_one> {
               ),
             ],
           ),
-
           // Row(
           //   children: [
           //     SizedBox(
@@ -192,7 +190,7 @@ class _Dashboard_oneState extends State<Dashboard_one> {
               if (constraints.maxWidth > 600) {
                 // Tablet layout - horizontal
                 return Padding(
-                  padding: const EdgeInsets.only(left: 55, right: 55),
+                  padding: const EdgeInsets.only(left: 80, right: 80,top: 20),
                   child: Wrap(
                     alignment: WrapAlignment.start,
                     spacing: MediaQuery.of(context).size.width * 0.02,
