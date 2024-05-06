@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/screens/plan_screen.dart';
 
 class widget_302 {
   static App_Bar(
@@ -6,11 +7,13 @@ class widget_302 {
       var leading,
       var fontweight,
       List<Widget>? actions,
-      var arrowNearText}) {
+      var arrowNearText,
+      required BuildContext context,
+      }) {
     return AppBar(
-         elevation: 0,
-        backgroundColor: Colors.white,
-      automaticallyImplyLeading: false,
+      elevation: 5,
+      backgroundColor: Colors.white,
+      //automaticallyImplyLeading: false,
       title: Image(
         image: AssetImage('assets/images/applogo.png'),
         height: 40,
@@ -21,31 +24,33 @@ class widget_302 {
         child: Icon(Icons.menu),
       ),
       actions: [
-        Material(
-          elevation: 3,
-          borderRadius: BorderRadius.circular(5),
-          child: Container(
-            width: 50,
-            height: 30,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(21, 43, 81, 1),
-              borderRadius: BorderRadius.circular(5),
+        InkWell(
+          onTap: (){
+
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
+          },
+          child: Material(
+            elevation: 3,
+            borderRadius: BorderRadius.circular(5),
+            child: Container(
+              width: 50,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(21, 43, 81, 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Center(
+                  child: Text(
+                "Buy",
+                style: TextStyle(color: Colors.white),
+              )),
             ),
-            child: Center(
-                child: Text(
-              "Buy",
-              style: TextStyle(color: Colors.white),
-            )),
           ),
         ),
         SizedBox(
           width: 10,
         ),
-        Image(
-          image: AssetImage('assets/icons/notification.png'),
-          height: 20,
-          width: 20,
-        ),
+        Icon(Icons.notifications_outlined),
         SizedBox(
           width: 10,
         ),

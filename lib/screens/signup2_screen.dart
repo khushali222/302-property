@@ -1,15 +1,49 @@
-import 'package:flutter/material.dart';
-
+import 'dart:convert';
+import 'dart:ui';
 import 'dashboard_one.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart'as http;
+
+import 'dialogbox.dart';
+
 
 class Signup2 extends StatefulWidget {
-  const Signup2({super.key});
+  String? firstname;
+  String? lastname;
+  String? email;
+  Signup2({super.key, this.firstname, this.lastname, this.email});
 
   @override
   State<Signup2> createState() => _Signup2State();
 }
 
 class _Signup2State extends State<Signup2> {
+  TextEditingController firstname = TextEditingController();
+  TextEditingController lastname = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController companyname = TextEditingController();
+  TextEditingController phonenumber = TextEditingController();
+  TextEditingController password = TextEditingController();
+  bool isChecked = false;
+  //bool isChecked = false;
+  bool companynameerror = false;
+  bool phoneerror = false;
+  bool passworderror = false;
+  bool loading = false;
+  String companynamemessage = "";
+  String phonemessage = "";
+  String passwordmessage = "";
+  bool showdialog = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    firstname.text = widget.firstname!;
+    lastname.text = widget.lastname!;
+    email.text = widget.email!;
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -21,8 +55,9 @@ class _Signup2State extends State<Signup2> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Image(
               image: AssetImage('assets/images/logo.png'),
-              height: 34,
-              width: width * 0.5,
+              height: 40,
+              width: width * .8,
+              alignment: Alignment.center,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Padding(
@@ -51,7 +86,7 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
+                          height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -65,21 +100,22 @@ class _Signup2State extends State<Signup2> {
                                       horizontal:
                                           MediaQuery.of(context).size.width *
                                               0.00),
-                                  child: Center(
-                                    child: TextField(
-                                      cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(15),
-                                        prefixIcon:
-                                        Padding(
-                                          padding: const EdgeInsets.all(15.0),
-                                          child: Image.asset(
-                                              'assets/icons/user.png',),
+                                  child: TextField(
+
+                                    enabled: false,
+                                    controller: firstname,
+                                    cursorColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.all(10),
+                                      prefixIcon: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Image.asset(
+                                          'assets/icons/user.png',
                                         ),
-                                        hintText: "Alex",
                                       ),
+                                      hintText: "First Name",
                                     ),
                                   ),
                                 ),
@@ -97,7 +133,7 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
+                          height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -113,6 +149,8 @@ class _Signup2State extends State<Signup2> {
                                               0.00),
                                   child: Center(
                                     child: TextField(
+                                      enabled: false,
+                                      controller: lastname,
                                       cursorColor:
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
@@ -123,7 +161,7 @@ class _Signup2State extends State<Signup2> {
                                           child: Image.asset(
                                               'assets/icons/user.png'),
                                         ),
-                                        hintText: "Williams",
+                                        hintText: "Last Name",
                                       ),
                                     ),
                                   ),
@@ -142,7 +180,7 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
+                          height:50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -159,6 +197,8 @@ class _Signup2State extends State<Signup2> {
                                   child: Center(
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
+                                      controller: email,
+                                      enabled: false,
                                       cursorColor:
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
@@ -167,10 +207,9 @@ class _Signup2State extends State<Signup2> {
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(18.0),
                                           child: Image.asset(
-                                              'assets/icons/email.png'
-                                          ),
+                                              'assets/icons/email.png'),
                                         ),
-                                        hintText: "Email",
+                                        hintText: "Business Email",
                                       ),
                                     ),
                                   ),
@@ -189,7 +228,7 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
+                          height:50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -205,15 +244,28 @@ class _Signup2State extends State<Signup2> {
                                               0.00),
                                   child: Center(
                                     child: TextField(
+                                      controller: companyname,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          companynameerror = false;
+                                        });
+                                      },
                                       cursorColor:
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
+                                        enabledBorder: companynameerror
+                                            ? OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: Colors
+                                                  .red), // Set border color here
+                                        )
+                                            : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
-
                                               'assets/icons/home.png'),
                                         ),
                                         hintText: "Company Name",
@@ -229,13 +281,21 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                     ],
                   ),
+                  companynameerror
+                      ? Center(
+                      child: Text(
+                        companynamemessage,
+                        style: TextStyle(color: Colors.red),
+                      ))
+                      : Container(),
+
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
                     children: [
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
+                          height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -251,10 +311,25 @@ class _Signup2State extends State<Signup2> {
                                               0.00),
                                   child: Center(
                                     child: TextField(
+
+                                      onChanged: (value) {
+                                        setState(() {
+                                          phoneerror = false;
+                                        });
+                                      },
+                                      controller: phonenumber,
                                       keyboardType: TextInputType.number,
                                       cursorColor:
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
+                                        enabledBorder: phoneerror
+                                            ? OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: Colors
+                                                  .red), // Set border color here
+                                        )
+                                            : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(15),
                                         prefixIcon: Padding(
@@ -275,13 +350,21 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                     ],
                   ),
+                  phoneerror
+                      ? Center(
+                      child: Text(
+                        phonemessage,
+                        style: TextStyle(color: Colors.red),
+                      ))
+                      : Container(),
+
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
                     children: [
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
+                          height:50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -297,15 +380,31 @@ class _Signup2State extends State<Signup2> {
                                               0.00),
                                   child: Center(
                                     child: TextField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          passworderror = false;
+                                        });
+                                      },
+                                      obscureText: true,
+                                      controller: password,
                                       cursorColor:
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(18),
+                                        contentPadding: EdgeInsets.all(10),
+                                        enabledBorder: passworderror
+                                            ? OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: Colors
+                                                  .red), // Set border color here
+                                        )
+                                            : InputBorder.none,
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
                                               'assets/icons/pasword.png'),
+
                                         ),
                                         hintText: "Password",
                                         //  suffixIcon: Icon(),
@@ -321,6 +420,14 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                     ],
                   ),
+                  passworderror
+                      ? Center(
+                      child: Text(
+                        passwordmessage,
+                        style: TextStyle(color: Colors.red),
+                      ))
+                      : Container(),
+
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
                     children: [
@@ -331,25 +438,117 @@ class _Signup2State extends State<Signup2> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: Colors.grey,
-                          ),
+                        ),
+                        child: Checkbox(
+                          activeColor: isChecked ? Colors.black : Colors.white,
+                          checkColor: Colors.white,
+                          value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                          onChanged: ( value) {
+                            setState(() {
+                              isChecked = value ?? false; // ensure value is not null
+                            });
+                          },
                         ),
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                       Text(
-                        "I have read and accept 302 properties term and condition ",
+                        "I have read and accept 302 properties terms and condition ",
                         style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.024,
-                            color: Colors.black),
+                          fontSize: MediaQuery.of(context).size.width * 0.024,
+                          color: Colors.black,
+                        ),
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                     ],
                   ),
+
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   GestureDetector(
                     onTap: () {
-                       Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard_one()));
+                     if(companyname.text.isEmpty){
+                      setState(() {
+                        companynameerror = true;
+                        companynamemessage = "Company name is required";
+                      });
+                     }
+                     else {
+                       setState(() {
+                         companynameerror = false;
+                       });
+                     }
+                     if(phonenumber.text.isEmpty){
+                       setState(() {
+                         phoneerror = true;
+                         phonemessage = "Phone number is required";
+                       });
+                     }
+                     else if(phonenumber.text.length < 9){
+                       setState(() {
+                         phoneerror = true;
+                         phonemessage = "Phone number is atleast 10 digit";
+                       });
+                     }
+                     else {
+                       setState(() {
+                         phoneerror = false;
+                       });
+                     }
+                     if(password.text.isEmpty){
+                       setState(() {
+                         passworderror = true;
+                         passwordmessage = "Password is required";
+                       });
+                     }
+                     else if(password.text.length < 8){
+                       setState(() {
+                         passworderror = true;
+                         passwordmessage = "Password must have 8 Characters";
+                       });
+                     }
+                     else if (!RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(password.text)) {
+                      setState(() {
+                        passworderror = true;
+                        passwordmessage =  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+
+                      });
+
+                     }
+                     else {
+                       setState(() {
+                         passworderror = false;
+                       });
+                     }
+
+                     if(companynameerror==false && passworderror == false && phoneerror ==false){
+                       if(isChecked){
+                         loginsubmit();
+                       }
+                       else {
+                         Fluttertoast.showToast(
+                             msg: "Please check the Terms & Condition",
+                             toastLength: Toast.LENGTH_SHORT,
+                             gravity: ToastGravity.CENTER,
+                             timeInSecForIosWeb: 1,
+                             backgroundColor: Colors.red,
+                             textColor: Colors.white,
+                             fontSize: 16.0
+                         );
+                       }
+
+                     }
+
+
+                    /*  setState(() {
+                        showdialog = true;
+                      });
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return dialogbox();
+                        },
+                      );*/
+                      //  dialogbox();
+                      // Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomBlurDialog()));
                     },
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.06,
@@ -359,7 +558,8 @@ class _Signup2State extends State<Signup2> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: Row(
+                        child: loading?CircularProgressIndicator(color: Colors.white,): Row(
+
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
@@ -375,10 +575,248 @@ class _Signup2State extends State<Signup2> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "1",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text('About you',
+                              style: TextStyle(
+                                  fontSize: 10, fontFamily: 'muslish')),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 2,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "2",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Customize Trial',
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(fontSize: 10, fontFamily: 'muslish'),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 2,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: showdialog ? Colors.black : Colors.grey,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "3",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text("Final",
+                              style: TextStyle(
+                                  fontSize: 10, fontFamily: 'muslish'))
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  )
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+
+  Future<void> loginsubmit() async {
+    setState(() {
+      loading = true;
+    });
+    final response = await http.post(
+        Uri.parse('https://saas.cloudrentalmanager.com/api/admin/register'),
+        body: {"email": email.text, "password": password.text,"first_name":firstname.text,"last_name":lastname.text,"company_name":companyname.text,"phone_number":phonenumber.text});
+    final jsonData = json.decode(response.body);
+
+    if (jsonData["statusCode"] == 200) {
+
+      setState(() {
+        loading = false;
+        showdialog = true;
+
+      });
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialogbox();
+        },
+      );
+
+      /*final List<dynamic> data = jsonData['data'];
+      List<String> urls = [];
+      List<String> banners = [];
+      List<bool> banner_status = [];
+      for (var item in data) {
+        urls.add(item['url']);
+        banners.add(item['id']);
+        banner_status.add(item['status']);
+      }
+      for (var i = 0 ; i < banner_status.length;i++){
+        setState(() {
+          if(banner_status[i])
+            selectedIndex = i;
+        });
+      }
+      setState(() {
+        imageUrls = urls;
+        bannerid = banners;
+        bannerstatus = banner_status;
+        isLoading = false;
+      });
+      print(imageUrls);*/
+    } else {
+      Fluttertoast.showToast(msg: jsonData["message"]);
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  dialogbox() {
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+      child: AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+              10.0), // Set your desired border radius here
+        ),
+        title: Image.asset(
+          "assets/check.png",
+          height: 36,
+          width: 36,
+        ),
+        content: SizedBox(
+          height: 160,
+          child: Column(
+            children: [
+              Text(
+                'Your trial account is being ready !',
+                style: TextStyle(fontSize: 14, fontFamily: 'mulish'),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Feel free to access the trial account.Once you sign u, we’ll start you with a fresh account',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, fontFamily: 'mulish'),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                onTap: () {
+                 // Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard()));
+                },
+                child: Container(
+                  width: 134,
+                  height: 34,
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(6)),
+                  child: Center(
+                    child: Text(
+                      "Get Started",
+                      style:
+                          TextStyle(color: Colors.white, fontFamily: 'mulish'),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
