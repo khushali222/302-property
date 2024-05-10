@@ -38,6 +38,7 @@ class _BarchartState extends State<Barchart> {
           height: 250,
          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Card(
+            elevation: 3,
             color: Colors.white.withOpacity(1),
             child: Column(
               children: [
@@ -45,7 +46,6 @@ class _BarchartState extends State<Barchart> {
                   height: 30,
                  // width: 120,
                   margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-
                   alignment: Alignment.topRight,
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(

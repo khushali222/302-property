@@ -25,13 +25,16 @@ class _Signup2State extends State<Signup2> {
   TextEditingController companyname = TextEditingController();
   TextEditingController phonenumber = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController confirmpassword = TextEditingController();
   bool isChecked = false;
   //bool isChecked = false;
   bool companynameerror = false;
   bool phoneerror = false;
   bool passworderror = false;
+  bool confirmpassworderror = false;
   bool loading = false;
   String companynamemessage = "";
+  String confirmpasswordmessage = "";
   String phonemessage = "";
   String passwordmessage = "";
   bool showdialog = false;
@@ -73,14 +76,14 @@ class _Signup2State extends State<Signup2> {
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width * 0.05),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.013),
                   Text(
                     "Signup for free trial account",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: MediaQuery.of(context).size.width * 0.04),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.025),
                   Row(
                     children: [
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
@@ -427,7 +430,75 @@ class _Signup2State extends State<Signup2> {
                         style: TextStyle(color: Colors.red),
                       ))
                       : Container(),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  Row(
+                    children: [
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                      Expanded(
+                        child: Container(
+                          height:50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                MediaQuery.of(context).size.width * 0.02),
+                            color: Color.fromRGBO(196, 196, 196, 0.3),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal:
+                                      MediaQuery.of(context).size.width *
+                                          0.00),
+                                  child: Center(
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          confirmpassworderror = false;
+                                        });
+                                      },
+                                      obscureText: true,
+                                      controller: confirmpassword,
+                                      cursorColor:
+                                      Color.fromRGBO(21, 43, 81, 1),
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(10),
+                                        enabledBorder: confirmpassworderror
+                                            ? OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: Colors
+                                                  .red), // Set border color here
+                                        )
+                                            : InputBorder.none,
+                                        prefixIcon: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Image.asset(
+                                              'assets/icons/pasword.png'),
 
+                                        ),
+                                        hintText: "Confirm Password",
+                                        //  suffixIcon: Icon(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                    ],
+                  ),
+                  confirmpassworderror
+                      ? Center(
+                      child: Text(
+                        confirmpasswordmessage,
+                        style: TextStyle(color: Colors.red),
+                      ))
+                      : Container(),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
                     children: [
@@ -461,7 +532,6 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                     ],
                   ),
-
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   GestureDetector(
                     onTap: () {
@@ -518,8 +588,24 @@ class _Signup2State extends State<Signup2> {
                          passworderror = false;
                        });
                      }
-
-                     if(companynameerror==false && passworderror == false && phoneerror ==false){
+                     if(confirmpassword.text.isEmpty){
+                       setState(() {
+                         confirmpassworderror = true;
+                         confirmpasswordmessage = "Confirm password is required";
+                       });
+                     }
+                     else if(confirmpassword.text != password.text){
+                       setState(() {
+                         confirmpassworderror = true;
+                         confirmpasswordmessage ="Both password is not match";
+                       });
+                     }
+                     else{
+                       setState(() {
+                         confirmpassworderror = false;
+                       });
+                     }
+                     if(companynameerror==false && passworderror == false && confirmpassworderror == false && phoneerror ==false){
                        if(isChecked){
                          loginsubmit();
                        }
@@ -715,7 +801,8 @@ class _Signup2State extends State<Signup2> {
     });
     final response = await http.post(
         Uri.parse('https://saas.cloudrentalmanager.com/api/admin/register'),
-        body: {"email": email.text, "password": password.text,"first_name":firstname.text,"last_name":lastname.text,"company_name":companyname.text,"phone_number":phonenumber.text});
+        body: {"email": email.text,
+          "password": password.text,"first_name":firstname.text,"last_name":lastname.text,"company_name":companyname.text,"phone_number":phonenumber.text});
     final jsonData = json.decode(response.body);
 
     if (jsonData["statusCode"] == 200) {

@@ -49,9 +49,12 @@ dependencies:
   http:
   fluttertoast: ^8.2.5
   syncfusion_flutter_charts: ^25.1.42+1
+  shared_preferences: ^2.2.3
   pie_chart: ^5.4.0
   d_chart:
   dropdown_button2: ^2.3.9
+  country_list_pick: ^1.0.1
+
 
 dev_dependencies:
   flutter_test:

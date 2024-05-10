@@ -48,9 +48,8 @@ class PieCharts extends StatelessWidget {
     ];
 
     return  Container(
-          height: 200,
+          height: 250,
           margin: EdgeInsets.all(10),
-          
           child: Card(
             color: Colors.white,
             elevation: 3,
@@ -61,7 +60,6 @@ class PieCharts extends StatelessWidget {
               legendOptions: const LegendOptions(
                 showLegends: true,
               ),
-
                 chartValuesOptions:ChartValuesOptions(
                     showChartValuesInPercentage:false,
                     showChartValues:false

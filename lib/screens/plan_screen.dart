@@ -49,219 +49,236 @@ class _Plan_screenState extends State<Plan_screen> {
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 24),
+                        fontSize: 22),
                   ),
                 ),
               ),
             ),
-            Container(
-               height: 246,
-               width: 270,
-            //  width: MediaQuery.of(context).size.width * .78,
-             // height: MediaQuery.of(context).size.height * ,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1,
-                  )),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 35,
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
-        
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 20,
-                        ),
-                      Image.asset("assets/icons/plan_icon.png",height: 20,),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text("Sliver Plan",
-                          style: TextStyle(
-                              color: Colors.white,
-                            //  fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(15),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("\$700/3 (Quarterly)",
-                        style:TextStyle(
-                          fontSize: 16,
-                          color: Color.fromRGBO(21, 43, 81, 1)
-                        )
-                        )
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 15,),
-                      Icon(Icons.fiber_manual_record, size: 15),
-                      SizedBox(width: 5,),
-                      Expanded(
-                        child: Text(
-                          "Everything in Essential and Growth",
-                          // Add any additional text styling as needed
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5,),
-                  Row(
-                    children: [
-                      SizedBox(width: 15,),
-                      Icon(Icons.fiber_manual_record, size: 15),
-                      SizedBox(width: 5,),
-                      Text("Account"),
-                    ],
-                  ),
-                  SizedBox(height: 5,),
-                  Row(
-                    children: [
-                      SizedBox(width: 15,),
-                      Icon(Icons.fiber_manual_record, size: 15),
-                      SizedBox(width: 5,),
-                      Text("More than 10 units of property"),
-                    ],
-                  ),
-                  SizedBox(height: 10,),
-        
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
-                    },
-                    child: Center(
-                      child: Container(
-                        width: 100,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(21, 43, 81, 1),
-                          borderRadius: BorderRadius.circular(4)
-                        ),
-                        child: Center(child: Text("Get Started",style: TextStyle(
-                          color: Colors.white
-                        ),)),
+            Material(
+              elevation: 3,
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                 height: 246,
+                 width: 275,
+              //  width: MediaQuery.of(context).size.width * .78,
+               // height: MediaQuery.of(context).size.height * ,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 1,
+                    )),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(21, 43, 81, 1),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
 
                       ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 20,
+                          ),
+                        Image.asset("assets/icons/plan_icon.png",height: 20,),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Sliver Plan",
+                            style: TextStyle(
+                                color: Colors.white,
+                              //  fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5,),
-                  Center(child: Text("Term Apply",style: TextStyle(
-                    color: Color.fromRGBO(21, 43, 81, 1),
-                    fontWeight: FontWeight.bold
-                  ),))
-                ],
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("\$700/3 (Quarterly)",
+                          style:TextStyle(
+                            fontSize: 16,
+                            color: Color.fromRGBO(21, 43, 81, 1)
+                          )
+                          )
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 15,),
+                        Icon(Icons.fiber_manual_record, size: 15),
+                        SizedBox(width: 5,),
+                        Expanded(
+                          child: Text(
+                            "Everything in Essential and Growth",
+                            // Add any additional text styling as needed
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+                    Row(
+                      children: [
+                        SizedBox(width: 15,),
+                        Icon(Icons.fiber_manual_record, size: 15),
+                        SizedBox(width: 5,),
+                        Text("Account"),
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+                    Row(
+                      children: [
+                        SizedBox(width: 15,),
+                        Icon(Icons.fiber_manual_record, size: 15),
+                        SizedBox(width: 5,),
+                        Text("More than 10 units of property"),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
+                      },
+                      child: Center(
+                        child: Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(4),
+                          child: Container(
+                            width: 100,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(21, 43, 81, 1),
+                              borderRadius: BorderRadius.circular(4)
+                            ),
+                            child: Center(child: Text("Get Started",style: TextStyle(
+                              color: Colors.white
+                            ),)),
+
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                    Center(child: Text("Term Apply",style: TextStyle(
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      fontWeight: FontWeight.bold
+                    ),))
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 30,),
-            Container(
-              height: 246,
-              width: 270,
-             // width: MediaQuery.of(context).size.width * .78,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1,
-                  )),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 35,
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
-        
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Image.asset("assets/icons/free_plan.png",height: 20,),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text("Free Plan",
-                          style: TextStyle(
-                              color: Colors.white,
-                              //  fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(15),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("\$0/2 ",
-                            style:TextStyle(
-                                fontSize: 16,
-                                color: Color.fromRGBO(21, 43, 81, 1)
-                            )
-                        )
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(width: 15,),
-                      Icon(Icons.fiber_manual_record, size: 15),
-                      SizedBox(width: 5,),
-                      Text("14 day free trial"),
-                    ],
-                  ),
-                  SizedBox(height: 5,),
-        
-                  SizedBox(height: 55,),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
-                    },
-                    child: Center(
-                      child: Container(
-                        width: 100,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            color: Color.fromRGBO(21, 43, 81, 1),
-                            borderRadius: BorderRadius.circular(4)
-                        ),
-                        child: Center(child: Text("Get Started",style: TextStyle(
-                            color: Colors.white
-                        ),)),
+            Material(
+              elevation: 3,
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                height: 246,
+                width: 275,
+               // width: MediaQuery.of(context).size.width * .78,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 1,
+                    )),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(21, 43, 81, 1),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
 
                       ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Image.asset("assets/icons/free_plan.png",height: 20,),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Free Plan",
+                            style: TextStyle(
+                                color: Colors.white,
+                                //  fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5,),
-                  Center(child: Text("Term Apply",style: TextStyle(
-                      color: Color.fromRGBO(21, 43, 81, 1),
-                      fontWeight: FontWeight.bold
-                  ),))
-                ],
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("\$0/2 ",
+                              style:TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromRGBO(21, 43, 81, 1)
+                              )
+                          )
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 15,),
+                        Icon(Icons.fiber_manual_record, size: 15),
+                        SizedBox(width: 5,),
+                        Text("14 day free trial"),
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+
+                    SizedBox(height: 55,),
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
+                      },
+                      child: Center(
+                        child: Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(4),
+                          child: Container(
+                            width: 100,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(21, 43, 81, 1),
+                                borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Center(child: Text("Get Started",style: TextStyle(
+                                color: Colors.white
+                            ),)),
+
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                    Center(child: Text("Term Apply",style: TextStyle(
+                        color: Color.fromRGBO(21, 43, 81, 1),
+                        fontWeight: FontWeight.bold
+                    ),))
+                  ],
+                ),
               ),
-            )
+            ),
+            SizedBox(height: 10,),
           ],
         ),
       ),

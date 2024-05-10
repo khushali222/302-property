@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/changepassword.dart';
 import 'package:three_zero_two_property/screens/signup_main.dart';
 import 'package:three_zero_two_property/screens/signup_screen.dart';
@@ -10,6 +11,7 @@ import 'package:http/http.dart' as http;
 
 import 'dashboard_one.dart';
 import 'forgotpassword.dart';
+import 'otp_vrify.dart';
 
 
 
@@ -390,7 +392,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                 width: MediaQuery.of(context).size.width * 0.9,
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
+                height: MediaQuery.of(context).size.height * 0.025,
               ),
               // Welcome
               Center(
@@ -404,17 +406,17 @@ class _Login_ScreenState extends State<Login_Screen> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
+                height: MediaQuery.of(context).size.height * 0.02,
               ),
               // Login text
               Center(
                 child: Text(
                   "Please login here...",
-                  style: TextStyle(color: Colors.black,fontSize: MediaQuery.of(context).size.width * 0.03),
+                  style: TextStyle(color: Colors.black,fontSize: MediaQuery.of(context).size.width * 0.036),
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
+                height: MediaQuery.of(context).size.height * 0.05,
               ),
               // Email
               Row(
@@ -501,7 +503,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                         Positioned.fill(
                           child: Center(
                             child: TextField(
-
                               onChanged: (value) {
                                 setState(() {
                                   passworderror = false;
@@ -593,7 +594,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   GestureDetector(
                     onTap: (){
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => changepassword()));
+                          context, MaterialPageRoute(builder: (context) => ForgotPassword()));
                     },
                     child: Text(
                       "Forgot password?",
@@ -610,10 +611,10 @@ class _Login_ScreenState extends State<Login_Screen> {
               Spacer(),
               // Login button
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
+                height: MediaQuery.of(context).size.height * 0.16,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   setState(() {
                     if (email.text.isEmpty) {
                       setState(() {
@@ -645,7 +646,17 @@ class _Login_ScreenState extends State<Login_Screen> {
                   });
 
                   if (emailerror == false && passworderror == false) {
-                    loginsubmit();
+                    await loginsubmit();
+
+                    // Save authentication status to SharedPreferences
+
+                    /*// Navigate to the appropriate screen based on authentication status
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Dashboard(),
+                      ),
+                    );*/
                   }
                 },
                 child: Center(
@@ -687,7 +698,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
+                height: MediaQuery.of(context).size.height * 0.04,
               ),
               // Register now
               Row(
@@ -697,7 +708,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     "Don't have an account ? ",
                     style: TextStyle(
                       color: Colors.black,
-                        fontSize: MediaQuery.of(context).size.width * 0.03
+                        fontSize: MediaQuery.of(context).size.width * 0.04
                     ),
                   ),
                   GestureDetector(
@@ -711,7 +722,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.blue,
-                            fontSize: MediaQuery.of(context).size.width * 0.03
+                            fontSize: MediaQuery.of(context).size.width * 0.037
                         ),
                       ),
                     ),
@@ -727,6 +738,31 @@ class _Login_ScreenState extends State<Login_Screen> {
       ),
     );
   }
+  Future<void> checkToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+   // String? token = prefs.getString('token');
+
+    final response = await http.post(
+        Uri.parse('https://saas.cloudrentalmanager.com/api/admin/token_check_api'),
+        body: {"token": token}
+    );
+    print(response.body);
+    final jsonData = json.decode(response.body);
+      if (jsonData['id'] != "") {
+        print(jsonData);
+        //prefs.setString('checkedToken',jsonData["token"]);
+        String? adminId = jsonData['data']['admin_id'];
+        print('Admin ID: $adminId');
+
+        prefs.setString('checkedToken', token);
+        prefs.setString('adminId', adminId!);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Dashboard())
+        );
+      }  else {
+      print('Failed to check token');
+    }
+  }
 
 
   Future<void> loginsubmit() async {
@@ -736,12 +772,16 @@ class _Login_ScreenState extends State<Login_Screen> {
     final response = await http.post(
         Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
         body: {"email": email.text, "password": password.text});
-    print(response.statusCode);
+    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       print(jsonData);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isAuthenticated', true);
+      prefs.setString('token',jsonData["token"]);
+      await checkToken(jsonData["token"]);
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => Dashboard()));
       /*final List<dynamic> data = jsonData['data'];
       List<String> urls = [];
       List<String> banners = [];

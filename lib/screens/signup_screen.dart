@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/screens/signup2_screen.dart';
+import 'package:http/http.dart'as http;
 
 class Signup extends StatefulWidget {
   @override
@@ -9,7 +13,7 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   int currentStep = 0;
-
+  bool loading = false;
   TextEditingController firstname = TextEditingController();
   TextEditingController lastname = TextEditingController();
   TextEditingController email = TextEditingController();
@@ -44,6 +48,58 @@ class _SignupState extends State<Signup> {
       });
     }
   }
+
+
+  Future<void> _checkEmailVerified(String email) async {
+    final url = Uri.parse('https://saas.cloudrentalmanager.com/api/admin/check_email');
+    final response = await http.post(url, body: {'email': email});
+
+    print(response.statusCode);
+      final jsonData = json.decode(response.body);
+    if (jsonData["statusCode"] == 200) {
+          print(jsonData);
+          setState(() {
+              emailerror = false;
+              emailmessage = 'email is verified';
+          });
+    } else if (jsonData["statusCode"] == 401) {
+      print("already use");
+      setState(() {
+        emailerror = true;
+        emailmessage = 'Email is already in use';
+      });
+    }else {
+      Fluttertoast.showToast(msg: jsonData["message"]);
+      setState(() {
+        emailerror = true;
+        emailmessage = 'Email is not verified';
+      });
+    }
+  }
+  // Future<void> loginsubmit() async {
+  //   setState(() {
+  //     loading = true;
+  //   });
+  //   final response = await http.post(
+  //       Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
+  //       body: {"email": email.text});
+  //   print(response.statusCode);
+  //   final jsonData = json.decode(response.body);
+  //   if (jsonData["statusCode"] == 200) {
+  //     print(jsonData);
+  //     Navigator.push(
+  //         context, MaterialPageRoute(builder: (context) => Dashboard()));
+  //
+  //     setState(() {
+  //       loading = false;
+  //     });
+  //   } else {
+  //     Fluttertoast.showToast(msg: jsonData["message"]);
+  //     setState(() {
+  //       loading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +324,7 @@ class _SignupState extends State<Signup> {
               width: MediaQuery.of(context).size.width * 0.9,
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
+              height: MediaQuery.of(context).size.height * 0.025,
             ),
             // Welcome
             Center(
@@ -282,17 +338,17 @@ class _SignupState extends State<Signup> {
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.01,
+              height: MediaQuery.of(context).size.height * 0.02,
             ),
             Center(
               child: Text(
                 "Signup for free trial account",
                 style: TextStyle(color: Colors.black,
-                    fontSize: MediaQuery.of(context).size.width * 0.03
+                    fontSize: MediaQuery.of(context).size.width * 0.036
                 ),
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Row(
               children: [
                 SizedBox(
@@ -353,7 +409,9 @@ class _SignupState extends State<Signup> {
                     style: TextStyle(color: Colors.red),
                   ))
                 : Container(),
-            SizedBox(height: 25),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.025,
+            ),
             // Last name
             Row(
               children: [
@@ -416,7 +474,9 @@ class _SignupState extends State<Signup> {
                   ))
                 : Container(),
 
-            SizedBox(height: 25),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.025,
+            ),
             // Business email
             Row(
               children: [
@@ -483,10 +543,10 @@ class _SignupState extends State<Signup> {
             Spacer(),
 
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.05,
+              height: MediaQuery.of(context).size.height * 0.098,
             ),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (firstname.text.isEmpty) {
                   setState(() {
                     firstnameerror = true;
@@ -520,15 +580,11 @@ class _SignupState extends State<Signup> {
                     emailmessage = "Email is not valid";
                   });
                 } else {
-                  setState(() {
-                    emailerror = false;
-                    //firstnamemessage = "Firstname is required";
-                  });
+                  await _checkEmailVerified(email.text);
                 }
-
-                if (firstnameerror == false &&
-                    lastnameerror == false &&
-                    emailerror == false) {
+                if (!firstnameerror == false &&
+                    !lastnameerror == false &&
+                    !emailerror == false) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -568,7 +624,7 @@ class _SignupState extends State<Signup> {
               ),
             ),
             SizedBox(
-              height: 20,
+              height: MediaQuery.of(context).size.height * 0.025,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -739,6 +795,7 @@ class _SignupState extends State<Signup> {
       ),
     );
   }
+
 
   Color _getCircleColor(int stepIndex) {
     if (currentStep >= stepIndex) {

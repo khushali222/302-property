@@ -14,15 +14,33 @@ class widget_302 {
       elevation: 5,
       backgroundColor: Colors.white,
       //automaticallyImplyLeading: false,
-      title: Image(
-        image: AssetImage('assets/images/applogo.png'),
-        height: 40,
-        width: 40,
+      // title: Image(
+      //   image: AssetImage('assets/images/applogo.png'),
+      //   height: 40,
+      //   width: 40,
+      // ),
+      title: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          // Check if the device width is less than 600 (considered as phone screen)
+          if (constraints.maxWidth < 500) {
+            return Image.asset(
+              'assets/images/applogo.png',
+              height: 40,
+              width: 40,
+            );
+          } else {
+            return Image.asset(
+              'assets/images/logo.png',
+
+              // Adjust height and width accordingly for tablet
+            );
+          }
+        },
       ),
-      leading: GestureDetector(
-        onTap: () {},
-        child: Icon(Icons.menu),
-      ),
+      // leading: GestureDetector(
+      //   onTap: () {},
+      //   child: Icon(Icons.menu),
+      // ),
       actions: [
         InkWell(
           onTap: (){
