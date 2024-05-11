@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/screens/login_screen.dart';
 
-class changepassword extends StatefulWidget {
-  const changepassword({super.key});
+class Changepassword extends StatefulWidget {
+  final String email;
+  const Changepassword({super.key, required this.email});
 
   @override
-  State<changepassword> createState() => _changepasswordState();
+  State<Changepassword> createState() => _ChangepasswordState();
 }
 
-class _changepasswordState extends State<changepassword> {
+class _ChangepasswordState extends State<Changepassword> {
   TextEditingController password = TextEditingController();
   TextEditingController confirmpassword = TextEditingController();
   bool passworderror = false;
@@ -19,13 +24,51 @@ class _changepasswordState extends State<changepassword> {
   String confirmpasswordmessage = "";
   bool visiable_password = true;
 
-  final GlobalKey formkey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
+  void changePassword() async {
+    setState(() {
+      loading = true; // Set loading to true while changing password
+    });
+
+    final response = await http.put(
+      Uri.parse('http://192.168.1.32:4000/api/admin/app/reset_password'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'email': widget.email,
+        'password': password.text,
+      }),
+    );
+    setState(() {
+      loading = false; // Set loading to false after receiving response
+    });
+    print(response.body);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      if (jsonData["message"] == "Password Updated Successfully") {
+        print(jsonData);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> Login_Screen()));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Password updated successfully")),
+        );
+      } else {
+        // Handle other successful responses or display an error message
+      }
+    } else {
+      // Handle HTTP error responses
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to update password")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Form(
-          key: formkey,
+          key: formKey,
           child: ListView(
             children: [
               SizedBox(
@@ -63,7 +106,6 @@ class _changepasswordState extends State<changepassword> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.06,
               ),
-
               Row(
                 children: [
                   SizedBox(
@@ -200,9 +242,8 @@ class _changepasswordState extends State<changepassword> {
                                       padding: const EdgeInsets.all(15.0),
                                       child: Image.asset(
                                           'assets/icons/pasword.png'),
-
                                     ),
-                                    hintText: "Password",
+                                    hintText: "Confirmpassword",
                                     suffixIcon:
                                     InkWell(
                                       onTap: () {
@@ -246,7 +287,79 @@ class _changepasswordState extends State<changepassword> {
                 height: MediaQuery.of(context).size.height * 0.2,
               ),
               GestureDetector(
-                onTap: (){},
+                onTap: () {
+                  if (password.text.isEmpty) {
+                    setState(() {
+                      passworderror = true;
+                      passwordmessage = "Password is required";
+                    });
+                  }
+                  else if (password.text.length < 8) {
+                    setState(() {
+                      passworderror = true;
+                      passwordmessage = "Password must have 8 Characters";
+                    });
+                  }
+                  else if (!RegExp(
+                      r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                      .hasMatch(password.text)) {
+                    setState(() {
+                      passworderror = true;
+                      passwordmessage =
+                      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                    });
+                  }
+                  else {
+                    setState(() {
+                      passworderror = false;
+                    });
+                  }
+                  if (confirmpassword.text.isEmpty) {
+                    setState(() {
+                      confirmpassworderror = true;
+                      confirmpasswordmessage = "Confirm password is required";
+                    });
+                  }
+                  else if (confirmpassword.text != password.text) {
+                    setState(() {
+                      confirmpassworderror = true;
+                      confirmpasswordmessage = "Both password is not match";
+                    });
+                  }
+                  else {
+                    setState(() {
+                      confirmpassworderror = false;
+                    });
+                  }
+                  if (!passworderror && !confirmpassworderror) {
+                    changePassword();
+                  }
+                  },
+                // onTap: () {
+                //   // Validate form fields
+                //   if (formKey.currentState!.validate()) {
+                //     // If form is valid, call changePassword function
+                //     changePassword();
+                //   } else {
+                //     // If form is not valid, show errors for empty fields
+                //     setState(() {
+                //       // Check if password field is empty
+                //       if (password.text.isEmpty) {
+                //         passworderror = true;
+                //         passwordmessage = "Please enter password";
+                //       } else {
+                //         passworderror = false;
+                //       }
+                //       // Check if confirm password field is empty
+                //       if (confirmpassword.text.isEmpty) {
+                //         confirmpassworderror = true;
+                //         confirmpasswordmessage = "Please enter confirm password";
+                //       } else {
+                //         confirmpassworderror = false;
+                //       }
+                //     });
+                //   }
+                // },
                 child: Center(
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.06,

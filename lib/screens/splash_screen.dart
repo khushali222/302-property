@@ -77,10 +77,16 @@ class _SplashScreenState extends State<SplashScreen> {
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     print(isAuthenticated);
 
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => isAuthenticated == false ? Dashboard() : Login_Screen(),
+    //   ),
+    // );
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => isAuthenticated == false ? Dashboard() : Login_Screen(),
+        builder: (context) => Login_Screen(),
       ),
     );
   }

@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart'as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'otp_vrify.dart';
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
 
@@ -13,6 +20,38 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   bool loading = false;
   String emailmessage = "";
   final GlobalKey formkey = GlobalKey<FormState>();
+  void sendOTP(String email) async {
+    setState(() {
+      loading = true; // Show loading indicator while sending OTP
+    });
+
+    final response = await http.post(
+      Uri.parse('http://192.168.1.32:4000/api/admin/sendOTP'),
+      body: {'email': email},
+    );
+
+    setState(() {
+      loading = false; // Hide loading indicator after receiving response
+    });
+
+    final jsonData = json.decode(response.body);
+    if (jsonData["statusCode"] == 200) {
+      print(jsonData);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => otp_verify(email: email,)),
+      );
+      Fluttertoast.showToast(msg: "OTP sent successfully");
+      setState(() {
+        loading = false;
+      });
+    } else {
+      Fluttertoast.showToast(msg: jsonData["message"]);
+      setState(() {
+        loading = false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -163,11 +202,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         //firstnamemessage = "Firstname is required";
                       });
                     }
-
                   });
-
-                  if (emailerror == false ) {
-                   // loginsubmit();
+                  if (!emailerror) {
+                    // If email is valid, send OTP
+                    sendOTP(email.text);
                   }
                 },
                 child: Center(

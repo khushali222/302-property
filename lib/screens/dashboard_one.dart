@@ -603,7 +603,8 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               Text(
                                 // "1200",
-                                nextMonthCharge.toString(),
+                                // nextMonthCharge.toString(),
+                                '\$ ${nextMonthCharge.toStringAsFixed(2)}',
                                //   nextMonthCharge.toStringAsFixed(2),
                                 style: TextStyle(
                                     color: Colors.blue,
@@ -677,7 +678,7 @@ class _DashboardState extends State<Dashboard> {
                               Text(
                                 // "2500",
                                 //   countList[1].toString(),
-                                totalCollectedAmount.toString(),
+                                '\$ ${totalCollectedAmount.toString()}',
                                 style: TextStyle(
                                     color: Colors.blue,
                                     fontSize:
@@ -759,7 +760,7 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               Text(
                                 // "1000",
-                                pastDueAmount.toStringAsFixed(2).toString(),
+                                "\$ ${pastDueAmount.toStringAsFixed(2).toString()}",
                                 //  pastDueAmount.toStringAsFixed(2),
                                 style: TextStyle(
                                     color: Colors.blue,
@@ -835,7 +836,7 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               Text(
                                 // "1800",
-                                lastMonthCollectedAmount.toString(),
+                               "\$ ${ lastMonthCollectedAmount.toString()}",
                                 // amountList[3].toString(),
                                 style: TextStyle(
                                     color: Colors.blue,
