@@ -51,6 +51,9 @@ class _SignupState extends State<Signup> {
 
 
   Future<void> _checkEmailVerified(String email) async {
+    setState(() {
+      loading = true;
+    });
     final url = Uri.parse('https://saas.cloudrentalmanager.com/api/admin/check_email');
     final response = await http.post(url, body: {'email': email});
     print(response.statusCode);
@@ -70,6 +73,9 @@ class _SignupState extends State<Signup> {
                     email: email,
                   )));
           Fluttertoast.showToast(msg: "added succesfully");
+          setState(() {
+            loading = false;
+          });
     } else if (jsonData["statusCode"] == 401) {
       print("already use");
       setState(() {
@@ -81,6 +87,7 @@ class _SignupState extends State<Signup> {
       setState(() {
         emailerror = true;
         emailmessage = 'Email is not verified';
+        loading = false;
       });
     }
   }
@@ -614,16 +621,19 @@ class _SignupState extends State<Signup> {
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Center(
-                    child: Row(
+                  child:
+                  Center(
+                    child: loading?CircularProgressIndicator(color: Colors.white,):
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Create your free trial",
                           style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.04
-                          ),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width *
+                                  0.035),
                         ),
                       ],
                     ),

@@ -76,13 +76,12 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     print(isAuthenticated);
-
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => isAuthenticated == false ? Dashboard() : Login_Screen(),
-    //   ),
-    // );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => isAuthenticated == true ? Dashboard() : Login_Screen(),
+      ),
+    );
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -90,7 +89,6 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-  //make this true to login  and  false to dashboard
   @override
   Widget build(BuildContext context) {
     return Scaffold(

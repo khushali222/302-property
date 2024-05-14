@@ -47,7 +47,8 @@ class _BarchartState extends State<Barchart> {
                  // width: 120,
                   margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                   alignment: Alignment.topRight,
-                  child: DropdownButtonHideUnderline(
+                  child:
+                  DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(
                       isExpanded: true,
                       hint: const Row(

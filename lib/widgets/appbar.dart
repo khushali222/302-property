@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/screens/plan_screen.dart';
 
+import '../screens/add_staffmember.dart';
+import '../screens/property_table.dart';
+
 class widget_302 {
   static App_Bar(
       {var suffixIcon,
@@ -31,7 +34,6 @@ class widget_302 {
           } else {
             return Image.asset(
               'assets/images/logo.png',
-
               // Adjust height and width accordingly for tablet
             );
           }
@@ -44,8 +46,8 @@ class widget_302 {
       actions: [
         InkWell(
           onTap: (){
-
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
+            // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DataTableDemo()));
           },
           child: Material(
             elevation: 3,

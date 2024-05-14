@@ -753,7 +753,6 @@ class _Login_ScreenState extends State<Login_Screen> {
         //prefs.setString('checkedToken',jsonData["token"]);
         String? adminId = jsonData['data']['admin_id'];
         print('Admin ID: $adminId');
-
         prefs.setString('checkedToken', token);
         prefs.setString('adminId', adminId!);
         Navigator.push(

@@ -644,7 +644,8 @@ class _Signup2State extends State<Signup2> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: loading?CircularProgressIndicator(color: Colors.white,): Row(
+                        child: loading?CircularProgressIndicator(color: Colors.white,):
+                        Row(
 
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
