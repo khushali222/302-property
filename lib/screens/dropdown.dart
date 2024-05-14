@@ -1,30 +1,30 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'DropdownButton2 Demo',
-      home: MyHomePage(),
+    return MaterialApp(
+      title: 'Country Dropdown',
+      home: CountryDropdown(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
+class CountryDropdown extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _CountryDropdownState createState() => _CountryDropdownState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _CountryDropdownState extends State<CountryDropdown> {
+  List<String> countries = [];
+  String selectedCountry = '';
   final List<String> items = [
     'This Year',
     'Previous Year',
@@ -32,8 +32,33 @@ class _MyHomePageState extends State<MyHomePage> {
   String? selectedValue;
 
   @override
+  void initState() {
+    super.initState();
+    fetchCountries();
+  }
+
+  Future<void> fetchCountries() async {
+    final response = await http
+        .get(Uri.parse('https://restcountries.com/v3.1/all?fields=name'));
+    final List<dynamic> data = jsonDecode(response.body);
+    setState(() {
+      countries = data
+          .map((country) => country['name']['common'])
+          .toList()
+          .cast<String>();
+      countries.sort(); // Sort countries alphabetically
+      if (countries.isNotEmpty) {
+        selectedCountry = countries[0];
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Country Dropdown'),
+      ),
       body: Center(
         child: Container(
           height: 30,
@@ -60,17 +85,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               items: items
                   .map((String item) => DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ))
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ))
                   .toList(),
               value: selectedValue,
               onChanged: (String? value) {
@@ -87,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   border: Border.all(
                     color: Colors.black26,
                   ),
-                  color:Color.fromRGBO(50, 75, 119, 1),
+                  color: Color.fromRGBO(50, 75, 119, 1),
                 ),
                 elevation: 2,
               ),

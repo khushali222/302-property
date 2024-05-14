@@ -821,7 +821,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget buildListTile(BuildContext context,Widget leadingIcon, String title,bool active) {
+ /* Widget buildListTile(BuildContext context,Widget leadingIcon, String title,bool active) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
@@ -837,8 +837,8 @@ class _DashboardState extends State<Dashboard> {
         ),),
       ),
     );
-  }
-  Widget buildDropdownListTile(
+  }*/
+ /* Widget buildDropdownListTile(
       BuildContext context,Widget leadingIcon, String title, List<String> subTopics) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -861,5 +861,5 @@ class _DashboardState extends State<Dashboard> {
         }).toList(),
       ),
     );
-  }
+  }*/
 }

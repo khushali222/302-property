@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/dashboard_one.dart';
 import '../screens/properties.dart';
+import '../screens/property_table.dart';
 
 Widget buildListTile(BuildContext context, Widget leadingIcon, String title, bool active,) {
   return Container(
@@ -16,7 +17,7 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
         if(title =="Dashboard"){
           Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
         }else if(title =="Add Property Type"){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Properties()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => DataTableDemo()));
         }
 
 
