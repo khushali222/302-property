@@ -4,9 +4,12 @@ import 'dart:core';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/pie_chart.dart';
+import 'package:three_zero_two_property/screens/properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import '../widgets/drawer_tiles.dart';
 import 'barchart.dart';
 
 
@@ -151,8 +154,11 @@ class _DashboardState extends State<Dashboard> {
   double nextMonthCharge = 0.0;
 
   Future<void> fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+
     final response = await http.get(Uri.parse(
-        'https://saas.cloudrentalmanager.com/api/payment/admin_balance/1707921596879'));
+        'https://saas.cloudrentalmanager.com/api/payment/admin_balance/${id!}'));
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       // setState(() {
@@ -181,6 +187,7 @@ class _DashboardState extends State<Dashboard> {
     fetchDatacount();
     fetchData();
   }
+  var appBarHeight = AppBar().preferredSize.height;
 
   @override
   Widget build(BuildContext context) {
@@ -198,14 +205,14 @@ class _DashboardState extends State<Dashboard> {
                 child: Image.asset("assets/images/logo.png"),
               ),
               SizedBox(height: 40),
-              buildListTile(Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
-              buildListTile(Icon(CupertinoIcons.house), "Add Property Type",false),
-              buildListTile(Icon(CupertinoIcons.person_add), "Add Staff Member",false),
-              buildDropdownListTile(
+              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
+              buildListTile(context,Icon(CupertinoIcons.house), "Add Property Type",false),
+              buildListTile(context,Icon(CupertinoIcons.person_add), "Add Staff Member",false),
+              buildDropdownListTile(context,
                   Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(Icon(Icons.thumb_up_alt_outlined), "Leasing",
+              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
                   ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
+              buildDropdownListTile(context,
                   Image.asset("assets/icons/maintence.png", height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
@@ -762,7 +769,13 @@ class _DashboardState extends State<Dashboard> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 10, right: 10),
-                          child: PieCharts(),
+                          child: PieCharts(dataMap: {
+                            "Properties": countList[0].toDouble(),
+                            "Tenants": countList[1].toDouble(),
+                            "Applicants": countList[2].toDouble(),
+                            "Vendors": countList[3].toDouble(),
+                            "Work Orders": countList[4].toDouble(),
+                          }),
                         ), // Vertical layout for phone
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.015),
@@ -783,7 +796,13 @@ class _DashboardState extends State<Dashboard> {
                           SizedBox(
                             width: 20,
                           ),
-                          PieCharts(),
+                          PieCharts(dataMap: {
+                            "Properties": countList[0].toDouble(),
+                            "Tenants": countList[1].toDouble(),
+                            "Applicants": countList[2].toDouble(),
+                            "Vendors": countList[3].toDouble(),
+                            "Work Orders": countList[4].toDouble(),
+                          }),
                           SizedBox(
                             width: 10,
                           ),
@@ -802,7 +821,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget buildListTile(Widget leadingIcon, String title,bool active) {
+  Widget buildListTile(BuildContext context,Widget leadingIcon, String title,bool active) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
@@ -820,7 +839,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
   Widget buildDropdownListTile(
-      Widget leadingIcon, String title, List<String> subTopics) {
+      BuildContext context,Widget leadingIcon, String title, List<String> subTopics) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.symmetric(horizontal: 16),

@@ -610,6 +610,14 @@ class _SignupState extends State<Signup> {
                   //               lastname: lastname.text,
                   //               email: email.text,
                   //             )));
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => Signup2(
+                  //               firstname: firstname.text,
+                  //               lastname: lastname.text,
+                  //               email: email.text,
+                  //             )));
                 }
                 //  print(EmailValidator.validate(email.text));
                 /*

@@ -103,6 +103,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/screens/Profile_screen.dart';
+import 'package:three_zero_two_property/screens/login_screen.dart';
 import 'package:three_zero_two_property/screens/plan_screen.dart';
 
 class widget_302 {
@@ -274,4 +277,19 @@ class widget_302 {
     }
     return combinationName ?? "L"; // Default to "L" if name is not available
   }
+  // static Future<String> _getNameFromSharedPreferences() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? firstName = prefs.getString("first_name");
+  //   String? lastName = prefs.getString("last_name");
+  //   String combinationName = '';
+  //
+  //   if (firstName != null && firstName.isNotEmpty) {
+  //     combinationName += firstName[0].toUpperCase();
+  //   }
+  //
+  //   if (lastName != null && lastName.isNotEmpty) {
+  //     combinationName += lastName[0].toUpperCase();
+  //   }
+  //   return combinationName ?? "L"; // Default to "L" if name is not available
+  // }
 }

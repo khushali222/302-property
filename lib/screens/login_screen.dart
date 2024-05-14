@@ -758,6 +758,8 @@ class _Login_ScreenState extends State<Login_Screen> {
         prefs.setString('adminId', adminId!);
         prefs.setString('first_name', jsonData['data']['first_name']);
         prefs.setString('last_name', jsonData['data']['last_name']);
+        prefs.setString('first_name', jsonData['data']['first_name']);
+        prefs.setString('last_name', jsonData['data']['last_name']);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Dashboard())
         );

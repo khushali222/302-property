@@ -65,6 +65,7 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^2.0.0
+  custom_pop_up_menu: ^1.2.4
 
 flutter_launcher_icons:
   android: "launcher_icon"
