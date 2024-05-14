@@ -62,6 +62,14 @@ class _SignupState extends State<Signup> {
               emailerror = false;
               emailmessage = 'email is verified';
           });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Signup2(
+                    firstname: firstname.text,
+                    lastname: lastname.text,
+                    email: email,
+                  )));
     } else if (jsonData["statusCode"] == 401) {
       print("already use");
       setState(() {
@@ -585,14 +593,14 @@ class _SignupState extends State<Signup> {
                 if (!firstnameerror == false &&
                     !lastnameerror == false &&
                     !emailerror == false) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Signup2(
-                                firstname: firstname.text,
-                                lastname: lastname.text,
-                                email: email.text,
-                              )));
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => Signup2(
+                  //               firstname: firstname.text,
+                  //               lastname: lastname.text,
+                  //               email: email.text,
+                  //             )));
                 }
                 //  print(EmailValidator.validate(email.text));
                 /*

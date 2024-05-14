@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
-void main() {
+/*void main() {
   runApp(const MyApp());
 }
 
@@ -20,32 +20,33 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
         brightness: Brightness.dark,
       ),
-      home: const PieCharts(),
+      home:  PieCharts(),
     );
   }
-}
+}*/
 
 class PieCharts extends StatelessWidget {
-  const PieCharts({Key? key}) : super(key: key);
+  Map<String, double> dataMap = <String, double>{
+    "Properties": 5,
+    "Tenants": 5,
+    "Applicants": 5,
+    "Vendors": 5,
+    "Work Orders": 5,
+  };
+  final colorList = <Color>[
+    Color.fromRGBO(50,75,119,1),
+    Color.fromRGBO(40,60,95,1),
+    Color.fromRGBO(21,43,81,1),
+    Color.fromRGBO(90,134,213,1),
+    Color.fromRGBO(60,89,142,1),
+
+  ];
+
+   PieCharts({Key? key,required this.dataMap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final dataMap = <String, double>{
-      "Properties": 5,
-      "Tenants": 5,
-      "Applicants": 5,
-      "Vendors": 5,
-      "Work Orders": 5,
-    };
 
-    final colorList = <Color>[
-       Color.fromRGBO(50,75,119,1),
-       Color.fromRGBO(40,60,95,1),
-       Color.fromRGBO(21,43,81,1),
-       Color.fromRGBO(90,134,213,1),
-       Color.fromRGBO(60,89,142,1),
-
-    ];
 
     return  Container(
           height: 250,

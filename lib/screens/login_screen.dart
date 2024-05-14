@@ -753,9 +753,11 @@ class _Login_ScreenState extends State<Login_Screen> {
         //prefs.setString('checkedToken',jsonData["token"]);
         String? adminId = jsonData['data']['admin_id'];
         print('Admin ID: $adminId');
-
+        print(jsonData['data']['last_name']);
         prefs.setString('checkedToken', token);
         prefs.setString('adminId', adminId!);
+        prefs.setString('first_name', jsonData['data']['first_name']);
+        prefs.setString('last_name', jsonData['data']['last_name']);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Dashboard())
         );

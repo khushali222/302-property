@@ -3,9 +3,12 @@ import 'dart:core';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/pie_chart.dart';
+import 'package:three_zero_two_property/screens/properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import '../widgets/drawer_tiles.dart';
 import 'barchart.dart';
 
 
@@ -66,8 +69,10 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   Future<void> fetchDatacount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
     final response = await http.get(Uri.parse(
-        'https://saas.cloudrentalmanager.com/api/admin/counts/1707921596879'));
+        'https://saas.cloudrentalmanager.com/api/admin/counts/${id!}'));
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       setState(() {
@@ -87,15 +92,18 @@ class _DashboardState extends State<Dashboard> {
   int lastMonthCollectedAmount = 0;
   double nextMonthCharge = 0.0;
   Future<void> fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+
     final response = await http.get(Uri.parse(
-        'https://saas.cloudrentalmanager.com/api/payment/admin_balance/1707921596879'));
+        'https://saas.cloudrentalmanager.com/api/payment/admin_balance/${id!}'));
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       setState(() {
-        pastDueAmount = jsonData['PastDueAmount'];
+        pastDueAmount = jsonData['PastDueAmount'].toDouble();
         totalCollectedAmount = jsonData['TotalCollectedAmount'];
         lastMonthCollectedAmount = jsonData['LastMonthCollectedAmount'];
-        nextMonthCharge = jsonData['NextMonthCharge'];
+        nextMonthCharge = jsonData['NextMonthCharge'].toDouble();
       });
     } else {
       throw Exception('Failed to load data');
@@ -111,6 +119,7 @@ class _DashboardState extends State<Dashboard> {
     fetchDatacount();
     fetchData();
   }
+  var appBarHeight = AppBar().preferredSize.height;
 
   @override
   Widget build(BuildContext context) {
@@ -128,14 +137,14 @@ class _DashboardState extends State<Dashboard> {
                 child: Image.asset("assets/images/logo.png"),
               ),
               SizedBox(height: 40),
-              buildListTile(Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
-              buildListTile(Icon(CupertinoIcons.house), "Add Property Type",false),
-              buildListTile(Icon(CupertinoIcons.person_add), "Add Staff Member",false),
-              buildDropdownListTile(
+              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
+              buildListTile(context,Icon(CupertinoIcons.house), "Add Property Type",false),
+              buildListTile(context,Icon(CupertinoIcons.person_add), "Add Staff Member",false),
+              buildDropdownListTile(context,
                   Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(Icon(Icons.thumb_up_alt_outlined), "Leasing",
+              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
                   ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
+              buildDropdownListTile(context,
                   Image.asset("assets/icons/maintence.png", height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
@@ -143,7 +152,7 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
-      appBar: widget_302.App_Bar(context: context),
+      appBar:widget_302.App_Bar(context: context),
       body: ListView(
         children: [
           Material(
@@ -867,9 +876,18 @@ class _DashboardState extends State<Dashboard> {
                 // Phone layout
                 return Column(
                   children: [
+                    if (countList.any((value) => value > 0))
                     Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: PieCharts(),
+                      child:  PieCharts(
+                          dataMap: {
+                            "Properties": countList[0].toDouble(),
+                            "Tenants": countList[1].toDouble(),
+                            "Applicants": countList[2].toDouble(),
+                            "Vendors": countList[3].toDouble(),
+                            "Work Orders": countList[4].toDouble(),
+                          }
+                      ),
                     ), // Vertical layout for phone
                     SizedBox(
                         height: MediaQuery.of(context).size.height * 0.015),
@@ -890,7 +908,16 @@ class _DashboardState extends State<Dashboard> {
                       SizedBox(
                         width: 20,
                       ),
-                      PieCharts(),
+                      if (countList.any((value) => value > 0))
+                      PieCharts(
+                        dataMap: {
+                          "Properties": countList[0].toDouble(),
+                          "Tenants": countList[1].toDouble(),
+                          "Applicants": countList[2].toDouble(),
+                          "Vendors": countList[3].toDouble(),
+                          "Work Orders": countList[4].toDouble(),
+                        }
+                      ),
                       SizedBox(
                         width: 10,
                       ),
@@ -907,45 +934,5 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget buildListTile(Widget leadingIcon, String title,bool active) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-          color: active?Color.fromRGBO(21, 43, 81, 1):Colors.transparent,
-          borderRadius: BorderRadius.circular(10)
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: ListTile(
 
-        leading: leadingIcon,
-        title: Text(title,style: TextStyle(
-            color: active?Colors.white:Colors.black
-        ),),
-      ),
-    );
-  }
-  Widget buildDropdownListTile(
-      Widget leadingIcon, String title, List<String> subTopics) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: ExpansionTile(
-        leading: leadingIcon,
-        title: Text(title),
-        children: subTopics.map((subTopic) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTile(
-              title: Text(subTopic),
-              onTap: () {
-                // Handle sub-topic selection
-                Navigator.pop(
-                    context); // Close drawer after selecting a sub-topic
-              },
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
 }

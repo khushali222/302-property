@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => isAuthenticated == false ? Dashboard() : Login_Screen(),
+        builder: (context) => isAuthenticated == true ? Dashboard() : Login_Screen(),
       ),
     );
   }
