@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/screens/signup2_screen.dart';
 import 'package:http/http.dart'as http;
@@ -81,6 +82,7 @@ class _SignupState extends State<Signup> {
       setState(() {
         emailerror = true;
         emailmessage = 'Email is already in use';
+        loading = false;
       });
     }else {
       Fluttertoast.showToast(msg: jsonData["message"]);
@@ -613,7 +615,8 @@ class _SignupState extends State<Signup> {
                 /*
        */
               },
-              child: Center(
+              child:
+              Center(
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.06,
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -622,18 +625,38 @@ class _SignupState extends State<Signup> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child:
+                  // Center(
+                  //   child: loading?CircularProgressIndicator(color: Colors.white,):
+                  //   Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Text(
+                  //         "Create your free trial",
+                  //         style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontWeight: FontWeight.bold,
+                  //             fontSize: MediaQuery.of(context).size.width *
+                  //                 0.035),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   Center(
-                    child: loading?CircularProgressIndicator(color: Colors.white,):
-                    Row(
+                    child: loading
+                        ? SpinKitFadingCircle(
+                      color: Colors.white,
+                      size: 50.0,
+                    )
+                        : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Create your free trial",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width *
-                                  0.035),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width * 0.035,
+                          ),
                         ),
                       ],
                     ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/changepassword.dart';
@@ -649,7 +650,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                     await loginsubmit();
 
                     // Save authentication status to SharedPreferences
-
                     /*// Navigate to the appropriate screen based on authentication status
                     Navigator.pushReplacement(
                       context,
@@ -669,8 +669,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                     ),
                     child: Center(
                       child: loading
-                          ? CircularProgressIndicator(
+                          ? SpinKitFadingCircle(
                         color: Colors.white,
+                        size: 50.0,
                       )
                           : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -680,16 +681,16 @@ class _Login_ScreenState extends State<Login_Screen> {
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.04
+                                fontSize: MediaQuery.of(context).size.width * 0.045
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.width * 0.01,
+                            height: MediaQuery.of(context).size.width * 0.015,
                           ),
                           Icon(
-                            Icons.keyboard_arrow_right_outlined,
+                            Icons.arrow_forward_ios_sharp,
                             color: Colors.white,
-                            size: MediaQuery.of(context).size.width * 0.04,
+                            size: MediaQuery.of(context).size.width * 0.045,
                           ),
                         ],
                       ),
@@ -755,6 +756,8 @@ class _Login_ScreenState extends State<Login_Screen> {
         print('Admin ID: $adminId');
         prefs.setString('checkedToken', token);
         prefs.setString('adminId', adminId!);
+        prefs.setString('first_name', jsonData['data']['first_name']);
+        prefs.setString('last_name', jsonData['data']['last_name']);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Dashboard())
         );
@@ -778,6 +781,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token',jsonData["token"]);
+
       await checkToken(jsonData["token"]);
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => Dashboard()));

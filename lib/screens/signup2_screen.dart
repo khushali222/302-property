@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'dashboard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -644,8 +646,12 @@ class _Signup2State extends State<Signup2> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: loading?CircularProgressIndicator(color: Colors.white,):
-                        Row(
+                        child: loading?
+                        SpinKitFadingCircle(
+                          color: Colors.white,
+                          size: 50.0,
+                        )
+                            : Row(
 
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

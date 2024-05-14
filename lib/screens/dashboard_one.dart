@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:three_zero_two_property/screens/pie_chart.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
@@ -65,38 +66,106 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  bool loading = false;
 
+  // Future<void> fetchDatacount() async {
+  //
+  //   final response = await http.get(Uri.parse(
+  //       'https://saas.cloudrentalmanager.com/api/admin/counts/1707921596879'));
+  //   final jsonData = json.decode(response.body);
+  //   if (jsonData["statusCode"] == 200) {
+  //     setState(() {
+  //       countList[0] = jsonData['tenantCount'];
+  //       countList[1] = jsonData['rentalCount'];
+  //       countList[2] = jsonData['vendorCount'];
+  //       countList[3] = jsonData['applicantCount'];
+  //       countList[4] = jsonData['workOrderCount'];
+  //     });
+  //
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }
   Future<void> fetchDatacount() async {
-    final response = await http.get(Uri.parse(
-        'https://saas.cloudrentalmanager.com/api/admin/counts/1707921596879'));
-    final jsonData = json.decode(response.body);
-    if (jsonData["statusCode"] == 200) {
-      setState(() {
-        countList[0] = jsonData['tenantCount'];
-        countList[1] = jsonData['rentalCount'];
-        countList[2] = jsonData['vendorCount'];
-        countList[3] = jsonData['applicantCount'];
-        countList[4] = jsonData['workOrderCount'];
-      });
+    setState(() {
+      loading = true;
+    });
+    try {
+      final response = await http.get(Uri.parse(
+          'https://saas.cloudrentalmanager.com/api/admin/counts/1707921596879'));
+      final jsonData = json.decode(response.body);
+      if (jsonData["statusCode"] == 200) {
+        setState(() {
+          countList[0] = jsonData['tenantCount'];
+          countList[1] = jsonData['rentalCount'];
+          countList[2] = jsonData['vendorCount'];
+          countList[3] = jsonData['applicantCount'];
+          countList[4] = jsonData['workOrderCount'];
+          loading = false;
+        });
 
-    } else {
-      throw Exception('Failed to load data');
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    } finally {
+      setState(() {
+        loading = false;
+      });
     }
   }
+
+  // Future<void> fetchData() async {
+  //   // setState(() {
+  //   //   loading = true;
+  //   // });
+  //   try {
+  //     final response = await http.get(Uri.parse(
+  //         'https://saas.cloudrentalmanager.com/api/payment/admin_balance/1707921596879'));
+  //     final jsonData = json.decode(response.body);
+  //     if (jsonData["statusCode"] == 200) {
+  //       setState(() {
+  //         pastDueAmount = double.parse(jsonData['PastDueAmount'].toString());
+  //         totalCollectedAmount = jsonData['TotalCollectedAmount'];
+  //         lastMonthCollectedAmount = jsonData['LastMonthCollectedAmount'];
+  //         nextMonthCharge = double.parse(jsonData['NextMonthCharge'].toString());
+  //         loading = false;
+  //       });
+  //
+  //     } else {
+  //       throw Exception('Failed to load data');
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching data: $e');
+  //   } finally {
+  //     setState(() {
+  //       loading = false;
+  //     });
+  //   }
+  // }
+
   double pastDueAmount = 0.0;
   int totalCollectedAmount = 0;
   int lastMonthCollectedAmount = 0;
   double nextMonthCharge = 0.0;
+
   Future<void> fetchData() async {
     final response = await http.get(Uri.parse(
         'https://saas.cloudrentalmanager.com/api/payment/admin_balance/1707921596879'));
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
+      // setState(() {
+      //   pastDueAmount = jsonData['PastDueAmount'];
+      //   totalCollectedAmount = jsonData['TotalCollectedAmount'];
+      //   lastMonthCollectedAmount = jsonData['LastMonthCollectedAmount'];
+      //   nextMonthCharge = jsonData['NextMonthCharge'];
+      // });
       setState(() {
-        pastDueAmount = jsonData['PastDueAmount'];
+        pastDueAmount = double.parse(jsonData['PastDueAmount'].toString());
         totalCollectedAmount = jsonData['TotalCollectedAmount'];
         lastMonthCollectedAmount = jsonData['LastMonthCollectedAmount'];
-        nextMonthCharge = jsonData['NextMonthCharge'];
+        nextMonthCharge = double.parse(jsonData['NextMonthCharge'].toString());
       });
     } else {
       throw Exception('Failed to load data');
@@ -145,335 +214,71 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       appBar: widget_302.App_Bar(context: context),
-      body: ListView(
-        children: [
-          Material(
-            elevation: 3,
-            child: Divider(
-              height: 1,
-              color: Colors.transparent,
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.012),
-          //welcome
-          Row(
+      body:
+        Center(
+          child: loading ? SpinKitFadingCircle(
+            color: Colors.black,
+            size: 50.0,
+          ):
+          ListView(
             children: [
-              SizedBox(
-                width: width * 0.1,
+              Material(
+                elevation: 3,
+                child: Divider(
+                  height: 1,
+                  color: Colors.transparent,
+                ),
               ),
-              Text(
-                "Hello Lou ,Welcome back",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: MediaQuery.of(context).size.width * 0.04),
-              ),
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-          //my dashboard
-          Row(
-            children: [
-              SizedBox(
-                width: width * 0.1,
-              ),
-              Text(
-                "My Dashboard",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.05),
-              ),
-            ],
-          ),
-          // LayoutBuilder(
-          //   builder: (context, constraints) {
-          //     if (constraints.maxWidth > 600) {
-          //       // Tablet layout - horizontal
-          //       return Padding(
-          //         padding: const EdgeInsets.only(left: 80, right: 80, top: 20),
-          //         child: Wrap(
-          //           alignment: WrapAlignment.start,
-          //           spacing: MediaQuery.of(context).size.width * 0.02,
-          //           runSpacing: MediaQuery.of(context).size.width * 0.02,
-          //           children: List.generate(
-          //             5,
-          //             (index) => SizedBox(
-          //               child: Material(
-          //                 elevation: 3,
-          //                 borderRadius: BorderRadius.circular(10),
-          //                 child: Container(
-          //                   width: 120,
-          //                   height: 120,
-          //                   decoration: BoxDecoration(
-          //                     color: colorc[index],
-          //                     borderRadius: BorderRadius.circular(10),
-          //                   ),
-          //                   child: Column(
-          //                     children: [
-          //                       SizedBox(height: 10),
-          //                       Row(
-          //                         children: [
-          //                           SizedBox(width: 10),
-          //                           Material(
-          //                             elevation: 5,
-          //                             borderRadius: BorderRadius.circular(20),
-          //                             child: Container(
-          //                               height: 30,
-          //                               width: 30,
-          //                               decoration: BoxDecoration(
-          //                                 color: colors[
-          //                                     index], // Access color based on index
-          //                                 borderRadius:
-          //                                     BorderRadius.circular(20),
-          //                               ),
-          //                               child: Center(
-          //                                 child: Icon(
-          //                                   icons[
-          //                                       index], // Access icon based on index
-          //                                   color: Colors.white,
-          //                                   size: 18,
-          //                                 ),
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                       SizedBox(height: 10),
-          //                       Row(
-          //                         children: [
-          //                           SizedBox(width: 10),
-          //                           Text(
-          //                             texts[
-          //                                 index], // Access text based on index
-          //                             style: TextStyle(
-          //                               color: Colors.white,
-          //                               fontSize: 15,
-          //                               fontWeight: FontWeight.bold,
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                       SizedBox(height: 10),
-          //                       Row(
-          //                         children: [
-          //                           SizedBox(width: 10),
-          //                           Text(
-          //                             titles[index],
-          //                             style: TextStyle(
-          //                                 color: Colors.white,
-          //                                 fontWeight: FontWeight.bold,
-          //                                 fontSize: 17),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       );
-          //     } else {
-          //       // Phone layout - vertical
-          //       return Column(
-          //         children: [
-          //           SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-          //           Padding(
-          //             padding: const EdgeInsets.only(left: 25, right: 25),
-          //             child: Wrap(
-          //               alignment: WrapAlignment.start,
-          //               spacing: MediaQuery.of(context).size.width * 0.02,
-          //               runSpacing: MediaQuery.of(context).size.width * 0.02,
-          //               children: List.generate(
-          //                 5, // Assuming you have 6 items
-          //                 (index) {
-          //                   return Material(
-          //                     elevation: 3,
-          //                     borderRadius: BorderRadius.circular(10),
-          //                     child: Container(
-          //                       width: 95,
-          //                       height: 95,
-          //                       decoration: BoxDecoration(
-          //                         color: colorc[index],
-          //                         borderRadius: BorderRadius.circular(10),
-          //                       ),
-          //                       child: Column(
-          //                         children: [
-          //                           SizedBox(height: 10),
-          //                           Row(
-          //                             children: [
-          //                               SizedBox(width: 10),
-          //                               Material(
-          //                                 elevation: 5,
-          //                                 borderRadius:
-          //                                     BorderRadius.circular(20),
-          //                                 child: Container(
-          //                                   height: 20,
-          //                                   width: 20,
-          //                                   decoration: BoxDecoration(
-          //                                     color: colors[
-          //                                         index], // Access color based on index
-          //                                     borderRadius:
-          //                                         BorderRadius.circular(20),
-          //                                   ),
-          //                                   child: Center(
-          //                                     child: Icon(
-          //                                       icons[
-          //                                           index], // Access icon based on index
-          //                                       color: Colors.white,
-          //                                       size: 12,
-          //                                     ),
-          //                                   ),
-          //                                 ),
-          //                               ),
-          //                             ],
-          //                           ),
-          //                           SizedBox(height: 10),
-          //                           Row(
-          //                             children: [
-          //                               SizedBox(width: 10),
-          //                               Text(
-          //                                 texts[
-          //                                     index], // Access text based on index
-          //                                 style: TextStyle(
-          //                                   color: Colors.white,
-          //                                   fontWeight: FontWeight.bold,
-          //                                 ),
-          //                               ),
-          //                             ],
-          //                           ),
-          //                           SizedBox(height: 10),
-          //                           Row(
-          //                             children: [
-          //                               SizedBox(width: 10),
-          //                               Text(
-          //                                 titles[index],
-          //                                 style: TextStyle(
-          //                                     color: Colors.white,
-          //                                     fontWeight: FontWeight.bold,
-          //                                     fontSize: 12),
-          //                               ),
-          //                             ],
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     ),
-          //                   );
-          //                 },
-          //               ),
-          //             ),
-          //           ),
-          //         ],
-          //       );
-          //     }
-          //   },
-          // ),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth > 600) {
-                // Tablet layout - horizontal
-                return Padding(
-                  padding: const EdgeInsets.only(left: 80, right: 80, top: 20),
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: MediaQuery.of(context).size.width * 0.02,
-                    runSpacing: MediaQuery.of(context).size.width * 0.02,
-                    children: List.generate(
-                      5,
-                          (index) => SizedBox(
-                        child: Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              color: dashboardData.colorc[index],
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 5,
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Container(
-                                        height: 30,
-                                        width: 30,
-                                        decoration: BoxDecoration(
-                                          color: dashboardData.colors[index],
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        child: Center(
-                                          child: Icon(
-                                            dashboardData.icons[index],
-                                            color: Colors.white,
-                                            size: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    SizedBox(width: 10),
-                                    Text(
-                                      countList[index].toString(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    SizedBox(width: 10),
-                                    Text(
-                                      dashboardData.titles[index],
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.012),
+              //welcome
+              Row(
+                children: [
+                  SizedBox(
+                    width: width * 0.1,
                   ),
-                );
-              } else {
-                // Phone layout - vertical
-                return Column(
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25, right: 25),
+                  Text(
+                    "Hello Lou ,Welcome back",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: MediaQuery.of(context).size.width * 0.04),
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              //my dashboard
+              Row(
+                children: [
+                  SizedBox(
+                    width: width * 0.1,
+                  ),
+                  Text(
+                    "My Dashboard",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width * 0.05),
+                  ),
+                ],
+              ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 600) {
+                    // Tablet layout - horizontal
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 80, right: 80, top: 20),
                       child: Wrap(
                         alignment: WrapAlignment.start,
                         spacing: MediaQuery.of(context).size.width * 0.02,
                         runSpacing: MediaQuery.of(context).size.width * 0.02,
                         children: List.generate(
                           5,
-                              (index) {
-                            return Material(
+                              (index) => SizedBox(
+                            child: Material(
                               elevation: 3,
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
-                                width: 95,
-                                height: 95,
+                                width: 120,
+                                height: 120,
                                 decoration: BoxDecoration(
                                   color: dashboardData.colorc[index],
                                   borderRadius: BorderRadius.circular(10),
@@ -488,8 +293,8 @@ class _DashboardState extends State<Dashboard> {
                                           elevation: 5,
                                           borderRadius: BorderRadius.circular(20),
                                           child: Container(
-                                            height: 20,
-                                            width: 20,
+                                            height: 30,
+                                            width: 30,
                                             decoration: BoxDecoration(
                                               color: dashboardData.colors[index],
                                               borderRadius: BorderRadius.circular(20),
@@ -498,7 +303,7 @@ class _DashboardState extends State<Dashboard> {
                                               child: Icon(
                                                 dashboardData.icons[index],
                                                 color: Colors.white,
-                                                size: 12,
+                                                size: 18,
                                               ),
                                             ),
                                           ),
@@ -513,6 +318,7 @@ class _DashboardState extends State<Dashboard> {
                                           countList[index].toString(),
                                           style: TextStyle(
                                             color: Colors.white,
+                                            fontSize: 15,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -527,385 +333,472 @@ class _DashboardState extends State<Dashboard> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 12),
+                                              fontSize: 17),
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          Row(
-            children: [
-              SizedBox(
-                width: width * 0.1,
-              ),
-              Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(10),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * .37,
-                      // height: 50,
-                      height: height * 0.071,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              Container(
-                                height: height * 0.03,
-                                decoration: BoxDecoration(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
+                    );
+                  } else {
+                    // Phone layout - vertical
+                    return Column(
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 25, right: 25),
+                          child: Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: MediaQuery.of(context).size.width * 0.02,
+                            runSpacing: MediaQuery.of(context).size.width * 0.02,
+                            children: List.generate(
+                              5,
+                                  (index) {
+                                return Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    width: 95,
+                                    height: 95,
+                                    decoration: BoxDecoration(
+                                      color: dashboardData.colorc[index],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 10),
+                                            Material(
+                                              elevation: 5,
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: Container(
+                                                height: 20,
+                                                width: 20,
+                                                decoration: BoxDecoration(
+                                                  color: dashboardData.colors[index],
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                                child: Center(
+                                                  child: Icon(
+                                                    dashboardData.icons[index],
+                                                    color: Colors.white,
+                                                    size: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 10),
+                                            Text(
+                                              countList[index].toString(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 10),
+                                            Text(
+                                              dashboardData.titles[index],
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Text(
-                                    "Due rent for the month",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.024,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                );
+                              },
+                            ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 25,
-                              ),
-                              Text(
-                                // "1200",
-                                // nextMonthCharge.toString(),
-                                '\$ ${nextMonthCharge.toStringAsFixed(2)}',
-                               //   nextMonthCharge.toStringAsFixed(2),
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        0.034),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                        ),
+                      ],
+                    );
+                  }
+                },
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.06,
-              ),
-              Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(10),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * .37,
-                      height: height * 0.071,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              Container(
-                                height: height * 0.03,
-                                decoration: BoxDecoration(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    "Total collected amount",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        // fontSize: 9,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.024,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 25,
-                              ),
-                              Text(
-                                // "2500",
-                                //   countList[1].toString(),
-                                '\$ ${totalCollectedAmount.toString()}',
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        0.034),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: width * 0.1,
-              ),
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          Row(
-            children: [
-              SizedBox(
-                width: width * 0.1,
-              ),
-              Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(10),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * .37,
-                      // height: 50,
-                      height: height * 0.071,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              Container(
-                                // height:
-                                //    20,
-                                height: height * 0.03,
-                                decoration: BoxDecoration(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    "Total past due amount",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.024,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 25,
-                              ),
-                              Text(
-                                // "1000",
-                                "\$ ${pastDueAmount.toStringAsFixed(2).toString()}",
-                                //  pastDueAmount.toStringAsFixed(2),
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        0.034),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.06,
-              ),
-              Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(10),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * .37,
-                      // height:50,
-                      height: height * 0.071,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              Container(
-                                // height:
-                                //     20,
-                                height: height * 0.03,
-                                decoration: BoxDecoration(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    "Last month collected amount",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        // fontSize: 9,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.024,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 25,
-                              ),
-                              Text(
-                                // "1800",
-                               "\$ ${ lastMonthCollectedAmount.toString()}",
-                                // amountList[3].toString(),
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        0.034),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: width * 0.1,
-              ),
-            ],
-          ),
-          // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          // PieCharts(),
-          // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          // Barchart()
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              // Check if the device width is less than 600 (considered as phone screen)
-              if (constraints.maxWidth < 500) {
-                // Phone layout
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: PieCharts(),
-                    ), // Vertical layout for phone
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.015),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8, right: 8),
-                      child: Barchart(),
-                    ),
-                  ],
-                );
-              } else {
-                // Tablet layout
-                return Padding(
-                  padding: const EdgeInsets.only(
-                    top: 35,
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              Row(
+                children: [
+                  SizedBox(
+                    width: width * 0.1,
                   ),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 20,
-                      ),
-                      PieCharts(),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Barchart(),
-                    ],
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * .37,
+                          // height: 50,
+                          height: height * 0.071,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: height * 0.03,
+                                    decoration: BoxDecoration(
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        )),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        "Due rent for the month",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.024,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  Text(
+                                    // "1200",
+                                    // nextMonthCharge.toString(),
+                                    '\$${nextMonthCharge.toStringAsFixed(2)}',
+                                   //   nextMonthCharge.toStringAsFixed(2),
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.034),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              }
-            },
-          ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.06,
+                  ),
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * .37,
+                          height: height * 0.071,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: height * 0.03,
+                                    decoration: BoxDecoration(
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        )),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        "Total collected amount",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            // fontSize: 9,
+                                            fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.024,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  Text(
+                                    // "2500",
+                                    //   countList[1].toString(),
+                                    '\$${totalCollectedAmount.toString()}',
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.034),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: width * 0.1,
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              Row(
+                children: [
+                  SizedBox(
+                    width: width * 0.1,
+                  ),
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * .37,
+                          // height: 50,
+                          height: height * 0.071,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    // height:
+                                    //    20,
+                                    height: height * 0.03,
+                                    decoration: BoxDecoration(
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        )),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        "Total past due amount",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.024,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  Text(
+                                    // "1000",
+                                    "\$${pastDueAmount.toStringAsFixed(2).toString()}",
+                                    //  pastDueAmount.toStringAsFixed(2),
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.034),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.06,
+                  ),
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * .37,
+                          // height:50,
+                          height: height * 0.071,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    // height:
+                                    //     20,
+                                    height: height * 0.03,
+                                    decoration: BoxDecoration(
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        )),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        "Last month collected amount",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            // fontSize: 9,
+                                            fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.024,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  Text(
+                                    // "1800",
+                                   "\$${ lastMonthCollectedAmount.toString()}",
+                                    // amountList[3].toString(),
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.034),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: width * 0.1,
+                  ),
+                ],
+              ),
+              // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              // PieCharts(),
+              // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              // Barchart()
+              LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  // Check if the device width is less than 600 (considered as phone screen)
+                  if (constraints.maxWidth < 500) {
+                    // Phone layout
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: PieCharts(),
+                        ), // Vertical layout for phone
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.015),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, right: 8),
+                          child: Barchart(),
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Tablet layout
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        top: 35,
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 20,
+                          ),
+                          PieCharts(),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Barchart(),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
 
-        ],
-      ),
+            ],
+          )
+        ),
+
     );
   }
 
