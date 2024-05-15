@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
@@ -34,7 +35,6 @@ class _otp_verifyState extends State<otp_verify> {
         'otp': otp,
       })
     );
-
     setState(() {
       loading = false; // Set loading to false after receiving response
     });
@@ -42,7 +42,6 @@ class _otp_verifyState extends State<otp_verify> {
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       print(jsonData);
-     
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Changepassword(email: widget.email)),
@@ -213,9 +212,10 @@ class _otp_verifyState extends State<otp_verify> {
                     ),
                     child: Center(
                       child: loading
-                          ? CircularProgressIndicator(
-                              color: Colors.white,
-                            )
+                          ? SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 50.0,
+                      )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

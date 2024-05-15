@@ -1102,7 +1102,6 @@ class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
     }
   }
 
-
   void _sort<T>(
       Comparable<T> Function(_Dessert d) getField,
       int columnIndex,

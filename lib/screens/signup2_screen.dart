@@ -652,7 +652,6 @@ class _Signup2State extends State<Signup2> {
                           size: 50.0,
                         )
                             : Row(
-
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(

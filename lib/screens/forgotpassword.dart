@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart'as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -218,8 +219,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     ),
                     child: Center(
                       child: loading
-                          ? CircularProgressIndicator(
+                          ?  SpinKitFadingCircle(
                         color: Colors.white,
+                        size: 50.0,
                       )
                           : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -232,7 +234,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 fontSize: MediaQuery.of(context).size.width * 0.045
                             ),
                           ),
-
                         ],
                       ),
                     ),

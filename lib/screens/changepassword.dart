@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart'as http;
 import 'package:three_zero_two_property/screens/login_screen.dart';
 
@@ -369,9 +370,11 @@ class _ChangepasswordState extends State<Changepassword> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
-                      child: loading
-                          ? CircularProgressIndicator(
-                        color: Colors.white,
+                      child:
+                      loading
+                          ? SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 50.0,
                       )
                           : Row(
                         mainAxisAlignment: MainAxisAlignment.center,

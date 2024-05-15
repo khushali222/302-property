@@ -70,32 +70,15 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   bool loading = false;
-
-  // Future<void> fetchDatacount() async {
-  //
-  //   final response = await http.get(Uri.parse(
-  //       'https://saas.cloudrentalmanager.com/api/admin/counts/1707921596879'));
-  //   final jsonData = json.decode(response.body);
-  //   if (jsonData["statusCode"] == 200) {
-  //     setState(() {
-  //       countList[0] = jsonData['tenantCount'];
-  //       countList[1] = jsonData['rentalCount'];
-  //       countList[2] = jsonData['vendorCount'];
-  //       countList[3] = jsonData['applicantCount'];
-  //       countList[4] = jsonData['workOrderCount'];
-  //     });
-  //
-  //   } else {
-  //     throw Exception('Failed to load data');
-  //   }
-  // }
   Future<void> fetchDatacount() async {
     setState(() {
       loading = true;
     });
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
       final response = await http.get(Uri.parse(
-          'https://saas.cloudrentalmanager.com/api/admin/counts/1707921596879'));
+          'https://saas.cloudrentalmanager.com/api/admin/counts/${id!}'));
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
@@ -118,45 +101,13 @@ class _DashboardState extends State<Dashboard> {
       });
     }
   }
-
-  // Future<void> fetchData() async {
-  //   // setState(() {
-  //   //   loading = true;
-  //   // });
-  //   try {
-  //     final response = await http.get(Uri.parse(
-  //         'https://saas.cloudrentalmanager.com/api/payment/admin_balance/1707921596879'));
-  //     final jsonData = json.decode(response.body);
-  //     if (jsonData["statusCode"] == 200) {
-  //       setState(() {
-  //         pastDueAmount = double.parse(jsonData['PastDueAmount'].toString());
-  //         totalCollectedAmount = jsonData['TotalCollectedAmount'];
-  //         lastMonthCollectedAmount = jsonData['LastMonthCollectedAmount'];
-  //         nextMonthCharge = double.parse(jsonData['NextMonthCharge'].toString());
-  //         loading = false;
-  //       });
-  //
-  //     } else {
-  //       throw Exception('Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching data: $e');
-  //   } finally {
-  //     setState(() {
-  //       loading = false;
-  //     });
-  //   }
-  // }
-
   double pastDueAmount = 0.0;
   int totalCollectedAmount = 0;
   int lastMonthCollectedAmount = 0;
   double nextMonthCharge = 0.0;
-
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-
     final response = await http.get(Uri.parse(
         'https://saas.cloudrentalmanager.com/api/payment/admin_balance/${id!}'));
     final jsonData = json.decode(response.body);
@@ -500,17 +451,25 @@ class _DashboardState extends State<Dashboard> {
                                   SizedBox(
                                     height: 25,
                                   ),
+                                  // Text(
+                                  //   // "1200",
+                                  //   // nextMonthCharge.toString(),
+                                  //   '\$${nextMonthCharge.toStringAsFixed(2)}',
+                                  //  //   nextMonthCharge.toStringAsFixed(2),
+                                  //   style: TextStyle(
+                                  //       color: Colors.blue,
+                                  //       fontSize:
+                                  //       MediaQuery.of(context).size.width *
+                                  //           0.034),
+                                  // ),
                                   Text(
-                                    // "1200",
-                                    // nextMonthCharge.toString(),
-                                    '\$${nextMonthCharge.toStringAsFixed(2)}',
-                                   //   nextMonthCharge.toStringAsFixed(2),
+                                    nextMonthCharge != 0 ? '\$${nextMonthCharge.toStringAsFixed(2)}' : '0',
                                     style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.034),
+                                      color: Colors.blue,
+                                      fontSize: MediaQuery.of(context).size.width * 0.034,
+                                    ),
                                   ),
+
                                 ],
                               ),
                             ],
@@ -574,16 +533,24 @@ class _DashboardState extends State<Dashboard> {
                                   SizedBox(
                                     height: 25,
                                   ),
+                                  // Text(
+                                  //   // "2500",
+                                  //   //   countList[1].toString(),
+                                  //   '\$${totalCollectedAmount.toString()}',
+                                  //   style: TextStyle(
+                                  //       color: Colors.blue,
+                                  //       fontSize:
+                                  //       MediaQuery.of(context).size.width *
+                                  //           0.034),
+                                  // ),
                                   Text(
-                                    // "2500",
-                                    //   countList[1].toString(),
-                                    '\$${totalCollectedAmount.toString()}',
+                                    totalCollectedAmount != 0 ? '\$${totalCollectedAmount.toString()}' : '0',
                                     style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.034),
+                                      color: Colors.blue,
+                                      fontSize: MediaQuery.of(context).size.width * 0.034,
+                                    ),
                                   ),
+
                                 ],
                               ),
                             ],
@@ -657,16 +624,24 @@ class _DashboardState extends State<Dashboard> {
                                   SizedBox(
                                     height: 25,
                                   ),
+                                  // Text(
+                                  //   // "1000",
+                                  //   "\$${pastDueAmount.toStringAsFixed(2).toString()}",
+                                  //   //  pastDueAmount.toStringAsFixed(2),
+                                  //   style: TextStyle(
+                                  //       color: Colors.blue,
+                                  //       fontSize:
+                                  //       MediaQuery.of(context).size.width *
+                                  //           0.034),
+                                  // ),
                                   Text(
-                                    // "1000",
-                                    "\$${pastDueAmount.toStringAsFixed(2).toString()}",
-                                    //  pastDueAmount.toStringAsFixed(2),
+                                    pastDueAmount != 0 ? '\$${pastDueAmount.toStringAsFixed(2)}' : '0',
                                     style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.034),
+                                      color: Colors.blue,
+                                      fontSize: MediaQuery.of(context).size.width * 0.034,
+                                    ),
                                   ),
+
                                 ],
                               ),
                             ],
@@ -733,16 +708,24 @@ class _DashboardState extends State<Dashboard> {
                                   SizedBox(
                                     height: 25,
                                   ),
+                                  // Text(
+                                  //   // "1800",
+                                  //  "\$${ lastMonthCollectedAmount.toString()}",
+                                  //   // amountList[3].toString(),
+                                  //   style: TextStyle(
+                                  //       color: Colors.blue,
+                                  //       fontSize:
+                                  //       MediaQuery.of(context).size.width *
+                                  //           0.034),
+                                  // ),
                                   Text(
-                                    // "1800",
-                                   "\$${ lastMonthCollectedAmount.toString()}",
-                                    // amountList[3].toString(),
+                                    lastMonthCollectedAmount != 0 ? '\$${lastMonthCollectedAmount.toString()}' : '0',
                                     style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.034),
+                                      color: Colors.blue,
+                                      fontSize: MediaQuery.of(context).size.width * 0.034,
+                                    ),
                                   ),
+
                                 ],
                               ),
                             ],

@@ -152,7 +152,6 @@ class widget_302 {
       actions: [
         InkWell(
           onTap: (){
-
             Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
           },
           child: Material(
@@ -233,6 +232,7 @@ class widget_302 {
                           ],
                         ),
                         ),
+
                         PopupMenuItem(child: Row(
                           children: [
                             Icon(Icons.directions_run_rounded),

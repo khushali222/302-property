@@ -9,7 +9,6 @@ class ProfileRepository {
 
   Future<profile> fetchProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     String? id = prefs.getString("adminId");
     final response = await http.get(Uri.parse('$apiUrl$id'));
     print('$apiUrl$id');
@@ -37,6 +36,7 @@ class ProfileRepository {
       return profile.fromJson(jsonDecode(response.body)["data"]);
     } else {
       throw Exception('Failed to load profile');
+
     }
   }
 
