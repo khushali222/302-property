@@ -25,8 +25,33 @@ class _Add_new_propertyState extends State<Add_new_property> {
   String? selectedValue;
   bool isChecked = false;
   String selectedMonth = 'Residential';
+
+  TextEditingController city = TextEditingController();
+  TextEditingController state = TextEditingController();
+  TextEditingController country = TextEditingController();
+  TextEditingController postalcode = TextEditingController();
+  TextEditingController address = TextEditingController();
   TextEditingController subtype = TextEditingController();
+
+  bool addresserror = false;
+  bool cityerror = false;
+  bool stateerror = false;
+  bool countryerror = false;
+  bool postalcodeerror = false;
+  bool subtypeerror = false;
+  bool  propertyTypeError = false;
+
+  String addressmessage = "";
+  String citymessage = "";
+  String statemessage = "";
+  String countrymessage = "";
+  String postalcodemessage = "";
+  String subtypemessage = "";
+  String propertyTypeErrorMessage = "";
+
   bool iserror = false;
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,1081 +99,59 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"]),
+                  ["Vendor", "Work Order"],),
             ],
           ),
         ),
       ),
       body:
-          // SingleChildScrollView(
-          //   child: Column(
-          //     children: [
-          //       Padding(
-          //         padding: const EdgeInsets.all(25.0),
-          //         child: ClipRRect(
-          //           borderRadius: BorderRadius.circular(5.0),
-          //           child: Container(
-          //             height: 50.0,
-          //             padding: EdgeInsets.only(top: 8, left: 10),
-          //             width: MediaQuery.of(context).size.width * .91,
-          //             margin: const EdgeInsets.only(
-          //                 bottom: 6.0), //Same as `blurRadius` i guess
-          //             decoration: BoxDecoration(
-          //               borderRadius: BorderRadius.circular(5.0),
-          //               color: Color.fromRGBO(21, 43, 81, 1),
-          //               boxShadow: [
-          //                 BoxShadow(
-          //                   color: Colors.grey,
-          //                   offset: Offset(0.0, 1.0), //(x,y)
-          //                   blurRadius: 6.0,
-          //                 ),
-          //               ],
-          //             ),
-          //             child: Text(
-          //               "Add Property",
-          //               style: TextStyle(
-          //                   color: Colors.white,
-          //                   fontWeight: FontWeight.bold,
-          //                   fontSize: 22),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.only(left: 25, right: 25),
-          //         child: Material(
-          //           elevation: 6,
-          //           borderRadius: BorderRadius.circular(10),
-          //           child: Container(
-          //             height: MediaQuery.of(context).size.height * .62,
-          //             width: MediaQuery.of(context).size.width * .99,
-          //             decoration: BoxDecoration(
-          //                 color: Colors.white,
-          //                 borderRadius: BorderRadius.circular(10),
-          //                 border: Border.all(
-          //                   color: Color.fromRGBO(21, 43, 81, 1),
-          //                 )),
-          //             child: Column(
-          //               children: [
-          //                 SizedBox(
-          //                   height: 20,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     SizedBox(
-          //                       width: 15,
-          //                     ),
-          //                     Text(
-          //                       "New Property ",
-          //                       style: TextStyle(
-          //                           fontWeight: FontWeight.bold,
-          //                           color: Color.fromRGBO(21, 43, 81, 1),
-          //                           fontSize: 15),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 10,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     SizedBox(
-          //                       width: 15,
-          //                     ),
-          //                     Text(
-          //                       "Property information",
-          //                       style: TextStyle(
-          //                           color: Colors.grey,
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 14),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 10,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     SizedBox(
-          //                       width: 15,
-          //                     ),
-          //                     Text(
-          //                       "What is the property Type?",
-          //                       style: TextStyle(
-          //                           color: Color.fromRGBO(21, 43, 81, 1),
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 14),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 10,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     SizedBox(
-          //                       width: 15,
-          //                     ),
-          //                     DropdownButtonHideUnderline(
-          //                       child: DropdownButton2<String>(
-          //                         isExpanded: true,
-          //                         hint: const Row(
-          //                           children: [
-          //                             SizedBox(
-          //                               width: 4,
-          //                             ),
-          //                             Expanded(
-          //                               child: Text(
-          //                                 'Property Type',
-          //                                 style: TextStyle(
-          //                                   fontSize: 10,
-          //                                   fontWeight: FontWeight.bold,
-          //                                   color: Color(0xFF8A95A8),
-          //                                 ),
-          //                                 overflow: TextOverflow.ellipsis,
-          //                               ),
-          //                             ),
-          //                           ],
-          //                         ),
-          //                         items: items
-          //                             .map(
-          //                                 (String item) => DropdownMenuItem<String>(
-          //                                       value: item,
-          //                                       child: Text(
-          //                                         item,
-          //                                         style: const TextStyle(
-          //                                           fontSize: 14,
-          //                                           fontWeight: FontWeight.bold,
-          //                                           color: Colors.black,
-          //                                         ),
-          //                                         overflow: TextOverflow.ellipsis,
-          //                                       ),
-          //                                     ))
-          //                             .toList(),
-          //                         value: selectedValue,
-          //                         onChanged: (value) {
-          //                           setState(() {
-          //                             selectedValue = value;
-          //                           });
-          //                         },
-          //                         buttonStyleData: ButtonStyleData(
-          //                           height: 30,
-          //                           width: 134,
-          //                           padding:
-          //                               const EdgeInsets.only(left: 14, right: 14),
-          //                           decoration: BoxDecoration(
-          //                             borderRadius: BorderRadius.circular(3),
-          //                             border: Border.all(
-          //                               color: Colors.black26,
-          //                             ),
-          //                             color: Colors.white,
-          //                           ),
-          //                           elevation: 3,
-          //                         ),
-          //                         dropdownStyleData: DropdownStyleData(
-          //                           maxHeight: 200,
-          //                           width: 200,
-          //                           decoration: BoxDecoration(
-          //                             borderRadius: BorderRadius.circular(14),
-          //                             //color: Colors.redAccent,
-          //                           ),
-          //                           offset: const Offset(-20, 0),
-          //                           scrollbarTheme: ScrollbarThemeData(
-          //                             radius: const Radius.circular(40),
-          //                             thickness: MaterialStateProperty.all(6),
-          //                             thumbVisibility:
-          //                                 MaterialStateProperty.all(true),
-          //                           ),
-          //                         ),
-          //                         menuItemStyleData: const MenuItemStyleData(
-          //                           height: 40,
-          //                           padding: EdgeInsets.only(left: 14, right: 14),
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 10,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     SizedBox(
-          //                       width: 15,
-          //                     ),
-          //                     Text(
-          //                       "What is the street  address?",
-          //                       style: TextStyle(
-          //                           color: Color.fromRGBO(21, 43, 81, 1),
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 14),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 5,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     SizedBox(
-          //                       width: 15,
-          //                     ),
-          //                     Text(
-          //                       "Address*",
-          //                       style: TextStyle(
-          //                           color: Color(0xFF8A95A8),
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 12),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 8,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     SizedBox(
-          //                       width: 15,
-          //                     ),
-          //                     Material(
-          //                       elevation: 2,
-          //                       borderRadius: BorderRadius.circular(3),
-          //                       child: Container(
-          //                         width: MediaQuery.of(context).size.width * .6,
-          //                         height: 30,
-          //                         padding: EdgeInsets.only(left: 10),
-          //                         decoration: BoxDecoration(
-          //                           color: Colors.white,
-          //                           borderRadius: BorderRadius.circular(3),
-          //                           border: Border.all(
-          //                             color: Color(0xFF8A95A8),
-          //                           ),
-          //                         ),
-          //                         child: Center(
-          //                           child: TextFormField(
-          //                             controller: subtype,
-          //                             decoration: InputDecoration(
-          //                               contentPadding: EdgeInsets.all(12),
-          //                               border: InputBorder.none,
-          //                               hintText: "Townhome",
-          //                               hintStyle: TextStyle(
-          //                                   color: Color(0xFF8A95A8), fontSize: 12),
-          //                             ),
-          //                           ),
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 10,
-          //                 ),
-          //                 Row(
-          //
-          //                   children: [
-          //                     SizedBox(width: MediaQuery.of(context).size.width * .043,),
-          //                     Text(
-          //                       "City*",
-          //                       style: TextStyle(
-          //                           color: Color(0xFF8A95A8),
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 12),
-          //                     ),
-          //                     SizedBox(width: MediaQuery.of(context).size.width * .23,),
-          //                     Text(
-          //                       "State*",
-          //                       style: TextStyle(
-          //                           color: Color(0xFF8A95A8),
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 12),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 9,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     Row(
-          //                       children: [
-          //                         SizedBox(
-          //                           width: 15,
-          //                         ),
-          //                         Material(
-          //                           elevation: 2,
-          //                           borderRadius: BorderRadius.circular(3),
-          //                           child: Container(
-          //                             width: MediaQuery.of(context).size.width * .29,
-          //                             height: 30,
-          //                             padding: EdgeInsets.only(left: 10),
-          //                             decoration: BoxDecoration(
-          //                               color: Colors.white,
-          //                               borderRadius: BorderRadius.circular(3),
-          //                               border: Border.all(
-          //                                 color: Color(0xFF8A95A8),
-          //                               ),
-          //                             ),
-          //                             child: Center(
-          //                               child: TextFormField(
-          //                                 controller: subtype,
-          //                                 decoration: InputDecoration(
-          //                                   contentPadding: EdgeInsets.all(12),
-          //                                   border: InputBorder.none,
-          //                                   hintText: "Enter CIty here",
-          //                                   hintStyle: TextStyle(
-          //                                       color: Color(0xFF8A95A8),
-          //                                       fontSize: 10),
-          //                                 ),
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //
-          //                       ],
-          //                     ),
-          //                     SizedBox(width: 5,),
-          //                     Row(
-          //                       children: [
-          //                         Material(
-          //                           elevation: 2,
-          //                           borderRadius: BorderRadius.circular(3),
-          //                           child: Container(
-          //                             width: MediaQuery.of(context).size.width * .29,
-          //                             height: 30,
-          //                             padding: EdgeInsets.only(left: 10),
-          //                             decoration: BoxDecoration(
-          //                               color: Colors.white,
-          //                               borderRadius: BorderRadius.circular(3),
-          //                               border: Border.all(
-          //                                 color: Color(0xFF8A95A8),
-          //                               ),
-          //                             ),
-          //                             child: Center(
-          //                               child: TextFormField(
-          //                                 controller: subtype,
-          //                                 decoration: InputDecoration(
-          //                                   contentPadding: EdgeInsets.all(12),
-          //                                   border: InputBorder.none,
-          //                                   hintText: "Enter State here",
-          //                                   hintStyle: TextStyle(
-          //                                       color: Color(0xFF8A95A8),
-          //                                       fontSize: 10),
-          //                                 ),
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //                         SizedBox(
-          //                           width: 15,
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 20,
-          //                 ),
-          //                 Row(
-          //
-          //                   children: [
-          //                     SizedBox(width: MediaQuery.of(context).size.width * .043,),
-          //                     Text(
-          //                       "Country*",
-          //                       style: TextStyle(
-          //                           color: Color(0xFF8A95A8),
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 12),
-          //                     ),
-          //                     SizedBox(width: MediaQuery.of(context).size.width * .21,),
-          //                     Text(
-          //                       "Postal Code*",
-          //                       style: TextStyle(
-          //                           color: Color(0xFF8A95A8),
-          //                           fontWeight: FontWeight.bold,
-          //                           fontSize: 12),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 9,
-          //                 ),
-          //                 Row(
-          //                   children: [
-          //                     Row(
-          //                       children: [
-          //                         SizedBox(
-          //                           width: 15,
-          //                         ),
-          //                         Material(
-          //                           elevation: 3,
-          //                           borderRadius: BorderRadius.circular(3),
-          //                           child: Container(
-          //                             width: MediaQuery.of(context).size.width * .33,
-          //                             height: 30,
-          //                             padding: EdgeInsets.only(left: 10),
-          //                             decoration: BoxDecoration(
-          //                               color: Colors.white,
-          //                               borderRadius: BorderRadius.circular(3),
-          //                               border: Border.all(
-          //                                 color: Color(0xFF8A95A8),
-          //                               ),
-          //                             ),
-          //                             child: Center(
-          //                               child: TextFormField(
-          //                                 controller: subtype,
-          //                                 decoration: InputDecoration(
-          //                                   contentPadding: EdgeInsets.all(12),
-          //                                   border: InputBorder.none,
-          //                                   hintText: "Enter Country here",
-          //                                   hintStyle: TextStyle(
-          //                                       color: Color(0xFF8A95A8),
-          //                                       fontSize: 10),
-          //                                 ),
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //
-          //                       ],
-          //                     ),
-          //                     SizedBox(width: 5,),
-          //                     Row(
-          //                       children: [
-          //                         Material(
-          //                           elevation: 3,
-          //                           borderRadius: BorderRadius.circular(3),
-          //                           child: Container(
-          //                             width: MediaQuery.of(context).size.width * .34,
-          //                             height: 30,
-          //                             padding: EdgeInsets.only(left: 10),
-          //                             decoration: BoxDecoration(
-          //                               color: Colors.white,
-          //                               borderRadius: BorderRadius.circular(3),
-          //                               border: Border.all(
-          //                                 color: Color(0xFF8A95A8),
-          //                               ),
-          //                             ),
-          //                             child: Center(
-          //                               child: TextFormField(
-          //                                 controller: subtype,
-          //                                 decoration: InputDecoration(
-          //                                   contentPadding: EdgeInsets.all(12),
-          //                                   border: InputBorder.none,
-          //                                   hintText: "Enter Pstal Code here",
-          //                                   hintStyle: TextStyle(
-          //                                       color: Color(0xFF8A95A8),
-          //                                       fontSize: 10),
-          //                                 ),
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //                         SizedBox(
-          //                           width: 15,
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 SizedBox(
-          //                   height: 20,
-          //                 ),
-          //
-          //               ],
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          SingleChildScrollView(
+      SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(5.0),
-                child: Container(
-                  height: 50.0,
-                  padding: EdgeInsets.only(top: 8, left: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Color.fromRGBO(21, 43, 81, 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, 1.0),
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    "Add Property",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 25),
-              Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10,right: 10,top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              "New Property ",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  fontSize: 15),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              "Property information",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              "What is the property Type?",
-                              style: TextStyle(
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            DropdownButtonHideUnderline(
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: const Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 4,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        'Property Type',
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                items: items
-                                    .map((String item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ))
-                                    .toList(),
-                                value: selectedValue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedValue = value;
-                                  });
-                                },
-                                buttonStyleData: ButtonStyleData(
-                                  height: 30,
-                                  width: 134,
-                                  padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(3),
-                                    border: Border.all(
-                                      color: Colors.black26,
-                                    ),
-                                    color: Colors.white,
-                                  ),
-                                  elevation: 3,
-                                ),
-                                dropdownStyleData: DropdownStyleData(
-                                  maxHeight: 200,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(14),
-                                    //color: Colors.redAccent,
-                                  ),
-                                  offset: const Offset(-20, 0),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(40),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility:
-                                        MaterialStateProperty.all(true),
-                                  ),
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
-                                  padding: EdgeInsets.only(left: 14, right: 14),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              "What is the street  address?",
-                              style: TextStyle(
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              "Address*",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Material(
-                              elevation: 2,
-                              borderRadius: BorderRadius.circular(3),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * .6,
-                                height: 30,
-                                padding: EdgeInsets.only(left: 10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(3),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: TextFormField(
-                                    controller: subtype,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(12),
-                                      border: InputBorder.none,
-                                      hintText: "Townhome",
-                                      hintStyle: TextStyle(
-                                          color: Color(0xFF8A95A8),
-                                          fontSize: 12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .043,
-                            ),
-                            Text(
-                              "City*",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .23,
-                            ),
-                            Text(
-                              "State*",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 9,
-                        ),
-                        Row(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Material(
-                                  elevation: 2,
-                                  borderRadius: BorderRadius.circular(3),
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .29,
-                                    height: 30,
-                                    padding: EdgeInsets.only(left: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(3),
-                                      border: Border.all(
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: TextFormField(
-                                        controller: subtype,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.all(12),
-                                          border: InputBorder.none,
-                                          hintText: "Enter CIty here",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8),
-                                              fontSize: 10),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Row(
-                              children: [
-                                Material(
-                                  elevation: 2,
-                                  borderRadius: BorderRadius.circular(3),
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .29,
-                                    height: 30,
-                                    padding: EdgeInsets.only(left: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(3),
-                                      border: Border.all(
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: TextFormField(
-                                        controller: subtype,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.all(12),
-                                          border: InputBorder.none,
-                                          hintText: "Enter State here",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8),
-                                              fontSize: 10),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .043,
-                            ),
-                            Text(
-                              "Country*",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .21,
-                            ),
-                            Text(
-                              "Postal Code*",
-                              style: TextStyle(
-                                  color: Color(0xFF8A95A8),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 9,
-                        ),
-                        Row(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(3),
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .30,
-                                    height: 30,
-                                    padding: EdgeInsets.only(left: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(3),
-                                      border: Border.all(
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: TextFormField(
-                                        controller: subtype,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.all(12),
-                                          border: InputBorder.none,
-                                          hintText: "Enter Country here",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8),
-                                              fontSize: 10),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Row(
-                              children: [
-                                Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(3),
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .33,
-                                    height: 30,
-                                    padding: EdgeInsets.only(left: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(3),
-                                      border: Border.all(
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: TextFormField(
-                                        controller: subtype,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.all(12),
-                                          border: InputBorder.none,
-                                          hintText: "Enter Postal Code here",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8),
-                                              fontSize: 10),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Container(
+                    height: 50.0,
+                    padding: EdgeInsets.only(top: 8, left: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(0.0, 1.0),
+                          blurRadius: 6.0,
                         ),
                       ],
                     ),
+                    child: Text(
+                      "Add Property",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 25),
-              Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
-                    child:
-                   Column(
-                     children: [
-
-                       Row(
-                         children: [
-                           SizedBox(
-                             width: 15,
-                           ),
-                           Text(
-                             "Owner information",
-                             style: TextStyle(
-                                 fontWeight: FontWeight.bold,
-                                 color: Color.fromRGBO(21, 43, 81, 1),
-                                 fontSize: 15),
-                           ),
-                         ],
-                       ),
-                       SizedBox(
-                         height: 10,
-                       ),
-                       Row(
-                         children: [
-                           SizedBox(
-                             width: 15,
-                           ),
-                           Text(
-                             "Who is the Property Owner ? (Required)",
-                             style: TextStyle(
-                                 color: Color(0xFF8A95A8),
-                               //  fontWeight: FontWeight.bold,
-                                 fontSize: 12),
-                           ),
-                         ],
-                       ),
-                       SizedBox(
-                         height: 10,
-                       ),
-                       Row(
-                         children: [
-                           SizedBox(
-                             width: 15,
-                           ),
-                           Expanded(
-                             child: Text(
-                               "This information will be used to help prepare owner drawns and 1099s",
-                               style: TextStyle(
-                                   color: Color(0xFF8A95A8),
-                                 //  fontWeight: FontWeight.bold,
-                                   fontSize: 10),
-                             ),
-                           ),
-                         ],
-                       ),
-                       SizedBox(
-                         height: 10,
-                       ),
-                       Row(
-                         children: [
-                           SizedBox(
-                             width: 15,
-                           ),
-                           Text(
-                             "Add Rental Owner",
-                             style: TextStyle(
-                               //  color: Color(0xFF8A95A8),
-                               color: Colors.green[400],
-                                 //  fontWeight: FontWeight.bold,
-                                 fontSize: 10),
-                           ),
-                         ],
-                       ),
-                     ],
-                   )
-                  ),
-                ),
-              ),
-              SizedBox(height: 25),
-              Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
-                  ),
-                  child: Padding(
+                SizedBox(height: 25),
+                Material(
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                    ),
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
-                      child:
-                      Column(
+                      child: Column(
                         children: [
                           Row(
                             children: [
@@ -1156,31 +159,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 width: 15,
                               ),
                               Text(
-                                "Who will be primary manager of this Property ?",
+                                "New Property ",
                                 style: TextStyle(
-                                    color: Color(0xFF8A95A8),
-                                    //  fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  "If staff member has not yet been added as user in your account ,they can be added to the account"
-                                      ",than as the manager later through the property's summary details.",
-                                  style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      //  fontWeight: FontWeight.bold,
-                                      fontSize: 10),
-                                ),
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    fontSize: 15),
                               ),
                             ],
                           ),
@@ -1193,11 +176,28 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 width: 15,
                               ),
                               Text(
-                                "Manage (Optional)",
+                                "Property information",
                                 style: TextStyle(
+                                    color: Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Text(
+                                "What is the property Type?",
+                                style: TextStyle(
                                     color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontSize: 15),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14),
                               ),
                             ],
                           ),
@@ -1219,7 +219,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       ),
                                       Expanded(
                                         child: Text(
-                                          'Select',
+                                          'Property Type',
                                           style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.bold,
@@ -1232,18 +232,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                   items: items
                                       .map((String item) =>
-                                      DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ))
+                                          DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
                                       .toList(),
                                   value: selectedValue,
                                   onChanged: (value) {
@@ -1253,7 +253,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 30,
-                                    width: 90,
+                                    width: 134,
                                     padding: const EdgeInsets.only(
                                         left: 14, right: 14),
                                     decoration: BoxDecoration(
@@ -1277,7 +277,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       radius: const Radius.circular(40),
                                       thickness: MaterialStateProperty.all(6),
                                       thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                          MaterialStateProperty.all(true),
                                     ),
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
@@ -1288,143 +288,781 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ),
                             ],
                           ),
+                          propertyTypeError
+                              ? Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 15,),
+                              Text(
+                                propertyTypeErrorMessage,
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: MediaQuery.of(context).size.width * .03
+                                ),
+                              ),
+                            ],
+                          )
+                              : Container(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Text(
+                                "What is the street  address?",
+                                style: TextStyle(
+                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Text(
+                                "Address*",
+                                style: TextStyle(
+                                    color: Color(0xFF8A95A8),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Material(
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(3),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  height: 30,
+                                  padding: EdgeInsets.only(left: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(3),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: TextFormField(
+                                      controller: address,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.all(12),
+                                        border: InputBorder.none,
+                                        hintText: "Enter address here",
+                                        hintStyle: TextStyle(
+                                            color: Color(0xFF8A95A8),
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            ],
+                          ),
+                          addresserror
+                              ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(width: 15,),
+                                  Text(
+                                    addressmessage,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context).size.width * .04
+                                    ),
+                                  ),
+                                ],
+                              )
+                              : Container(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .043,
+                              ),
+                              Text(
+                                "City*",
+                                style: TextStyle(
+                                    color: Color(0xFF8A95A8),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .23,
+                              ),
+                              Text(
+                                "State*",
+                                style: TextStyle(
+                                    color: Color(0xFF8A95A8),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 9,
+                          ),
+                          Row(
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Material(
+                                    elevation: 2,
+                                    borderRadius: BorderRadius.circular(3),
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width * .29,
+                                      height: 30,
+                                      padding: EdgeInsets.only(left: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(3),
+                                        border: Border.all(
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: TextFormField(
+                                          controller: city,
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.all(12),
+                                            border: InputBorder.none,
+                                            hintText: "Enter CIty here",
+                                            hintStyle: TextStyle(
+                                                color: Color(0xFF8A95A8),
+                                                fontSize: 10),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Row(
+                                children: [
+                                  Material(
+                                    elevation: 2,
+                                    borderRadius: BorderRadius.circular(3),
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width * .29,
+                                      height: 30,
+                                      padding: EdgeInsets.only(left: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(3),
+                                        border: Border.all(
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: TextFormField(
+                                          controller: state,
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.all(12),
+                                            border: InputBorder.none,
+                                            hintText: "Enter State here",
+                                            hintStyle: TextStyle(
+                                                color: Color(0xFF8A95A8),
+                                                fontSize: 10),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              addresserror
+                                  ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(width: 15,),
+                                  Text(
+                                    addressmessage,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context).size.width * .04
+                                    ),
+                                  ),
+                                ],
+                              )
+                                  : Container(),
+                              SizedBox(width: 45,),
+                              addresserror
+                                  ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(width: 15,),
+                                  Text(
+                                    addressmessage,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context).size.width * .04
+                                    ),
+                                  ),
+                                ],
+                              )
+                                  : Container(),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .043,
+                              ),
+                              Text(
+                                "Country*",
+                                style: TextStyle(
+                                    color: Color(0xFF8A95A8),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .21,
+                              ),
+                              Text(
+                                "Postal Code*",
+                                style: TextStyle(
+                                    color: Color(0xFF8A95A8),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 9,
+                          ),
+                          Row(
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Material(
+                                    elevation: 3,
+                                    borderRadius: BorderRadius.circular(3),
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width * .30,
+                                      height: 30,
+                                      padding: EdgeInsets.only(left: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(3),
+                                        border: Border.all(
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: TextFormField(
+                                          controller: country,
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.all(12),
+                                            border: InputBorder.none,
+                                            hintText: "Enter Country here",
+                                            hintStyle: TextStyle(
+                                                color: Color(0xFF8A95A8),
+                                                fontSize: 10),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Row(
+                                children: [
+                                  Material(
+                                    elevation: 3,
+                                    borderRadius: BorderRadius.circular(3),
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width * .33,
+                                      height: 30,
+                                      padding: EdgeInsets.only(left: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(3),
+                                        border: Border.all(
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: TextFormField(
+                                          controller: postalcode,
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.all(12),
+                                            border: InputBorder.none,
+                                            hintText: "Enter Postal Code here",
+                                            hintStyle: TextStyle(
+                                                color: Color(0xFF8A95A8),
+                                                fontSize: 10),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              addresserror
+                                  ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(width: 15,),
+                                  Text(
+                                    addressmessage,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context).size.width * .04
+                                    ),
+                                  ),
+                                ],
+                              )
+                                  : Container(),
+                              SizedBox(width: 45,),
+                              addresserror
+                                  ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(width: 15,),
+                                  Text(
+                                    addressmessage,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: MediaQuery.of(context).size.width * .04
+                                    ),
+                                  ),
+                                ],
+                              )
+                                  : Container(),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                         ],
-                      )
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              GestureDetector(
-                // onTap: () async {
-                //   if (name.text.isEmpty) {
-                //     setState(() {
-                //       nameerror = true;
-                //       namemessage = "name is required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       nameerror = false;
-                //     });
-                //   }
-                //   if (designation.text.isEmpty) {
-                //     setState(() {
-                //       designationerror = true;
-                //       designationmessage = "designation is required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       designationerror = false;
-                //     });
-                //   }
-                //   if (phonenumber.text.isEmpty) {
-                //     setState(() {
-                //       phonenumbererror = true;
-                //       phonenumbermessage = "number is required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       phonenumbererror = false;
-                //     });
-                //   }
-                //   if (email.text.isEmpty) {
-                //     setState(() {
-                //       emailerror = true;
-                //       emailmessage = "email is required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       emailerror = false;
-                //     });
-                //   }
-                //   if (password.text.isEmpty) {
-                //     setState(() {
-                //       passworderror = true;
-                //       passwordmessage = "password is required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       passworderror = false;
-                //     });
-                //   }
-                //   if (!nameerror &&
-                //       designationerror &&
-                //       phonenumbererror &&
-                //       emailerror &&
-                //       phonenumbererror) {
-                //     setState(() {
-                //       loading = true;
-                //     });
-                //   }
-                //   SharedPreferences prefs =
-                //   await SharedPreferences.getInstance();
-                //   String? adminId = prefs.getString("adminId");
-                //
-                //   if (adminId != null) {
-                //     try {
-                //       await StaffMemberRepository().addStaffMember(
-                //         adminId: adminId,
-                //         staffmemberName: name.text,
-                //         staffmemberDesignation: designation.text,
-                //         staffmemberPhoneNumber: phonenumber.text,
-                //         staffmemberEmail: email.text,
-                //         staffmemberPassword: password.text,
-                //       );
-                //       setState(() {
-                //         loading = false;
-                //       });
-                //     } catch (e) {
-                //       setState(() {
-                //         loading = false;
-                //       });
-                //       // Handle error
-                //     }
-                //   }
-                // },
-                child: Row(
-                  children: [
-                    SizedBox(
-                        width:
-                        MediaQuery.of(context).size.width * 0.01),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Container(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * .3,
-                        decoration: BoxDecoration(
-                         // borderRadius: BorderRadius.circular(3),
-                          color: Color.fromRGBO(21, 43, 81, 1),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 6.0,
+                SizedBox(height: 25),
+                Material(
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                      child:
+                     Column(
+                       children: [
+            
+                         Row(
+                           children: [
+                             SizedBox(
+                               width: 15,
+                             ),
+                             Text(
+                               "Owner information",
+                               style: TextStyle(
+                                   fontWeight: FontWeight.bold,
+                                   color: Color.fromRGBO(21, 43, 81, 1),
+                                   fontSize: 15),
+                             ),
+                           ],
+                         ),
+                         SizedBox(
+                           height: 10,
+                         ),
+                         Row(
+                           children: [
+                             SizedBox(
+                               width: 15,
+                             ),
+                             Text(
+                               "Who is the Property Owner ? (Required)",
+                               style: TextStyle(
+                                   color: Color(0xFF8A95A8),
+                                 //  fontWeight: FontWeight.bold,
+                                   fontSize: 12),
+                             ),
+                           ],
+                         ),
+                         SizedBox(
+                           height: 10,
+                         ),
+                         Row(
+                           children: [
+                             SizedBox(
+                               width: 15,
+                             ),
+                             Expanded(
+                               child: Text(
+                                 "This information will be used to help prepare owner drawns and 1099s",
+                                 style: TextStyle(
+                                     color: Color(0xFF8A95A8),
+                                   //  fontWeight: FontWeight.bold,
+                                     fontSize: 10),
+                               ),
+                             ),
+                           ],
+                         ),
+                         SizedBox(
+                           height: 10,
+                         ),
+                         Row(
+                           children: [
+                             SizedBox(
+                               width: 15,
+                             ),
+                             Icon(Icons.add,size: 10,color: Colors.green[400],),
+                             SizedBox(
+                               width: 9,
+                             ),
+                             Text(
+                               "Add Rental Owner",
+                               style: TextStyle(
+                                 //  color: Color(0xFF8A95A8),
+                                 color: Colors.green[400],
+                                   //  fontWeight: FontWeight.bold,
+                                   fontSize: 10),
+                             ),
+                           ],
+                         ),
+                       ],
+                     )
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                Material(
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                    ),
+                    child: Padding(
+                        padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                        child:
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Text(
+                                  "Who will be primary manager of this Property ?",
+                                  style: TextStyle(
+                                      color: Color(0xFF8A95A8),
+                                      //  fontWeight: FontWeight.bold,
+                                      fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    "If staff member has not yet been added as user in your account ,they can be added to the account"
+                                        ",than as the manager later through the property's summary details.",
+                                    style: TextStyle(
+                                        color: Color(0xFF8A95A8),
+                                        //  fontWeight: FontWeight.bold,
+                                        fontSize: 10),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Text(
+                                  "Manage (Optional)",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      fontSize: 15),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton2<String>(
+                                    isExpanded: true,
+                                    hint: const Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'Select',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF8A95A8),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    items: items
+                                        .map((String item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ))
+                                        .toList(),
+                                    value: selectedValue,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedValue = value;
+                                      });
+                                    },
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 30,
+                                      width: 90,
+                                      padding: const EdgeInsets.only(
+                                          left: 14, right: 14),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(3),
+                                        border: Border.all(
+                                          color: Colors.black26,
+                                        ),
+                                        color: Colors.white,
+                                      ),
+                                      elevation: 3,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: 200,
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14),
+                                        //color: Colors.redAccent,
+                                      ),
+                                      offset: const Offset(-20, 0),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        radius: const Radius.circular(40),
+                                        thickness: MaterialStateProperty.all(6),
+                                        thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                      ),
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      height: 40,
+                                      padding: EdgeInsets.only(left: 14, right: 14),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Create Property",
-                            style: TextStyle(
-                                color: Colors.white,
-                               // fontWeight: FontWeight.bold,
-                                fontSize: 10),
+                        )
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    if (selectedValue == null) {
+                      setState(() {
+                        propertyTypeError = true;
+                        propertyTypeErrorMessage = "required";
+                      });
+                    } else {
+                      setState(() {
+                        propertyTypeError = false;
+                      });
+                    }if (address.text.isEmpty) {
+                      setState(() {
+                        addresserror = true;
+                        addressmessage = "required";
+                      });
+                    } else {
+                      setState(() {
+                        addresserror = false;
+                      });
+                    }
+                    if (city.text.isEmpty) {
+                      setState(() {
+                        cityerror = true;
+                        citymessage = "required";
+                      });
+                    } else {
+                      setState(() {
+                        cityerror = false;
+                      });
+                    }
+                    if (state.text.isEmpty) {
+                      setState(() {
+                        stateerror = true;
+                        statemessage = "required";
+                      });
+                    } else {
+                      setState(() {
+                        stateerror = false;
+                      });
+                    }
+                    if (country.text.isEmpty) {
+                      setState(() {
+                        countryerror = true;
+                        countrymessage = "required";
+                      });
+                    } else {
+                      setState(() {
+                        countryerror = false;
+                      });
+                    }
+                    if (postalcode.text.isEmpty) {
+                      setState(() {
+                        postalcodeerror = true;
+                        postalcodemessage = "required";
+                      });
+                    } else {
+                      setState(() {
+                        postalcodeerror = false;
+                      });
+                    }
+                    if (addresserror &&
+                        cityerror &&
+                        stateerror &&
+                        countryerror &&
+                        postalcodeerror) {
+
+                    }
+                    },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                          width:
+                          MediaQuery.of(context).size.width * 0.01),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Container(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width * .3,
+                          decoration: BoxDecoration(
+                           // borderRadius: BorderRadius.circular(3),
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0), //(x,y)
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Create Property",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                 // fontWeight: FontWeight.bold,
+                                  fontSize: 10),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Text("Cancel"),
-                  ],
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Text("Cancel"),
+
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+
+

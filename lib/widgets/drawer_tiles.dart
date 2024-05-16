@@ -21,11 +21,10 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
         if(title =="Dashboard"){
           Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
         }else if(title =="Add Property Type"){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Add_new_property()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Property_table()));
         }else if(title == "Add Staff Member"){
           Navigator.push(context, MaterialPageRoute(builder: (context)=> Staffmember_table()));
         }
-
         },
       leading: leadingIcon,
       title: Text(
@@ -38,21 +37,39 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
   );
 }
 
-Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String title, List<String> subTopics) {
+void navigateToOption(BuildContext context, String option,) {
+  Map<String, WidgetBuilder> routes = {
+    "Properties": (context) => Add_new_property(),
+    "RentalOwner": (context) => Add_new_property(),
+    "Tenants": (context) => Add_new_property(),
+  };
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: routes[option]!),
+  );
+}
+
+
+Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String title, List<String> subTopics ,) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     padding: EdgeInsets.symmetric(horizontal: 16),
+    // decoration: BoxDecoration(
+    //   color: subTopics.contains(selectedOption) ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+    //   borderRadius: BorderRadius.circular(10),
+    // ),
     child: ExpansionTile(
       leading: leadingIcon,
       title: Text(title),
-      children: subTopics.map((subTopic) {
+      children: subTopics.map((subTopic,) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ListTile(
             title: Text(subTopic),
             onTap: () {
-              // Handle sub-topic selection
-              Navigator.pop(context); // Close drawer after selecting a sub-topic
+              Navigator.pop(context);
+              navigateToOption(context, subTopic);
+
             },
           ),
         );

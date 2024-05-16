@@ -46,7 +46,13 @@ class _Add_propertyState extends State<Add_property> {
               buildListTile(context,Icon(CupertinoIcons.house,color: Colors.white,), "Add Property Type",true),
               buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
               buildDropdownListTile(context,
-                  Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
+                  Icon(Icons.key), "Rental", [
+                    "Properties",
+                    "RentalOwner",
+                    "Tenants",
+                  ]
+
+              ),
               buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
                   ["Rent Roll", "Applicants"]),
               buildDropdownListTile(context,

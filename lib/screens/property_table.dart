@@ -1270,7 +1270,6 @@ class _Property_tableState extends State<Property_table> with RestorationMixin {
                     isExpanded: true,
                     hint: const Row(
                       children: [
-
                         SizedBox(
                           width: 4,
                         ),

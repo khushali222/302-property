@@ -10,6 +10,7 @@ import 'package:three_zero_two_property/screens/properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../widgets/drawer_tiles.dart';
+import 'add_new_property.dart';
 import 'barchart.dart';
 
 
@@ -159,7 +160,9 @@ class _DashboardState extends State<Dashboard> {
               buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
               buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
               buildDropdownListTile(context,
-                  Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
+                  Icon(Icons.key), "Rental",
+                  ["Properties", "RentalOwner", "Tenants"]
+              ),
               buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
                   ["Rent Roll", "Applicants"]),
               buildDropdownListTile(context,

@@ -35,7 +35,6 @@ class StaffMemberRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
