@@ -28,13 +28,11 @@ class _PropertiesState extends State<Properties> {
       appBar: widget_302.App_Bar(context: context),
       body: Container(
         child: Column(
-
           children: [
             SizedBox(height: 10,),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   width: 150,
@@ -89,9 +87,7 @@ class _PropertiesState extends State<Properties> {
               children: [
                 SizedBox(
                   width: 150,
-
                   child: TextFormField(
-
                     decoration: InputDecoration(
                       hintText: "Search here...",
                       border: OutlineInputBorder()

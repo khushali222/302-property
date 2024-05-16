@@ -1,133 +1,228 @@
-// import 'dart:convert';
+//
 //
 // import 'package:dropdown_button2/dropdown_button2.dart';
-// import 'package:expandable_datatable/expandable_datatable.dart';
+// import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
+// import 'package:intl/intl.dart';
 // import 'package:three_zero_two_property/widgets/appbar.dart';
 //
-// import 'barchart.dart';
+// import '../widgets/drawer_tiles.dart';
+// import 'add_property.dart';
 //
-// class Property_Table extends StatefulWidget {
-//   const Property_Table({super.key});
+// class DataTableDemo extends StatefulWidget {
+//   const DataTableDemo({super.key});
 //
 //   @override
-//   State<Property_Table> createState() => _Property_TableState();
+//   State<DataTableDemo> createState() => _DataTableDemoState();
 // }
 //
-// class _Property_TableState extends State<Property_Table> {
+// class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
+//   // The set of indices of selected dessert rows
+//   Set<int> _dessertSelections = {};
+//
+//   /// Returns whether or not a dessert row is selected by index.
+//   bool isSelected(int index) => _dessertSelections.contains(index);
+//
+//   /// Takes a list of [_Dessert]s and saves the row indices of selected rows
+//   /// into a [Set].
+//   void setDessertSelections(List<_Dessert> desserts) {
+//     final updatedSet = <int>{};
+//     for (var i = 0; i < desserts.length; i += 1) {
+//       var dessert = desserts[i];
+//       if (dessert.selected) {
+//         updatedSet.add(i);
+//       }
+//     }
+//     _dessertSelections = updatedSet;
+//     notifyListeners();
+//   }
+//
+//   @override
+//   Set<int> createDefaultValue() => _dessertSelections;
+//
+//   @override
+//   Set<int> fromPrimitives(Object? data) {
+//     final selectedItemIndices = data as List<dynamic>;
+//     _dessertSelections = {
+//       ...selectedItemIndices.map<int>((dynamic id) => id as int),
+//     };
+//     return _dessertSelections;
+//   }
+//
+//   @override
+//   void initWithValue(Set<int> value) {
+//     _dessertSelections = value;
+//   }
+//
+//   @override
+//   Object toPrimitives() => _dessertSelections.toList();
+// }
+//
+// class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
+//   final RestorableInt _rowIndex = RestorableInt(0);
+//   final RestorableInt _rowsPerPage = RestorableInt(PaginatedDataTable.defaultRowsPerPage);
+//   final RestorableBool _sortAscending = RestorableBool(true);
+//   final RestorableIntN _sortColumnIndex = RestorableIntN(null);
+//
+//   late _DessertDataSource _dessertsDataSource;
+//  // _DessertDataSource? _dessertsDataSource;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _dessertsDataSource = _DessertDataSource(context);
+//   }
+//   @override
+//   String get restorationId => 'data_table_demo';
+//
+//   @override
+//   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+//     registerForRestoration(_rowIndex, 'current_row_index');
+//     registerForRestoration(_rowsPerPage, 'rows_per_page');
+//     registerForRestoration(_sortAscending, 'sort_ascending');
+//     registerForRestoration(_sortColumnIndex, 'sort_column_index');
+//
+//     _dessertsDataSource ??= _DessertDataSource(context);
+//
+//     switch (_sortColumnIndex.value) {
+//       case 0:
+//         _dessertsDataSource._sort<String>((d) => d.name, _sortAscending.value);
+//         break;
+//       case 1:
+//         _dessertsDataSource._sort<String>((d) => d.property, _sortAscending.value);
+//         break;
+//       case 2:
+//         _dessertsDataSource._sort<String>((d) => d.subtype, _sortAscending.value);
+//         break;
+//       case 3:
+//         _dessertsDataSource._sort<String>((d) => d.rentalowenername, _sortAscending.value);
+//         break;
+//     }
+//     _dessertsDataSource.addListener(_updateSelectedDessertRowListener);
+//   }
+//
+//   @override
+//   void didChangeDependencies() {
+//     super.didChangeDependencies();
+//     _dessertsDataSource ??= _DessertDataSource(context);
+//     _dessertsDataSource.addListener(_updateSelectedDessertRowListener);
+//   }
+//
+//   void _updateSelectedDessertRowListener() {
+//     // Example: Get the selected row index
+//     int? selectedRowIndex = _dessertsDataSource.selectedRowCount;
+//
+//     // Example: Perform some action based on the selected row index
+//     if (selectedRowIndex != null) {
+//       // A row is selected, perform some action
+//       print('Selected row index: $selectedRowIndex');
+//     } else {
+//       // No row is selected, perform some other action
+//       print('No row selected');
+//     }
+//   }
+//
+//   void _sort<T>(
+//       Comparable<T> Function(_Dessert d) getField,
+//       int columnIndex,
+//       bool ascending,
+//       ) {
+//     _dessertsDataSource._sort<T>(getField, ascending);
+//     setState(() {
+//       _sortColumnIndex.value = columnIndex;
+//       _sortAscending.value = ascending;
+//     });
+//   }
+//
 //   final List<String> items = [
-//     'commercial',
-//     'Residencial',
-//     'All',
+//    'Residential',
+//     "Commercial",
+//     "All"
 //   ];
 //   String? selectedValue;
-//   bool isChecked = false;
+//   @override
+//   void dispose() {
+//     _rowsPerPage.dispose();
+//     _sortColumnIndex.dispose();
+//     _sortAscending.dispose();
+//     _dessertsDataSource.removeListener(_updateSelectedDessertRowListener);
+//     _dessertsDataSource.dispose();
+//     super.dispose();
+//   }
 //
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: widget_302.App_Bar(context: context),
-//       drawer: Drawer(),
-//       body: HomePage(),
-//     );
-//   }
-// }
-//
-// class HomePage extends StatefulWidget {
-//   const HomePage({Key? key}) : super(key: key);
-//
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-//
-// class _HomePageState extends State<HomePage> {
-//   List<Users> userList = [];
-//
-//   late List<ExpandableColumn<dynamic>> headers;
-//   late List<ExpandableRow> rows;
-//
-//   bool _isLoading = true;
-//
-//   void setLoading() {
-//     setState(() {
-//       _isLoading = false;
-//     });
-//   }
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//
-//     fetch();
-//   }
-//
-//   void fetch() async {
-//     userList = await getUsers();
-//
-//     createDataSource();
-//
-//     setLoading();
-//   }
-//
-//   Future<List<Users>> getUsers() async {
-//     final String response = await rootBundle.loadString('assets/dumb1.json');
-//
-//     final data = await json.decode(response);
-//
-//     print(data);
-//     API apiData = API.fromJson(data);
-//
-//     if (apiData.users != null) {
-//       return apiData.users!;
-//     }
-//
-//     return [];
-//   }
-//
-//   void createDataSource() {
-//     headers = [
-//       ExpandableColumn<int>(columnTitle: "ID", columnFlex: 1),
-//       ExpandableColumn<String>(columnTitle: "First name", columnFlex: 2),
-//       ExpandableColumn<String>(columnTitle: "Last name", columnFlex: 2),
-//       ExpandableColumn<String>(columnTitle: "Maiden name", columnFlex: 2),
-//       ExpandableColumn<int>(columnTitle: "Age", columnFlex: 1),
-//       ExpandableColumn<String>(columnTitle: "Gender", columnFlex: 1),
-//       ExpandableColumn<String>(columnTitle: "Email", columnFlex: 4),
-//     ];
-//
-//     rows = userList.map<ExpandableRow>((e) {
-//       return ExpandableRow(cells: [
-//         ExpandableCell<int>(columnTitle: "ID", value: e.id),
-//         ExpandableCell<String>(columnTitle: "First name", value: e.firstName),
-//         ExpandableCell<String>(columnTitle: "Last name", value: e.lastName),
-//         ExpandableCell<String>(columnTitle: "Maiden name", value: e.maidenName),
-//         ExpandableCell<int>(columnTitle: "Age", value: e.age),
-//         ExpandableCell<String>(columnTitle: "Gender", value: e.gender),
-//         ExpandableCell<String>(columnTitle: "Email", value: e.email),
-//       ]);
-//     }).toList();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: SafeArea(
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: Text(
-//                 'Users Table', // Add your text here
-//                 style: TextStyle(
-//                   fontSize: 18,
-//                   fontWeight: FontWeight.bold,
-//                 ),
+//       drawer: Drawer(
+//         child: SingleChildScrollView(
+//           child: Column(
+//             children: [
+//               SizedBox(height: 40),
+//               Padding(
+//                 padding: const EdgeInsets.all(20.0),
+//                 child: Image.asset("assets/images/logo.png"),
 //               ),
+//               SizedBox(height: 40),
+//               buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
+//               buildListTile(context,Icon(CupertinoIcons.house,color: Colors.white,), "Add Property Type",true),
+//               buildListTile(context,Icon(CupertinoIcons.person_add), "Add Staff Member",false),
+//               buildDropdownListTile(context,
+//                   Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
+//               buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
+//                   ["Rent Roll", "Applicants"]),
+//               buildDropdownListTile(context,
+//                   Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+//                   "Maintenance",
+//                   ["Vendor", "Work Order"]),
+//             ],
+//           ),
+//         ),
+//       ),
+//       body: Scrollbar(
+//         child: ListView(
+//
+//           restorationId: 'data_table_list_view',
+//           padding: const EdgeInsets.all(16),
+//           children: [
+//             SizedBox(height: 10),
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.end,
+//               children: [
+//                 GestureDetector(
+//                   onTap: (){
+//                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Add_property()));
+//                   },
+//                   child: Container(
+//                     height: 40,
+//                     width: MediaQuery.of(context).size.width * 0.4,
+//                     decoration: BoxDecoration(
+//                       color: Color.fromRGBO(21, 43, 81, 1),
+//                       borderRadius: BorderRadius.circular(5),
+//                     ),
+//                     child: Center(
+//                       child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           Text(
+//                             "Add New Property",
+//                             style: TextStyle(
+//                               color: Colors.white,
+//                               fontWeight: FontWeight.bold,
+//                               fontSize: MediaQuery.of(context).size.width * 0.034,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(width: 5),
+//               ],
 //             ),
+//             SizedBox(height: 10),
 //             Padding(
-//               padding: const EdgeInsets.all(30.0),
+//               padding: const EdgeInsets.all(5.0),
 //               child: ClipRRect(
 //                 borderRadius: BorderRadius.circular(5.0),
 //                 child: Container(
@@ -148,7 +243,7 @@
 //                     ],
 //                   ),
 //                   child: Text(
-//                     "Preminum Plans",
+//                     "Property Type",
 //                     style: TextStyle(
 //                         color: Colors.white,
 //                         fontWeight: FontWeight.bold,
@@ -157,69 +252,166 @@
 //                 ),
 //               ),
 //             ),
-//             Expanded(
-//               child: Padding(
-//                 padding: const EdgeInsets.only(left: 25,right: 25),
-//                 child: Container(
+//             SizedBox(height: 10),
+//             Row(
+//               children: [
+//                 SizedBox(width: 5),
+//                 Container(
+//                   height: 40,
+//                   width: 140,
 //                   decoration: BoxDecoration(
-//                     border: Border.all(color: Colors.black), // Add border here
+//                     borderRadius: BorderRadius.circular(2),
+//                     border: Border.all(color: Colors.grey),
 //                   ),
-//                   child: !_isLoading
-//                       ? LayoutBuilder(builder: (context, constraints) {
-//                     // Your ExpandableDataTable widget goes here
-//                     int visibleCount = 3;
-//                     if (constraints.maxWidth < 600) {
-//                       visibleCount = 3;
-//                     } else if (constraints.maxWidth < 800) {
-//                       visibleCount = 4;
-//                     } else if (constraints.maxWidth < 1000) {
-//                       visibleCount = 5;
-//                     } else {
-//                       visibleCount = 6;
-//                     }
-//                     return ExpandableTheme(
-//                       data: ExpandableThemeData(
-//                         context,
-//                         contentPadding: const EdgeInsets.all(2),
-//                         expandedBorderColor: Colors.transparent,
-//                         paginationSize: 48,
-//                         headerHeight: 56,
-//                         headerColor: Colors.amber[400],
-//                         headerBorder: const BorderSide(
-//                           color: Colors.black,
-//                           width: 1,
+//                   child: Stack(
+//                     children: [
+//                       Positioned.fill(
+//                         child: TextField(
+//                           // onChanged: (value) {
+//                           //   setState(() {
+//                           //     cvverror = false;
+//                           //   });
+//                           // },
+//                          // controller: cvv,
+//                           cursorColor: Color.fromRGBO(21, 43, 81, 1),
+//                           decoration: InputDecoration(
+//                             border: InputBorder.none,
+//                             hintText: "Search here...",
+//                             contentPadding: EdgeInsets.all(10),
+//                           ),
 //                         ),
-//                         evenRowColor: const Color(0xFFFFFFFF),
-//                         oddRowColor: Colors.white,
-//                         rowBorder: const BorderSide(
-//                           color: Colors.black,
-//                           width: 0.3,
-//                         ),
-//                         rowColor: Colors.green,
-//                         headerTextMaxLines: 4,
-//                         headerSortIconColor: const Color(0xFF6c59cf),
-//                         paginationSelectedFillColor: const Color(0xFF6c59cf),
-//                         paginationSelectedTextColor: Colors.white,
 //                       ),
-//                       child: ExpandableDataTable(
-//                         headers: headers,
-//                         rows: rows,
-//                         multipleExpansion: false,
-//                         isEditable: false,
-//                         onRowChanged: (newRow) {
-//                           print(newRow.cells[01].value);
-//                         },
-//                         onPageChanged: (page) {
-//                           print(page);
-//                         },
-//                         renderEditDialog: (row, onSuccess) =>
-//                             _buildEditDialog(row, onSuccess),
-//                         visibleColumnCount: visibleCount,
-//                       ),
-//                     );
-//                   })
-//                       : const Center(child: CircularProgressIndicator()),
+//                     ],
+//                   ),
 //                 ),
+//                 SizedBox(width: 10),
+//                 DropdownButtonHideUnderline(
+//                   child: DropdownButton2<String>(
+//                     isExpanded: true,
+//                     hint: const Row(
+//                       children: [
+//
+//                         SizedBox(
+//                           width: 4,
+//                         ),
+//                         Expanded(
+//                           child: Text(
+//                             'Type',
+//                             style: TextStyle(
+//                               fontSize: 14,
+//                               fontWeight: FontWeight.bold,
+//                               color: Colors.black,
+//                             ),
+//                             overflow: TextOverflow.ellipsis,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                     items: items
+//                         .map((String item) => DropdownMenuItem<String>(
+//                       value: item,
+//                       child: Text(
+//                         item,
+//                         style: const TextStyle(
+//                           fontSize: 14,
+//                           fontWeight: FontWeight.bold,
+//                           color: Colors.black,
+//                         ),
+//                         overflow: TextOverflow.ellipsis,
+//                       ),
+//                     ))
+//                         .toList(),
+//                     value: selectedValue,
+//                     onChanged: (value) {
+//                       setState(() {
+//                         selectedValue = value;
+//                       });
+//                     },
+//                     buttonStyleData: ButtonStyleData(
+//                       height: 50,
+//                       width: 160,
+//                       padding: const EdgeInsets.only(left: 14, right: 14),
+//                       decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(10),
+//                         border: Border.all(
+//                           color: Colors.black26,
+//                         ),
+//                        color: Colors.white,
+//                       ),
+//                       elevation: 0,
+//                     ),
+//
+//                     dropdownStyleData: DropdownStyleData(
+//                       maxHeight: 200,
+//                       width: 200,
+//                       decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(14),
+//                         //color: Colors.redAccent,
+//                       ),
+//                       offset: const Offset(-20, 0),
+//                       scrollbarTheme: ScrollbarThemeData(
+//                         radius: const Radius.circular(40),
+//                         thickness: MaterialStateProperty.all(6),
+//                         thumbVisibility: MaterialStateProperty.all(true),
+//                       ),
+//                     ),
+//                     menuItemStyleData: const MenuItemStyleData(
+//                       height: 40,
+//                       padding: EdgeInsets.only(left: 14, right: 14),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             SizedBox(height: 20),
+//             Theme(
+//               data: ThemeData(
+//                 scaffoldBackgroundColor: Colors.white,
+//                 cardTheme: CardTheme( // Apply custom style to the Card wrapping the DataTable
+//                   shape: RoundedRectangleBorder( // Remove border radius
+//                     borderRadius: BorderRadius.zero,
+//                   ),
+//                 ),
+//               ),
+//               child: PaginatedDataTable(
+//                 rowsPerPage: _rowsPerPage.value,
+//                 onRowsPerPageChanged: (value) {
+//                   setState(() {
+//                     _rowsPerPage.value = value!;
+//                   });
+//                 },
+//                 initialFirstRowIndex: _rowIndex.value,
+//                 onPageChanged: (rowIndex) {
+//                   setState(() {
+//                     _rowIndex.value = rowIndex;
+//                   });
+//                 },
+//                 availableRowsPerPage: [3, 5, 10,15, 25],
+//                 sortColumnIndex: _sortColumnIndex.value,
+//                 sortAscending: _sortAscending.value,
+//                 columnSpacing: 28,
+//                 dataRowHeight: 45,
+//                 headingRowHeight: 60,
+//               //  showEmptyRows: false,
+//                 columns: [
+//                   DataColumn(
+//                     label: Text('Property', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
+//                     onSort: (columnIndex, ascending) => _sort<String>((d) => d.name, columnIndex, ascending),
+//                   ),
+//                   DataColumn(
+//                     label: Text('Property Type', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
+//                     onSort: (columnIndex, ascending) => _sort<String>((d) => d.property, columnIndex, ascending),
+//                   ),
+//                   DataColumn(
+//                     label: Text('Sub Type', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
+//                     onSort: (columnIndex, ascending) => _sort<String>((d) => d.subtype, columnIndex, ascending),
+//                   ),
+//                   DataColumn(
+//                     label: Text('Rental Owner Name', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
+//                     onSort: (columnIndex, ascending) => _sort<String>((d) => d.rentalowenername, columnIndex, ascending),
+//                   ),
+//                 ],
+//                 source: _dessertsDataSource,
 //               ),
 //             ),
 //           ],
@@ -227,393 +419,202 @@
 //       ),
 //     );
 //   }
+// }
 //
 //
+// class _Dessert {
+//   _Dessert(
+//       this.name,
+//       this.property,
+//       this.subtype,
+//       this.rentalowenername,
+//       );
 //
-//   Widget _buildEditDialog(
-//       ExpandableRow row, Function(ExpandableRow) onSuccess) {
-//     return AlertDialog(
-//       title: SizedBox(
-//         height: 300,
-//         child: TextButton(
-//           child: const Text("Change name"),
-//           onPressed: () {
-//             row.cells[1].value = "x3";
-//             onSuccess(row);
-//           },
-//         ),
+//   final String name;
+//   final String property;
+//   final String subtype;
+//   final String rentalowenername;
+//   bool selected = false;
+// }
+//
+//
+// class _DessertDataSource extends DataTableSource {
+//   _DessertDataSource(this.context) {
+//     _desserts = <_Dessert>[
+//       _Dessert(
+//         '2Clipercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
 //       ),
-//     );
-//   }
-// }
-//
-// class Users {
-//   final int id;
-//   final String firstName;
-//   final String lastName;
-//   final String maidenName;
-//   final int age;
-//   final String gender;
-//   final String email;
-//
-//   Users({
-//     required this.id,
-//     required this.firstName,
-//     required this.lastName,
-//     required this.maidenName,
-//     required this.age,
-//     required this.gender,
-//     required this.email,
-//   });
-//
-//   factory Users.fromJson(Map<String, dynamic> json) {
-//     return Users(
-//       id: json['id'] as int,
-//       firstName: json['firstName'] as String,
-//       lastName: json['lastName'] as String,
-//       maidenName: json['maidenName'] as String,
-//       age: json['age'] as int,
-//       gender: json['gender'] as String,
-//       email: json['email'] as String,
-//     );
-//   }
-// }
-//
-// class API {
-//   final List<Users>? users;
-//
-//   API({this.users});
-//
-//   factory API.fromJson(Map<String, dynamic> json) {
-//     return API(
-//       users: (json['users'] as List<dynamic>?)
-//           ?.map((userJson) => Users.fromJson(userJson))
-//           .toList(),
-//     );
-//   }
-// }
-
-// import 'package:flutter/material.dart';
-//
-// class MyTable extends StatelessWidget {
-//   // Dummy data for demonstration
-//   final List<Map<String, String>> _data = [
-//     {'Column 1': 'Data 1', 'Column 2': 'Data 2', 'Column 3': 'Data 3'},
-//     {'Column 1': 'Data 4', 'Column 2': 'Data 5', 'Column 3': 'Data 6'},
-//     // Add more data as needed
-//   ];
-//
-//   // Dropdown menu options
-//   final List<String> _propertyOptions = ['Option 1', 'Option 2', 'Option 3'];
-//   final List<String> _propertyTypeOptions = ['Type 1', 'Type 2', 'Type 3'];
-//
-//   // Selected values for dropdowns
-//   String _selectedProperty = 'Option 1';
-//   String _selectedPropertyType = 'Type 1';
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Table Example'),
+//       _Dessert(
+//         '5jeggingscourt',
+//         'Recidential',
+//         'Single Family',
+//         '37',
 //       ),
-//       body: SingleChildScrollView(
-//         child: PaginatedDataTable(
-//           header: Row(
-//             children: [
-//               DropdownButton<String>(
-//                 value: _selectedProperty,
-//                 onChanged: (newValue) {
-//                   if (newValue != null) {
-//                     // Update selected property
-//                     _selectedProperty = newValue;
-//                   }
-//                 },
-//                 items: _propertyOptions
-//                     .map<DropdownMenuItem<String>>((String value) {
-//                   return DropdownMenuItem<String>(
-//                     value: value,
-//                     child: Text(value),
-//                   );
-//                 }).toList(),
-//               ),
-//               SizedBox(width: 20),
-//               DropdownButton<String>(
-//                 value: _selectedPropertyType,
-//                 onChanged: (newValue) {
-//                   if (newValue != null) {
-//                     // Update selected property type
-//                     _selectedPropertyType = newValue;
-//                   }
-//                 },
-//                 items: _propertyTypeOptions
-//                     .map<DropdownMenuItem<String>>((String value) {
-//                   return DropdownMenuItem<String>(
-//                     value: value,
-//                     child: Text(value),
-//                   );
-//                 }).toList(),
-//               ),
-//             ],
-//           ),
-//           columns: [
-//             DataColumn(label: Text('Column 1')),
-//             DataColumn(label: Text('Column 2')),
-//             DataColumn(label: Text('Column 3')),
-//             // Add more columns as needed
-//           ],
-//           source: _DataSource(context, _data),
-//           rowsPerPage: 5, // Adjust the number of rows per page
-//         ),
+//       _Dessert(
+//         '36Clipercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
 //       ),
-//     );
+//       _Dessert(
+//         '3willycourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '2williamcourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//       _Dessert(
+//         '28cartercourt',
+//         'Commercial',
+//         'combo',
+//         '24',
+//       ),
+//     ];
 //   }
-// }
 //
-// class _DataSource extends DataTableSource {
 //   final BuildContext context;
-//   final List<Map<String, String>> _data;
+//   late List<_Dessert> _desserts;
 //
-//   _DataSource(this.context, this._data);
+//   void _sort<T>(Comparable<T> Function(_Dessert d) getField, bool ascending) {
+//     _desserts.sort((a, b) {
+//       final aValue = getField(a);
+//       final bValue = getField(b);
+//       return ascending ? Comparable.compare(aValue, bValue) : Comparable.compare(bValue, aValue);
+//     });
+//     notifyListeners();
+//   }
 //
 //   @override
 //   DataRow? getRow(int index) {
-//     if (index >= _data.length) {
-//       return null;
-//     }
-//     final row = _data[index];
-//     return DataRow(cells: [
-//       DataCell(Text(row['Column 1'] ?? '')),
-//       DataCell(Text(row['Column 2'] ?? '')),
-//       DataCell(Text(row['Column 3'] ?? '')),
-//       // Add more cells as needed
-//     ]);
-//   }
-//
-//   @override
-//   bool get isRowCountApproximate => false;
-//
-//   @override
-//   int get rowCount => _data.length;
-//
-//   @override
-//   int get selectedRowCount => 0;
-// }
-//
-// void main() {
-//   runApp(MaterialApp(
-//     home: MyTable(),
-//   ));
-// }
-
-// import 'package:flutter/material.dart';
-//
-// class MyTable extends StatelessWidget {
-//   // Dummy data for demonstration
-//   final List<Map<String, String>> _data = [
-//     {'Column 1': 'Data 1', 'Column 2': 'Data 2', 'Column 3': 'Data 3'},
-//     {'Column 1': 'Data 4', 'Column 2': 'Data 5', 'Column 3': 'Data 6'},
-//     // Add more data as needed
-//   ];
-//
-//   // Dropdown menu options
-//   final List<String> _propertyOptions = ['House', 'Apartment', 'Condo'];
-//   final List<String> _propertyTypeOptions = ['Rent', 'Sale', 'Lease'];
-//   final List<String> _subTypeOptions = ['Single Family', 'Multi-family', 'Townhome'];
-//   final List<String> _rentalOwnerNames = ['John Doe', 'Jane Smith', 'Michael Johnson'];
-//
-//   // Selected values for dropdowns
-//   String _selectedProperty = 'House';
-//   String _selectedPropertyType = 'Rent';
-//   String _selectedSubType = 'Single Family';
-//   String _selectedRentalOwnerName = 'John Doe';
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Table Example'),
-//       ),
-//       body: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           SizedBox(height: 20),
-//           Padding(
-//             padding: EdgeInsets.only(left: 20, right: 20),
-//             child: Container(
-//               padding: EdgeInsets.only(left: 10, right: 10),
-//               decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius: BorderRadius.only(
-//                   topLeft: Radius.circular(10),
-//                   topRight: Radius.circular(10),
-//                 ),
-//                 border: Border.all(color: Colors.black), // Add black border
-//               ),
-//               child: SingleChildScrollView(
-//                 scrollDirection: Axis.horizontal,
-//                 child: Row(
-//                   children: [
-//                     ColumnHeaderWithDropdown(
-//                       label: 'Property',
-//                       options: _propertyOptions,
-//                       selectedOption: _selectedProperty,
-//                       onOptionChanged: (String? newValue) {
-//                         if (newValue != null) {
-//                           _selectedProperty = newValue;
-//                         }
-//                       },
-//                     ),
-//                     SizedBox(width: 20),
-//                     ColumnHeaderWithDropdown(
-//                       label: 'Property Type',
-//                       options: _propertyTypeOptions,
-//                       selectedOption: _selectedPropertyType,
-//                       onOptionChanged: (String? newValue) {
-//                         if (newValue != null) {
-//                           _selectedPropertyType = newValue;
-//                         }
-//                       },
-//                     ),
-//                     SizedBox(width: 20),
-//                     ColumnHeaderWithDropdown(
-//                       label: 'Subtype',
-//                       options: _subTypeOptions,
-//                       selectedOption: _selectedSubType,
-//                       onOptionChanged: (String? newValue) {
-//                         if (newValue != null) {
-//                           _selectedSubType = newValue;
-//                         }
-//                       },
-//                     ),
-//                     SizedBox(width: 20),
-//                     ColumnHeaderWithDropdown(
-//                       label: 'Rental Owner Name',
-//                       options: _rentalOwnerNames,
-//                       selectedOption: _selectedRentalOwnerName,
-//                       onOptionChanged: (String? newValue) {
-//                         if (newValue != null) {
-//                           _selectedRentalOwnerName = newValue;
-//                         }
-//                       },
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//           SizedBox(height: 20),
-//           SingleChildScrollView(
-//             child: Padding(
-//               padding: const EdgeInsets.only(left: 20, right: 20),
-//               child: Container(
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   border: Border.all(color: Colors.black), // Add black border
-//                 ),
-//                 child: PaginatedDataTable(
-//                   columns: [
-//                     DataColumn(label: Text('Column 1')),
-//                     DataColumn(label: Text('Column 2')),
-//                     DataColumn(label: Text('Column 3')),
-//                     // Add more columns as needed
-//                   ],
-//                   source: _DataSource(context, _data),
-//                   rowsPerPage: 5,
-//                   // Adjust the number of rows per page
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//
-// class ColumnHeaderWithDropdown extends StatelessWidget {
-//   final String label;
-//   final List<String> options;
-//   final String selectedOption;
-//   final ValueChanged<String?>? onOptionChanged;
-//
-//   const ColumnHeaderWithDropdown({
-//     Key? key,
-//     required this.label,
-//     required this.options,
-//     required this.selectedOption,
-//     this.onOptionChanged,
-//   }) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(label),
-//         DropdownButton<String>(
-//           value: selectedOption,
-//           onChanged: onOptionChanged,
-//           items: options
-//               .map<DropdownMenuItem<String>>(
-//                 (String value) => DropdownMenuItem<String>(
-//               value: value,
-//               child: Text(value),
-//             ),
-//           )
-//               .toList(),
-//         ),
+//     assert(index >= 0);
+//     if (index >= _desserts.length) return null;
+//     final dessert = _desserts[index];
+//     return DataRow.byIndex(
+//       index: index,
+//       cells: [
+//         DataCell(Text(dessert.name)),
+//         DataCell(Text(dessert.property)),
+//         DataCell(Text(dessert.subtype)),
+//         DataCell(Text(dessert.rentalowenername)),
 //       ],
 //     );
 //   }
-// }
-//
-// class _DataSource extends DataTableSource {
-//   final BuildContext context;
-//   final List<Map<String, String>> _data;
-//
-//   _DataSource(this.context, this._data);
 //
 //   @override
-//   DataRow? getRow(int index) {
-//     if (index >= _data.length) {
-//       return null;
-//     }
-//     final row = _data[index];
-//     return DataRow(cells: [
-//       DataCell(Text(row['Column 1'] ?? '')),
-//       DataCell(Text(row['Column 2'] ?? '')),
-//       DataCell(Text(row['Column 3'] ?? '')),
-//       // Add more cells as needed
-//     ]);
-//   }
+//   int get rowCount => _desserts.length;
 //
 //   @override
 //   bool get isRowCountApproximate => false;
 //
 //   @override
-//   int get rowCount => _data.length;
-//
-//   @override
-//   int get selectedRowCount => 0;
+//   int get selectedRowCount => 0; // No checkbox, so always returning 0
 // }
 //
-// void main() {
-//   runApp(MaterialApp(
-//     home: MyTable(),
-//   ));
-// }
+//
+//
 
 
+
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
-class DataTableDemo extends StatefulWidget {
-  const DataTableDemo({super.key});
+import '../widgets/drawer_tiles.dart';
+import 'add_property.dart';
+
+class Property_table extends StatefulWidget {
+  const Property_table({super.key});
 
   @override
-  State<DataTableDemo> createState() => _DataTableDemoState();
+  State<Property_table> createState() => _Property_tableState();
 }
 
 class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
@@ -657,7 +658,7 @@ class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
   @override
   Object toPrimitives() => _dessertSelections.toList();
 }
-// class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
+// class _Property_tableState extends State<Property_table> with RestorationMixin {
 //   // Create restoration properties
 //   final _RestorableDessertSelections _dessertSelections = _RestorableDessertSelections();
 //   final RestorableInt _rowIndex = RestorableInt(0);
@@ -1038,14 +1039,14 @@ class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
 //     );
 //   }
 // }
-class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
+class _Property_tableState extends State<Property_table> with RestorationMixin {
   final RestorableInt _rowIndex = RestorableInt(0);
   final RestorableInt _rowsPerPage = RestorableInt(PaginatedDataTable.defaultRowsPerPage);
   final RestorableBool _sortAscending = RestorableBool(true);
   final RestorableIntN _sortColumnIndex = RestorableIntN(null);
 
   late _DessertDataSource _dessertsDataSource;
- // _DessertDataSource? _dessertsDataSource;
+  // _DessertDataSource? _dessertsDataSource;
 
   @override
   void initState() {
@@ -1124,10 +1125,41 @@ class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
     super.dispose();
   }
 
+  final List<String> items = [
+    'Residential',
+    "Commercial",
+    "All"
+  ];
+  String? selectedValue;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+    drawer: Drawer(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset("assets/images/logo.png"),
+              ),
+              SizedBox(height: 40),
+              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
+              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.white,), "Add Property Type",true),
+              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
+              buildDropdownListTile(context,
+                  Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
+              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
+                  ["Rent Roll", "Applicants"]),
+              buildDropdownListTile(context,
+                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+                  "Maintenance",
+                  ["Vendor", "Work Order"]),
+            ],
+          ),
+        ),
+      ),
       body: Scrollbar(
         child: ListView(
           restorationId: 'data_table_list_view',
@@ -1138,6 +1170,9 @@ class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Add_property()));
+                  },
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.034,
                     width: MediaQuery.of(context).size.width * 0.4,
@@ -1188,7 +1223,7 @@ class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
                     ],
                   ),
                   child: Text(
-                    "Preminum Plans",
+                    "Property Type",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -1217,7 +1252,7 @@ class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
                           //     cvverror = false;
                           //   });
                           // },
-                         // controller: cvv,
+                          // controller: cvv,
                           cursorColor: Color.fromRGBO(21, 43, 81, 1),
                           decoration: InputDecoration(
                             border: InputBorder.none,
@@ -1230,6 +1265,82 @@ class _DataTableDemoState extends State<DataTableDemo> with RestorationMixin {
                   ),
                 ),
                 SizedBox(width: 20),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: const Row(
+                      children: [
+
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Type',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    items: items
+                        .map((String item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ))
+                        .toList(),
+                    value: selectedValue,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedValue = value;
+                      });
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      height: 50,
+                      width: 160,
+                      padding: const EdgeInsets.only(left: 14, right: 14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.black26,
+                        ),
+                        color: Colors.white,
+                      ),
+                      elevation: 0,
+                    ),
+
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 200,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        //color: Colors.redAccent,
+                      ),
+                      offset: const Offset(-20, 0),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(40),
+                        thickness: MaterialStateProperty.all(6),
+                        thumbVisibility: MaterialStateProperty.all(true),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                      padding: EdgeInsets.only(left: 14, right: 14),
+                    ),
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 20),
@@ -1672,6 +1783,3 @@ class _DessertDataSource extends DataTableSource {
   @override
   int get selectedRowCount => 0; // No checkbox, so always returning 0
 }
-
-
-

@@ -139,7 +139,6 @@ class _DashboardState extends State<Dashboard> {
     fetchData();
   }
   var appBarHeight = AppBar().preferredSize.height;
-
   @override
   Widget build(BuildContext context) {
     fetchData();
@@ -157,8 +156,8 @@ class _DashboardState extends State<Dashboard> {
               ),
               SizedBox(height: 40),
               buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
-              buildListTile(context,Icon(CupertinoIcons.house), "Add Property Type",false),
-              buildListTile(context,Icon(CupertinoIcons.person_add), "Add Staff Member",false),
+              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
+              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
               buildDropdownListTile(context,
                   Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
               buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
@@ -804,7 +803,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget buildListTile(BuildContext context,Widget leadingIcon, String title,bool active) {
+ /* Widget buildListTile(BuildContext context,Widget leadingIcon, String title,bool active) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
@@ -820,8 +819,8 @@ class _DashboardState extends State<Dashboard> {
         ),),
       ),
     );
-  }
-  Widget buildDropdownListTile(
+  }*/
+ /* Widget buildDropdownListTile(
       BuildContext context,Widget leadingIcon, String title, List<String> subTopics) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -844,5 +843,5 @@ class _DashboardState extends State<Dashboard> {
         }).toList(),
       ),
     );
-  }
+  }*/
 }
