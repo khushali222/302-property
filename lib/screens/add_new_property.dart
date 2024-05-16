@@ -761,24 +761,210 @@ class _Add_new_propertyState extends State<Add_new_property> {
                          SizedBox(
                            height: 10,
                          ),
-                         Row(
-                           children: [
-                             SizedBox(
-                               width: 15,
-                             ),
-                             Icon(Icons.add,size: 10,color: Colors.green[400],),
-                             SizedBox(
-                               width: 9,
-                             ),
-                             Text(
-                               "Add Rental Owner",
-                               style: TextStyle(
-                                 //  color: Color(0xFF8A95A8),
-                                 color: Colors.green[400],
-                                   //  fontWeight: FontWeight.bold,
-                                   fontSize: 10),
-                             ),
-                           ],
+                         GestureDetector(
+                           onTap: () {
+                             showDialog(
+                               context: context,
+                               builder: (BuildContext context) {
+                                 return Padding(
+                                   padding: const EdgeInsets.only(top: 90, bottom: 90, left: 30, right: 30),
+                                   child: Material(
+                                     type: MaterialType.transparency,
+                                     child: Container(
+                                       decoration: BoxDecoration(
+                                         color: Colors.white,
+                                         borderRadius: BorderRadius.circular(20),
+                                       ),
+                                       child: Padding(
+                                         padding: const EdgeInsets.only(left: 20, right: 20,top: 20,bottom: 20),
+                                         child: Column(
+                                           children: [
+                                             Row(
+                                               children: [
+                                                 Text("Add rental owner",
+                                                     style: TextStyle(
+                                                       color: Color.fromRGBO(21, 43, 81, 1),
+                                                       fontWeight: FontWeight.bold
+                                                     )),],
+                                             ),
+                                             SizedBox(
+                                               height: 10,
+                                             ),
+                                             Row(
+                                               children: [
+                                                 Container(
+                                                   height: MediaQuery.of(context).size.height * 0.03,
+                                                   width: MediaQuery.of(context).size.height * 0.03,
+                                                   decoration: BoxDecoration(
+                                                     color: Colors.white,
+                                                     borderRadius: BorderRadius.circular(5),
+                                                   ),
+                                                   child: Checkbox(
+                                                     activeColor: isChecked ? Colors.black : Colors.white,
+                                                     checkColor: Colors.white,
+                                                     value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                                     onChanged: ( value) {
+                                                       setState(() {
+                                                         isChecked = value ?? false; // ensure value is not null
+                                                       });
+                                                     },
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                                             Row(
+                                               children: [
+                                                 SizedBox(
+                                                   width: MediaQuery.of(context).size.width * .099,
+                                                 ),
+                                                 Expanded(
+                                                   child: Container(
+                                                     height: 50,
+                                                     decoration: BoxDecoration(
+                                                       borderRadius: BorderRadius.circular(10),
+                                                       color: Color.fromRGBO(196, 196, 196, .3),
+                                                     ),
+                                                     child: Stack(
+                                                       children: [
+                                                         Positioned.fill(
+                                                           child: TextField(
+                                                             onChanged: (value) {
+                                                               setState(() {
+                                                                 firstnameerror = false;
+                                                               });
+                                                             },
+                                                             controller: firstname,
+                                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                             decoration: InputDecoration(
+                                                               enabledBorder: firstnameerror
+                                                                   ? OutlineInputBorder(
+                                                                 borderRadius: BorderRadius.circular(10),
+                                                                 borderSide: BorderSide(
+                                                                     color: Colors
+                                                                         .red), // Set border color here
+                                                               )
+                                                                   : InputBorder.none,
+                                                               border: InputBorder.none,
+                                                               contentPadding: EdgeInsets.all(10),
+                                                               prefixIcon: Container(
+                                                                   height: 20,
+                                                                   width: 20,
+                                                                   padding: EdgeInsets.all(13),
+                                                                   child: Image.asset(
+                                                                       "assets/icons/user_icon.png")),
+                                                               hintText: "First Name",
+                                                             ),
+                                                           ),
+                                                         ),
+                                                       ],
+                                                     ),
+                                                   ),
+                                                 ),
+                                                 SizedBox(
+                                                   width: MediaQuery.of(context).size.width * .099,
+                                                 ),
+                                               ],
+                                             ),
+                                             firstnameerror
+                                                 ? Center(
+                                                 child: Text(
+                                                   firstnamemessage,
+                                                   style: TextStyle(color: Colors.red),
+                                                 ))
+                                                 : Container(),
+                                             SizedBox(
+                                               height: MediaQuery.of(context).size.height * 0.025,
+                                             ),
+                                             // Last name
+                                             Row(
+                                               children: [
+                                                 SizedBox(
+                                                   width: MediaQuery.of(context).size.width * .099,
+                                                 ),
+                                                 Expanded(
+                                                   child: Container(
+                                                     height: 50,
+                                                     decoration: BoxDecoration(
+                                                       borderRadius: BorderRadius.circular(10),
+                                                       color: Color.fromRGBO(196, 196, 196, .3),
+                                                     ),
+                                                     child: Stack(
+                                                       children: [
+                                                         Positioned.fill(
+                                                           child: TextField(
+                                                             onChanged: (value) {
+                                                               setState(() {
+                                                                 lastnameerror = false;
+                                                               });
+                                                             },
+                                                             controller: lastname,
+                                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                             decoration: InputDecoration(
+                                                               enabledBorder: lastnameerror
+                                                                   ? OutlineInputBorder(
+                                                                 borderRadius: BorderRadius.circular(10),
+                                                                 borderSide: BorderSide(
+                                                                     color: Colors
+                                                                         .red), // Set border color here
+                                                               )
+                                                                   : InputBorder.none,
+                                                               border: InputBorder.none,
+                                                               contentPadding: EdgeInsets.all(10),
+                                                               prefixIcon: Container(
+                                                                   height: 20,
+                                                                   width: 20,
+                                                                   padding: EdgeInsets.all(13),
+                                                                   child: Image.asset(
+                                                                       "assets/icons/user_icon.png")),
+                                                               hintText: "Last Name",
+                                                             ),
+                                                           ),
+                                                         ),
+                                                       ],
+                                                     ),
+                                                   ),
+                                                 ),
+                                                 SizedBox(
+                                                   width: MediaQuery.of(context).size.width * .099,
+                                                 ),
+                                               ],
+                                             ),
+                                             lastnameerror
+                                                 ? Center(
+                                                 child: Text(
+                                                   lastnamemessage,
+                                                   style: TextStyle(color: Colors.red),
+                                                 ))
+                                                 : Container(),
+                                           ],
+                                         ),
+                                       ),
+                                     ),
+                                   ),
+                                 );
+                               },
+                             );
+                           },
+                           child: Row(
+                             children: [
+                               SizedBox(
+                                 width: 15,
+                               ),
+                               Icon(Icons.add,size: 10,color: Colors.green[400],),
+                               SizedBox(
+                                 width: 9,
+                               ),
+                               Text(
+                                 "Add Rental Owner",
+                                 style: TextStyle(
+                                   //  color: Color(0xFF8A95A8),
+                                   color: Colors.green[400],
+                                     //  fontWeight: FontWeight.bold,
+                                     fontSize: 10),
+                               ),
+                             ],
+                           ),
                          ),
                        ],
                      )
