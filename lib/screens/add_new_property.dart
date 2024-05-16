@@ -78,10 +78,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   context,
                   Icon(
                     CupertinoIcons.house,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Add Property Type",
-                  true),
+                  false),
               buildListTile(
                   context,
                   Icon(
@@ -91,15 +91,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   "Add Staff Member",
                   false),
               buildDropdownListTile(context, Icon(Icons.key), "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
+                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Properties"),
               buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
-                  "Leasing", ["Rent Roll", "Applicants"]),
+                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Properties"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"],),
+                  ["Vendor", "Work Order"],selectedSubtopic: "Properties"),
             ],
           ),
         ),
