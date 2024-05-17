@@ -45,13 +45,13 @@ class _Add_propertyState extends State<Add_property> {
               buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
               buildListTile(context,Icon(CupertinoIcons.house,color: Colors.white,), "Add Property Type",true),
               buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
-              buildDropdownListTile(context,
+              buildDropdownListTile(
+                  context,
                   Icon(Icons.key), "Rental", [
                     "Properties",
                     "RentalOwner",
                     "Tenants",
                   ]
-
               ),
               buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
                   ["Rent Roll", "Applicants"]),
@@ -103,7 +103,7 @@ class _Add_propertyState extends State<Add_property> {
                 elevation: 6,
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * .43,
+                  // height: MediaQuery.of(context).size.height * .43,
                   width: MediaQuery.of(context).size.width * .99,
                   decoration: BoxDecoration(
                       color: Colors.white,
