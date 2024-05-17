@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
+import '../Model/propertytype.dart';
+
 class PropertyTypeRepository {
   final String apiUrl = 'https://saas.cloudrentalmanager.com/api/propertytype/property_type';
 
@@ -34,6 +36,16 @@ class PropertyTypeRepository {
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');
+    }
+  }
+  Future<List<propertytype>> fetchPropertyTypes() async {
+    final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/propertytype/property_type/1707921596879'));
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => propertytype.fromJson(data)).toList();
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 }

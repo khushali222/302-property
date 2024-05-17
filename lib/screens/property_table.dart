@@ -600,13 +600,14 @@
 //
 
 
-
+/*
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
+import '../Model/propertytype.dart';
 import '../widgets/drawer_tiles.dart';
 import 'add_property.dart';
 
@@ -657,7 +658,7 @@ class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
 
   @override
   Object toPrimitives() => _dessertSelections.toList();
-}
+}*/
 // class _Property_tableState extends State<Property_table> with RestorationMixin {
 //   // Create restoration properties
 //   final _RestorableDessertSelections _dessertSelections = _RestorableDessertSelections();
@@ -1039,6 +1040,7 @@ class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
 //     );
 //   }
 // }
+/*
 class _Property_tableState extends State<Property_table> with RestorationMixin {
   final RestorableInt _rowIndex = RestorableInt(0);
   final RestorableInt _rowsPerPage = RestorableInt(PaginatedDataTable.defaultRowsPerPage);
@@ -1397,6 +1399,7 @@ class _Property_tableState extends State<Property_table> with RestorationMixin {
     );
   }
 }
+*/
 
 // class _Dessert {
 //   _Dessert(
@@ -1414,6 +1417,17 @@ class _Property_tableState extends State<Property_table> with RestorationMixin {
 //       // The amount of iron in the dessert (in milligrams) (immutable)
 //   bool selected = false; // Whether the dessert is currently selected (default is false)
 // }
+
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../Model/propertytype.dart';
+import '../repository/Property_type.dart';
+import '../widgets/drawer_tiles.dart';
+import 'add_property.dart';
 
 class _Dessert {
   _Dessert(
@@ -1624,132 +1638,406 @@ class _Dessert {
 //     notifyListeners();
 //   }
 // }
+class PropertyTable extends StatefulWidget {
+  @override
+  _PropertyTableState createState() => _PropertyTableState();
+}
 
-class _DessertDataSource extends DataTableSource {
-  _DessertDataSource(this.context) {
-    _desserts = <_Dessert>[
-      _Dessert(
-        '2Clipercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '5jeggingscourt',
-        'Recidential',
-        'Single Family',
-        '37',
-      ),
-      _Dessert(
-        '36Clipercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '3willycourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '2williamcourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-      _Dessert(
-        '28cartercourt',
-        'Commercial',
-        'combo',
-        '24',
-      ),
-    ];
+class _PropertyTableState extends State<PropertyTable> {
+  late Future<List<propertytype>> futurePropertyTypes;
+  int rowsPerPage = 5;
+  int sortColumnIndex = 0;
+  bool sortAscending = true;
+  final List<String> items = [
+   'Residential',
+    "Commercial",
+    "All"
+  ];
+  String? selectedValue;
+  String searchvalue = "";
+  @override
+  void initState() {
+    super.initState();
+    futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+  }
+  void handleEdit(propertytype property) {
+    // Handle edit action
+    print('Edit ${property.sId}');
+  }
+  void _sort<T>(Comparable<T> Function(propertytype) getField, int columnIndex, bool ascending) {
+    futurePropertyTypes.then((propertyTypes) {
+      propertyTypes.sort((a, b) {
+        final aValue = getField(a);
+        final bValue = getField(b);
+        return ascending ? Comparable.compare(aValue, bValue) : Comparable.compare(bValue, aValue);
+      });
+      setState(() {
+        sortColumnIndex = columnIndex;
+        sortAscending = ascending;
+      });
+    });
   }
 
-  final BuildContext context;
-  late List<_Dessert> _desserts;
+  void handleDelete(propertytype property) {
+    // Handle delete action
+    print('Delete ${property.sId}');
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: widget_302.App_Bar(context: context),
+      drawer: Drawer(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset("assets/images/logo.png"),
+              ),
+              SizedBox(height: 40),
+              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
+              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.white,), "Add Property Type",true),
+              buildListTile(context,Icon(CupertinoIcons.person_add), "Add Staff Member",false),
+              buildDropdownListTile(context,
+                  Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
+              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
+                  ["Rent Roll", "Applicants"]),
+              buildDropdownListTile(context,
+                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+                  "Maintenance",
+                  ["Vendor", "Work Order"]),
+            ],
+          ),
+        ),
+      ),
+      body: FutureBuilder<List<propertytype>>(
+        future: futurePropertyTypes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No data available'));
+          } else {
+            List<propertytype>? filteredData =[];
+            if(selectedValue == null  && searchvalue == ""){
+              filteredData = snapshot.data;
+            }
+            else if(selectedValue == "All"){
+              filteredData = snapshot.data;
+            }
+            else if (searchvalue != null && searchvalue.isNotEmpty) {
+              filteredData = snapshot.data!.where((property) =>
+              property.propertyType!.toLowerCase().contains(searchvalue.toLowerCase()) ||
+                  property.propertysubType!.toLowerCase().contains(searchvalue.toLowerCase())
+              ).toList();
+            }
+            else  {
+              filteredData = snapshot.data!.where((property) => property.propertyType == selectedValue).toList();
+            }
 
-  void _sort<T>(Comparable<T> Function(_Dessert d) getField, bool ascending) {
-    _desserts.sort((a, b) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Add_property()));
+                    },
+                    child: Container(
+                      height: 40,
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(21, 43, 81, 1),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Add New Property",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: MediaQuery.of(context).size.width * 0.034,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                ],
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Container(
+                    height: 50.0,
+                    padding: EdgeInsets.only(top: 8, left: 10),
+                    width: MediaQuery.of(context).size.width * .91,
+                    margin: const EdgeInsets.only(
+                        bottom: 6.0), //Same as `blurRadius` i guess
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(0.0, 1.0), //(x,y)
+                          blurRadius: 6.0,
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      "Property Type",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  SizedBox(width: 5),
+                  Container(
+                    height: 40,
+                    width: 140,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: TextField(
+                            // onChanged: (value) {
+                            //   setState(() {
+                            //     cvverror = false;
+                            //   });
+                            // },
+                           // controller: cvv,
+                            onChanged: (value){
+                              setState(() {
+                                searchvalue = value;
+                              });
+                            },
+                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Search here...",
+                              contentPadding: EdgeInsets.all(10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: const Row(
+                        children: [
+              
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Type',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      items: items
+                          .map((String item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ))
+                          .toList(),
+                      value: selectedValue,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue = value;
+                        });
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 50,
+                        width: 160,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.black26,
+                          ),
+                         color: Colors.white,
+                        ),
+                        elevation: 0,
+                      ),
+              
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 200,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          //color: Colors.redAccent,
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all(6),
+                          thumbVisibility: MaterialStateProperty.all(true),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+                  SingleChildScrollView(
+                    child: PaginatedDataTable(
+                      sortAscending: sortAscending,
+                      sortColumnIndex: sortColumnIndex,
+                      rowsPerPage: rowsPerPage,
+                      showEmptyRows: false,
+                      columnSpacing: 15,
+                      availableRowsPerPage: [5, 10, 15,20],
+                      onRowsPerPageChanged: (value) {
+                        setState(() {
+                          rowsPerPage = value!;
+                        });
+                      },
+                      columns: [
+                        DataColumn(
+                          label: Text('Main Type'),
+                          onSort: (columnIndex, ascending) {
+                            _sort<String>((property) => property.propertyType!, columnIndex, ascending);
+                          },
+                        ),
+                        DataColumn(
+                          label: Text('Subtype'),
+                          onSort: (columnIndex, ascending) {
+                            _sort<String>((property) => property.propertysubType!, columnIndex, ascending);
+                          },
+                        ),
+                        DataColumn(label: Text('Created At')),
+                        DataColumn(label: Text('Updated At')),
+                        DataColumn(label: Text('Actions')),
+              
+                      ],
+                      source: PropertyDataSource(filteredData!,
+                        onEdit: handleEdit,
+                        onDelete: handleDelete,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+void main() => runApp(MaterialApp(home: PropertyTable()));
+
+class PropertyDataSource extends DataTableSource {
+  final List<propertytype> data;
+  final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
+  final Function(propertytype) onEdit;
+  final Function(propertytype) onDelete;
+
+  PropertyDataSource(this.data, {required this.onEdit, required this.onDelete});
+
+
+  @override
+  DataRow getRow(int index) {
+    final property = data[index];
+    return DataRow.byIndex(index: index, cells: [
+
+      DataCell(Text(property.propertyType ?? '')),
+      DataCell(Text(property.propertysubType ?? '')),
+
+      DataCell(Text(_formatDate(property.createdAt))),
+      DataCell(Text(_formatDate(property.updatedAt))),
+      DataCell(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap:(){
+    onEdit(property);
+    },
+            child: Container(
+            //  color: Colors.redAccent,
+              padding: EdgeInsets.zero,
+              child: FaIcon(FontAwesomeIcons.edit,size: 20,),
+            ),
+          ),
+          SizedBox(width: 4,),
+          InkWell(
+            onTap: (){
+              onDelete(property);
+            },
+            child: Container(
+          //    color: Colors.redAccent,
+              padding: EdgeInsets.zero,
+              child: FaIcon(FontAwesomeIcons.trashCan,size: 20,),
+            ),
+          ),
+
+        ],
+      )),
+    ]);
+  }
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) {
+      return '';
+    }
+    DateTime dateTime = DateTime.parse(dateStr);
+    return dateFormat.format(dateTime);
+  }
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => data.length;
+
+  @override
+  int get selectedRowCount => 0;
+  void sort<T>(Comparable<T> getField(propertytype d), bool ascending) {
+    data.sort((a, b) {
       final aValue = getField(a);
       final bValue = getField(b);
       return ascending ? Comparable.compare(aValue, bValue) : Comparable.compare(bValue, aValue);
@@ -1757,28 +2045,4 @@ class _DessertDataSource extends DataTableSource {
     notifyListeners();
   }
 
-  @override
-  DataRow? getRow(int index) {
-    assert(index >= 0);
-    if (index >= _desserts.length) return null;
-    final dessert = _desserts[index];
-    return DataRow.byIndex(
-      index: index,
-      cells: [
-        DataCell(Text(dessert.name)),
-        DataCell(Text(dessert.property)),
-        DataCell(Text(dessert.subtype)),
-        DataCell(Text(dessert.rentalowenername)),
-      ],
-    );
-  }
-
-  @override
-  int get rowCount => _desserts.length;
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get selectedRowCount => 0; // No checkbox, so always returning 0
 }
