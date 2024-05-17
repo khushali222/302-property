@@ -39,7 +39,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
   bool countryerror = false;
   bool postalcodeerror = false;
   bool subtypeerror = false;
-  bool  propertyTypeError = false;
+  bool propertyTypeError = false;
 
   String addressmessage = "";
   String citymessage = "";
@@ -48,7 +48,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
   String postalcodemessage = "";
   String subtypemessage = "";
   String propertyTypeErrorMessage = "";
+  TextEditingController firstname = TextEditingController();
+  TextEditingController lastname = TextEditingController();
+  TextEditingController email = TextEditingController();
 
+  bool firstnameerror = false;
+  bool lastnameerror = false;
+  bool emailerror = false;
+
+  String firstnamemessage = "";
+  String lastnamemessage = "";
+  String emailmessage = "";
   bool iserror = false;
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -91,21 +101,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   "Add Staff Member",
                   false),
               buildDropdownListTile(context, Icon(Icons.key), "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Properties"),
+                  ["Properties", "RentalOwner", "Tenants"],
+                  selectedSubtopic: "Properties"),
               buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
-                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Properties"),
+                  "Leasing", ["Rent Roll", "Applicants"],
+                  selectedSubtopic: "Properties"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"],selectedSubtopic: "Properties"),
+                  ["Vendor", "Work Order"],
+                  selectedSubtopic: "Properties"),
             ],
           ),
         ),
       ),
-      body:
-      SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
           child: Form(
@@ -150,7 +162,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 10, bottom: 10),
                       child: Column(
                         children: [
                           Row(
@@ -282,7 +295,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
                                     height: 40,
-                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
                                   ),
                                 ),
                               ),
@@ -290,18 +304,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           ),
                           propertyTypeError
                               ? Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(width: 15,),
-                              Text(
-                                propertyTypeErrorMessage,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: MediaQuery.of(context).size.width * .03
-                                ),
-                              ),
-                            ],
-                          )
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      propertyTypeErrorMessage,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .03),
+                                    ),
+                                  ],
+                                )
                               : Container(),
                           SizedBox(
                             height: 10,
@@ -374,23 +392,26 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                           addresserror
                               ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 15,),
-                                  Text(
-                                    addressmessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * .04
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
                                     ),
-                                  ),
-                                ],
-                              )
+                                    Text(
+                                      addressmessage,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .04),
+                                    ),
+                                  ],
+                                )
                               : Container(),
                           SizedBox(
                             height: 10,
@@ -433,8 +454,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     elevation: 2,
                                     borderRadius: BorderRadius.circular(3),
                                     child: Container(
-                                      width:
-                                          MediaQuery.of(context).size.width * .29,
+                                      width: MediaQuery.of(context).size.width *
+                                          .29,
                                       height: 30,
                                       padding: EdgeInsets.only(left: 10),
                                       decoration: BoxDecoration(
@@ -470,8 +491,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     elevation: 2,
                                     borderRadius: BorderRadius.circular(3),
                                     child: Container(
-                                      width:
-                                          MediaQuery.of(context).size.width * .29,
+                                      width: MediaQuery.of(context).size.width *
+                                          .29,
                                       height: 30,
                                       padding: EdgeInsets.only(left: 10),
                                       decoration: BoxDecoration(
@@ -507,34 +528,46 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             children: [
                               addresserror
                                   ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 15,),
-                                  Text(
-                                    addressmessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * .04
-                                    ),
-                                  ),
-                                ],
-                              )
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        Text(
+                                          addressmessage,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .04),
+                                        ),
+                                      ],
+                                    )
                                   : Container(),
-                              SizedBox(width: 45,),
+                              SizedBox(
+                                width: 45,
+                              ),
                               addresserror
                                   ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 15,),
-                                  Text(
-                                    addressmessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * .04
-                                    ),
-                                  ),
-                                ],
-                              )
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        Text(
+                                          addressmessage,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .04),
+                                        ),
+                                      ],
+                                    )
                                   : Container(),
                             ],
                           ),
@@ -579,8 +612,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     elevation: 3,
                                     borderRadius: BorderRadius.circular(3),
                                     child: Container(
-                                      width:
-                                          MediaQuery.of(context).size.width * .30,
+                                      width: MediaQuery.of(context).size.width *
+                                          .30,
                                       height: 30,
                                       padding: EdgeInsets.only(left: 10),
                                       decoration: BoxDecoration(
@@ -616,8 +649,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     elevation: 3,
                                     borderRadius: BorderRadius.circular(3),
                                     child: Container(
-                                      width:
-                                          MediaQuery.of(context).size.width * .33,
+                                      width: MediaQuery.of(context).size.width *
+                                          .33,
                                       height: 30,
                                       padding: EdgeInsets.only(left: 10),
                                       decoration: BoxDecoration(
@@ -653,34 +686,46 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             children: [
                               addresserror
                                   ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 15,),
-                                  Text(
-                                    addressmessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * .04
-                                    ),
-                                  ),
-                                ],
-                              )
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        Text(
+                                          addressmessage,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .04),
+                                        ),
+                                      ],
+                                    )
                                   : Container(),
-                              SizedBox(width: 45,),
+                              SizedBox(
+                                width: 45,
+                              ),
                               addresserror
                                   ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 15,),
-                                  Text(
-                                    addressmessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * .04
-                                    ),
-                                  ),
-                                ],
-                              )
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        Text(
+                                          addressmessage,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .04),
+                                        ),
+                                      ],
+                                    )
                                   : Container(),
                             ],
                           ),
@@ -703,272 +748,901 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
-                      child:
-                     Column(
-                       children: [
-            
-                         Row(
-                           children: [
-                             SizedBox(
-                               width: 15,
-                             ),
-                             Text(
-                               "Owner information",
-                               style: TextStyle(
-                                   fontWeight: FontWeight.bold,
-                                   color: Color.fromRGBO(21, 43, 81, 1),
-                                   fontSize: 15),
-                             ),
-                           ],
-                         ),
-                         SizedBox(
-                           height: 10,
-                         ),
-                         Row(
-                           children: [
-                             SizedBox(
-                               width: 15,
-                             ),
-                             Text(
-                               "Who is the Property Owner ? (Required)",
-                               style: TextStyle(
-                                   color: Color(0xFF8A95A8),
-                                 //  fontWeight: FontWeight.bold,
-                                   fontSize: 12),
-                             ),
-                           ],
-                         ),
-                         SizedBox(
-                           height: 10,
-                         ),
-                         Row(
-                           children: [
-                             SizedBox(
-                               width: 15,
-                             ),
-                             Expanded(
-                               child: Text(
-                                 "This information will be used to help prepare owner drawns and 1099s",
-                                 style: TextStyle(
-                                     color: Color(0xFF8A95A8),
-                                   //  fontWeight: FontWeight.bold,
-                                     fontSize: 10),
-                               ),
-                             ),
-                           ],
-                         ),
-                         SizedBox(
-                           height: 10,
-                         ),
-                         GestureDetector(
-                           onTap: () {
-                             showDialog(
-                               context: context,
-                               builder: (BuildContext context) {
-                                 return Padding(
-                                   padding: const EdgeInsets.only(top: 90, bottom: 90, left: 30, right: 30),
-                                   child: Material(
-                                     type: MaterialType.transparency,
-                                     child: Container(
-                                       decoration: BoxDecoration(
-                                         color: Colors.white,
-                                         borderRadius: BorderRadius.circular(20),
-                                       ),
-                                       child: Padding(
-                                         padding: const EdgeInsets.only(left: 20, right: 20,top: 20,bottom: 20),
-                                         child: Column(
-                                           children: [
-                                             Row(
-                                               children: [
-                                                 Text("Add rental owner",
-                                                     style: TextStyle(
-                                                       color: Color.fromRGBO(21, 43, 81, 1),
-                                                       fontWeight: FontWeight.bold
-                                                     )),],
-                                             ),
-                                             SizedBox(
-                                               height: 10,
-                                             ),
-                                             Row(
-                                               children: [
-                                                 Container(
-                                                   height: MediaQuery.of(context).size.height * 0.03,
-                                                   width: MediaQuery.of(context).size.height * 0.03,
-                                                   decoration: BoxDecoration(
-                                                     color: Colors.white,
-                                                     borderRadius: BorderRadius.circular(5),
-                                                   ),
-                                                   child: Checkbox(
-                                                     activeColor: isChecked ? Colors.black : Colors.white,
-                                                     checkColor: Colors.white,
-                                                     value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
-                                                     onChanged: ( value) {
-                                                       setState(() {
-                                                         isChecked = value ?? false; // ensure value is not null
-                                                       });
-                                                     },
-                                                   ),
-                                                 ),
-                                               ],
-                                             ),
-                                             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                                             Row(
-                                               children: [
-                                                 SizedBox(
-                                                   width: MediaQuery.of(context).size.width * .099,
-                                                 ),
-                                                 Expanded(
-                                                   child: Container(
-                                                     height: 50,
-                                                     decoration: BoxDecoration(
-                                                       borderRadius: BorderRadius.circular(10),
-                                                       color: Color.fromRGBO(196, 196, 196, .3),
-                                                     ),
-                                                     child: Stack(
-                                                       children: [
-                                                         Positioned.fill(
-                                                           child: TextField(
-                                                             onChanged: (value) {
-                                                               setState(() {
-                                                                 firstnameerror = false;
-                                                               });
-                                                             },
-                                                             controller: firstname,
-                                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                             decoration: InputDecoration(
-                                                               enabledBorder: firstnameerror
-                                                                   ? OutlineInputBorder(
-                                                                 borderRadius: BorderRadius.circular(10),
-                                                                 borderSide: BorderSide(
-                                                                     color: Colors
-                                                                         .red), // Set border color here
-                                                               )
-                                                                   : InputBorder.none,
-                                                               border: InputBorder.none,
-                                                               contentPadding: EdgeInsets.all(10),
-                                                               prefixIcon: Container(
-                                                                   height: 20,
-                                                                   width: 20,
-                                                                   padding: EdgeInsets.all(13),
-                                                                   child: Image.asset(
-                                                                       "assets/icons/user_icon.png")),
-                                                               hintText: "First Name",
-                                                             ),
-                                                           ),
-                                                         ),
-                                                       ],
-                                                     ),
-                                                   ),
-                                                 ),
-                                                 SizedBox(
-                                                   width: MediaQuery.of(context).size.width * .099,
-                                                 ),
-                                               ],
-                                             ),
-                                             firstnameerror
-                                                 ? Center(
-                                                 child: Text(
-                                                   firstnamemessage,
-                                                   style: TextStyle(color: Colors.red),
-                                                 ))
-                                                 : Container(),
-                                             SizedBox(
-                                               height: MediaQuery.of(context).size.height * 0.025,
-                                             ),
-                                             // Last name
-                                             Row(
-                                               children: [
-                                                 SizedBox(
-                                                   width: MediaQuery.of(context).size.width * .099,
-                                                 ),
-                                                 Expanded(
-                                                   child: Container(
-                                                     height: 50,
-                                                     decoration: BoxDecoration(
-                                                       borderRadius: BorderRadius.circular(10),
-                                                       color: Color.fromRGBO(196, 196, 196, .3),
-                                                     ),
-                                                     child: Stack(
-                                                       children: [
-                                                         Positioned.fill(
-                                                           child: TextField(
-                                                             onChanged: (value) {
-                                                               setState(() {
-                                                                 lastnameerror = false;
-                                                               });
-                                                             },
-                                                             controller: lastname,
-                                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                             decoration: InputDecoration(
-                                                               enabledBorder: lastnameerror
-                                                                   ? OutlineInputBorder(
-                                                                 borderRadius: BorderRadius.circular(10),
-                                                                 borderSide: BorderSide(
-                                                                     color: Colors
-                                                                         .red), // Set border color here
-                                                               )
-                                                                   : InputBorder.none,
-                                                               border: InputBorder.none,
-                                                               contentPadding: EdgeInsets.all(10),
-                                                               prefixIcon: Container(
-                                                                   height: 20,
-                                                                   width: 20,
-                                                                   padding: EdgeInsets.all(13),
-                                                                   child: Image.asset(
-                                                                       "assets/icons/user_icon.png")),
-                                                               hintText: "Last Name",
-                                                             ),
-                                                           ),
-                                                         ),
-                                                       ],
-                                                     ),
-                                                   ),
-                                                 ),
-                                                 SizedBox(
-                                                   width: MediaQuery.of(context).size.width * .099,
-                                                 ),
-                                               ],
-                                             ),
-                                             lastnameerror
-                                                 ? Center(
-                                                 child: Text(
-                                                   lastnamemessage,
-                                                   style: TextStyle(color: Colors.red),
-                                                 ))
-                                                 : Container(),
-                                           ],
-                                         ),
-                                       ),
-                                     ),
-                                   ),
-                                 );
-                               },
-                             );
-                           },
-                           child: Row(
-                             children: [
-                               SizedBox(
-                                 width: 15,
-                               ),
-                               Icon(Icons.add,size: 10,color: Colors.green[400],),
-                               SizedBox(
-                                 width: 9,
-                               ),
-                               Text(
-                                 "Add Rental Owner",
-                                 style: TextStyle(
-                                   //  color: Color(0xFF8A95A8),
-                                   color: Colors.green[400],
-                                     //  fontWeight: FontWeight.bold,
-                                     fontSize: 10),
-                               ),
-                             ],
-                           ),
-                         ),
-                       ],
-                     )
-                    ),
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 10),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Text(
+                                  "Owner information",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      fontSize: 15),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Text(
+                                  "Who is the Property Owner ? (Required)",
+                                  style: TextStyle(
+                                      color: Color(0xFF8A95A8),
+                                      //  fontWeight: FontWeight.bold,
+                                      fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    "This information will be used to help prepare owner drawns and 1099s",
+                                    style: TextStyle(
+                                        color: Color(0xFF8A95A8),
+                                        //  fontWeight: FontWeight.bold,
+                                        fontSize: 10),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     showDialog(
+                            //       context: context,
+                            //       builder: (BuildContext context) {
+                            //         return Padding(
+                            //           padding: const EdgeInsets.only(top: 90, bottom: 90, left: 30, right: 30),
+                            //           child: Material(
+                            //             type: MaterialType.transparency,
+                            //             child: Container(
+                            //               decoration: BoxDecoration(
+                            //                 color: Colors.white,
+                            //                 borderRadius: BorderRadius.circular(20),
+                            //               ),
+                            //               child: Padding(
+                            //                 padding: const EdgeInsets.only(left: 20, right: 20,top: 20,bottom: 20),
+                            //                 child: Column(
+                            //                   children: [
+                            //                     Row(
+                            //                       children: [
+                            //                         Text("Add rental owner",
+                            //                             style: TextStyle(
+                            //                               color: Color.fromRGBO(21, 43, 81, 1),
+                            //                               fontWeight: FontWeight.bold,
+                            //                               fontSize: 17,
+                            //                             )),],
+                            //                     ),
+                            //                     SizedBox(
+                            //                       height: 12,
+                            //                     ),
+                            //                     Row(
+                            //                       children: [
+                            //                         SizedBox(
+                            //                           width: 5,
+                            //                         ),
+                            //                         Container(
+                            //                           height: MediaQuery.of(context).size.height * 0.01,
+                            //                           width: MediaQuery.of(context).size.height * 0.01,
+                            //                           decoration: BoxDecoration(
+                            //                             color: Colors.white,
+                            //                             borderRadius: BorderRadius.circular(5),
+                            //                           ),
+                            //                           child: Checkbox(
+                            //                             activeColor: isChecked ? Colors.black : Colors.white,
+                            //                             checkColor: Colors.white,
+                            //                             value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                            //                             onChanged: ( value) {
+                            //                               setState(() {
+                            //                                 isChecked = value ?? false; // ensure value is not null
+                            //                               });
+                            //                             },
+                            //                           ),
+                            //                         ),
+                            //                       ],
+                            //                     ),
+                            //                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                            //                     isChecked // Check the value of isChecked
+                            //                         ? Column(
+                            //                       children: [
+                            //                         TextFormField(
+                            //                           decoration: InputDecoration(
+                            //                             labelText: "Additional Field 1",
+                            //                           ),
+                            //                         ),
+                            //                         TextFormField(
+                            //                           decoration: InputDecoration(
+                            //                             labelText: "Additional Field 2",
+                            //                           ),
+                            //                         ),
+                            //                       ],
+                            //                     )
+                            //                         :
+                            //                     Column(
+                            //                       children: [
+                            //                           Row(
+                            //                             children: [
+                            //                               Text(
+                            //                                 "Name*",
+                            //                                 style: TextStyle(
+                            //                                     fontWeight: FontWeight.bold,
+                            //                                     color: Color(0xFF8A95A8),
+                            //                                     fontSize: 14),
+                            //                               ),
+                            //                             ],
+                            //                           ),
+                            //                         SizedBox(
+                            //                           height: 5,
+                            //                         ),
+                            //                           Row(
+                            //                             children: [
+                            //                               Expanded(
+                            //                                 child: Material(
+                            //                                   elevation:3,
+                            //                                   borderRadius: BorderRadius.circular(5),
+                            //                                   child: Container(
+                            //                                     height: 35,
+                            //                                     decoration: BoxDecoration(
+                            //                                       borderRadius: BorderRadius.circular(5),
+                            //                                      // color: Color.fromRGBO(196, 196, 196, .3),
+                            //                                       border: Border.all(color: Color(0xFF8A95A8))
+                            //                                     ),
+                            //                                     child: Stack(
+                            //                                       children: [
+                            //                                         Positioned.fill(
+                            //                                           child: TextField(
+                            //                                             onChanged: (value) {
+                            //                                               setState(() {
+                            //                                                 firstnameerror = false;
+                            //                                               });
+                            //                                             },
+                            //                                             controller: firstname,
+                            //                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                             decoration: InputDecoration(
+                            //                                               enabledBorder: firstnameerror
+                            //                                                   ? OutlineInputBorder(
+                            //                                                 borderRadius: BorderRadius.circular(10),
+                            //                                                 borderSide: BorderSide(
+                            //                                                     color: Colors
+                            //                                                         .red), // Set border color here
+                            //                                               )
+                            //                                                   : InputBorder.none,
+                            //                                               border: InputBorder.none,
+                            //                                               contentPadding: EdgeInsets.all(12),
+                            //                                               hintText: " Enter first name here...",
+                            //                                               hintStyle: TextStyle(
+                            //                                                 color: Color(0xFF8A95A8),
+                            //                                                 fontSize: 14,
+                            //                                                 fontWeight: FontWeight.w400,
+                            //                                               ),
+                            //                                             ),
+                            //                                           ),
+                            //                                         ),
+                            //                                       ],
+                            //                                     ),
+                            //                                   ),
+                            //                                 ),
+                            //                               ),
+                            //                               SizedBox(
+                            //                                 width: MediaQuery.of(context).size.width * .099,
+                            //                               ),
+                            //                             ],
+                            //                           ),
+                            //                           firstnameerror
+                            //                               ? Center(
+                            //                               child: Text(
+                            //                                 firstnamemessage,
+                            //                                 style: TextStyle(color: Colors.red),
+                            //                               ))
+                            //                               : Container(),
+                            //                           SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                            //                           Row(
+                            //                             children: [
+                            //                               Expanded(
+                            //                                 child: Material(
+                            //                                   elevation:3,
+                            //                                   borderRadius: BorderRadius.circular(5),
+                            //                                   child: Container(
+                            //                                     height: 35,
+                            //                                     decoration: BoxDecoration(
+                            //                                         borderRadius: BorderRadius.circular(5),
+                            //                                         // color: Color.fromRGBO(196, 196, 196, .3),
+                            //                                         border: Border.all(color: Color(0xFF8A95A8))
+                            //                                     ),
+                            //                                     child: Stack(
+                            //                                       children: [
+                            //                                         Positioned.fill(
+                            //                                           child: TextField(
+                            //                                             onChanged: (value) {
+                            //                                               setState(() {
+                            //                                                 lastnameerror = false;
+                            //                                               });
+                            //                                             },
+                            //                                             controller: lastname,
+                            //                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                             decoration: InputDecoration(
+                            //                                               enabledBorder: lastnameerror
+                            //                                                   ? OutlineInputBorder(
+                            //                                                 borderRadius: BorderRadius.circular(10),
+                            //                                                 borderSide: BorderSide(
+                            //                                                     color: Colors
+                            //                                                         .red), // Set border color here
+                            //                                               )
+                            //                                                   : InputBorder.none,
+                            //                                               border: InputBorder.none,
+                            //                                               contentPadding: EdgeInsets.all(12),
+                            //                                               hintText: " Enter last name here...",
+                            //                                               hintStyle: TextStyle(
+                            //                                                 color: Color(0xFF8A95A8),
+                            //                                                 fontSize: 14,
+                            //                                                 fontWeight: FontWeight.w400,
+                            //                                               ),
+                            //                                             ),
+                            //                                           ),
+                            //                                         ),
+                            //                                       ],
+                            //                                     ),
+                            //                                   ),
+                            //                                 ),
+                            //                               ),
+                            //                               SizedBox(
+                            //                                 width: MediaQuery.of(context).size.width * .099,
+                            //                               ),
+                            //                             ],
+                            //                           ),
+                            //                           lastnameerror
+                            //                               ? Center(
+                            //                               child: Text(
+                            //                                 lastnamemessage,
+                            //                                 style: TextStyle(color: Colors.red),
+                            //                               ))
+                            //                               : Container(),
+                            //                           SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                            //                           Row(
+                            //                             children: [
+                            //                               Text(
+                            //                                 "Company Name*",
+                            //                                 style: TextStyle(
+                            //                                     fontWeight: FontWeight.bold,
+                            //                                     color: Color(0xFF8A95A8),
+                            //                                     fontSize: 14),
+                            //                               ),
+                            //                             ],
+                            //                           ),
+                            //                           SizedBox(
+                            //                             height: 5,
+                            //                           ),
+                            //                           Row(
+                            //                             children: [
+                            //                               Expanded(
+                            //                                 child: Material(
+                            //                                   elevation:3,
+                            //                                   borderRadius: BorderRadius.circular(5),
+                            //                                   child: Container(
+                            //                                     height: 35,
+                            //                                     decoration: BoxDecoration(
+                            //                                         borderRadius: BorderRadius.circular(5),
+                            //                                         // color: Color.fromRGBO(196, 196, 196, .3),
+                            //                                         border: Border.all(color: Color(0xFF8A95A8))
+                            //                                     ),
+                            //                                     child: Stack(
+                            //                                       children: [
+                            //                                         Positioned.fill(
+                            //                                           child: TextField(
+                            //                                             onChanged: (value) {
+                            //                                               setState(() {
+                            //                                                 firstnameerror = false;
+                            //                                               });
+                            //                                             },
+                            //                                             controller: firstname,
+                            //                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                             decoration: InputDecoration(
+                            //                                               enabledBorder: firstnameerror
+                            //                                                   ? OutlineInputBorder(
+                            //                                                 borderRadius: BorderRadius.circular(10),
+                            //                                                 borderSide: BorderSide(
+                            //                                                     color: Colors
+                            //                                                         .red), // Set border color here
+                            //                                               )
+                            //                                                   : InputBorder.none,
+                            //                                               border: InputBorder.none,
+                            //                                               contentPadding: EdgeInsets.all(12),
+                            //                                               hintText: " Enter company name here...",
+                            //                                               hintStyle: TextStyle(
+                            //                                                 color: Color(0xFF8A95A8),
+                            //                                                 fontSize: 14,
+                            //                                                 fontWeight: FontWeight.w400,
+                            //                                               ),
+                            //                                             ),
+                            //                                           ),
+                            //                                         ),
+                            //                                       ],
+                            //                                     ),
+                            //                                   ),
+                            //                                 ),
+                            //                               ),
+                            //                               SizedBox(
+                            //                                 width: MediaQuery.of(context).size.width * .099,
+                            //                               ),
+                            //                             ],
+                            //                           ),
+                            //                           firstnameerror
+                            //                               ? Center(
+                            //                               child: Text(
+                            //                                 firstnamemessage,
+                            //                                 style: TextStyle(color: Colors.red),
+                            //                               ))
+                            //                               : Container(),
+                            //                           SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                            //                         ],
+                            //                     ),
+                            //
+                            //                   //   Row(
+                            //                   //     children: [
+                            //                   //       Text(
+                            //                   //         "Name*",
+                            //                   //         style: TextStyle(
+                            //                   //             fontWeight: FontWeight.bold,
+                            //                   //             color: Color(0xFF8A95A8),
+                            //                   //             fontSize: 14),
+                            //                   //       ),
+                            //                   //     ],
+                            //                   //   ),
+                            //                   // SizedBox(
+                            //                   //   height: 5,
+                            //                   // ),
+                            //                   //   Row(
+                            //                   //     children: [
+                            //                   //       Expanded(
+                            //                   //         child: Material(
+                            //                   //           elevation:3,
+                            //                   //           borderRadius: BorderRadius.circular(5),
+                            //                   //           child: Container(
+                            //                   //             height: 35,
+                            //                   //             decoration: BoxDecoration(
+                            //                   //               borderRadius: BorderRadius.circular(5),
+                            //                   //              // color: Color.fromRGBO(196, 196, 196, .3),
+                            //                   //               border: Border.all(color: Color(0xFF8A95A8))
+                            //                   //             ),
+                            //                   //             child: Stack(
+                            //                   //               children: [
+                            //                   //                 Positioned.fill(
+                            //                   //                   child: TextField(
+                            //                   //                     onChanged: (value) {
+                            //                   //                       setState(() {
+                            //                   //                         firstnameerror = false;
+                            //                   //                       });
+                            //                   //                     },
+                            //                   //                     controller: firstname,
+                            //                   //                     cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                   //                     decoration: InputDecoration(
+                            //                   //                       enabledBorder: firstnameerror
+                            //                   //                           ? OutlineInputBorder(
+                            //                   //                         borderRadius: BorderRadius.circular(10),
+                            //                   //                         borderSide: BorderSide(
+                            //                   //                             color: Colors
+                            //                   //                                 .red), // Set border color here
+                            //                   //                       )
+                            //                   //                           : InputBorder.none,
+                            //                   //                       border: InputBorder.none,
+                            //                   //                       contentPadding: EdgeInsets.all(12),
+                            //                   //                       hintText: " Enter first name here...",
+                            //                   //                       hintStyle: TextStyle(
+                            //                   //                         color: Color(0xFF8A95A8),
+                            //                   //                         fontSize: 14,
+                            //                   //                         fontWeight: FontWeight.w400,
+                            //                   //                       ),
+                            //                   //                     ),
+                            //                   //                   ),
+                            //                   //                 ),
+                            //                   //               ],
+                            //                   //             ),
+                            //                   //           ),
+                            //                   //         ),
+                            //                   //       ),
+                            //                   //       SizedBox(
+                            //                   //         width: MediaQuery.of(context).size.width * .099,
+                            //                   //       ),
+                            //                   //     ],
+                            //                   //   ),
+                            //                   //   firstnameerror
+                            //                   //       ? Center(
+                            //                   //       child: Text(
+                            //                   //         firstnamemessage,
+                            //                   //         style: TextStyle(color: Colors.red),
+                            //                   //       ))
+                            //                   //       : Container(),
+                            //                   //   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                            //                   //   Row(
+                            //                   //     children: [
+                            //                   //       Expanded(
+                            //                   //         child: Material(
+                            //                   //           elevation:3,
+                            //                   //           borderRadius: BorderRadius.circular(5),
+                            //                   //           child: Container(
+                            //                   //             height: 35,
+                            //                   //             decoration: BoxDecoration(
+                            //                   //                 borderRadius: BorderRadius.circular(5),
+                            //                   //                 // color: Color.fromRGBO(196, 196, 196, .3),
+                            //                   //                 border: Border.all(color: Color(0xFF8A95A8))
+                            //                   //             ),
+                            //                   //             child: Stack(
+                            //                   //               children: [
+                            //                   //                 Positioned.fill(
+                            //                   //                   child: TextField(
+                            //                   //                     onChanged: (value) {
+                            //                   //                       setState(() {
+                            //                   //                         lastnameerror = false;
+                            //                   //                       });
+                            //                   //                     },
+                            //                   //                     controller: lastname,
+                            //                   //                     cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                   //                     decoration: InputDecoration(
+                            //                   //                       enabledBorder: lastnameerror
+                            //                   //                           ? OutlineInputBorder(
+                            //                   //                         borderRadius: BorderRadius.circular(10),
+                            //                   //                         borderSide: BorderSide(
+                            //                   //                             color: Colors
+                            //                   //                                 .red), // Set border color here
+                            //                   //                       )
+                            //                   //                           : InputBorder.none,
+                            //                   //                       border: InputBorder.none,
+                            //                   //                       contentPadding: EdgeInsets.all(12),
+                            //                   //                       hintText: " Enter last name here...",
+                            //                   //                       hintStyle: TextStyle(
+                            //                   //                         color: Color(0xFF8A95A8),
+                            //                   //                         fontSize: 14,
+                            //                   //                         fontWeight: FontWeight.w400,
+                            //                   //                       ),
+                            //                   //                     ),
+                            //                   //                   ),
+                            //                   //                 ),
+                            //                   //               ],
+                            //                   //             ),
+                            //                   //           ),
+                            //                   //         ),
+                            //                   //       ),
+                            //                   //       SizedBox(
+                            //                   //         width: MediaQuery.of(context).size.width * .099,
+                            //                   //       ),
+                            //                   //     ],
+                            //                   //   ),
+                            //                   //   lastnameerror
+                            //                   //       ? Center(
+                            //                   //       child: Text(
+                            //                   //         lastnamemessage,
+                            //                   //         style: TextStyle(color: Colors.red),
+                            //                   //       ))
+                            //                   //       : Container(),
+                            //                   //   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                            //                   //   Row(
+                            //                   //     children: [
+                            //                   //       Text(
+                            //                   //         "Company Name*",
+                            //                   //         style: TextStyle(
+                            //                   //             fontWeight: FontWeight.bold,
+                            //                   //             color: Color(0xFF8A95A8),
+                            //                   //             fontSize: 14),
+                            //                   //       ),
+                            //                   //     ],
+                            //                   //   ),
+                            //                   //   SizedBox(
+                            //                   //     height: 5,
+                            //                   //   ),
+                            //                   //   Row(
+                            //                   //     children: [
+                            //                   //       Expanded(
+                            //                   //         child: Material(
+                            //                   //           elevation:3,
+                            //                   //           borderRadius: BorderRadius.circular(5),
+                            //                   //           child: Container(
+                            //                   //             height: 35,
+                            //                   //             decoration: BoxDecoration(
+                            //                   //                 borderRadius: BorderRadius.circular(5),
+                            //                   //                 // color: Color.fromRGBO(196, 196, 196, .3),
+                            //                   //                 border: Border.all(color: Color(0xFF8A95A8))
+                            //                   //             ),
+                            //                   //             child: Stack(
+                            //                   //               children: [
+                            //                   //                 Positioned.fill(
+                            //                   //                   child: TextField(
+                            //                   //                     onChanged: (value) {
+                            //                   //                       setState(() {
+                            //                   //                         firstnameerror = false;
+                            //                   //                       });
+                            //                   //                     },
+                            //                   //                     controller: firstname,
+                            //                   //                     cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                   //                     decoration: InputDecoration(
+                            //                   //                       enabledBorder: firstnameerror
+                            //                   //                           ? OutlineInputBorder(
+                            //                   //                         borderRadius: BorderRadius.circular(10),
+                            //                   //                         borderSide: BorderSide(
+                            //                   //                             color: Colors
+                            //                   //                                 .red), // Set border color here
+                            //                   //                       )
+                            //                   //                           : InputBorder.none,
+                            //                   //                       border: InputBorder.none,
+                            //                   //                       contentPadding: EdgeInsets.all(12),
+                            //                   //                       hintText: " Enter company name here...",
+                            //                   //                       hintStyle: TextStyle(
+                            //                   //                         color: Color(0xFF8A95A8),
+                            //                   //                         fontSize: 14,
+                            //                   //                         fontWeight: FontWeight.w400,
+                            //                   //                       ),
+                            //                   //                     ),
+                            //                   //                   ),
+                            //                   //                 ),
+                            //                   //               ],
+                            //                   //             ),
+                            //                   //           ),
+                            //                   //         ),
+                            //                   //       ),
+                            //                   //       SizedBox(
+                            //                   //         width: MediaQuery.of(context).size.width * .099,
+                            //                   //       ),
+                            //                   //     ],
+                            //                   //   ),
+                            //                   //   firstnameerror
+                            //                   //       ? Center(
+                            //                   //       child: Text(
+                            //                   //         firstnamemessage,
+                            //                   //         style: TextStyle(color: Colors.red),
+                            //                   //       ))
+                            //                   //       : Container(),
+                            //                   //   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                            //                   ],
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         );
+                            //       },
+                            //     );
+                            //   },
+                            //   child: Row(
+                            //     children: [
+                            //       SizedBox(
+                            //         width: 15,
+                            //       ),
+                            //       Icon(Icons.add,size: 10,color: Colors.green[400],),
+                            //       SizedBox(
+                            //         width: 9,
+                            //       ),
+                            //       Text(
+                            //         "Add Rental Owner",
+                            //         style: TextStyle(
+                            //           //  color: Color(0xFF8A95A8),
+                            //           color: Colors.green[400],
+                            //             //  fontWeight: FontWeight.bold,
+                            //             fontSize: 10),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    bool isChecked =
+                                        false; // Moved isChecked inside the StatefulBuilder
+                                    return StatefulBuilder(
+                                      builder: (BuildContext context,
+                                          StateSetter setState) {
+                                        return AlertDialog(
+                                          title: Text("Add Rental Owner"),
+                                          content: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    SizedBox(width: 1,),
+                                                    Checkbox(
+                                                      value: isChecked,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          isChecked =
+                                                              value ?? false;
+                                                        });
+                                                      },
+                                                      activeColor: isChecked ? Colors.blue : Colors.black,
+                                                    ),
+                                                  ],
+                                                ),
+                                                isChecked
+                                                    ? Column(
+                                                        children: [
+                                                          TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Additional Field 1",
+                                                            ),
+                                                          ),
+                                                          TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Additional Field 2",
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    :
+                                                Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "Name*",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Color(0xFF8A95A8),
+                                                              fontSize: 14),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Material(
+                                                            elevation:3,
+                                                            borderRadius: BorderRadius.circular(5),
+                                                            child: Container(
+                                                              height: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(5),
+                                                                  // color: Color.fromRGBO(196, 196, 196, .3),
+                                                                  border: Border.all(color: Color(0xFF8A95A8))
+                                                              ),
+                                                              child: Stack(
+                                                                children: [
+                                                                  Positioned.fill(
+                                                                    child: TextField(
+                                                                      onChanged: (value) {
+                                                                        setState(() {
+                                                                          firstnameerror = false;
+                                                                        });
+                                                                      },
+                                                                      controller: firstname,
+                                                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                      decoration: InputDecoration(
+                                                                        enabledBorder: firstnameerror
+                                                                            ? OutlineInputBorder(
+                                                                          borderRadius: BorderRadius.circular(10),
+                                                                          borderSide: BorderSide(
+                                                                              color: Colors
+                                                                                  .red), // Set border color here
+                                                                        )
+                                                                            : InputBorder.none,
+                                                                        border: InputBorder.none,
+                                                                        contentPadding: EdgeInsets.all(12),
+                                                                        hintText: " Enter first name here...",
+                                                                        hintStyle: TextStyle(
+                                                                          color: Color(0xFF8A95A8),
+                                                                          fontSize: 14,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: MediaQuery.of(context).size.width * .099,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    firstnameerror
+                                                        ? Center(
+                                                        child: Text(
+                                                          firstnamemessage,
+                                                          style: TextStyle(color: Colors.red),
+                                                        ))
+                                                        : Container(),
+                                                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Material(
+                                                            elevation:3,
+                                                            borderRadius: BorderRadius.circular(5),
+                                                            child: Container(
+                                                              height: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(5),
+                                                                  // color: Color.fromRGBO(196, 196, 196, .3),
+                                                                  border: Border.all(color: Color(0xFF8A95A8))
+                                                              ),
+                                                              child: Stack(
+                                                                children: [
+                                                                  Positioned.fill(
+                                                                    child: TextField(
+                                                                      onChanged: (value) {
+                                                                        setState(() {
+                                                                          lastnameerror = false;
+                                                                        });
+                                                                      },
+                                                                      controller: lastname,
+                                                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                      decoration: InputDecoration(
+                                                                        enabledBorder: lastnameerror
+                                                                            ? OutlineInputBorder(
+                                                                          borderRadius: BorderRadius.circular(10),
+                                                                          borderSide: BorderSide(
+                                                                              color: Colors
+                                                                                  .red), // Set border color here
+                                                                        )
+                                                                            : InputBorder.none,
+                                                                        border: InputBorder.none,
+                                                                        contentPadding: EdgeInsets.all(12),
+                                                                        hintText: " Enter last name here...",
+                                                                        hintStyle: TextStyle(
+                                                                          color: Color(0xFF8A95A8),
+                                                                          fontSize: 14,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: MediaQuery.of(context).size.width * .099,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    lastnameerror
+                                                        ? Center(
+                                                        child: Text(
+                                                          lastnamemessage,
+                                                          style: TextStyle(color: Colors.red),
+                                                        ))
+                                                        : Container(),
+                                                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "Company Name*",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Color(0xFF8A95A8),
+                                                              fontSize: 14),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Material(
+                                                            elevation:3,
+                                                            borderRadius: BorderRadius.circular(5),
+                                                            child: Container(
+                                                              height: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(5),
+                                                                  // color: Color.fromRGBO(196, 196, 196, .3),
+                                                                  border: Border.all(color: Color(0xFF8A95A8))
+                                                              ),
+                                                              child: Stack(
+                                                                children: [
+                                                                  Positioned.fill(
+                                                                    child: TextField(
+                                                                      onChanged: (value) {
+                                                                        setState(() {
+                                                                          firstnameerror = false;
+                                                                        });
+                                                                      },
+                                                                      controller: firstname,
+                                                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                      decoration: InputDecoration(
+                                                                        enabledBorder: firstnameerror
+                                                                            ? OutlineInputBorder(
+                                                                          borderRadius: BorderRadius.circular(10),
+                                                                          borderSide: BorderSide(
+                                                                              color: Colors
+                                                                                  .red), // Set border color here
+                                                                        )
+                                                                            : InputBorder.none,
+                                                                        border: InputBorder.none,
+                                                                        contentPadding: EdgeInsets.all(12),
+                                                                        hintText: " Enter company name here...",
+                                                                        hintStyle: TextStyle(
+                                                                          color: Color(0xFF8A95A8),
+                                                                          fontSize: 14,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: MediaQuery.of(context).size.width * .099,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    firstnameerror
+                                                        ? Center(
+                                                        child: Text(
+                                                          firstnamemessage,
+                                                          style: TextStyle(color: Colors.red),
+                                                        ))
+                                                        : Container(),
+                                                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                // Add logic to save form data
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("Save"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 15),
+                                  Icon(Icons.add,
+                                      size: 20, color: Colors.green[400]),
+                                  SizedBox(width: 9),
+                                  Text(
+                                    "Add Rental Owner",
+                                    style: TextStyle(
+                                      color: Colors.green[400],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
                   ),
                 ),
                 SizedBox(height: 25),
@@ -982,9 +1656,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
                     ),
                     child: Padding(
-                        padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
-                        child:
-                        Column(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 10),
+                        child: Column(
                           children: [
                             Row(
                               children: [
@@ -1011,7 +1685,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 Expanded(
                                   child: Text(
                                     "If staff member has not yet been added as user in your account ,they can be added to the account"
-                                        ",than as the manager later through the property's summary details.",
+                                    ",than as the manager later through the property's summary details.",
                                     style: TextStyle(
                                         color: Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
@@ -1068,18 +1742,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     ),
                                     items: items
                                         .map((String item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ))
+                                            DropdownMenuItem<String>(
+                                              value: item,
+                                              child: Text(
+                                                item,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ))
                                         .toList(),
                                     value: selectedValue,
                                     onChanged: (value) {
@@ -1113,20 +1787,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         radius: const Radius.circular(40),
                                         thickness: MaterialStateProperty.all(6),
                                         thumbVisibility:
-                                        MaterialStateProperty.all(true),
+                                            MaterialStateProperty.all(true),
                                       ),
                                     ),
                                     menuItemStyleData: const MenuItemStyleData(
                                       height: 40,
-                                      padding: EdgeInsets.only(left: 14, right: 14),
+                                      padding:
+                                          EdgeInsets.only(left: 14, right: 14),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ],
-                        )
-                    ),
+                        )),
                   ),
                 ),
                 SizedBox(
@@ -1143,7 +1817,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       setState(() {
                         propertyTypeError = false;
                       });
-                    }if (address.text.isEmpty) {
+                    }
+                    if (address.text.isEmpty) {
                       setState(() {
                         addresserror = true;
                         addressmessage = "required";
@@ -1197,22 +1872,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         cityerror &&
                         stateerror &&
                         countryerror &&
-                        postalcodeerror) {
-
-                    }
-                    },
+                        postalcodeerror) {}
+                  },
                   child: Row(
                     children: [
-                      SizedBox(
-                          width:
-                          MediaQuery.of(context).size.width * 0.01),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 30,
                           width: MediaQuery.of(context).size.width * .3,
                           decoration: BoxDecoration(
-                           // borderRadius: BorderRadius.circular(3),
+                            // borderRadius: BorderRadius.circular(3),
                             color: Color.fromRGBO(21, 43, 81, 1),
                             boxShadow: [
                               BoxShadow(
@@ -1227,7 +1898,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               "Create Property",
                               style: TextStyle(
                                   color: Colors.white,
-                                 // fontWeight: FontWeight.bold,
+                                  // fontWeight: FontWeight.bold,
                                   fontSize: 10),
                             ),
                           ),
@@ -1237,7 +1908,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         width: 15,
                       ),
                       Text("Cancel"),
-
                     ],
                   ),
                 ),
@@ -1249,6 +1919,3 @@ class _Add_new_propertyState extends State<Add_new_property> {
     );
   }
 }
-
-
-
