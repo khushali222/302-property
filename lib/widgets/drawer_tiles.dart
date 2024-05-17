@@ -26,7 +26,7 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
         if(title =="Dashboard"){
           Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
         }else if(title =="Add Property Type"){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Property_table()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => PropertyTable()));
         }else if(title == "Add Staff Member"){
           Navigator.push(context, MaterialPageRoute(builder: (context)=> Staffmember_table()));
         }
