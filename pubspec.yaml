@@ -59,6 +59,7 @@ dependencies:
   flutter_spinkit: ^5.2.1
   intl:
   font_awesome_flutter:
+  rflutter_alert:
 
 dev_dependencies:
   flutter_test:
