@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
-import '../repository/profile_repository.dart';
-import '../widgets/drawer_tiles.dart';
+import '../../repository/profile_repository.dart';
+import '../../widgets/drawer_tiles.dart';
 
 class Profile_screen extends StatefulWidget {
   const Profile_screen({Key? key}) : super(key: key);

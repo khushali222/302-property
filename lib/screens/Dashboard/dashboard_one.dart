@@ -5,13 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/pie_chart.dart';
-import 'package:three_zero_two_property/screens/properties.dart';
+import 'package:three_zero_two_property/widgets/pie_chart.dart';
+import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
-import '../widgets/drawer_tiles.dart';
-import 'add_new_property.dart';
-import 'barchart.dart';
+import '../../widgets/drawer_tiles.dart';
+import '../Rental/Properties/add_new_property.dart';
+import '../../widgets/barchart.dart';
 
 
 class DashboardData {

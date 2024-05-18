@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
-import '../widgets/drawer_tiles.dart';
-import 'add_staffmember.dart';
+import '../../widgets/drawer_tiles.dart';
+import 'Add_staffmember.dart';
 
 class Staffmember_table extends StatefulWidget {
   const Staffmember_table({super.key});

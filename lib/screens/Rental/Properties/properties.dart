@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
-import '../widgets/drawer_tiles.dart';
+import '../../../widgets/drawer_tiles.dart';
 class Properties extends StatefulWidget {
   const Properties({Key? key}) : super(key: key);
 

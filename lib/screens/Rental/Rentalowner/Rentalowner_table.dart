@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import '../../widgets/drawer_tiles.dart';
-class Vendor_table extends StatefulWidget {
-  const Vendor_table({super.key});
+import '../../../widgets/drawer_tiles.dart';
+
+class Rentalowner_table extends StatefulWidget {
+  const Rentalowner_table({super.key});
 
   @override
-  State<Vendor_table> createState() => _Vendor_tableState();
+  State<Rentalowner_table> createState() => _Rentalowner_tableState();
 }
 
-class _Vendor_tableState extends State<Vendor_table> {
+class _Rentalowner_tableState extends State<Rentalowner_table> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,20 +50,20 @@ class _Vendor_tableState extends State<Vendor_table> {
                   "Add Staff Member",
                   false),
               buildDropdownListTile(context, Icon(Icons.key), "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Vendor"),
+                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "RentalOwner"),
               buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
-                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Vendor"),
+                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "RentalOwner"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"],selectedSubtopic: "Vendor"),
+                  ["Vendor", "Work Order"],selectedSubtopic: "RentalOwner"),
             ],
           ),
         ),
       ),
-      body: Center(child: Container(child: Text("Vendor page"),)),
+      body: Center(child: Container(child: Text("Rental owner page"),)),
     );
   }
 }

@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:three_zero_two_property/screens/plan_screen.dart';
 //
-// import '../screens/add_staffmember.dart';
-// import '../screens/property_table.dart';
+// import '../screens/Add_staffmember.dart';
+// import '../screens/Property_type_table.dart';
 //
 // class widget_302 {
 //   static App_Bar(
@@ -101,12 +101,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Profile_screen.dart';
-import 'package:three_zero_two_property/screens/login_screen.dart';
+import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
+import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Profile_screen.dart';
-import 'package:three_zero_two_property/screens/login_screen.dart';
-import 'package:three_zero_two_property/screens/plan_screen.dart';
+import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
+import 'package:three_zero_two_property/screens/Login/login_screen.dart';
+import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
 class widget_302 {

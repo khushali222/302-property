@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/changepassword.dart';
-import 'package:three_zero_two_property/screens/signup_main.dart';
-import 'package:three_zero_two_property/screens/signup_screen.dart';
+import 'package:three_zero_two_property/screens/Password/changepassword.dart';
+
+import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
 
-import 'dashboard_one.dart';
-import 'forgotpassword.dart';
-import 'otp_vrify.dart';
+import '../Dashboard/dashboard_one.dart';
+import '../Password/forgotpassword.dart';
+import '../Password/otp_vrify.dart';
 
 
 

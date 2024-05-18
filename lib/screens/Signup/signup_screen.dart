@@ -4,7 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:three_zero_two_property/screens/signup2_screen.dart';
+import 'package:three_zero_two_property/screens/Signup/signup2_screen.dart';
 import 'package:http/http.dart'as http;
 
 class Signup extends StatefulWidget {

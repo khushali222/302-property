@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import '../../widgets/drawer_tiles.dart';
-class Tenants_table extends StatefulWidget {
-  const Tenants_table({super.key});
+import '../../../widgets/drawer_tiles.dart';
+
+class Workorder_table extends StatefulWidget {
+  const Workorder_table({super.key});
 
   @override
-  State<Tenants_table> createState() => _Tenants_tableState();
+  State<Workorder_table> createState() => _Workorder_tableState();
 }
 
-class _Tenants_tableState extends State<Tenants_table> {
-  @override
+class _Workorder_tableState extends State<Workorder_table> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
@@ -49,20 +49,20 @@ class _Tenants_tableState extends State<Tenants_table> {
                   "Add Staff Member",
                   false),
               buildDropdownListTile(context, Icon(Icons.key), "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Tenants"),
+                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Work Order"),
               buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
-                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Tenants"),
+                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Work Order"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"],selectedSubtopic: "Tenants"),
+                  ["Vendor", "Work Order"],selectedSubtopic: "Work Order"),
             ],
           ),
         ),
       ),
-      body: Center(child: Container(child: Text("Tenants page"),)),
+      body: Center(child: Container(child: Text("Work Order page"),)),
     );
   }
 }

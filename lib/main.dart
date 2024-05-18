@@ -1,7 +1,7 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 
-import 'package:three_zero_two_property/screens/splash_screen.dart';
+import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
 void main() {
   runApp(

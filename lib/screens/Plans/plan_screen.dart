@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:three_zero_two_property/screens/planform.dart';
-import '../widgets/appbar.dart';
+import 'package:three_zero_two_property/screens/Plans/planform.dart';
+import '../../widgets/appbar.dart';
 
 void main() {
   runApp(MaterialApp(home: Plan_screen()));

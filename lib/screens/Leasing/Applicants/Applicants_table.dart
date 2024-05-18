@@ -1,16 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import '../../widgets/drawer_tiles.dart';
-
-class Workorder_table extends StatefulWidget {
-  const Workorder_table({super.key});
+import '../../../widgets/drawer_tiles.dart';
+class Applicants_table extends StatefulWidget {
+  const Applicants_table({super.key});
 
   @override
-  State<Workorder_table> createState() => _Workorder_tableState();
+  State<Applicants_table> createState() => _Applicants_tableState();
 }
 
-class _Workorder_tableState extends State<Workorder_table> {
+class _Applicants_tableState extends State<Applicants_table> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
@@ -49,20 +48,20 @@ class _Workorder_tableState extends State<Workorder_table> {
                   "Add Staff Member",
                   false),
               buildDropdownListTile(context, Icon(Icons.key), "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Work Order"),
+                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Applicants"),
               buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
-                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Work Order"),
+                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Applicants"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"],selectedSubtopic: "Work Order"),
+                  ["Vendor", "Work Order"],selectedSubtopic: "Applicants"),
             ],
           ),
         ),
       ),
-      body: Center(child: Container(child: Text("Work Order page"),)),
+      body: Center(child: Container(child: Text("Rental owner page"),)),
     );
   }
 }

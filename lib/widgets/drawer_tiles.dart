@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../screens/Leasing/Applicants_table.dart';
-import '../screens/Leasing/RentalRoll_table.dart';
-import '../screens/Maintenance/Vendor_table.dart';
-import '../screens/Maintenance/Workorder_table.dart';
-import '../screens/Rental/Tenants_table.dart';
-import '../screens/add_new_property.dart';
-import '../screens/add_staffmember.dart';
-import '../screens/dashboard_one.dart';
-import '../screens/properties.dart';
-import '../screens/property_table.dart';
-import '../screens/staffmember_table.dart';
-import '../screens/Rental/Rentalowner_table.dart';
+import '../screens/Leasing/Applicants/Applicants_table.dart';
+import '../screens/Leasing/RentalRoll/RentalRoll_table.dart';
+import '../screens/Maintenance/Vendor/Vendor_table.dart';
+import '../screens/Maintenance/Workorder/Workorder_table.dart';
+import '../screens/Rental/Tenants/Tenants_table.dart';
+import '../screens/Rental/Properties/add_new_property.dart';
+import '../screens/Staff_Member/Add_staffmember.dart';
+import '../screens/Dashboard/dashboard_one.dart';
+import '../screens/Rental/Properties/properties.dart';
+import '../screens/Property_Type/Property_type_table.dart';
+import '../screens/Staff_Member/Staffmember_table.dart';
+import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
 
 Widget buildListTile(BuildContext context, Widget leadingIcon, String title, bool active,) {
   return Container(

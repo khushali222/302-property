@@ -56,8 +56,8 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/dashboard_one.dart';
-import 'login_screen.dart'; // Import your login screen file
+import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
+import '../Login/login_screen.dart'; // Import your login screen file
 
 
 class SplashScreen extends StatefulWidget {

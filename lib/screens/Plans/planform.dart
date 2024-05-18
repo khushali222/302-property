@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:three_zero_two_property/screens/reviewscreen.dart';
-import 'package:three_zero_two_property/screens/signup_screen.dart';
+
+import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart'as http;
 

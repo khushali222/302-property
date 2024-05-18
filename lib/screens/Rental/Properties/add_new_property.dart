@@ -6,8 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
-import '../repository/Property_type.dart';
-import '../widgets/drawer_tiles.dart';
+import '../../../repository/Property_type.dart';
+import '../../../widgets/drawer_tiles.dart';
 
 class Add_new_property extends StatefulWidget {
   const Add_new_property({super.key});

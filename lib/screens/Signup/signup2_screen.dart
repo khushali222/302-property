@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'dashboard_one.dart';
+import '../Dashboard/dashboard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart'as http;
 
-import 'dialogbox.dart';
+import '../../widgets/dialogbox.dart';
 
 
 class Signup2 extends StatefulWidget {
