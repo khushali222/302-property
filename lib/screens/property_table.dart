@@ -366,7 +366,9 @@ class _PropertyTableState extends State<PropertyTable> {
                       controller: _scrollController,
                       thumbVisibility: true,
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 50),
+                        margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.1,
+                        ),
                         child: Theme(
                           data: Theme.of(context).copyWith(
                             cardTheme: CardTheme(

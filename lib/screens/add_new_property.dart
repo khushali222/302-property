@@ -1513,6 +1513,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     SizedBox(
                                                       height: 5,
                                                     ),
+                                                    //firstname
                                                     Row(
                                                       children: [
                                                         Expanded(
@@ -1562,9 +1563,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
+
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -1575,6 +1574,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    //lastname
                                                     Row(
                                                       children: [
                                                         Expanded(
@@ -1624,9 +1624,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
+
                                                       ],
                                                     ),
                                                     lastnameerror
@@ -1637,6 +1635,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    //company name
                                                     Row(
                                                       children: [
                                                         Text(
@@ -1685,7 +1684,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         )
                                                                             : InputBorder.none,
                                                                         border: InputBorder.none,
-                                                                        contentPadding: EdgeInsets.all(12),
+                                                                        contentPadding: EdgeInsets.all(10),
                                                                         hintText: " Enter company name here...",
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
@@ -1700,9 +1699,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -1713,6 +1709,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    //primary email
                                                     Row(
                                                       children: [
                                                         Text(
@@ -1761,8 +1758,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         )
                                                                             : InputBorder.none,
                                                                         border: InputBorder.none,
-                                                                        contentPadding: EdgeInsets.all(12),
+                                                                        contentPadding: EdgeInsets.only(top: 12,bottom: 12,left: 10),
                                                                         hintText: " Enter primary email here...",
+                                                                        prefixIcon: Container(
+                                                                            height: 20,
+                                                                            width: 20,
+                                                                            padding: EdgeInsets.all(8),
+                                                                            child: Image.asset(
+                                                                                "assets/icons/email_icon.png"),
+                                                                        ),
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
@@ -1776,9 +1780,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -1789,6 +1790,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    //Alternative Email
                                                     Row(
                                                       children: [
                                                         Text(
@@ -1852,9 +1854,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
+
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -1865,6 +1865,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    //Phone Numbers
                                                     Row(
                                                       children: [
                                                         Text(
@@ -1915,6 +1916,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         border: InputBorder.none,
                                                                         contentPadding: EdgeInsets.all(12),
                                                                         hintText: " Enter phone number here...",
+                                                                        prefixIcon: Padding(
+                                                                          padding: const EdgeInsets.only(top: 6,left: 8),
+                                                                          child: FaIcon(
+                                                                            FontAwesomeIcons.phone,
+                                                                            color: Colors.grey,
+                                                                            size: 15,
+                                                                          ),
+                                                                        ),
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
@@ -1928,9 +1937,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
+
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -1941,6 +1948,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                                                    //homenumber
                                                     Row(
                                                       children: [
                                                         Expanded(
@@ -1990,9 +1998,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
+
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -2052,9 +2058,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
+
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -2065,6 +2069,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                                                    //Address information
                                                     Row(
                                                       children: [
                                                         Text(
@@ -2079,6 +2084,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     SizedBox(
                                                       height: 5,
                                                     ),
+                                                    //Street Address
                                                     Row(
                                                       children: [
                                                         Expanded(
@@ -2114,7 +2120,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             : InputBorder.none,
                                                                         border: InputBorder.none,
                                                                         contentPadding: EdgeInsets.all(12),
-                                                                        hintText: " Enter business number here...",
+                                                                        hintText: " Enter Street Address here...",
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
@@ -2128,9 +2134,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width * .099,
-                                                        ),
+
                                                       ],
                                                     ),
                                                     firstnameerror
@@ -2141,8 +2145,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         ))
                                                         : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                                               //city and state
                                                     Row(
                                                       children: [
+
                                                         Expanded(
                                                           child: Material(
                                                             elevation:3,
@@ -2176,7 +2182,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             : InputBorder.none,
                                                                         border: InputBorder.none,
                                                                         contentPadding: EdgeInsets.all(12),
-                                                                        hintText: " Enter phone number here...",
+                                                                        hintText: " Enter city here...",
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
@@ -2226,7 +2232,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             : InputBorder.none,
                                                                         border: InputBorder.none,
                                                                         contentPadding: EdgeInsets.all(12),
-                                                                        hintText: " Enter home number here...",
+                                                                        hintText: " Enter state here...",
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
@@ -2240,10 +2246,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             ),
                                                           ),
                                                         ),
-
                                                       ],
                                                     ),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                                                    // counrty and postal code
                                                     Row(
                                                       children: [
                                                         Expanded(
@@ -2279,7 +2285,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             : InputBorder.none,
                                                                         border: InputBorder.none,
                                                                         contentPadding: EdgeInsets.all(12),
-                                                                        hintText: " Enter phone number here...",
+                                                                        hintText: " Enter country here...",
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
@@ -2329,7 +2335,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             : InputBorder.none,
                                                                         border: InputBorder.none,
                                                                         contentPadding: EdgeInsets.all(12),
-                                                                        hintText: " Enter home number here...",
+                                                                        hintText: " Enter postal code here...",
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
@@ -2347,6 +2353,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                       ],
                                                     ),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                                                    //merchant id
                                                     Row(
                                                       children: [
                                                         Text(
