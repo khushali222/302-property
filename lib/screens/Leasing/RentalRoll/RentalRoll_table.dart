@@ -15,6 +15,8 @@ class _RentalRoll_tableState extends State<RentalRoll_table> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: Drawer(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
           child: Column(
             children: [

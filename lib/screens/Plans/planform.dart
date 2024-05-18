@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart'as http;
+
+import '../../widgets/drawer_tiles.dart';
 
 void main() {
   runApp(MaterialApp(home: Planform()));
@@ -95,6 +98,35 @@ class _PlanformState extends State<Planform> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset("assets/images/logo.png"),
+              ),
+              SizedBox(height: 40),
+              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
+              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
+              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
+              buildDropdownListTile(context,
+                  Icon(Icons.key), "Rental",
+                  ["Properties", "RentalOwner", "Tenants"]
+              ),
+              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
+                  ["Rent Roll", "Applicants"]),
+              buildDropdownListTile(context,
+                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+                  "Maintenance",
+                  ["Vendor", "Work Order"]),
+            ],
+          ),
+        ),
+      ),
       body:
       SingleChildScrollView(
         child: Column(

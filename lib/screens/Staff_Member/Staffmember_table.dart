@@ -153,6 +153,8 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: Drawer(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
           child: Column(
             children: [

@@ -69,6 +69,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: Drawer(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
           child: Column(
             children: [

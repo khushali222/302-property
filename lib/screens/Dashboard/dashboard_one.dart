@@ -148,6 +148,8 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: Drawer(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
           child: Column(
             children: [

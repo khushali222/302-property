@@ -39,6 +39,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: Drawer(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
           child: Column(
             children: [
