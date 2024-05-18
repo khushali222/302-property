@@ -37,6 +37,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(

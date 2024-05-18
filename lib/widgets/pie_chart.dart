@@ -53,7 +53,8 @@ class PieCharts extends StatelessWidget {
           margin: EdgeInsets.all(10),
           child: Card(
             color: Colors.white,
-            elevation: 3,
+            surfaceTintColor: Colors.white,
+            elevation: 4,
             child: PieChart(
               dataMap: dataMap,
               chartRadius: MediaQuery.of(context).size.width / 3.2,

@@ -330,6 +330,7 @@ class _SignupState extends State<Signup> {
         // );
         SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: ListView(
           children: [
             SizedBox(

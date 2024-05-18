@@ -34,12 +34,15 @@ class _BarchartState extends State<Barchart> {
   @override
   Widget build(BuildContext context) {
     return  Container(
-          //color: Colors.deepPurple,
+     // color: Colors.white,
+         // color: Colors.deepPurple,
           height: 250,
          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Card(
-            elevation: 3,
-            color: Colors.white.withOpacity(1),
+            elevation: 4,
+           // color: Colors.white.withOpacity(1),
+            color: Colors.white,
+            surfaceTintColor: Colors.white,
             child: Column(
               children: [
                 Container(

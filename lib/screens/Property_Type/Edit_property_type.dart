@@ -43,6 +43,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(

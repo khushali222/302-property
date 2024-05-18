@@ -11,7 +11,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+backgroundColor: Colors.white,
     );
   }
 }

@@ -14,6 +14,7 @@ class _Vendor_tableState extends State<Vendor_table> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(

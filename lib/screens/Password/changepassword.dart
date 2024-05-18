@@ -68,6 +68,7 @@ class _ChangepasswordState extends State<Changepassword> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: Form(
           key: formKey,
           child: ListView(
@@ -336,31 +337,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     changePassword();
                   }
                   },
-                // onTap: () {
-                //   // Validate form fields
-                //   if (formKey.currentState!.validate()) {
-                //     // If form is valid, call changePassword function
-                //     changePassword();
-                //   } else {
-                //     // If form is not valid, show errors for empty fields
-                //     setState(() {
-                //       // Check if password field is empty
-                //       if (password.text.isEmpty) {
-                //         passworderror = true;
-                //         passwordmessage = "Please enter password";
-                //       } else {
-                //         passworderror = false;
-                //       }
-                //       // Check if confirm password field is empty
-                //       if (confirmpassword.text.isEmpty) {
-                //         confirmpassworderror = true;
-                //         confirmpasswordmessage = "Please enter confirm password";
-                //       } else {
-                //         confirmpassworderror = false;
-                //       }
-                //     });
-                //   }
-                // },
+
                 child: Center(
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.06,

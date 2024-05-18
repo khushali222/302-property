@@ -26,6 +26,7 @@ class _PropertiesState extends State<Properties> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       body: Container(
         child: Column(
           children: [

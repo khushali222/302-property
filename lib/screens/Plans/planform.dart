@@ -94,6 +94,7 @@ class _PlanformState extends State<Planform> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       body:
       SingleChildScrollView(
         child: Column(

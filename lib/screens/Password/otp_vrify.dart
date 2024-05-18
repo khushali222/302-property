@@ -104,6 +104,7 @@ class _otp_verifyState extends State<otp_verify> {
     double height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: Form(
           key: formKey,
           child: ListView(

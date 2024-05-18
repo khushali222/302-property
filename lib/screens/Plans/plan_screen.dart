@@ -20,6 +20,7 @@ class _Plan_screenState extends State<Plan_screen> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [

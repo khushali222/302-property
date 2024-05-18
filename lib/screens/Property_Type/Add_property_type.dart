@@ -32,6 +32,7 @@ class _Add_propertyState extends State<Add_property> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(

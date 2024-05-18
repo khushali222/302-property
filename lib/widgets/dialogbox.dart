@@ -39,6 +39,7 @@ class CustomBlurDialog extends StatelessWidget {
       filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
       child: AlertDialog(
         backgroundColor: Colors.white,
+        //surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0), // Set your desired border radius here
         ),
@@ -58,7 +59,6 @@ class CustomBlurDialog extends StatelessWidget {
                 child: Container(
                   width: 134,
                   height: 34,
-
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius:BorderRadius.circular(6)

@@ -10,6 +10,8 @@ class Properties_table extends StatefulWidget {
 class _Properties_tableState extends State<Properties_table> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+  backgroundColor: Colors.white,
+    );
   }
 }

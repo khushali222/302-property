@@ -146,6 +146,7 @@ class _DashboardState extends State<Dashboard> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(
@@ -182,13 +183,13 @@ class _DashboardState extends State<Dashboard> {
           ):
           ListView(
             children: [
-              Material(
-                elevation: 3,
-                child: Divider(
-                  height: 1,
-                  color: Colors.transparent,
-                ),
-              ),
+              // Material(
+              //   elevation: 3,
+              //   child: Divider(
+              //     height: 1,
+              //     color: Colors.transparent,
+              //   ),
+              // ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.012),
               //welcome
               Row(

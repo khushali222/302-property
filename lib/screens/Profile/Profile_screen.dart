@@ -30,6 +30,7 @@ class _Profile_screenState extends State<Profile_screen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: widget_302.App_Bar(context: context),
+        backgroundColor: Colors.white,
         drawer: Drawer(
           child: SingleChildScrollView(
             child: Column(
@@ -93,6 +94,7 @@ class _Profile_screenState extends State<Profile_screen> {
                         width: MediaQuery.of(context).size.width * .9,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
+                            color: Colors.grey.shade100,
                           // border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -163,6 +165,7 @@ class _Profile_screenState extends State<Profile_screen> {
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.shade100
                           ),
                           child: Padding(
                             padding: EdgeInsets.all(16.0),
@@ -175,6 +178,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                     borderRadius: BorderRadius.circular(5.0),
                                     child: Container(
                                       height: 50.0,
+
                                       padding:
                                           EdgeInsets.only(top: 8, left: 10),
                                       width: MediaQuery.of(context).size.width,

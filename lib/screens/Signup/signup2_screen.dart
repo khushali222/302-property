@@ -55,6 +55,7 @@ class _Signup2State extends State<Signup2> {
     double height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: ListView(
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),

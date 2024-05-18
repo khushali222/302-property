@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -63,11 +64,17 @@ class _PropertyTableState extends State<PropertyTable> {
 
   void _showAlert(BuildContext context,String id) {
     Alert(
+
       context: context,
       type: AlertType.warning,
+
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this property!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
       buttons: [
+
         DialogButton(
           child: Text(
             "Cancel",
@@ -123,6 +130,7 @@ class _PropertyTableState extends State<PropertyTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(
@@ -382,7 +390,10 @@ class _PropertyTableState extends State<PropertyTable> {
               future: futurePropertyTypes,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: SpinKitFadingCircle(
+                    color: Colors.black,
+                    size: 40.0,
+                  ));
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
