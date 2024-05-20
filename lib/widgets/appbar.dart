@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
@@ -9,6 +10,8 @@ import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
+
+import '../screens/test/custom_datatable.dart';
 
 class widget_302 {
   static App_Bar(
@@ -79,7 +82,12 @@ class widget_302 {
         SizedBox(
           width: 10,
         ),
-        Icon(Icons.notifications_outlined,color:Color.fromRGBO(21, 43, 81, 1) ,),
+       Icon(Icons.notifications_outlined,color:Color.fromRGBO(21, 43, 81, 1) ,),
+      //   FaIcon(
+      //     FontAwesomeIcons.bell,
+      //     size: 20,
+      //     color: Color.fromRGBO(21, 43, 81, 1),
+      //   ),
         SizedBox(
           width: 10,
         ),
@@ -98,6 +106,8 @@ class widget_302 {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child:  PopupMenuButton(
+                      color: Colors.white,
+                      surfaceTintColor: Colors.white,
                       position: PopupMenuPosition.under,
                       child:  Center(
                         child: Text(
@@ -120,6 +130,11 @@ class widget_302 {
                         PopupMenuItem(child: Row(
                           children: [
                             Icon(Icons.person),
+                           //  FaIcon(
+                           //    FontAwesomeIcons.user,
+                           //    size: 20,
+                           //    color: Colors.black,
+                           //  ),
                             SizedBox(width: 10,),
                             Text("My Profile"),
                           ],
@@ -130,7 +145,11 @@ class widget_302 {
                         ),
                         PopupMenuItem(child: Row(
                           children: [
-                            Icon(Icons.settings),
+                            FaIcon(
+                              FontAwesomeIcons.cog,
+                              size: 20,
+                              color: Colors.black,
+                            ),
                             SizedBox(width: 10,),
                             Text("Settings"),
                           ],
@@ -140,6 +159,11 @@ class widget_302 {
                         PopupMenuItem(child: Row(
                           children: [
                             Icon(Icons.directions_run_rounded),
+                           //  FaIcon(
+                           //    FontAwesomeIcons,
+                           //    size: 20,
+                           //    color: Colors.black,
+                           //  ),
                             SizedBox(width: 10,),
                             Text("Logout"),
                           ],

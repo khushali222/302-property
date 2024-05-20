@@ -104,10 +104,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   ),
                   "Add Staff Member",
                   false),
-              buildDropdownListTile(context, Icon(Icons.key), "Rental",
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.key,
+                size: 20,
+                color: Colors.black,
+              ), "Rental",
                   ["Properties", "RentalOwner", "Tenants"],
                   selectedSubtopic: "Properties"),
-              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ),
                   "Leasing", ["Rent Roll", "Applicants"],
                   selectedSubtopic: "Properties"),
               buildDropdownListTile(
@@ -1730,68 +1738,55 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     Row(
                                                       children: [
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation:3,
-                                                            borderRadius: BorderRadius.circular(5),
-                                                            child: Container(
-                                                              height: 35,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius: BorderRadius.circular(5),
-                                                                  // color: Color.fromRGBO(196, 196, 196, .3),
-                                                                  border: Border.all(color: Color(0xFF8A95A8))
-                                                              ),
-                                                              child: Stack(
-                                                                children: [
-                                                                  Positioned.fill(
-                                                                    child: TextField(
-                                                                      onChanged: (value) {
-                                                                        setState(() {
-                                                                          firstnameerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller: firstname,
-                                                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                                      decoration: InputDecoration(
-                                                                        enabledBorder: firstnameerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(10),
-                                                                          borderSide: BorderSide(
-                                                                              color: Colors
-                                                                                  .red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        border: InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12,bottom: 12,left: 10),
-                                                                        hintText: " Enter primary email here...",
-                                                                        prefixIcon: Container(
-                                                                            height: 20,
-                                                                            width: 20,
-                                                                            padding: EdgeInsets.all(8),
-                                                                            child: Image.asset(
-                                                                                "assets/icons/email_icon.png"),
-                                                                        ),
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              color: Colors.white,
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned.fill(
+                                                                  child: TextField(
+                                                                    onChanged: (value) {
+                                                                      setState(() {
+                                                                        emailerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller: email,
+                                                                    keyboardType: TextInputType.emailAddress,
+                                                                    cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                    decoration: InputDecoration(
+                                                                      border: InputBorder.none,
+                                                                      enabledBorder: emailerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(10),
+                                                                        borderSide: BorderSide(
+                                                                            color: Colors
+                                                                                .red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      contentPadding: EdgeInsets.all(1),
+                                                                      prefixIcon: Container(
+                                                                          height: 20,
+                                                                          width: 20,
+                                                                          padding: EdgeInsets.all(13),
+                                                                          child: Image.asset(
+                                                                              "assets/icons/email_icon.png")),
+                                                                      hintText: "Primaery Email",
+                                                                      hintStyle: TextStyle(
+                                                                        color: Color(0xFF8A95A8),
                                                                           fontSize: 14,
-                                                                          fontWeight: FontWeight.w400,
-                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
                                                       ],
                                                     ),
-                                                    firstnameerror
-                                                        ? Center(
-                                                        child: Text(
-                                                          firstnamemessage,
-                                                          style: TextStyle(color: Colors.red),
-                                                        ))
-                                                        : Container(),
                                                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                                                     //Alternative Email
                                                     Row(

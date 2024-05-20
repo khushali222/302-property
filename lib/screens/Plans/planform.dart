@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -114,10 +115,18 @@ class _PlanformState extends State<Planform> {
               buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
               buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
               buildDropdownListTile(context,
-                  Icon(Icons.key), "Rental",
+                  FaIcon(
+                    FontAwesomeIcons.key,
+                    size: 20,
+                    color: Colors.black,
+                  ), "Rental",
                   ["Properties", "RentalOwner", "Tenants"]
               ),
-              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
+              buildDropdownListTile(context,FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ), "Leasing",
                   ["Rent Roll", "Applicants"]),
               buildDropdownListTile(context,
                   Image.asset("assets/icons/maintence.png", height: 20, width: 20),

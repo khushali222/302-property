@@ -161,9 +161,17 @@ class _PropertyTableState extends State<PropertyTable> {
                   true),
               buildListTile(context, Icon(CupertinoIcons.person_add),
                   "Add Staff Member", false),
-              buildDropdownListTile(context, Icon(Icons.key), "Rental",
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.key,
+                size: 20,
+                color: Colors.black,
+              ), "Rental",
                   ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ),
                   "Leasing", ["Rent Roll", "Applicants"]),
               buildDropdownListTile(
                   context,

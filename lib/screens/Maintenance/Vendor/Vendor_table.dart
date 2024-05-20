@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
 class Vendor_table extends StatefulWidget {
@@ -51,9 +52,17 @@ class _Vendor_tableState extends State<Vendor_table> {
                   ),
                   "Add Staff Member",
                   false),
-              buildDropdownListTile(context, Icon(Icons.key), "Rental",
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.key,
+                size: 20,
+                color: Colors.black,
+              ), "Rental",
                   ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Vendor"),
-              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ),
                   "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Vendor"),
               buildDropdownListTile(
                   context,

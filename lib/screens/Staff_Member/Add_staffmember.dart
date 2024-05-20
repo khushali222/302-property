@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/Staffmember.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -54,8 +55,16 @@ class _Add_staffmemberState extends State<Add_staffmember> {
               buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
               buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.white,), "Add Staff Member",true),
               buildDropdownListTile(context,
-                  Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
+                  FaIcon(
+                    FontAwesomeIcons.key,
+                    size: 20,
+                    color: Colors.black,
+                  ), "Rental", ["Properties", "RentalOwner", "Tenants"]),
+              buildDropdownListTile(context,FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ), "Leasing",
                   ["Rent Roll", "Applicants"]),
               buildDropdownListTile(context,
                   Image.asset("assets/icons/maintence.png", height: 20, width: 20),

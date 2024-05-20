@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';class RentalRoll_table extends StatefulWidget {
   const RentalRoll_table({super.key});
@@ -50,9 +51,17 @@ class _RentalRoll_tableState extends State<RentalRoll_table> {
                   ),
                   "Add Staff Member",
                   false),
-              buildDropdownListTile(context, Icon(Icons.key), "Rental",
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.key,
+                size: 20,
+                color: Colors.black,
+              ), "Rental",
                   ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Rent Roll"),
-              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ),
                   "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Rent Roll"),
               buildDropdownListTile(
                   context,

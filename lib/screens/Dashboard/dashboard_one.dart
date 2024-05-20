@@ -4,6 +4,7 @@ import 'dart:core';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/pie_chart.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
@@ -159,14 +160,23 @@ class _DashboardState extends State<Dashboard> {
                 child: Image.asset("assets/images/logo.png"),
               ),
               SizedBox(height: 40),
-              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
-              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
+              buildListTile(context,
+                  Icon(CupertinoIcons.circle_grid_3x3,color: Colors.white,), "Dashboard",true),
+              buildListTile(context, Icon(CupertinoIcons.home,color: Colors.black,),"Add Property Type",false),
               buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
               buildDropdownListTile(context,
-                  Icon(Icons.key), "Rental",
+                  FaIcon(
+                    FontAwesomeIcons.key,
+                    size: 20,
+                    color: Colors.black,
+                  ), "Rental",
                   ["Properties", "RentalOwner", "Tenants"]
               ),
-              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
+              buildDropdownListTile(context,FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ), "Leasing",
                   ["Rent Roll", "Applicants"]),
               buildDropdownListTile(context,
                   Image.asset("assets/icons/maintence.png", height: 20, width: 20),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../widgets/drawer_tiles.dart';
 
@@ -51,9 +52,17 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                   ),
                   "Add Staff Member",
                   true),
-              buildDropdownListTile(context, Icon(Icons.key), "Rental",
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.key,
+                size: 20,
+                color: Colors.black,
+              ), "Rental",
                   ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
+              buildDropdownListTile(context, FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ),
                   "Leasing", ["Rent Roll", "Applicants"]),
               buildDropdownListTile(
                   context,
