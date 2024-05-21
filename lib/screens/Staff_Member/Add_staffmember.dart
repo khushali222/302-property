@@ -51,23 +51,52 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                 child: Image.asset("assets/images/logo.png"),
               ),
               SizedBox(height: 40),
-              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
-              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
-              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.white,), "Add Staff Member",true),
-              buildDropdownListTile(context,
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.circle_grid_3x3,
+                    color: Colors.black,
+                  ),
+                  "Dashboard",
+                  false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.house,
+                    color: Colors.black,
+                  ),
+                  "Add Property Type",
+                  false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.person_add,
+                    color: Colors.white,
+                  ),
+                  "Add Staff Member",
+                  true),
+              buildDropdownListTile(
+                  context,
                   FaIcon(
                     FontAwesomeIcons.key,
                     size: 20,
                     color: Colors.black,
-                  ), "Rental", ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(context,FaIcon(
-                FontAwesomeIcons.thumbsUp,
-                size: 20,
-                color: Colors.black,
-              ), "Leasing",
+                  ),
+                  "Rental",
+                  ["Properties", "RentalOwner", "Tenants"]),
+              buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.thumbsUp,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Leasing",
                   ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(context,
-                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+              buildDropdownListTile(
+                  context,
+                  Image.asset("assets/icons/maintence.png",
+                      height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
             ],
@@ -99,7 +128,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                   ],
                 ),
                 child: Text(
-                  "Preminum Plans",
+                  "Add Staff Members",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -108,43 +137,39 @@ class _Add_staffmemberState extends State<Add_staffmember> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25),
-              child: Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * .61,
-                  width: MediaQuery.of(context).size.width * .99,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: Color.fromRGBO(21, 43, 81, 1),
-                      )),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: Material(
+              elevation: 6,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25, right: 25, top: 20, bottom: 30),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
                       Row(
                         children: [
                           SizedBox(
                             width: 15,
                           ),
                           Text(
-                            "Nwe Staff Member",
+                            "New Staff Member",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromRGBO(21, 43, 81, 1),
-                              fontSize: 15,
-                            ),
+                                color: Color.fromRGBO(21, 43, 81, 1),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       Row(
                         children: [
@@ -154,7 +179,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Text(
                             "Staff member name..*",
                             style: TextStyle(
-                                //color: Color(0xFF8A95A8),
+                                color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
                           ),
@@ -169,7 +194,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Material(
                             elevation: 4,
                             child: Container(
-                              height: 30,
+                              height: 50,
                               width: MediaQuery.of(context).size.width * .6,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(2),
@@ -188,22 +213,22 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       },
                                       controller: name,
                                       cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                      Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         hintText:
-                                            "Enter a staff member name here..*",
+                                        "Enter a staff member name here..*",
                                         hintStyle: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           color: Color(0xFF8A95A8),
                                         ),
                                         enabledBorder: nameerror
                                             ? OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
-                                                borderSide: BorderSide(
-                                                  color: Colors.red,
-                                                ),
-                                              )
+                                          borderRadius:
+                                          BorderRadius.circular(2),
+                                          borderSide: BorderSide(
+                                            color: Colors.red,
+                                          ),
+                                        )
                                             : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(12),
@@ -219,16 +244,16 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       ),
                       nameerror
                           ? Row(
-                              children: [
-                                SizedBox(
-                                  width: 117,
-                                ),
-                                Text(
-                                  namemessage,
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            )
+                        children: [
+                          SizedBox(
+                            width: 117,
+                          ),
+                          Text(
+                            namemessage,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -241,7 +266,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Text(
                             "Designation...*",
                             style: TextStyle(
-                                // color: Colors.grey,
+                              // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
@@ -257,7 +282,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Material(
                             elevation: 4,
                             child: Container(
-                              height: 30,
+                              height: 50,
                               width: MediaQuery.of(context).size.width * .6,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(2),
@@ -276,21 +301,21 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       },
                                       controller: designation,
                                       cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                      Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         hintText: "Enter Designation here..*",
                                         hintStyle: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           color: Color(0xFF8A95A8),
                                         ),
                                         enabledBorder: designationerror
                                             ? OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
-                                                borderSide: BorderSide(
-                                                  color: Colors.red,
-                                                ),
-                                              )
+                                          borderRadius:
+                                          BorderRadius.circular(2),
+                                          borderSide: BorderSide(
+                                            color: Colors.red,
+                                          ),
+                                        )
                                             : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(12),
@@ -306,16 +331,16 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       ),
                       designationerror
                           ? Row(
-                              children: [
-                                SizedBox(
-                                  width: 117,
-                                ),
-                                Text(
-                                  designationmessage,
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            )
+                        children: [
+                          SizedBox(
+                            width: 117,
+                          ),
+                          Text(
+                            designationmessage,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -328,7 +353,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Text(
                             "Phone Number...",
                             style: TextStyle(
-                                // color: Colors.grey,
+                              // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
@@ -344,7 +369,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Material(
                             elevation: 4,
                             child: Container(
-                              height: 30,
+                              height: 50,
                               width: MediaQuery.of(context).size.width * .6,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(2),
@@ -363,21 +388,22 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       },
                                       controller: phonenumber,
                                       cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                      Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
-                                        hintText: "Enter Phone Number here..*",
+                                        hintText:
+                                        "Enter Phone Number here..*",
                                         hintStyle: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           color: Color(0xFF8A95A8),
                                         ),
                                         enabledBorder: phonenumbererror
                                             ? OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
-                                                borderSide: BorderSide(
-                                                  color: Colors.red,
-                                                ),
-                                              )
+                                          borderRadius:
+                                          BorderRadius.circular(2),
+                                          borderSide: BorderSide(
+                                            color: Colors.red,
+                                          ),
+                                        )
                                             : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(12),
@@ -393,16 +419,16 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       ),
                       phonenumbererror
                           ? Row(
-                              children: [
-                                SizedBox(
-                                  width: 117,
-                                ),
-                                Text(
-                                  phonenumbermessage,
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            )
+                        children: [
+                          SizedBox(
+                            width: 117,
+                          ),
+                          Text(
+                            phonenumbermessage,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -415,7 +441,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Text(
                             "Email...*",
                             style: TextStyle(
-                                // color: Colors.grey,
+                              // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
@@ -431,7 +457,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Material(
                             elevation: 4,
                             child: Container(
-                              height: 30,
+                              height: 50,
                               width: MediaQuery.of(context).size.width * .6,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(2),
@@ -450,21 +476,21 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       },
                                       controller: email,
                                       cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                      Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         hintText: "Enter Email here..*",
                                         hintStyle: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           color: Color(0xFF8A95A8),
                                         ),
                                         enabledBorder: emailerror
                                             ? OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
-                                                borderSide: BorderSide(
-                                                  color: Colors.red,
-                                                ),
-                                              )
+                                          borderRadius:
+                                          BorderRadius.circular(2),
+                                          borderSide: BorderSide(
+                                            color: Colors.red,
+                                          ),
+                                        )
                                             : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(12),
@@ -480,16 +506,16 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       ),
                       emailerror
                           ? Row(
-                              children: [
-                                SizedBox(
-                                  width: 117,
-                                ),
-                                Text(
-                                  emailmessage,
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            )
+                        children: [
+                          SizedBox(
+                            width: 117,
+                          ),
+                          Text(
+                            emailmessage,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -502,7 +528,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Text(
                             "Password...*",
                             style: TextStyle(
-                                // color: Colors.grey,
+                              // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13),
@@ -518,7 +544,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Material(
                             elevation: 4,
                             child: Container(
-                              height: 30,
+                              height: 50,
                               width: MediaQuery.of(context).size.width * .6,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(2),
@@ -537,21 +563,21 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       },
                                       controller: password,
                                       cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                      Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         hintText: "Enter Password here..*",
                                         hintStyle: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           color: Color(0xFF8A95A8),
                                         ),
                                         enabledBorder: passworderror
                                             ? OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
-                                                borderSide: BorderSide(
-                                                  color: Colors.red,
-                                                ),
-                                              )
+                                          borderRadius:
+                                          BorderRadius.circular(2),
+                                          borderSide: BorderSide(
+                                            color: Colors.red,
+                                          ),
+                                        )
                                             : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(12),
@@ -567,16 +593,16 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       ),
                       passworderror
                           ? Row(
-                              children: [
-                                SizedBox(
-                                  width: 117,
-                                ),
-                                Text(
-                                  passwordmessage,
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            )
+                        children: [
+                          SizedBox(
+                            width: 117,
+                          ),
+                          Text(
+                            passwordmessage,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
                           : Container(),
                       SizedBox(
                         height: 20,
@@ -634,31 +660,31 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             });
                           }
                           if (!nameerror &&
-                              designationerror &&
-                              phonenumbererror &&
-                              emailerror &&
-                              phonenumbererror) {
+                              !designationerror &&
+                              !phonenumbererror &&
+                              !emailerror &&
+                              !phonenumbererror) {
                             setState(() {
                               loading = true;
                             });
                           }
                           SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
+                          await SharedPreferences.getInstance();
                           String? adminId = prefs.getString("adminId");
-
                           if (adminId != null) {
                             try {
                               await StaffMemberRepository().addStaffMember(
-                                  adminId: adminId,
-                                  staffmemberName: name.text,
-                                  staffmemberDesignation: designation.text,
-                                  staffmemberPhoneNumber: phonenumber.text,
-                                  staffmemberEmail: email.text,
-                                  staffmemberPassword: password.text,
+                                adminId: adminId,
+                                staffmemberName: name.text,
+                                staffmemberDesignation: designation.text,
+                                staffmemberPhoneNumber: phonenumber.text,
+                                staffmemberEmail: email.text,
+                                staffmemberPassword: password.text,
                               );
                               setState(() {
                                 loading = false;
                               });
+                              Navigator.of(context).pop(true);
                             } catch (e) {
                               setState(() {
                                 loading = false;
@@ -671,12 +697,13 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           children: [
                             SizedBox(
                                 width:
-                                    MediaQuery.of(context).size.width * 0.05),
+                                MediaQuery.of(context).size.width * 0.05),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: 25.0,
-                                width: MediaQuery.of(context).size.width * .3,
+                                height: 30.0,
+                                width:
+                                MediaQuery.of(context).size.width * .36,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -694,7 +721,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 10),
+                                        fontSize: 13),
                                   ),
                                 ),
                               ),

@@ -64,13 +64,16 @@ class DashboardData {
 
 }
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+
+  Dashboard({super.key});
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+  String firstname = '';
+  String lastname = '';
   bool loading = false;
   Future<void> fetchDatacount() async {
     setState(() {
@@ -133,12 +136,21 @@ class _DashboardState extends State<Dashboard> {
   late DashboardData dashboardData;
   List<int> countList = List.filled(5, 0);
   List<int> amountList = List.filled(5, 0);
+  
   @override
   void initState() {
     super.initState();
     dashboardData = DashboardData(countList: [0, 0, 0, 0, 0], amountList: [0, 0, 0, 0, 0]);
     fetchDatacount();
     fetchData();
+     _loadName();
+  }
+  Future<void> _loadName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      firstname = prefs.getString('first_name') ?? '';
+       lastname = prefs.getString('last_name') ?? '';
+    });
   }
   var appBarHeight = AppBar().preferredSize.height;
   @override
@@ -210,7 +222,7 @@ class _DashboardState extends State<Dashboard> {
                     width: width * 0.1,
                   ),
                   Text(
-                    "Hello Lou ,Welcome back",
+                    "Hello $firstname $lastname, Welcome back",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: MediaQuery.of(context).size.width * 0.04),

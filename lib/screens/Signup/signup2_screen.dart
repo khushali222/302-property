@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Dashboard/dashboard_one.dart';
 import 'package:flutter/material.dart';
@@ -803,9 +804,11 @@ class _Signup2State extends State<Signup2> {
 
 
   Future<void> loginsubmit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       loading = true;
     });
+
     final response = await http.post(
         Uri.parse('https://saas.cloudrentalmanager.com/api/admin/register'),
         body: {"email": email.text,
@@ -814,6 +817,8 @@ class _Signup2State extends State<Signup2> {
 
     if (jsonData["statusCode"] == 200) {
 
+      prefs.setString('first_name', jsonData['data']['first_name']);
+      prefs.setString('last_name', jsonData['data']['last_name']);
       setState(() {
         loading = false;
         showdialog = true;

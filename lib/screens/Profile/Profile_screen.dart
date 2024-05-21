@@ -67,7 +67,8 @@ class _Profile_screenState extends State<Profile_screen> {
             ),
           ),
         ),
-        body: FutureBuilder<profile>(
+        body:
+        FutureBuilder<profile>(
           future: ProfileRepository().fetchProfile(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -91,7 +92,8 @@ class _Profile_screenState extends State<Profile_screen> {
               _companyNameController.text = profile.companyName ?? '';
               print(snapshot.data!.email);
 
-              return SingleChildScrollView(
+              return
+                SingleChildScrollView(
                 child: Column(
                   children: [
                     SizedBox(

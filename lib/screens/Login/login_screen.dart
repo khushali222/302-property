@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -212,6 +213,55 @@ class _Login_ScreenState extends State<Login_Screen> {
                       ],
                     ),
                   ),
+                  // Material(
+                  //   elevation: 3,
+                  //   borderRadius: BorderRadius.circular(4),
+                  //   child: Container(
+                  //     height: 35,
+                  //     width: MediaQuery.of(context).size.width * .6,
+                  //     // margin: EdgeInsets.all(8),
+                  //     decoration: BoxDecoration(
+                  //       // color: Colors.pink,
+                  //       border: Border.all(color: Color(0xFF8A95A8)),
+                  //       borderRadius: BorderRadius.circular(4),
+                  //     ),
+                  //     child: Center(
+                  //       child: TextField(
+                  //         controller: password,
+                  //         style: TextStyle(color: Color(0xFF8A95A8),fontSize: 12,),
+                  //         keyboardType: TextInputType.number,
+                  //         onChanged: (value) {
+                  //           setState(() {
+                  //             passworderror = false;
+                  //           });
+                  //         },
+                  //         decoration: InputDecoration(
+                  //           contentPadding: EdgeInsets.only(left: 10,bottom: 16,),
+                  //           enabledBorder: passworderror
+                  //               ? OutlineInputBorder(
+                  //             borderRadius:
+                  //             BorderRadius.circular(2),
+                  //             borderSide: BorderSide(
+                  //               color: Colors.red,
+                  //             ),
+                  //           )
+                  //               : InputBorder.none,
+                  //           border: InputBorder.none,
+                  //           // labelText: "Amount",
+                  //           hintText: "Enter staff member name",
+                  //           hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                  //           prefixIcon: Padding(
+                  //             padding: const EdgeInsets.only(bottom: 2,right: 10,left: 10),
+                  //             child: Icon(CupertinoIcons.lock,size: 20,color: Color(0xFF8A95A8),),
+                  //           ),
+                  //           prefixIconConstraints:
+                  //           BoxConstraints(minWidth: 0, minHeight: 0),
+                  //           suffixIcon:
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.05,
                   ),

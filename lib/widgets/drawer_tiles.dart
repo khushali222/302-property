@@ -12,6 +12,7 @@ import '../screens/Rental/Properties/properties.dart';
 import '../screens/Property_Type/Property_type_table.dart';
 import '../screens/Staff_Member/Staffmember_table.dart';
 import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
+import '../screens/Staff_Member/Staffmemvertable.dart';
 
 Widget buildListTile(BuildContext context, Widget leadingIcon, String title, bool active,) {
   return Container(
@@ -28,7 +29,7 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
         }else if(title =="Add Property Type"){
           Navigator.push(context, MaterialPageRoute(builder: (context) => PropertyTable()));
         }else if(title == "Add Staff Member"){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> Staffmember_table()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> StaffTable()));
         }
         },
       leading: leadingIcon,

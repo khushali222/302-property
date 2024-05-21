@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/screens/Staff_Member/Edit_staff_member.dart';
+
+import '../model/staffmember.dart';
 
 class StaffMemberRepository {
   final String apiUrl = 'https://saas.cloudrentalmanager.com/api/staffmember/staff_member';
@@ -21,12 +25,7 @@ class StaffMemberRepository {
       "staffmember_email": staffmemberEmail,
       "staffmember_password": staffmemberPassword,
     };
-    // admin_id
-    // staffmember_name
-    // staffmember_designation
-    // staffmember_phoneNumber
-    // staffmember_email
-    // staffmember_password
+
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -41,6 +40,79 @@ class StaffMemberRepository {
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add StaffMember ');
+    }
+  }
+  Future<List<Staffmembers>> fetchStaffmembers() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/staffmember/staffmember/$id'));
+    print(response.body);
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => Staffmembers.fromJson(data)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+  Future<Map<String, dynamic>> Edit_staff_member({
+    required String? adminId,
+    required String? staffmemberName,
+    required String? staffmemberDesignation,
+    required String staffmemberPhoneNumber,
+    required String? staffmemberEmail,
+    required String? staffmemberPassword,
+    required String? Sid
+  }) async {
+    final Map<String, dynamic> data = {
+      "admin_id": adminId,
+      "staffmember_name": staffmemberName,
+      "staffmember_designation": staffmemberDesignation,
+      "staffmember_phoneNumber": staffmemberPhoneNumber,
+      "staffmember_email": staffmemberEmail,
+    //  "staffmember_password": staffmemberPassword,
+
+    };
+    print(data);
+    String apiUrl = "https://saas.cloudrentalmanager.com/api/staffmember/staff_member/$Sid";
+    print(apiUrl);
+    final http.Response response = await http.put(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+    print(response.body);
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add StaffMember ');
+    }
+  }
+  Future<Map<String, dynamic>> DeleteStaffMember({
+    required String? id
+  }) async {
+
+    print('$apiUrl/$id');
+
+    final http.Response response = await http.delete(
+      Uri.parse('$apiUrl/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add property type');
     }
   }
 }
