@@ -214,22 +214,27 @@ class _Login_ScreenState extends State<Login_Screen> {
                     ),
                   ),
                   // Material(
-                  //   elevation: 3,
-                  //   borderRadius: BorderRadius.circular(4),
+                  //  // elevation: 3,
+                  //   borderRadius: BorderRadius.circular(10),
                   //   child: Container(
-                  //     height: 35,
-                  //     width: MediaQuery.of(context).size.width * .6,
+                  //     // height: 35,
+                  //     // width: MediaQuery.of(context).size.width * .6,
+                  //     height: MediaQuery.of(context).size.height * 0.065,
+                  //     width: MediaQuery.of(context).size.width * 0.8,
                   //     // margin: EdgeInsets.all(8),
                   //     decoration: BoxDecoration(
                   //       // color: Colors.pink,
-                  //       border: Border.all(color: Color(0xFF8A95A8)),
-                  //       borderRadius: BorderRadius.circular(4),
+                  //      // border: Border.all(color: Color(0xFF8A95A8)),
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       color: Color.fromRGBO(196, 196, 196, .3),
                   //     ),
                   //     child: Center(
                   //       child: TextField(
                   //         controller: password,
                   //         style: TextStyle(color: Color(0xFF8A95A8),fontSize: 12,),
+                  //         cursorColor: Color.fromRGBO(196, 196, 196, .3),
                   //         keyboardType: TextInputType.number,
+                  //         obscureText: visiable_password,
                   //         onChanged: (value) {
                   //           setState(() {
                   //             passworderror = false;
@@ -248,15 +253,28 @@ class _Login_ScreenState extends State<Login_Screen> {
                   //               : InputBorder.none,
                   //           border: InputBorder.none,
                   //           // labelText: "Amount",
-                  //           hintText: "Enter staff member name",
+                  //           hintText: "Password",
                   //           hintStyle: TextStyle(color: Color(0xFF8A95A8)),
                   //           prefixIcon: Padding(
-                  //             padding: const EdgeInsets.only(bottom: 2,right: 10,left: 10),
-                  //             child: Icon(CupertinoIcons.lock,size: 20,color: Color(0xFF8A95A8),),
-                  //           ),
+                  //                             padding: const EdgeInsets.all(15.0),
+                  //                             child: Image.asset('assets/icons/pasword.png'),
+                  //                           ),
                   //           prefixIconConstraints:
                   //           BoxConstraints(minWidth: 0, minHeight: 0),
                   //           suffixIcon:
+                  //           InkWell(
+                  //             onTap: () {
+                  //               setState(() {
+                  //                 visiable_password = !visiable_password;
+                  //               });
+                  //             },
+                  //             child: Icon(
+                  //               visiable_password
+                  //                   ? Icons.remove_red_eye_outlined
+                  //                   : Icons.visibility_off_outlined,
+                  //               color: Colors.grey,
+                  //             ),
+                  //           ),
                   //         ),
                   //       ),
                   //     ),

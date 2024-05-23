@@ -51,6 +51,7 @@ class PropertyTypeRepository {
       throw Exception('Failed to load data');
     }
   }
+
   Future<Map<String, dynamic>> EditPropertyType({
     required String? adminId,
     required String? propertyType,

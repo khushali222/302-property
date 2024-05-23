@@ -180,7 +180,7 @@ class _StaffTableState extends State<StaffTable> {
                     },
                     child: Container(
                       height: 40,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.5,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -588,14 +588,36 @@ class StaffDataSource extends DataTableSource {
       DataCell(Text(staff.staffmemberPhoneNumber.toString()!)),
       DataCell(Row(
         children: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () => onEdit(staff),
+          InkWell(
+            onTap: () {
+              onEdit(staff);
+            },
+            child: Container(
+              //  color: Colors.redAccent,
+              padding: EdgeInsets.zero,
+              child: FaIcon(
+                FontAwesomeIcons.edit,
+                size: 20,
+              ),
+            ),
           ),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () => onDelete(staff),
+          SizedBox(
+            width: 4,
           ),
+          InkWell(
+            onTap: () {
+              onDelete(staff);
+            },
+            child: Container(
+              //    color: Colors.redAccent,
+              padding: EdgeInsets.zero,
+              child: FaIcon(
+                FontAwesomeIcons.trashCan,
+                size: 20,
+              ),
+            ),
+          ),
+
         ],
       )),
     ]);

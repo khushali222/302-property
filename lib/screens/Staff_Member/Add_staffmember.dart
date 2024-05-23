@@ -152,7 +152,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                 child: Padding(
                   padding: const EdgeInsets.only(
                       left: 25, right: 25, top: 20, bottom: 30),
-                  child: Column(
+                  child:
+                  Column(
                     children: [
                       Row(
                         children: [

@@ -42,11 +42,23 @@ class StaffMemberRepository {
       throw Exception('Failed to add StaffMember ');
     }
   }
+  // Future<List<Staffmembers>> fetchStaffmembers() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? id = prefs.getString("adminId");
+  //   final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/staffmember/staff_member/$id'));
+  //   print(response.body);
+  //   if (response.statusCode == 200) {
+  //     List jsonResponse = json.decode(response.body)['data'];
+  //     return jsonResponse.map((data) => Staffmembers.fromJson(data)).toList();
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }
+
   Future<List<Staffmembers>> fetchStaffmembers() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/staffmember/staffmember/$id'));
-    print(response.body);
+    final response = await http.get(Uri.parse('$apiUrl/$id'));
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Staffmembers.fromJson(data)).toList();

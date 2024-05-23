@@ -119,7 +119,8 @@ class _Add_propertyState extends State<Add_property> {
                       border: Border.all(
                         color: Color.fromRGBO(21, 43, 81, 1),
                       )),
-                  child: Column(
+                  child:
+                  Column(
                     children: [
                       SizedBox(
                         height: 20,
@@ -287,44 +288,7 @@ class _Add_propertyState extends State<Add_property> {
                           ),
                         ],
                       ),
-                      /* Row(
-                        children: [
-                          SizedBox(width: 15,),
-                          Stack(
-                            children: [
-                              Container(
-                                width: 80,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                child: Center(
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: selectedMonth,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedMonth = newValue!;
-                                        });
-                                      },
-                                      items: months.map((String months){
-                                        return DropdownMenuItem<String>(
-                                          value: months,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                            child: Text(months,style: TextStyle(fontSize: 12),),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),*/
+
                       SizedBox(
                         height: 20,
                       ),
@@ -414,7 +378,7 @@ class _Add_propertyState extends State<Add_property> {
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height: 30.0,
-                                width: MediaQuery.of(context).size.width * .3,
+                                width: MediaQuery.of(context).size.width * .4,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),

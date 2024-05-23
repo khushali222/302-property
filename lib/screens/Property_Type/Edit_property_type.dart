@@ -145,7 +145,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             width: 15,
                           ),
                           Text(
-                            "New Property Type",
+                            "Edit Property Type",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(21, 43, 81, 1),
@@ -431,7 +431,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height: 30.0,
-                                width: MediaQuery.of(context).size.width * .3,
+                                width: MediaQuery.of(context).size.width * .4,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),

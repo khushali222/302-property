@@ -721,7 +721,7 @@ class _DashboardState extends State<Dashboard> {
                                             // fontSize: 9,
                                             fontSize:
                                             MediaQuery.of(context).size.width *
-                                                0.024,
+                                                0.022,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],

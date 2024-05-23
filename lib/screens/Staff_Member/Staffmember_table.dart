@@ -195,7 +195,7 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
                   },
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.034,
-                    width: MediaQuery.of(context).size.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.5,
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(21, 43, 81, 1),
                       borderRadius: BorderRadius.circular(5),
