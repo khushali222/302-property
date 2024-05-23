@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
+import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
 import '../screens/test/custom_datatable.dart';
@@ -143,7 +144,8 @@ class widget_302 {
                             Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile_screen()));
                           },
                         ),
-                        PopupMenuItem(child: Row(
+                        PopupMenuItem(child:
+                        Row(
                           children: [
                             FaIcon(
                               FontAwesomeIcons.cog,
@@ -154,6 +156,9 @@ class widget_302 {
                             Text("Settings"),
                           ],
                         ),
+                          onTap: (){
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>TabBarExample()));
+                          },
                         ),
 
                         PopupMenuItem(child: Row(
