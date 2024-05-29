@@ -39,11 +39,11 @@ class PropertyTypeRepository {
       throw Exception('Failed to add property type');
     }
   }
+
   Future<List<propertytype>> fetchPropertyTypes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/propertytype/property_type/$id'));
-
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => propertytype.fromJson(data)).toList();

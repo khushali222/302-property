@@ -167,14 +167,15 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: 2,
                           ),
                           Text(
                             "Edit Staff Member",
                             style: TextStyle(
                                 color: Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18),
+                                fontSize:
+    MediaQuery.of(context).size.width * .05),
                           ),
                         ],
                       ),
@@ -184,14 +185,15 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: 2,
                           ),
                           Text(
-                            "Staff member name..*",
+                            "Staff Member Name",
                             style: TextStyle(
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13),
+                                fontSize:
+    MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -200,68 +202,73 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 15),
-                          Material(
-                            elevation: 4,
-                            child: Container(
-                              height: 50,
-                              width: MediaQuery.of(context).size.width * .6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                border: Border.all(
-                                  color: Color(0xFF8A95A8),
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
                                 ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          nameerror = false;
-                                        });
-                                      },
-                                      controller: name,
-                                      cursorColor:
-                                      Color.fromRGBO(21, 43, 81, 1),
-                                      decoration: InputDecoration(
-                                        hintText:
-                                        "Enter a staff member name here..*",
-                                        hintStyle: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        enabledBorder: nameerror
-                                            ? OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(2),
-                                          borderSide: BorderSide(
-                                            color: Colors.red,
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            nameerror = false;
+                                          });
+                                        },
+                                        controller: name,
+                                        cursorColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                        decoration: InputDecoration(
+                                          hintText:
+                                          "Enter a staff member name",
+                                          hintStyle: TextStyle(
+                                            fontSize:MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                          .037,
+                                            color: Color(0xFF8A95A8),
                                           ),
-                                        )
-                                            : InputBorder.none,
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(12),
+                                          enabledBorder: nameerror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 20),
+                          SizedBox(width: 2),
                         ],
                       ),
                       nameerror
                           ? Row(
                         children: [
-                          SizedBox(
-                            width: 117,
-                          ),
+                           Spacer(),
                           Text(
                             namemessage,
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
+                                .035),
                           ),
+                          SizedBox(width: 2,),
                         ],
                       )
                           : Container(),
@@ -271,15 +278,15 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: 2,
                           ),
                           Text(
-                            "Designation...*",
+                            "Designation",
                             style: TextStyle(
                               // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13),
+                                fontSize:  MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -288,67 +295,72 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 15),
-                          Material(
-                            elevation: 4,
-                            child: Container(
-                              height: 50,
-                              width: MediaQuery.of(context).size.width * .6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                border: Border.all(
-                                  color: Color(0xFF8A95A8),
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
                                 ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          designationerror = false;
-                                        });
-                                      },
-                                      controller: designation,
-                                      cursorColor:
-                                      Color.fromRGBO(21, 43, 81, 1),
-                                      decoration: InputDecoration(
-                                        hintText: "Enter Designation here..*",
-                                        hintStyle: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        enabledBorder: designationerror
-                                            ? OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(2),
-                                          borderSide: BorderSide(
-                                            color: Colors.red,
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            designationerror = false;
+                                          });
+                                        },
+                                        controller: designation,
+                                        cursorColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                        decoration: InputDecoration(
+                                          hintText: "Enter Designation",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .037,
+                                            color: Color(0xFF8A95A8),
                                           ),
-                                        )
-                                            : InputBorder.none,
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(12),
+                                          enabledBorder: designationerror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 20),
+                          SizedBox(width: 2),
                         ],
                       ),
                       designationerror
                           ? Row(
                         children: [
-                          SizedBox(
-                            width: 117,
-                          ),
+                           Spacer(),
                           Text(
                             designationmessage,
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
+                                .035),
                           ),
+                          SizedBox(width: 2,),
                         ],
                       )
                           : Container(),
@@ -358,15 +370,15 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: 2,
                           ),
                           Text(
-                            "Phone Number...",
+                            "Phone Number",
                             style: TextStyle(
                               // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13),
+                                fontSize:  MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -375,68 +387,73 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 15),
-                          Material(
-                            elevation: 4,
-                            child: Container(
-                              height: 50,
-                              width: MediaQuery.of(context).size.width * .6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                border: Border.all(
-                                  color: Color(0xFF8A95A8),
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
                                 ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          phonenumbererror = false;
-                                        });
-                                      },
-                                      controller: phonenumber,
-                                      cursorColor:
-                                      Color.fromRGBO(21, 43, 81, 1),
-                                      decoration: InputDecoration(
-                                        hintText:
-                                        "Enter Phone Number here..*",
-                                        hintStyle: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        enabledBorder: phonenumbererror
-                                            ? OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(2),
-                                          borderSide: BorderSide(
-                                            color: Colors.red,
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            phonenumbererror = false;
+                                          });
+                                        },
+                                        controller: phonenumber,
+                                        cursorColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                        decoration: InputDecoration(
+                                          hintText:
+                                          "Enter Phone Number",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .037,
+                                            color: Color(0xFF8A95A8),
                                           ),
-                                        )
-                                            : InputBorder.none,
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(12),
+                                          enabledBorder: phonenumbererror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 20),
+                          SizedBox(width: 2),
                         ],
                       ),
                       phonenumbererror
                           ? Row(
                         children: [
-                          SizedBox(
-                            width: 117,
-                          ),
+                         Spacer(),
                           Text(
                             phonenumbermessage,
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
+                                .035),
                           ),
+                          SizedBox(width: 2,),
                         ],
                       )
                           : Container(),
@@ -446,15 +463,15 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: 2,
                           ),
                           Text(
-                            "Email...*",
+                            "Email",
                             style: TextStyle(
                               // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13),
+                                fontSize:  MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -463,67 +480,72 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 15),
-                          Material(
-                            elevation: 4,
-                            child: Container(
-                              height: 50,
-                              width: MediaQuery.of(context).size.width * .6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                border: Border.all(
-                                  color: Color(0xFF8A95A8),
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
                                 ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          emailerror = false;
-                                        });
-                                      },
-                                      controller: email,
-                                      cursorColor:
-                                      Color.fromRGBO(21, 43, 81, 1),
-                                      decoration: InputDecoration(
-                                        hintText: "Enter Email here..*",
-                                        hintStyle: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        enabledBorder: emailerror
-                                            ? OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(2),
-                                          borderSide: BorderSide(
-                                            color: Colors.red,
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            emailerror = false;
+                                          });
+                                        },
+                                        controller: email,
+                                        cursorColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                        decoration: InputDecoration(
+                                          hintText: "Enter Email",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .037,
+                                            color: Color(0xFF8A95A8),
                                           ),
-                                        )
-                                            : InputBorder.none,
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(12),
+                                          enabledBorder: emailerror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 20),
+                          SizedBox(width: 2),
                         ],
                       ),
                       emailerror
                           ? Row(
                         children: [
-                          SizedBox(
-                            width: 117,
-                          ),
+                         Spacer(),
                           Text(
                             emailmessage,
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
+                                .035),
                           ),
+                          SizedBox(width: 2,),
                         ],
                       )
                           : Container(),
@@ -533,15 +555,15 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: 2,
                           ),
                           Text(
-                            "Password...*",
+                            "Password",
                             style: TextStyle(
                               // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13),
+                                fontSize:  MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -550,165 +572,170 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 15),
-                          Material(
-                            elevation: 4,
-                            child: Container(
-                              height: 50,
-                              width: MediaQuery.of(context).size.width * .6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                border: Border.all(
-                                  color: Color(0xFF8A95A8),
+                          SizedBox(width: 2),
+                          Expanded(
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * .6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  border: Border.all(
+                                    color: Color(0xFF8A95A8),
+                                  ),
                                 ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          passworderror = false;
-                                        });
-                                      },
-                                      controller: password,
-                                      cursorColor:
-                                      Color.fromRGBO(21, 43, 81, 1),
-                                      decoration: InputDecoration(
-                                        hintText: "Enter Password here..*",
-                                        hintStyle: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        enabledBorder: passworderror
-                                            ? OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(2),
-                                          borderSide: BorderSide(
-                                            color: Colors.red,
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            passworderror = false;
+                                          });
+                                        },
+                                        controller: password,
+                                        cursorColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                        decoration: InputDecoration(
+                                          hintText: "Enter Password",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .037,
+                                            color: Color(0xFF8A95A8),
                                           ),
-                                        )
-                                            : InputBorder.none,
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(12),
+                                          enabledBorder: passworderror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 20),
+                          SizedBox(width: 2),
                         ],
                       ),
                       passworderror
                           ? Row(
                         children: [
-                          SizedBox(
-                            width: 117,
-                          ),
+                        Spacer(),
                           Text(
                             passwordmessage,
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
+                                .035),
                           ),
+                          SizedBox(width: 2,),
                         ],
                       )
                           : Container(),
                       SizedBox(
                         height: 20,
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          if (name.text.isEmpty) {
-                            setState(() {
-                              nameerror = true;
-                              namemessage = "name is required";
-                            });
-                          } else {
-                            setState(() {
-                              nameerror = false;
-                            });
-                          }
-                          if (designation.text.isEmpty) {
-                            setState(() {
-                              designationerror = true;
-                              designationmessage = "designation is required";
-                            });
-                          } else {
-                            setState(() {
-                              designationerror = false;
-                            });
-                          }
-                          if (phonenumber.text.isEmpty) {
-                            setState(() {
-                              phonenumbererror = true;
-                              phonenumbermessage = "number is required";
-                            });
-                          } else {
-                            setState(() {
-                              phonenumbererror = false;
-                            });
-                          }
-                          if (email.text.isEmpty) {
-                            setState(() {
-                              emailerror = true;
-                              emailmessage = "email is required";
-                            });
-                          } else {
-                            setState(() {
-                              emailerror = false;
-                            });
-                          }
-                          if (password.text.isEmpty) {
-                            setState(() {
-                              passworderror = true;
-                              passwordmessage = "password is required";
-                            });
-                          } else {
-                            setState(() {
-                              passworderror = false;
-                            });
-                          }
-                          if (!nameerror &&
-                              !designationerror &&
-                              !phonenumbererror &&
-                              !emailerror &&
-                              !phonenumbererror) {
-                            setState(() {
-                              loading = true;
-                            });
-                          }
-                          SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                          String? adminId = prefs.getString("adminId");
-                          if (adminId != null) {
-                            try {
-                              await StaffMemberRepository().Edit_staff_member(
-                                adminId: adminId,
-                                staffmemberName: name.text,
-                                staffmemberDesignation: designation.text,
-                                staffmemberPhoneNumber: phonenumber.text,
-                                staffmemberEmail: email.text,
-                                staffmemberPassword: password.text,
-                                Sid: widget.staff!.staffmemberId
-                              );
-                              setState(() {
-                                loading = false;
-                              });
-                            } catch (e) {
-                              setState(() {
-                                loading = false;
-                              });
-                              // Handle error
-                            }
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            SizedBox(
-                                width:
-                                MediaQuery.of(context).size.width * 0.05),
-                            ClipRRect(
+                      Row(
+                        children: [
+                          SizedBox(
+                              width:
+                              MediaQuery.of(context).size.width * 0.01),
+                          GestureDetector(
+                            onTap: () async {
+                              if (name.text.isEmpty) {
+                                setState(() {
+                                  nameerror = true;
+                                  namemessage = "name is required";
+                                });
+                              } else {
+                                setState(() {
+                                  nameerror = false;
+                                });
+                              }
+                              if (designation.text.isEmpty) {
+                                setState(() {
+                                  designationerror = true;
+                                  designationmessage = "designation is required";
+                                });
+                              } else {
+                                setState(() {
+                                  designationerror = false;
+                                });
+                              }
+                              if (phonenumber.text.isEmpty) {
+                                setState(() {
+                                  phonenumbererror = true;
+                                  phonenumbermessage = "number is required";
+                                });
+                              } else {
+                                setState(() {
+                                  phonenumbererror = false;
+                                });
+                              }
+                              if (email.text.isEmpty) {
+                                setState(() {
+                                  emailerror = true;
+                                  emailmessage = "email is required";
+                                });
+                              } else {
+                                setState(() {
+                                  emailerror = false;
+                                });
+                              }
+                              if (password.text.isEmpty) {
+                                setState(() {
+                                  passworderror = true;
+                                  passwordmessage = "password is required";
+                                });
+                              } else {
+                                setState(() {
+                                  passworderror = false;
+                                });
+                              }
+                              if (!nameerror &&
+                                  !designationerror &&
+                                  !phonenumbererror &&
+                                  !emailerror &&
+                                  !phonenumbererror) {
+                                setState(() {
+                                  loading = true;
+                                });
+                              }
+                              SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                              String? adminId = prefs.getString("adminId");
+                              if (adminId != null) {
+                                try {
+                                  await StaffMemberRepository().Edit_staff_member(
+                                      adminId: adminId,
+                                      staffmemberName: name.text,
+                                      staffmemberDesignation: designation.text,
+                                      staffmemberPhoneNumber: phonenumber.text,
+                                      staffmemberEmail: email.text,
+                                      staffmemberPassword: password.text,
+                                      Sid: widget.staff!.staffmemberId
+                                  );
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                } catch (e) {
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  // Handle error
+                                }
+                              }
+                            },
+                            child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height: 40.0,
@@ -736,12 +763,12 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text("Cancel"),
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Text("Cancel"),
+                        ],
                       ),
                     ],
                   ),

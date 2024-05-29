@@ -4,7 +4,7 @@ class Staffmembers {
   String? staffmemberId;
   String? staffmemberName;
   String? staffmemberDesignation;
-  int? staffmemberPhoneNumber;
+  String? staffmemberPhoneNumber;
   String? staffmemberEmail;
   String? staffmemberPassword;
   String? createdAt;

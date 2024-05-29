@@ -937,12 +937,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(13),
-                                                    suffixIcon: Icon(
-                                                      Icons.percent,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1),
-                                                      size: 18,
-                                                    ),
+
                                                   ),
                                                 ),
                                               ),
@@ -1029,12 +1024,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(13),
-                                                    suffixIcon: Icon(
-                                                      Icons.percent,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1),
-                                                      size: 18,
-                                                    ),
+
                                                   ),
                                                 ),
                                               ),

@@ -42,24 +42,6 @@ class Setting1 {
   }
 }
 
-// Map<String, dynamic> toJson() {
-//   final Map<String, dynamic> data = new Map<String, dynamic>();
-//   data['_id'] = this.sId;
-//   data['admin_id'] = this.adminId;
-//   data['surcharge_id'] = this.roll;
-//   data['surcharge_percent'] = this.firstName;
-//   data['email'] = this.email;
-//   data['company_name'] = this.companyName;
-//   data['phone_number'] = this.phoneNumber;
-//   data['createdAt'] = this.createdAt;
-//   data['updatedAt'] = this.updatedAt;
-//   data['isAdmin_delete'] = this.isAdminDelete;
-//   data['is_addby_superdmin'] = this.isAddbySuperdmin;
-//   data['status'] = this.status;
-//   data['__v'] = this.iV;
-//   return data;
-// }
-
 class ApiResponse {
   List<Setting1> data;
   int statusCode;

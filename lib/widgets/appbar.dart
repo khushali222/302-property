@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
+import '../screens/test/add.dart';
 import '../screens/test/custom_datatable.dart';
 
 class widget_302 {
@@ -60,7 +61,7 @@ class widget_302 {
       actions: [
         InkWell(
           onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PropertyForm()));
           },
           child: Material(
             elevation: 3,

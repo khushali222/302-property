@@ -40,7 +40,7 @@ class DashboardData {
     "Tenants",
     "Applicants",
     "Vendors",
-    "Work order"
+    "Work Orders"
   ];
 
   List<Color> colorc = [
@@ -94,7 +94,6 @@ class _DashboardState extends State<Dashboard> {
           countList[4] = jsonData['workOrderCount'];
           loading = false;
         });
-
       } else {
         throw Exception('Failed to load data');
       }
