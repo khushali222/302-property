@@ -30,14 +30,63 @@ class Setting1 {
       id: json['_id'],
       adminId: json['admin_id'],
       surchargeId: json['surcharge_id'],
-      surchargePercent: json['surcharge_percent']??0.0,
+      surchargePercent: json['surcharge_percent'] ?? 0.0,
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isDelete: json['is_delete'],
       v: json['__v'],
-      surchargePercentDebit: json['surcharge_percent_debit']??0.0,
-      surchargePercentACH: json['surcharge_percent_ACH']?? 0.0,
-      surchargeFlatACH:  json['surcharge_flat_ACH'] != null  ? json['surcharge_flat_ACH'].toDouble() : 0.0,
+      surchargePercentDebit: json['surcharge_percent_debit'] ?? 0.0,
+      surchargePercentACH: json['surcharge_percent_ACH'] ?? 0.0,
+      surchargeFlatACH: json['surcharge_flat_ACH'] != null
+          ? json['surcharge_flat_ACH'].toDouble()
+          : 0.0,
+    );
+  }
+}
+
+// Map<String, dynamic> toJson() {
+//   final Map<String, dynamic> data = new Map<String, dynamic>();
+//   data['_id'] = this.sId;
+//   data['admin_id'] = this.adminId;
+//   data['surcharge_id'] = this.roll;
+//   data['surcharge_percent'] = this.firstName;
+//   data['email'] = this.email;
+//   data['company_name'] = this.companyName;
+//   data['phone_number'] = this.phoneNumber;
+//   data['createdAt'] = this.createdAt;
+//   data['updatedAt'] = this.updatedAt;
+//   data['isAdmin_delete'] = this.isAdminDelete;
+//   data['is_addby_superdmin'] = this.isAddbySuperdmin;
+//   data['status'] = this.status;
+//   data['__v'] = this.iV;
+//   return data;
+// }
+
+class Setting2 {
+  String id;
+  String adminId;
+  String latefeeId;
+
+  String duration;
+  String late_fee;
+
+  Setting2({
+    required this.id,
+    required this.adminId,
+    required this.latefeeId,
+    required this.duration,
+    required this.late_fee,
+
+  });
+
+  factory Setting2.fromJson(Map<String, dynamic> json) {
+    return Setting2(
+
+      id: json['_id'],
+      adminId: json['admin_id'],
+      latefeeId: json['latefee_id'],
+      duration: json['duration'].toString(),
+      late_fee: json['late_fee'].toString(),
     );
   }
 }

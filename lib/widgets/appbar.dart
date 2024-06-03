@@ -61,7 +61,7 @@ class widget_302 {
       actions: [
         InkWell(
           onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PropertyForm()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
           },
           child: Material(
             elevation: 3,

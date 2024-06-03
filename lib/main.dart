@@ -1,19 +1,27 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/add_property.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
 void main() {
   runApp(
-    DevicePreview(
-      enabled: true,
-      tools: [
-        ...DevicePreview.defaultTools,
-      ],
-      builder: (context) => MyApp(),
+    ChangeNotifierProvider(
+      create: (context) => OwnerDetailsProvider(),
+      child: MyApp(),
     ),
+    // DevicePreview(
+    //   enabled: true,
+    //   tools: [
+    //     ...DevicePreview.defaultTools,
+    //   ],
+    //   builder: (context) => MyApp(),
+    // ),
   );
 }
+
+
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});

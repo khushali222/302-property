@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
 import 'package:three_zero_two_property/repository/Staffmember.dart';
@@ -12,14 +17,20 @@ import 'package:three_zero_two_property/repository/rental_properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../Model/propertytype.dart';
+import '../../../model/add_property.dart';
+import '../../../model/rental_properties.dart';
+import '../../../provider/add_property.dart';
 import '../../../repository/Property_type.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/rental_widget.dart';
 import 'package:http/http.dart' as http;
 
+import '../../Staff_Member/Edit_staff_member.dart';
+
 class Add_new_property extends StatefulWidget {
   propertytype? property;
   Staffmembers? staff;
+
   Add_new_property({super.key, this.property, this.staff});
 
   @override
@@ -28,6 +39,11 @@ class Add_new_property extends StatefulWidget {
 
 class _Add_new_propertyState extends State<Add_new_property> {
   List<String> months = ['Residential', "Commercial"];
+  List<Widget> fields = [];
+  int? selectedIndex;
+  List<ProcessorGroup> _processorGroups = [];
+
+
 
   final List<String> items = [
     'Residential',
@@ -118,6 +134,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
   Future<List<propertytype>>? futureProperties;
   String? selectedProperty;
+  Future<List<RentalOwner>>? futureRentalOwner;
+
+
+
 
   Map<String, List<propertytype>> groupPropertiesByType(
       List<propertytype> properties) {
@@ -139,8 +159,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
     setState(() {
       isLoading = true;
     });
-
-    final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/rentals/rental-owners/1707921596879'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    final response = await http.get(Uri.parse(
+        'https://saas.cloudrentalmanager.com/api/rentals/rental-owners/$id'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -164,6 +186,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
       }).toList();
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -173,21 +196,21 @@ class _Add_new_propertyState extends State<Add_new_property> {
     // futureMember = StaffMemberRepository().fetchStaffmembers();
     futureProperties = PropertyTypeRepository().fetchPropertyTypes();
     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+    futureRentalOwner = Rental_PropertiesRepository().fetchRentalOwner();
     propertyGroups = [];
     // Add property group based on selected subproperty type
     addPropertyGroup();
     fetchOwners();
   }
-  String? rental_id;
-
-
 
   @override
   void dispose() {
     searchController.dispose();
     super.dispose();
   }
+
   Owner? selectedOwner;
+  Owner? rentalOwnerId;
   Owner? getSelectedOwner() {
     for (int i = 0; i < selected.length; i++) {
       if (selected[i]) {
@@ -212,8 +235,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
     ));
   }
 
+  List<List<TextEditingController>> propertyGroupControllers = [];
 
   bool iserror = false;
+  bool iserror2 = false;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
   TextEditingController designation = TextEditingController();
@@ -225,8 +250,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
   bool phonenumbererror = false;
   bool emailerror = false;
   bool passworderror = false;
-  propertytype? selectedpropertytype = propertytype();
-  propertytype? selectedIsMultiUnit;
+  propertytype? selectedpropertytypedata = propertytype();
+  propertytype? id = propertytype();
+
+  String? showdata;
+
+//  propertytype? selectedpropertytype = propertytype();
+  String? selectedpropertytype;
+  //propertytype? selectedIsMultiUnit;
+  bool selectedIsMultiUnit = false;
   String namemessage = "";
   String designationmessage = "";
   String phonenumbermessage = "";
@@ -236,155 +268,447 @@ class _Add_new_propertyState extends State<Add_new_property> {
   bool loading = false;
   List<Widget> units = [];
 
-  // final List<String> selectedpropertytype = [
-  //   'residential',
-  //   'commercial',
-  //   'residentialMulti',
-  //   'commercialMulti'
-  // ];
-  // Widget buildPropertyWidget({
-  //
-  //   required String selectedpropertytype,
-  // }) {
-  //   switch (selectedpropertytype) {
-  //     case 'residential':
-  //       return residential();
-  //     case 'commercial':
-  //       return commercial();
-  //     case 'residentialMulti':
-  //       return residentialMulti();
-  //     case 'commercialMulti':
-  //       return CommercialMulti();
-  //     default:
-  //       return Container(); // Default case if no valid propertyType is found
-  //   }
-  // }
-  //
-  // void _addUnit() {
-  //   setState(() {
-  //     print(propertytype);
-  //     if (propertytype == 'residential') {
-  //       units.add(residential());
-  //     } else if (propertytype == 'commercial') {
-  //       units.add(commercial());
-  //     } else if (propertytype == 'residentialMulti') {
-  //       units.add(residentialMulti());
-  //     } else if (propertytype == 'commercialMulti') {
-  //       units.add(CommercialMulti());
-  //     } else {
-  //       // Handle default case
-  //     }
-  //   });
-  // }
-
-  // String? selectedPropertyType;
-  List<List<Widget>> propertyGroups = [];
-
-  // void addPropertyGroup() {
-  //   List<Widget> fields = [];
-  //
-  //   if (selectedPropertyType == 'Residential') {
-  //     fields = [
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'SQft'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Bed'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Room'),
-  //       ),
-  //     ];
-  //   } else if (selectedPropertyType == 'Commercial') {
-  //     fields = [
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'SQft'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Unit'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Unit Address'),
-  //       ),
-  //
-  //     ];
-  //   }
-  //   else if (selectedPropertyType == 'Commercial') {
-  //     fields = [
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'SQft'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Unit'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Unit Address'),
-  //       ),
-  //
-  //     ];
-  //   }
-  //   else if (selectedPropertyType == 'Commercial') {
-  //     fields = [
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'SQft'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Unit'),
-  //       ),
-  //       TextFormField(
-  //         decoration: InputDecoration(labelText: 'Unit Address'),
-  //       ),
-  //
-  //     ];
-  //   }
-  //
-  //   setState(() {
-  //     propertyGroups.add(fields);
-  //   });
-  // }
-  void addPropertyGroup() {
-    List<Widget> fields = [];
-    if (selectedProperty == 'Residential') {
-      fields = [
-        TextFormField(
-          decoration: InputDecoration(labelText: 'SQft'),
-        ),
-        TextFormField(
-          decoration: InputDecoration(labelText: 'Bed'),
-        ),
-        TextFormField(
-          decoration: InputDecoration(labelText: 'Room'),
-        ),
-      ];
-    } else if (selectedProperty == 'Commercial') {
-      fields = [
-        TextFormField(
-          decoration: InputDecoration(labelText: 'SQft'),
-        ),
-        TextFormField(
-          decoration: InputDecoration(labelText: 'Unit'),
-        ),
-        TextFormField(
-          decoration: InputDecoration(labelText: 'Unit Address'),
-        ),
-      ];
-    }
-
-    setState(() {
-      propertyGroups.clear(); // Clear existing property groups
-      propertyGroups.add(fields);
-    });
-  }
 
   void removePropertyGroup(int index) {
     setState(() {
       propertyGroups.removeAt(index);
     });
   }
+  // void removerental(){
+  //   setState(() {
+  //     OwnersdetailsGroups.removeAt();
+  //   });
+  // }
+  //  void addPropertyGroup() {
+  //    print("hello");
+  //    List<Widget> fields = [];
+  //    List<Widget> photos = [];
+  //    List<TextEditingController> controllers = [];
+  //    List<File?> propertyGroupImages = [];
+  //    print(selectedpropertytype);
+  //   if(selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true){
+  //     var unitController = TextEditingController();
+  //     var unitAddressController = TextEditingController();
+  //     var sqftController = TextEditingController();
+  //
+  //     fields = [
+  //
+  //        customTextField('Unit',unitController),
+  //        customTextField('Unit Address',unitAddressController),
+  //        customTextField('SQft',sqftController),
+  //
+  //        SizedBox(height: 20,),
+  //        photo(),
+  //      ];
+  //     controllers = [unitController, unitAddressController, sqftController];
+  //
+  //    }else if(selectedpropertytype == 'Residential' && selectedIsMultiUnit == true){
+  //
+  //     var unitController = TextEditingController();
+  //     var unitAddressController = TextEditingController();
+  //     var sqftController = TextEditingController();
+  //     var bathController = TextEditingController();
+  //     var bedController = TextEditingController();
+  //
+  //     fields = [
+  //       customTextField('Unit', unitController),
+  //       customTextField('Unit Address', unitAddressController),
+  //       customTextField('SQft', sqftController),
+  //       customTextField('Bath', bathController),
+  //       customTextField('Bed', bedController),
+  //
+  //       SizedBox(height: 20,),
+  //       photo(),
+  //     ];
+  //
+  //     controllers = [unitController, unitAddressController, sqftController, bathController, bedController];
+  //
+  //
+  //   } else if (selectedpropertytype == 'Residential') {
+  //     var sqftController = TextEditingController();
+  //     var bathController = TextEditingController();
+  //     var bedController = TextEditingController();
+  //
+  //     fields = [
+  //       customTextField('SQft', sqftController),
+  //       customTextField('Bath', bathController),
+  //       customTextField('Bed', bedController),
+  //
+  //       SizedBox(height: 20,),
+  //       photo(),
+  //     ];
+  //
+  //     controllers = [sqftController, bathController, bedController];
+  //
+  //
+  //   } else if (selectedpropertytype == 'Commercial') {
+  //     var sqftController = TextEditingController();
+  //
+  //     fields = [
+  //       customTextField('SQft', sqftController),
+  //
+  //       SizedBox(height: 20,),
+  //       photo(),
+  //     ];
+  //
+  //     controllers = [sqftController];
+  //
+  //    }
+  //    setState(() {
+  //      propertyGroups.add(fields);
+  //      propertyGroupControllers.add(controllers);
+  //    });
+  //  }
+
+  Future<void> getImage(int index) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+
+    if (pickedFile != null) {
+      try {
+        String? filename = await uploadImage(File(pickedFile.path));
+        setState(() {
+          propertyGroupImagenames[index] = filename!;
+
+        //  _uploadedFilename = filename;
+        });
+      } catch (e) {
+        print('Error uploading image: $e');
+      }
+    }
+
+    setState(() {
+      if (pickedFile != null) {
+
+        print('Image selected: ${pickedFile.path}');
+        print('Before: ${propertyGroupImages.length}');
+        propertyGroupImages[index] = File(pickedFile.path);
+        print('After : ${propertyGroupImages.length}');
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  List<List<Widget>> propertyGroups = [];
+//  List<List<TextEditingController>> propertyGroupControllers = [];
+  List<File?> propertyGroupImages = [];
+  List<String?> propertyGroupImagenames = [];
+  File? _image;
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path!);
+
+
+    // API URL
+    final String uploadUrl = 'https://saas.cloudrentalmanager.com/api/images/upload';
+
+    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    if (imageFile != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('files', imageFile!.path));
+    }
+    // Create a multipart request
+//    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+
+    // Attach the file in the 'image' field
+    // var multipartFile = await http.MultipartFile.fromPath(
+    //   'files',
+    //   imageFile.path,
+    // //  contentType: MediaType('image', 'jpeg'), // Adjust based on your file type
+    // );
+    //
+    // // Add the file to the request
+    // request.files.add(multipartFile);
+
+    // Send the request
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+    // Check if the upload was successful
+    if (response.statusCode == 200) {
+      // Parse the response
+      var responseData = await http.Response.fromStream(response);
+      print(responseData.body);
+      var responseBody = json.decode(responseData.body);
+
+      // Extract the filename from the response
+      if (responseBody['status'] == 'ok') {
+        return responseBody['files'][0]['filename'];
+      } else {
+        throw Exception('Failed to upload file: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to upload file. Status code: ${response.statusCode}');
+    }
+  }
+  Widget customTextField(String label, TextEditingController Controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3.0),
+      child: TextFormField(
+        controller: Controller,
+        cursorColor: Colors.black,
+        decoration: InputDecoration(
+          hintText: label,
+          // labelText: label,
+          // labelStyle: TextStyle(color: Colors.grey[700]),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(3),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(3),
+            borderSide: BorderSide(color: Color(0xFF8A95A8)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(3),
+            borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+          ),
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        ),
+      ),
+    );
+  }
+  void _showDeleteAlert(BuildContext context, String id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this staff member!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            await Rental_PropertiesRepository().DeleteRentalOwner(id: id);
+            setState(() {
+
+              futureRentalOwner = Rental_PropertiesRepository().fetchRentalOwner();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
+  void handleDelete(RentalOwner rental) {
+    _showDeleteAlert(context, rental.rentalOwnerId!);
+    // Handle delete action
+    print('Delete ${rental.rentalOwnerId}');
+  }
+
+  Widget photo(int index) {
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Photo',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.0),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    getImage(index).then((_) {
+                      setState(
+                          () {}); // Rebuild the widget after selecting the image
+                    });
+                  },
+                  child: Text(
+                    '+ Add',
+                    style: TextStyle(color: Colors.green),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            if (propertyGroupImages[index] != null)
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 30,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            propertyGroupImages[index] =
+                                null; // Clear the selected image
+                          });
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Image.file(
+                          propertyGroupImages[index]!,
+                          height: 50,
+                          width: 50,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  void addPropertyGroup() {
+    print("hello");
+    List<Widget> fields = [];
+    List<TextEditingController> controllers = [];
+
+    print(selectedpropertytype);
+
+    if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
+      var unitController = TextEditingController();
+      var unitAddressController = TextEditingController();
+      var sqftController = TextEditingController();
+
+      fields = [
+        customTextField('Unit', unitController),
+        customTextField('Unit Address', unitAddressController),
+        customTextField('SQft', sqftController),
+
+        SizedBox(
+          height: 20,
+        ),
+        photo(propertyGroups.length), // Pass the index
+      ];
+
+      controllers = [unitController, unitAddressController, sqftController];
+    } else if (selectedpropertytype == 'Residential' &&
+        selectedIsMultiUnit == true) {
+      var unitController = TextEditingController();
+      var unitAddressController = TextEditingController();
+      var sqftController = TextEditingController();
+      var bathController = TextEditingController();
+      var bedController = TextEditingController();
+
+      fields = [
+        customTextField('Unit', unitController),
+        customTextField('Unit Address', unitAddressController),
+        customTextField('SQft', sqftController),
+        customTextField('Bath', bathController),
+        customTextField('Bed', bedController),
+
+        SizedBox(
+          height: 20,
+        ),
+        photo(propertyGroups.length), // Pass the index
+      ];
+
+      controllers = [
+        unitController,
+        unitAddressController,
+        sqftController,
+        bathController,
+        bedController
+      ];
+    } else if (selectedpropertytype == 'Residential') {
+      var sqftController = TextEditingController();
+      var bathController = TextEditingController();
+      var bedController = TextEditingController();
+
+      fields = [
+        customTextField('SQft', sqftController),
+        customTextField('Bath', bathController),
+        customTextField('Bed', bedController),
+
+        SizedBox(
+          height: 20,
+        ),
+        photo(propertyGroups.length), // Pass the index
+      ];
+
+      controllers = [sqftController, bathController, bedController];
+    } else if (selectedpropertytype == 'Commercial') {
+      var sqftController = TextEditingController();
+
+      fields = [
+        customTextField('SQft', sqftController),
+
+        SizedBox(
+          height: 20,
+        ),
+        photo(propertyGroups.length), // Pass the index
+      ];
+
+      controllers = [sqftController];
+    }
+
+    setState(() {
+      propertyGroups.add(fields);
+      propertyGroupControllers.add(controllers);
+      propertyGroupImages.add(null); // Initialize with null for the new group
+    });
+  }
+
+  void displayPropertyData() {
+    for (int i = 0; i < propertyGroupControllers.length; i++) {
+      List<TextEditingController> controllers = propertyGroupControllers[i];
+      for (int j = 0; j < controllers.length; j++) {
+        print(controllers[j].text);
+      }
+    }
+  }
+
+  void handleEdit(RentalOwner rental) async {
+    // Handle edit action
+    // print('Edit ${rental.sId}');
+    // // final result = await Navigator.push(
+    // //     context,
+    // //     MaterialPageRoute(
+    // //         builder: (context) => Edit_staff_member(
+    // //           staff: rental,
+    // //         )));
+    // if (result == true) {
+    //   setState(() {
+    //     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+    //   });
+    // }
+  }
+  RentalOwner? Ownersdetails;
+  List<OwnersDetails> OwnersdetailsGroups = [];
+  bool hasError = false;
 
   @override
   Widget build(BuildContext context) {
-
     // print(selectedIsMultiUnit);
     // print(selectedProperty);
     return Scaffold(
@@ -492,6 +816,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   ),
                 ),
                 SizedBox(height: 25),
+                //dropdown
                 Material(
                   elevation: 6,
                   borderRadius: BorderRadius.circular(10),
@@ -585,7 +910,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 .05,
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                .36,
+                                                .5,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
@@ -1106,18 +1431,28 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           newValue)
                                                       .first
                                                       .isMultiunit);
-                                                  selectedpropertytype = snapshot
-                                                      .data!
-                                                      .where((element) =>
-                                                          element
-                                                              .propertysubType ==
-                                                          newValue)
-                                                      .first;
+                                                  // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
+                                                  selectedpropertytypedata =
+                                                      snapshot.data!
+                                                          .where((element) =>
+                                                              element
+                                                                  .propertysubType ==
+                                                              newValue)
+                                                          .first;
                                                   print(selectedProperty);
                                                   selectedProperty = newValue;
                                                   propertyGroups = [];
-                                                  addPropertyGroup(); // Call the method here
+                                                  // Call the method here
+                                                  selectedpropertytype =
+                                                      selectedpropertytypedata!
+                                                          .propertyType;
+                                                  selectedIsMultiUnit =
+                                                      selectedpropertytypedata!
+                                                          .isMultiunit!;
                                                 });
+                                                propertyGroups.clear();
+                                                addPropertyGroup();
+                                                propertyTypeError = false;
                                               }
                                             },
                                             items: [
@@ -1169,11 +1504,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     SizedBox(width: 6),
                                                     Text('Add New properties',
                                                         style: TextStyle(
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .03)), // Adjusted text size
+                                                            fontSize:
+                                                                16 //MediaQuery.of(context).size.width * .03
+                                                            )), // Adjusted text size
                                                   ],
                                                 ),
                                               ),
@@ -1772,6 +2105,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   ),
                 ),
                 SizedBox(height: 25),
+                //rental
                 Material(
                   elevation: 6,
                   borderRadius: BorderRadius.circular(10),
@@ -1903,8 +2237,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   ],
                                                 ),
                                                 isChecked
-                                                    ?
-                                                    Column(
+                                                    ? Column(
                                                         children: [
                                                           SizedBox(
                                                               height: 16.0),
@@ -1941,7 +2274,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             controller:
                                                                                 searchController,
                                                                             //keyboardType: TextInputType.emailAddress,
-                                                                                onChanged: filterOwners,
+                                                                            onChanged:
+                                                                                (value) {
+                                                                              setState(() {
+                                                                                if (value != "") filteredOwners = owners.where((element) => element.firstName.toLowerCase().contains(value.toLowerCase())).toList();
+                                                                                if (value == "") {
+                                                                                  filteredOwners = owners;
+                                                                                }
+                                                                              });
+                                                                            },
                                                                             cursorColor: Color.fromRGBO(
                                                                                 21,
                                                                                 43,
@@ -1951,14 +2292,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 InputDecoration(
                                                                               border: InputBorder.none,
                                                                               contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                              // prefixIcon: Padding(
-                                                                              //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                              //   child: FaIcon(
-                                                                              //     FontAwesomeIcons.envelope,
-                                                                              //     size: 18,
-                                                                              //     color: Color(0xFF8A95A8),
-                                                                              //   ),
-                                                                              // ),
                                                                               hintText: "Search by first and last name",
                                                                               hintStyle: TextStyle(
                                                                                 color: Color(0xFF8A95A8),
@@ -1987,7 +2320,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   color: Colors
                                                                       .grey),
                                                             ),
-                                                            child: DataTable(
+                                                            child:
+                                                            DataTable(
                                                               columnSpacing: 10,
                                                               headingRowHeight:
                                                                   29,
@@ -2049,12 +2383,60 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     ),
                                                                     DataCell(
                                                                       Text(
-                                                                        filteredOwners[index].processorList
-                                                                            .map((processor) => processor.processorId)
-                                                                            .join('\n'),  // Join processor IDs with newline
-                                                                        style: TextStyle(fontSize: 10),
+                                                                        filteredOwners[index]
+                                                                            .processorList
+                                                                            .map((processor) =>
+                                                                                processor.processorId)
+                                                                            .join('\n'), // Join processor IDs with newline
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                10),
                                                                       ),
                                                                     ),
+                                                                    // DataCell(
+                                                                    //   SizedBox(
+                                                                    //     height:
+                                                                    //         10,
+                                                                    //     width:
+                                                                    //         10,
+                                                                    //     child:
+                                                                    //         Checkbox(
+                                                                    //       value:
+                                                                    //           selectedIndex == index,
+                                                                    //       onChanged:
+                                                                    //           (bool? value) {
+                                                                    //         setState(() {
+                                                                    //           if (value != null && value) {
+                                                                    //             selectedIndex = index;
+                                                                    //             selectedOwner = filteredOwners[index];
+                                                                    //             firstname.text = selectedOwner!.firstName;
+                                                                    //             lastname.text = selectedOwner!.lastName;
+                                                                    //             comname.text = selectedOwner!.companyName;
+                                                                    //             primaryemail.text = selectedOwner!.primaryEmail;
+                                                                    //             alternativeemail.text = selectedOwner!.alternateEmail;
+                                                                    //             homenum.text = selectedOwner!.homeNumber ?? '';
+                                                                    //             phonenum.text = selectedOwner!.phoneNumber;
+                                                                    //             businessnum.text = selectedOwner!.businessNumber ?? '';
+                                                                    //             street2.text = selectedOwner!.streetAddress;
+                                                                    //             city2.text = selectedOwner!.city;
+                                                                    //             state2.text = selectedOwner!.state;
+                                                                    //             county2.text = selectedOwner!.country;
+                                                                    //             code2.text = selectedOwner!.postalCode;
+                                                                    //             proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
+                                                                    //           } else {
+                                                                    //             selectedIndex = null;
+                                                                    //           }
+                                                                    //           isChecked = false;
+                                                                    //         });
+                                                                    //       },
+                                                                    //       activeColor: Color.fromRGBO(
+                                                                    //           21,
+                                                                    //           43,
+                                                                    //           81,
+                                                                    //           1),
+                                                                    //     ),
+                                                                    //   ),
+                                                                    // ),
                                                                     DataCell(
                                                                       SizedBox(
                                                                         height:
@@ -2062,16 +2444,45 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         width:
                                                                             10,
                                                                         child:
-                                                                        Checkbox(
-                                                                          value: selected[owners.indexOf(filteredOwners[index])],
-                                                                          onChanged: (bool? value) {
+                                                                            Checkbox(
+                                                                          value:
+                                                                              selectedIndex == index,
+                                                                          onChanged:
+                                                                              (bool? value) {
                                                                             setState(() {
-                                                                              selected[owners.indexOf(filteredOwners[index])] = value!;
+                                                                              if (value != null && value) {
+                                                                                selectedIndex = index;
+                                                                                selectedOwner = filteredOwners[index];
+                                                                                firstname.text = selectedOwner!.firstName;
+                                                                                lastname.text = selectedOwner!.lastName;
+                                                                                comname.text = selectedOwner!.companyName;
+                                                                                primaryemail.text = selectedOwner!.primaryEmail;
+                                                                                alternativeemail.text = selectedOwner!.alternateEmail;
+                                                                                homenum.text = selectedOwner!.homeNumber ?? '';
+                                                                                phonenum.text = selectedOwner!.phoneNumber;
+                                                                                businessnum.text = selectedOwner!.businessNumber ?? '';
+                                                                                street2.text = selectedOwner!.streetAddress;
+                                                                                city2.text = selectedOwner!.city;
+                                                                                state2.text = selectedOwner!.state;
+                                                                                county2.text = selectedOwner!.country;
+                                                                                code2.text = selectedOwner!.postalCode;
+                                                                                proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
+                                                                              } else {
+                                                                                selectedIndex = null;
+                                                                              }
+                                                                              isChecked = false;
+                                                                              _processorGroups.clear();
+                                                                              for (Processor processor in selectedOwner!.processorList) {
+                                                                                _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController(text: processor.processorId)));
+                                                                              }
                                                                             });
-                                                                            Navigator.pop(context);
                                                                           },
-                                                                          activeColor: Color.fromRGBO(21, 43, 81, 1),
-                                                                      ),
+                                                                          activeColor: Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              81,
+                                                                              1),
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ],
@@ -2087,40 +2498,61 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     .start,
                                                             children: [
                                                               GestureDetector(
-                                                                // onTap: () async {
-                                                                //   if (selectedValue == null || subtype.text.isEmpty) {
-                                                                //     setState(() {
-                                                                //       iserror = true;
-                                                                //     });
-                                                                //   } else {
-                                                                //     setState(() {
-                                                                //       isLoading = true;
-                                                                //       iserror = false;
-                                                                //     });
-                                                                //     SharedPreferences prefs =
-                                                                //     await SharedPreferences.getInstance();
-                                                                //
-                                                                //     String? id = prefs.getString("adminId");
-                                                                //     PropertyTypeRepository()
-                                                                //         .addPropertyType(
-                                                                //       adminId: id!,
-                                                                //       propertyType: selectedValue,
-                                                                //       propertySubType: subtype.text,
-                                                                //       isMultiUnit: isChecked,
-                                                                //     )
-                                                                //         .then((value) {
-                                                                //       setState(() {
-                                                                //         isLoading = false;
-                                                                //       });
-                                                                //     }).catchError((e) {
-                                                                //       setState(() {
-                                                                //         isLoading = false;
-                                                                //       });
-                                                                //     });
-                                                                //   }
-                                                                //   print(selectedValue);
-                                                                // },
-                                                               onTap:onAddButtonTapped,
+                                                                onTap: () async {
+                                                                  if (!isChecked2) {
+                                                                    print(!isChecked2);
+                                                                    var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                      rentalOwner_firstName: firstname.text,
+                                                                      rentalOwner_lastName: lastname.text,
+                                                                      rentalOwner_companyName: comname.text,
+                                                                      rentalOwner_primaryEmail: primaryemail.text,
+                                                                      rentalOwner_alternativeEmail: alternativeemail.text,
+                                                                      rentalOwner_phoneNumber: phonenum.text,
+                                                                      rentalOwner_homeNumber: homenum.text,
+                                                                      rentalOwner_businessNumber: businessnum.text,
+                                                                      // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
+                                                                    );
+                                                                    if(response == true){
+                                                                      print("check true");
+
+                                                                      Ownersdetails = RentalOwner(
+                                                                        // rentalOwnerFirstName: firstname.text,
+                                                                        rentalOwnerLastName: lastname.text,
+                                                                        rentalOwnerPhoneNumber: phonenum.text,
+                                                                        rentalOwnerFirstName: firstname.text,
+                                                                      );
+                                                                      context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
+                                                                      //  Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
+
+                                                                      Fluttertoast.showToast(
+                                                                        msg: "Rental Owner Added Successfully!",
+                                                                        toastLength: Toast.LENGTH_SHORT,
+                                                                        gravity: ToastGravity.TOP,
+                                                                        timeInSecForIosWeb: 1,
+                                                                        backgroundColor: Colors.green,
+                                                                        textColor: Colors.white,
+                                                                        fontSize: 16.0,
+                                                                      );
+                                                                      setState(() {
+                                                                        hasError = false; // Set error state if the response is not true
+                                                                      });
+                                                                      Navigator.pop(context);
+                                                                      // SetshowRentalOwnerTable();
+
+                                                                    }
+
+                                                                  } else {
+                                                                    Fluttertoast.showToast(
+                                                                      msg: "Rental Owner Successfully!",
+                                                                      toastLength: Toast.LENGTH_SHORT,
+                                                                      gravity: ToastGravity.TOP,
+                                                                      timeInSecForIosWeb: 1,
+                                                                      backgroundColor: Colors.red,
+                                                                      textColor: Colors.white,
+                                                                      fontSize: 16.0,
+                                                                    );
+                                                                  }
+                                                                },
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
@@ -3581,184 +4013,304 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       .height *
                                                                   0.01),
                                                           //merchant id
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                "Merchant Id",
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontSize:
-                                                                        14),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    20.0, // Standard width for checkbox
-                                                                height: 20.0,
-                                                                child: Checkbox(
-                                                                  value:
-                                                                      isChecked2,
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      isChecked2 =
-                                                                          value ??
-                                                                              false;
-                                                                    });
-                                                                  },
-                                                                  activeColor: isChecked2
-                                                                      ? Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1)
-                                                                      : Colors
-                                                                          .black,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    .02,
-                                                              ),
-                                                              Expanded(
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 35,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5),
-                                                                      color: Colors
-                                                                          .white,
-                                                                      border: Border.all(
-                                                                          color:
-                                                                              Color(0xFF8A95A8)),
-                                                                    ),
-                                                                    child:
-                                                                        Stack(
-                                                                      children: [
-                                                                        Positioned
-                                                                            .fill(
+                                                          // Row(
+                                                          //   children: [
+                                                          //     Text(
+                                                          //       "Merchant Id",
+                                                          //       style: TextStyle(
+                                                          //           fontWeight:
+                                                          //               FontWeight
+                                                          //                   .bold,
+                                                          //           color: Color(
+                                                          //               0xFF8A95A8),
+                                                          //           fontSize:
+                                                          //               14),
+                                                          //     ),
+                                                          //   ],
+                                                          // ),
+                                                          // SizedBox(
+                                                          //   height: 5,
+                                                          // ),
+                                                          // Row(
+                                                          //   children: [
+                                                          //     SizedBox(
+                                                          //       width:
+                                                          //           20.0, // Standard width for checkbox
+                                                          //       height: 20.0,
+                                                          //       child: Checkbox(
+                                                          //         value:
+                                                          //             isChecked2,
+                                                          //         onChanged:
+                                                          //             (value) {
+                                                          //           setState(
+                                                          //               () {
+                                                          //             isChecked2 =
+                                                          //                 value ??
+                                                          //                     false;
+                                                          //           });
+                                                          //         },
+                                                          //         activeColor: isChecked2
+                                                          //             ? Color.fromRGBO(
+                                                          //                 21,
+                                                          //                 43,
+                                                          //                 81,
+                                                          //                 1)
+                                                          //             : Colors
+                                                          //                 .black,
+                                                          //       ),
+                                                          //     ),
+                                                          //     SizedBox(
+                                                          //       width: MediaQuery.of(
+                                                          //                   context)
+                                                          //               .size
+                                                          //               .width *
+                                                          //           .02,
+                                                          //     ),
+                                                          //     Expanded(
+                                                          //       child: Material(
+                                                          //         elevation: 3,
+                                                          //         borderRadius:
+                                                          //             BorderRadius
+                                                          //                 .circular(
+                                                          //                     5),
+                                                          //         child:
+                                                          //             Container(
+                                                          //           height: 50,
+                                                          //           decoration:
+                                                          //               BoxDecoration(
+                                                          //             borderRadius:
+                                                          //                 BorderRadius.circular(
+                                                          //                     5),
+                                                          //             color: Colors
+                                                          //                 .white,
+                                                          //             border: Border.all(
+                                                          //                 color:
+                                                          //                     Color(0xFF8A95A8)),
+                                                          //           ),
+                                                          //           child:
+                                                          //               Stack(
+                                                          //             children: [
+                                                          //               Positioned
+                                                          //                   .fill(
+                                                          //                 child:
+                                                          //                     TextField(
+                                                          //                   onChanged:
+                                                          //                       (value) {
+                                                          //                     setState(() {
+                                                          //                       proiderror = false;
+                                                          //                     });
+                                                          //                   },
+                                                          //                   controller:
+                                                          //                    proid
+                                                          //                       ,
+                                                          //                   // keyboardType: TextInputType.emailAddress,
+                                                          //                   cursorColor: Color.fromRGBO(
+                                                          //                       21,
+                                                          //                       43,
+                                                          //                       81,
+                                                          //                       1),
+                                                          //                   decoration:
+                                                          //                       InputDecoration(
+                                                          //                     border: InputBorder.none,
+                                                          //                     enabledBorder: proiderror
+                                                          //                         ? OutlineInputBorder(
+                                                          //                             borderRadius: BorderRadius.circular(5),
+                                                          //                             borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                          //                           )
+                                                          //                         : InputBorder.none,
+                                                          //                     contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                          //                     // prefixIcon: Padding(
+                                                          //                     //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                          //                     //   child: FaIcon(
+                                                          //                     //     FontAwesomeIcons.envelope,
+                                                          //                     //     size: 18,
+                                                          //                     //     color: Color(0xFF8A95A8),
+                                                          //                     //   ),
+                                                          //                     // ),
+                                                          //                     hintText: "Enter proccesor",
+                                                          //                     hintStyle: TextStyle(
+                                                          //                       color: Color(0xFF8A95A8),
+                                                          //                       fontSize: 13,
+                                                          //                     ),
+                                                          //                   ),
+                                                          //                 ),
+                                                          //               ),
+                                                          //             ],
+                                                          //           ),
+                                                          //         ),
+                                                          //       ),
+                                                          //     ),
+                                                          //     SizedBox(
+                                                          //       width: MediaQuery.of(
+                                                          //                   context)
+                                                          //               .size
+                                                          //               .width *
+                                                          //           .02,
+                                                          //     ),
+                                                          //     InkWell(
+                                                          //       onTap: () {
+                                                          //         // onDelete(property);
+                                                          //       },
+                                                          //       child:
+                                                          //           Container(
+                                                          //         //    color: Colors.redAccent,
+                                                          //         padding:
+                                                          //             EdgeInsets
+                                                          //                 .zero,
+                                                          //         child: FaIcon(
+                                                          //           FontAwesomeIcons
+                                                          //               .trashCan,
+                                                          //           size: 20,
+                                                          //           color: Color
+                                                          //               .fromRGBO(
+                                                          //                   21,
+                                                          //                   43,
+                                                          //                   81,
+                                                          //                   1),
+                                                          //         ),
+                                                          //       ),
+                                                          //     ),
+                                                          //   ],
+                                                          // ),
+                                                          // SizedBox(
+                                                          //     height: MediaQuery.of(
+                                                          //                 context)
+                                                          //             .size
+                                                          //             .height *
+                                                          //         0.01),
+                                                          // Row(
+                                                          //   children: [
+                                                          //     proiderror
+                                                          //         ? Center(
+                                                          //             child:
+                                                          //                 Text(
+                                                          //             proidmessage,
+                                                          //             style: TextStyle(
+                                                          //                 color:
+                                                          //                     Colors.red),
+                                                          //           ))
+                                                          //         : Container(),
+                                                          //   ],
+                                                          if (selectedOwner !=
+                                                              null)
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                if (selectedOwner!
+                                                                    .processorList
+                                                                    .isNotEmpty) ...[
+                                                                  Row(
+                                                                    children: [
+                                                                      Text(
+                                                                        "Merchant Id",
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: Color(0xFF8A95A8),
+                                                                            fontSize: 14),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          5),
+                                                                  Column(
+                                                                    children: [
+                                                                      Column(
+                                                                          children:
+                                                                              _processorGroups.map((group) {
+                                                                        return Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 8.0),
                                                                           child:
-                                                                              TextField(
-                                                                            onChanged:
-                                                                                (value) {
-                                                                              setState(() {
-                                                                                proiderror = false;
-                                                                              });
-                                                                            },
-                                                                            controller:
-                                                                                proid,
-                                                                            // keyboardType: TextInputType.emailAddress,
-                                                                            cursorColor: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                81,
-                                                                                1),
-                                                                            decoration:
-                                                                                InputDecoration(
-                                                                              border: InputBorder.none,
-                                                                              enabledBorder: proiderror
-                                                                                  ? OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(5),
-                                                                                      borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                                    )
-                                                                                  : InputBorder.none,
-                                                                              contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                              // prefixIcon: Padding(
-                                                                              //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                              //   child: FaIcon(
-                                                                              //     FontAwesomeIcons.envelope,
-                                                                              //     size: 18,
-                                                                              //     color: Color(0xFF8A95A8),
-                                                                              //   ),
-                                                                              // ),
-                                                                              hintText: "Enter proccesor",
-                                                                              hintStyle: TextStyle(
-                                                                                color: Color(0xFF8A95A8),
-                                                                                fontSize: 13,
+                                                                              Row(
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 20.0,
+                                                                                height: 20.0,
+                                                                                child: Checkbox(
+                                                                                  value: group?.isChecked,
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      group?.isChecked = value ?? false;
+                                                                                    });
+                                                                                  },
+                                                                                  activeColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                ),
                                                                               ),
-                                                                            ),
+                                                                              SizedBox(width: MediaQuery.of(context).size.width * .02),
+                                                                              Expanded(
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                  child: Container(
+                                                                                    height: 50,
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(5),
+                                                                                      color: Colors.white,
+                                                                                      border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    child: Stack(
+                                                                                      children: [
+                                                                                        Positioned.fill(
+                                                                                          child: TextField(
+                                                                                            controller: group.controller,
+                                                                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                            decoration: InputDecoration(
+                                                                                              border: InputBorder.none,
+                                                                                              contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                              hintText: "Enter processor",
+                                                                                              hintStyle: TextStyle(
+                                                                                                color: Color(0xFF8A95A8),
+                                                                                                fontSize: 13,
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(width: MediaQuery.of(context).size.width * .02),
+                                                                              InkWell(
+                                                                                onTap: () {
+                                                                                  setState(() {
+                                                                                    _processorGroups.remove(group);
+                                                                                  });
+                                                                                },
+                                                                                child: Container(
+                                                                                  padding: EdgeInsets.zero,
+                                                                                  child: FaIcon(
+                                                                                    FontAwesomeIcons.trashCan,
+                                                                                    size: 20,
+                                                                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
                                                                           ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                                                        );
+                                                                      }).toList())
+                                                                    ],
                                                                   ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    .02,
-                                                              ),
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  // onDelete(property);
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  //    color: Colors.redAccent,
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  child: FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .trashCan,
-                                                                    size: 20,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
+                                                                  SizedBox(
+                                                                      height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .height *
+                                                                          0.01),
+                                                                  Row(
+                                                                    children: [
+                                                                      // Handle error display here if needed
+                                                                    ],
                                                                   ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  0.01),
-                                                          Row(
-                                                            children: [
-                                                              proiderror
-                                                                  ? Center(
-                                                                      child:
-                                                                          Text(
-                                                                      proidmessage,
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.red),
-                                                                    ))
-                                                                  : Container(),
-                                                            ],
-                                                          ),
+                                                                ],
+                                                              ],
+                                                            ),
+
                                                           SizedBox(
                                                               height: MediaQuery.of(
                                                                           context)
@@ -3771,303 +4323,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     .start,
                                                             children: [
                                                               GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (firstname
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      firstnameerror =
-                                                                          true;
-                                                                      firstnamemessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      firstnameerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (lastname
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      lastnameerror =
-                                                                          true;
-                                                                      lastnamemessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      lastnameerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (comname
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      comnameerror =
-                                                                          true;
-                                                                      comnamemessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      comnameerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (primaryemail
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      primaryemailerror =
-                                                                          true;
-                                                                      primaryemailmessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      primaryemailerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (alternativeemail
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      alternativeerror =
-                                                                          true;
-                                                                      alternativemessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      alternativeerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (phonenum
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      phonenumerror =
-                                                                          true;
-                                                                      phonenummessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      phonenumerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (homenum
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      homenumerror =
-                                                                          true;
-                                                                      homenummessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      homenumerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (businessnum
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      businessnumerror =
-                                                                          true;
-                                                                      businessnummessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      businessnumerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (street2
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      street2error =
-                                                                          true;
-                                                                      street2message =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      street2error =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (city2.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      city2error =
-                                                                          true;
-                                                                      city2message =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      city2error =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (state2
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      state2error =
-                                                                          true;
-                                                                      state2message =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      state2error =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (county2
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      county2error =
-                                                                          true;
-                                                                      county2message =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      county2error =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (code2.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      code2error =
-                                                                          true;
-                                                                      code2message =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      code2error =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (proid.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      proiderror =
-                                                                          true;
-                                                                      proidmessage =
-                                                                          "required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      proiderror =
-                                                                          false;
-                                                                    });
-                                                                  }
-
-                                                                  if (!firstnameerror &&
-                                                                      !lastnameerror &&
-                                                                      !comnameerror &&
-                                                                      !primaryemailerror &&
-                                                                      !alternativeerror &&
-                                                                      !phonenumerror &&
-                                                                      !homenumerror &&
-                                                                      !businessnumerror &&
-                                                                      !street2error &&
-                                                                      !city2error &&
-                                                                      !state2error &&
-                                                                      !countryerror &&
-                                                                      !code2error &&
-                                                                      !proiderror) {}
-                                                                  SharedPreferences
-                                                                      prefs =
-                                                                      await SharedPreferences
-                                                                          .getInstance();
-
-                                                                  String? id = prefs
-                                                                      .getString(
-                                                                          "adminId");
-                                                                  String? procesorlist;
-                                                                  Rental_PropertiesRepository()
-                                                                      .addRentals(
-                                                                          adminId:
-                                                                              id!,
-                                                                          rentalowner_id:
-                                                                          rental_id,
-                                                                          processor_list: procesorlist,
-                                                                          rentalOwner_firstName:
-                                                                              firstname.text,
-                                                                          rentalOwner_lastName:
-                                                                          lastname.text,
-                                                                          rentalOwner_companyName:comname.text,
-                                                                          rentalOwner_primaryEmail:
-                                                                              primaryemail.text,
-                                                                          rentalOwner_phoneNumber:
-                                                                          phonenum.text,
-                                                                          rentalOwner_businessNumber:
-                                                                          businessnum.text)
-                                                                      .then(
-                                                                          (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      isLoading =
-                                                                          false;
-                                                                    });
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(
-                                                                            true);
-                                                                  }).catchError(
-                                                                          (e) {
-                                                                    setState(
-                                                                        () {
-                                                                      isLoading =
-                                                                          false;
-                                                                    });
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    _processorGroups.add(ProcessorGroup(
+                                                                        isChecked:
+                                                                            false,
+                                                                        controller:
+                                                                            TextEditingController()));
                                                                   });
                                                                 },
                                                                 child:
@@ -4115,7 +4377,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               size: 25.0,
                                                                             )
                                                                           : Text(
-                                                                              "Add Property Type",
+                                                                              "Add another",
                                                                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
                                                                             ),
                                                                     ),
@@ -4135,40 +4397,225 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 MainAxisAlignment
                                                                     .start,
                                                             children: [
+                                                              //                       GestureDetector(
+                                                              //                         // onTap: () async {
+                                                              //                         //   if (selectedValue == null || subtype.text.isEmpty) {
+                                                              //                         //     setState(() {
+                                                              //                         //       iserror = true;
+                                                              //                         //     });
+                                                              //                         //   } else {
+                                                              //                         //     setState(() {
+                                                              //                         //       isLoading = true;
+                                                              //                         //       iserror = false;
+                                                              //                         //     });
+                                                              //                         //     SharedPreferences prefs =
+                                                              //                         //     await SharedPreferences.getInstance();
+                                                              //                         //
+                                                              //                         //     String? id = prefs.getString("adminId");
+                                                              //                         //     PropertyTypeRepository()
+                                                              //                         //         .addPropertyType(
+                                                              //                         //       adminId: id!,
+                                                              //                         //       propertyType: selectedValue,
+                                                              //                         //       propertySubType: subtype.text,
+                                                              //                         //       isMultiUnit: isChecked,
+                                                              //                         //     )
+                                                              //                         //         .then((value) {
+                                                              //                         //       setState(() {
+                                                              //                         //         isLoading = false;
+                                                              //                         //       });
+                                                              //                         //     }).catchError((e) {
+                                                              //                         //       setState(() {
+                                                              //                         //         isLoading = false;
+                                                              //                         //       });
+                                                              //                         //     });
+                                                              //                         //   }
+                                                              //                         //   print(selectedValue);
+                                                              //                         // },
+                                                              //                         onTap:()async{
+                                                              //                          if(isChecked2 == false){
+                                                              //                            Rental_PropertiesRepository().
+                                                              //                            checkIfRentalOwnerExists(
+                                                              //                              rentalowner_id: rentalOwnerId!.rentalOwnerId,
+                                                              //                              rentalOwner_firstName: firstname.text,
+                                                              //                              rentalOwner_lastName: lastname.text,
+                                                              //                              rentalOwner_companyName: comname.text,
+                                                              //                              rentalOwner_primaryEmail: primaryemail.text,
+                                                              //                              rentalOwner_alternativeEmail: alternativeemail.text,
+                                                              //                              rentalOwner_phoneNumber: phonenum.text,
+                                                              //                              rentalOwner_homeNumber: homenum.text,
+                                                              //                              rentalOwner_businessNumber: businessnum.text,
+                                                              //                            ) ;
+                                                              //                          }
+                                                              //                           else {
+                                                              //                             // setSelectedRentalOwnerData(values);
+                                                              //                             // setshowRentalOwnerTable(false);
+                                                              //                           // handleAddrentalOwner();
+                                                              //                            // handleClose();
+                                                              //                            Fluttertoast.showToast(
+                                                              //                                msg: "Rental Owner Added Successfully!",
+                                                              //                                toastLength: Toast.LENGTH_SHORT,
+                                                              //                                gravity: ToastGravity.TOP,
+                                                              //                                timeInSecForIosWeb: 1,
+                                                              //                                backgroundColor: Colors.red,
+                                                              //                                textColor: Colors.white,
+                                                              //                                fontSize: 16.0
+                                                              //                            );
+                                                              //                            Navigator.pop(context);
+                                                              //                           }
+                                                              //
+                                                              // },
+                                                              //                         child:
+                                                              //                             ClipRRect(
+                                                              //                           borderRadius:
+                                                              //                               BorderRadius
+                                                              //                                   .circular(
+                                                              //                                       5.0),
+                                                              //                           child:
+                                                              //                               Container(
+                                                              //                             height:
+                                                              //                                 30.0,
+                                                              //                             width: 50,
+                                                              //                             decoration:
+                                                              //                                 BoxDecoration(
+                                                              //                               borderRadius:
+                                                              //                                   BorderRadius.circular(
+                                                              //                                       5.0),
+                                                              //                               color: Color
+                                                              //                                   .fromRGBO(
+                                                              //                                       21,
+                                                              //                                       43,
+                                                              //                                       81,
+                                                              //                                       1),
+                                                              //                               boxShadow: [
+                                                              //                                 BoxShadow(
+                                                              //                                   color:
+                                                              //                                       Colors.grey,
+                                                              //                                   offset: Offset(
+                                                              //                                       0.0,
+                                                              //                                       1.0), //(x,y)
+                                                              //                                   blurRadius:
+                                                              //                                       6.0,
+                                                              //                                 ),
+                                                              //                               ],
+                                                              //                             ),
+                                                              //                             child:
+                                                              //                                 Center(
+                                                              //                               child: isLoading
+                                                              //                                   ? SpinKitFadingCircle(
+                                                              //                                       color: Colors.white,
+                                                              //                                       size: 25.0,
+                                                              //                                     )
+                                                              //                                   : Text(
+                                                              //                                       "Add",
+                                                              //                                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                                              //                                     ),
+                                                              //                             ),
+                                                              //                           ),
+                                                              //                         ),
+                                                              //                       ),
                                                               GestureDetector(
-                                                                // onTap: () async {
-                                                                //   if (selectedValue == null || subtype.text.isEmpty) {
-                                                                //     setState(() {
-                                                                //       iserror = true;
-                                                                //     });
-                                                                //   } else {
-                                                                //     setState(() {
-                                                                //       isLoading = true;
-                                                                //       iserror = false;
-                                                                //     });
-                                                                //     SharedPreferences prefs =
-                                                                //     await SharedPreferences.getInstance();
-                                                                //
-                                                                //     String? id = prefs.getString("adminId");
-                                                                //     PropertyTypeRepository()
-                                                                //         .addPropertyType(
-                                                                //       adminId: id!,
-                                                                //       propertyType: selectedValue,
-                                                                //       propertySubType: subtype.text,
-                                                                //       isMultiUnit: isChecked,
+                                                                // onTap:
+                                                                //     () async {
+                                                                //   if (!isChecked) {
+                                                                //     await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                //       rentalowner_id: rentalOwnerId!.rentalOwnerId,
+                                                                //       rentalOwner_firstName: firstname.text,
+                                                                //       rentalOwner_lastName: lastname.text,
+                                                                //       rentalOwner_companyName: comname.text,
+                                                                //       rentalOwner_primaryEmail: primaryemail.text,
+                                                                //       rentalOwner_alternativeEmail: alternativeemail.text,
+                                                                //       rentalOwner_phoneNumber: phonenum.text,
+                                                                //       rentalOwner_homeNumber: homenum.text,
+                                                                //       rentalOwner_businessNumber: businessnum.text,
                                                                 //     )
                                                                 //         .then((value) {
                                                                 //       setState(() {
                                                                 //         isLoading = false;
                                                                 //       });
+                                                                //       Navigator.pop(context,true);
                                                                 //     }).catchError((e) {
                                                                 //       setState(() {
                                                                 //         isLoading = false;
                                                                 //       });
                                                                 //     });
+                                                                //   } else {
+                                                                //     Fluttertoast
+                                                                //         .showToast(
+                                                                //       msg:
+                                                                //           "Rental Owner Added Successfully!",
+                                                                //       toastLength:
+                                                                //           Toast
+                                                                //               .LENGTH_SHORT,
+                                                                //       gravity:
+                                                                //           ToastGravity
+                                                                //               .TOP,
+                                                                //       timeInSecForIosWeb:
+                                                                //           1,
+                                                                //       backgroundColor:
+                                                                //           Colors
+                                                                //               .green,
+                                                                //       textColor:
+                                                                //           Colors
+                                                                //               .white,
+                                                                //       fontSize:
+                                                                //           16.0,
+                                                                //     );
                                                                 //   }
-                                                                //   print(selectedValue);
                                                                 // },
+                                                                onTap: () async {
+                                                                  if (!isChecked2) {
+                                                                    print(!isChecked2);
+                                                                  var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                      rentalOwner_firstName: firstname.text,
+                                                                      rentalOwner_lastName: lastname.text,
+                                                                      rentalOwner_companyName: comname.text,
+                                                                      rentalOwner_primaryEmail: primaryemail.text,
+                                                                      rentalOwner_alternativeEmail: alternativeemail.text,
+                                                                      rentalOwner_phoneNumber: phonenum.text,
+                                                                      rentalOwner_homeNumber: homenum.text,
+                                                                      rentalOwner_businessNumber: businessnum.text,
+                                                                     // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
+                                                                    );
+                                                                  if(response == true){
+                                                                    print("check true");
+
+                                                                    Ownersdetails = RentalOwner(
+                                                                       // rentalOwnerFirstName: firstname.text,
+                                                                        rentalOwnerLastName: lastname.text,
+                                                                        rentalOwnerPhoneNumber: phonenum.text,
+                                                                         rentalOwnerFirstName: firstname.text,
+                                                                    );
+
+                                                                   context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
+                                                                  //  Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
+
+                                                                    Fluttertoast.showToast(
+                                                                      msg: "Rental Owner Added Successfully!",
+                                                                      toastLength: Toast.LENGTH_SHORT,
+                                                                      gravity: ToastGravity.TOP,
+                                                                      timeInSecForIosWeb: 1,
+                                                                      backgroundColor: Colors.green,
+                                                                      textColor: Colors.white,
+                                                                      fontSize: 16.0,
+                                                                    );
+                                                                    setState(() {
+                                                                      hasError = false; // Set error state if the response is not true
+                                                                    });
+                                                                    Navigator.pop(context);
+                                                                    // SetshowRentalOwnerTable();
+                                                                  }
+                                                                  } else {
+                                                                    Fluttertoast.showToast(
+                                                                      msg: "Rental Owner Successfully!",
+                                                                      toastLength: Toast.LENGTH_SHORT,
+                                                                      gravity: ToastGravity.TOP,
+                                                                      timeInSecForIosWeb: 1,
+                                                                      backgroundColor: Colors.red,
+                                                                      textColor: Colors.white,
+                                                                      fontSize: 16.0,
+                                                                    );
+                                                                  }
+                                                                },
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
@@ -4197,7 +4644,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               Colors.grey,
                                                                           offset: Offset(
                                                                               0.0,
-                                                                              1.0), //(x,y)
+                                                                              1.0), // (x,y)
                                                                           blurRadius:
                                                                               6.0,
                                                                         ),
@@ -4212,7 +4659,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             )
                                                                           : Text(
                                                                               "Add",
-                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                                                              style: TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 10,
+                                                                              ),
                                                                             ),
                                                                     ),
                                                                   ),
@@ -4225,39 +4676,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           .width *
                                                                       0.03),
                                                               GestureDetector(
-                                                                // onTap: () async {
-                                                                //   if (selectedValue == null || subtype.text.isEmpty) {
-                                                                //     setState(() {
-                                                                //       iserror = true;
-                                                                //     });
-                                                                //   } else {
-                                                                //     setState(() {
-                                                                //       isLoading = true;
-                                                                //       iserror = false;
-                                                                //     });
-                                                                //     SharedPreferences prefs =
-                                                                //     await SharedPreferences.getInstance();
-                                                                //
-                                                                //     String? id = prefs.getString("adminId");
-                                                                //     PropertyTypeRepository()
-                                                                //         .addPropertyType(
-                                                                //       adminId: id!,
-                                                                //       propertyType: selectedValue,
-                                                                //       propertySubType: subtype.text,
-                                                                //       isMultiUnit: isChecked,
-                                                                //     )
-                                                                //         .then((value) {
-                                                                //       setState(() {
-                                                                //         isLoading = false;
-                                                                //       });
-                                                                //     }).catchError((e) {
-                                                                //       setState(() {
-                                                                //         isLoading = false;
-                                                                //       });
-                                                                //     });
-                                                                //   }
-                                                                //   print(selectedValue);
-                                                                // },
+                                                                onTap: () {
+                                                                  Navigator.pop(context);
+                                                                },
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius:
@@ -4331,6 +4752,2882 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ],
                               ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            if (hasError && Provider.of<OwnerDetailsProvider>(context).OwnerDetails == null )
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  'required',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            // Ownersdetails != null
+                            //     ? Column(
+                            //       children: [
+                            //         SizedBox(
+                            //           height: 10,
+                            //         ),
+                            //         Row(
+                            //           children: [
+                            //             SizedBox(width: 20,),
+                            //             Text("Owners Information",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold),),
+                            //           ],
+                            //         ),
+                            //         SizedBox(
+                            //           height: 10,
+                            //         ),
+                            //         Container(
+                            //                                       decoration:
+                            //                                       BoxDecoration(
+                            //         borderRadius:
+                            //         BorderRadius
+                            //             .circular(
+                            //             5),
+                            //         border: Border.all(
+                            //             color: Colors
+                            //                 .grey),
+                            //                                       ),
+                            //                                       child: DataTable(
+                            //             columnSpacing: 10,
+                            //             headingRowHeight:
+                            //             29,
+                            //             dataRowHeight: 30,
+                            //             // horizontalMargin: 10,
+                            //             columns: [
+                            //               DataColumn(
+                            //                   label:
+                            //                   Expanded(
+                            //                     child: Text(
+                            //                       'FirstName',
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           10,
+                            //                           fontWeight:
+                            //                           FontWeight.bold),
+                            //                     ),
+                            //                   )),
+                            //               DataColumn(
+                            //                   label:
+                            //                   Expanded(
+                            //                     child: Text(
+                            //                       'LastName',
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           11,
+                            //                           fontWeight:
+                            //                           FontWeight.bold),
+                            //                     ),
+                            //                   )),
+                            //               DataColumn(
+                            //                   label:
+                            //                   Expanded(
+                            //                     child: Text(
+                            //                       'PhoneNumber',
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           11,
+                            //                           fontWeight:
+                            //                           FontWeight.bold),
+                            //                     ),
+                            //                   )),
+                            //               DataColumn(
+                            //                   label:
+                            //                   Expanded(
+                            //                     child: Text(
+                            //                       'Action',
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           11,
+                            //                           fontWeight:
+                            //                           FontWeight.bold),
+                            //                     ),
+                            //                   )),
+                            //             ],
+                            //             rows: [
+                            //               DataRow(
+                            //                 cells: [
+                            //                   DataCell(
+                            //                     Text(
+                            //                       Ownersdetails!.rentalOwnerFirstName ?? 'N/A',
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           10),
+                            //                     ),
+                            //                   ),
+                            //                   DataCell(
+                            //                     Text(
+                            //                       Ownersdetails!.rentalOwnerLastName ?? 'N/A',
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           10),
+                            //                     ),
+                            //                   ),
+                            //                   DataCell(
+                            //                     Text(
+                            //                       Ownersdetails!.rentalOwnerPhoneNumber ?? 'N/A' ,// Join processor IDs with newline
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           10),
+                            //                     ),
+                            //                   ),
+                            //                   DataCell(Row(
+                            //                     children: [
+                            //                       InkWell(
+                            //                         onTap: () {
+                            //                           //  onEdit(rental);
+                            //                         },
+                            //                         child: Container(
+                            //                           //  color: Colors.redAccent,
+                            //                           padding: EdgeInsets.zero,
+                            //                           child: FaIcon(
+                            //                             FontAwesomeIcons.edit,
+                            //                             size: 15,
+                            //                           ),
+                            //                         ),
+                            //                       ),
+                            //                       SizedBox(
+                            //                         width: 4,
+                            //                       ),
+                            //                       InkWell(
+                            //                         onTap: () {
+                            //
+                            //                           //  handleDelete(rental);
+                            //                         },
+                            //                         child: Container(
+                            //                           //    color: Colors.redAccent,
+                            //                           padding: EdgeInsets.zero,
+                            //                           child: FaIcon(
+                            //                             FontAwesomeIcons.trashCan,
+                            //                             size: 15,
+                            //                           ),
+                            //                         ),
+                            //                       ),
+                            //
+                            //                     ],
+                            //                   )),
+                            //                 ],
+                            //               ),
+                            //             ]
+                            //           ),
+                            //
+                            //                                     ),
+                            //       ],
+                            //     ):  Text('No owner details available'),
+                            Consumer<OwnerDetailsProvider>(
+                              builder: (context, provider, child) {
+                              //  final ownersdetails = provider.OwnerDetails;
+                                return Ownersdetails != null
+                                    ? Column(
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        SizedBox(width: 20),
+                                        Text(
+                                          "Owners Information",
+                                          style: TextStyle(
+                                              fontSize: 13, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: DataTable(
+                                        columnSpacing: 10,
+                                        headingRowHeight: 29,
+                                        dataRowHeight: 30,
+                                        columns: [
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Text(
+                                                'FirstName',
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Text(
+                                                'LastName',
+                                                style: TextStyle(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Text(
+                                                'PhoneNumber',
+                                                style: TextStyle(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Text(
+                                                'Action',
+                                                style: TextStyle(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                        rows: [
+                                          DataRow(
+                                            cells: [
+                                              DataCell(
+                                                Text(
+                                                   Ownersdetails!.rentalOwnerFirstName ?? 'N/A',
+
+                                                 // Ownersdetails!.rentalOwnerFirstName ?? "",
+                                                  style: TextStyle(fontSize: 10),
+                                                ),
+                                              ),
+                                              DataCell(
+                                                Text(
+                                                  Ownersdetails!.rentalOwnerLastName ?? 'N/A',
+                                                  style: TextStyle(fontSize: 10),
+                                                ),
+                                              ),
+                                              DataCell(
+                                                Text(
+                                                  Ownersdetails!.rentalOwnerPhoneNumber ?? 'N/A',
+                                                  style: TextStyle(fontSize: 10),
+                                                ),
+                                              ),
+                                              DataCell(
+                                                Row(
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext context) {
+                                                            bool isChecked =
+                                                            false; // Moved isChecked inside the StatefulBuilder
+                                                            return StatefulBuilder(
+                                                              builder: (BuildContext context,
+                                                                  StateSetter setState) {
+                                                                return AlertDialog(
+                                                                  backgroundColor: Colors.white,
+                                                                  surfaceTintColor: Colors.white,
+                                                                  title: Text(
+                                                                    "Add Rental Owner",
+                                                                    style: TextStyle(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: Color.fromRGBO(
+                                                                            21, 43, 81, 1),
+                                                                        fontSize: 15),
+                                                                  ),
+                                                                  content: SingleChildScrollView(
+                                                                    child: Column(
+                                                                      children: [
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                          MainAxisAlignment.start,
+                                                                          children: [
+                                                                            // SizedBox(width: 5,),
+                                                                            SizedBox(
+                                                                              width:
+                                                                              24.0, // Standard width for checkbox
+                                                                              height: 24.0,
+                                                                              child: Checkbox(
+                                                                                value: isChecked,
+                                                                                onChanged: (value) {
+                                                                                  setState(() {
+                                                                                    isChecked =
+                                                                                        value ?? false;
+                                                                                  });
+                                                                                },
+                                                                                activeColor: isChecked
+                                                                                    ? Color.fromRGBO(
+                                                                                    21, 43, 81, 1)
+                                                                                    : Colors.black,
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 5,
+                                                                            ),
+                                                                            Expanded(
+                                                                              child: Text(
+                                                                                "choose an existing rental owner",
+                                                                                style: TextStyle(
+                                                                                    fontWeight:
+                                                                                    FontWeight.bold,
+                                                                                    color: Color(
+                                                                                        0xFF8A95A8),
+                                                                                    fontSize: 12),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        isChecked
+                                                                            ? Column(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                                height: 16.0),
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        // color: Colors
+                                                                                        //     .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              controller:
+                                                                                              searchController,
+                                                                                              //keyboardType: TextInputType.emailAddress,
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  if (value != "") filteredOwners = owners.where((element) => element.firstName.toLowerCase().contains(value.toLowerCase())).toList();
+                                                                                                  if (value == "") {
+                                                                                                    filteredOwners = owners;
+                                                                                                  }
+                                                                                                });
+                                                                                              },
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                hintText: "Search by first and last name",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                                height: 16.0),
+                                                                            Container(
+                                                                              decoration:
+                                                                              BoxDecoration(
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    5),
+                                                                                border: Border.all(
+                                                                                    color: Colors
+                                                                                        .grey),
+                                                                              ),
+                                                                              child:
+                                                                              DataTable(
+                                                                                columnSpacing: 10,
+                                                                                headingRowHeight:
+                                                                                29,
+                                                                                dataRowHeight: 30,
+                                                                                // horizontalMargin: 10,
+                                                                                columns: [
+                                                                                  DataColumn(
+                                                                                      label:
+                                                                                      Expanded(
+                                                                                        child: Text(
+                                                                                          'Rentalowner \nName',
+                                                                                          style: TextStyle(
+                                                                                              fontSize:
+                                                                                              10,
+                                                                                              fontWeight:
+                                                                                              FontWeight.bold),
+                                                                                        ),
+                                                                                      )),
+                                                                                  DataColumn(
+                                                                                      label:
+                                                                                      Expanded(
+                                                                                        child: Text(
+                                                                                          'Processor \nID',
+                                                                                          style: TextStyle(
+                                                                                              fontSize:
+                                                                                              11,
+                                                                                              fontWeight:
+                                                                                              FontWeight.bold),
+                                                                                        ),
+                                                                                      )),
+                                                                                  DataColumn(
+                                                                                      label:
+                                                                                      Expanded(
+                                                                                        child: Text(
+                                                                                          'Select \n',
+                                                                                          style: TextStyle(
+                                                                                              fontSize:
+                                                                                              11,
+                                                                                              fontWeight:
+                                                                                              FontWeight.bold),
+                                                                                        ),
+                                                                                      )),
+                                                                                ],
+                                                                                rows: List<
+                                                                                    DataRow>.generate(
+                                                                                  filteredOwners
+                                                                                      .length,
+                                                                                      (index) =>
+                                                                                      DataRow(
+                                                                                        cells: [
+                                                                                          DataCell(
+                                                                                            Text(
+                                                                                              '${filteredOwners[index].firstName} '
+                                                                                                  '(${filteredOwners[index].phoneNumber})',
+                                                                                              style: TextStyle(
+                                                                                                  fontSize:
+                                                                                                  10),
+                                                                                            ),
+                                                                                          ),
+                                                                                          DataCell(
+                                                                                            Text(
+                                                                                              filteredOwners[index]
+                                                                                                  .processorList
+                                                                                                  .map((processor) =>
+                                                                                              processor.processorId)
+                                                                                                  .join('\n'), // Join processor IDs with newline
+                                                                                              style: TextStyle(
+                                                                                                  fontSize:
+                                                                                                  10),
+                                                                                            ),
+                                                                                          ),
+                                                                                          // DataCell(
+                                                                                          //   SizedBox(
+                                                                                          //     height:
+                                                                                          //         10,
+                                                                                          //     width:
+                                                                                          //         10,
+                                                                                          //     child:
+                                                                                          //         Checkbox(
+                                                                                          //       value:
+                                                                                          //           selectedIndex == index,
+                                                                                          //       onChanged:
+                                                                                          //           (bool? value) {
+                                                                                          //         setState(() {
+                                                                                          //           if (value != null && value) {
+                                                                                          //             selectedIndex = index;
+                                                                                          //             selectedOwner = filteredOwners[index];
+                                                                                          //             firstname.text = selectedOwner!.firstName;
+                                                                                          //             lastname.text = selectedOwner!.lastName;
+                                                                                          //             comname.text = selectedOwner!.companyName;
+                                                                                          //             primaryemail.text = selectedOwner!.primaryEmail;
+                                                                                          //             alternativeemail.text = selectedOwner!.alternateEmail;
+                                                                                          //             homenum.text = selectedOwner!.homeNumber ?? '';
+                                                                                          //             phonenum.text = selectedOwner!.phoneNumber;
+                                                                                          //             businessnum.text = selectedOwner!.businessNumber ?? '';
+                                                                                          //             street2.text = selectedOwner!.streetAddress;
+                                                                                          //             city2.text = selectedOwner!.city;
+                                                                                          //             state2.text = selectedOwner!.state;
+                                                                                          //             county2.text = selectedOwner!.country;
+                                                                                          //             code2.text = selectedOwner!.postalCode;
+                                                                                          //             proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
+                                                                                          //           } else {
+                                                                                          //             selectedIndex = null;
+                                                                                          //           }
+                                                                                          //           isChecked = false;
+                                                                                          //         });
+                                                                                          //       },
+                                                                                          //       activeColor: Color.fromRGBO(
+                                                                                          //           21,
+                                                                                          //           43,
+                                                                                          //           81,
+                                                                                          //           1),
+                                                                                          //     ),
+                                                                                          //   ),
+                                                                                          // ),
+                                                                                          DataCell(
+                                                                                            SizedBox(
+                                                                                              height:
+                                                                                              10,
+                                                                                              width:
+                                                                                              10,
+                                                                                              child:
+                                                                                              Checkbox(
+                                                                                                value:
+                                                                                                selectedIndex == index,
+                                                                                                onChanged:
+                                                                                                    (bool? value) {
+                                                                                                  setState(() {
+                                                                                                    if (value != null && value) {
+                                                                                                      selectedIndex = index;
+                                                                                                      selectedOwner = filteredOwners[index];
+                                                                                                      firstname.text = selectedOwner!.firstName;
+                                                                                                      lastname.text = selectedOwner!.lastName;
+                                                                                                      comname.text = selectedOwner!.companyName;
+                                                                                                      primaryemail.text = selectedOwner!.primaryEmail;
+                                                                                                      alternativeemail.text = selectedOwner!.alternateEmail;
+                                                                                                      homenum.text = selectedOwner!.homeNumber ?? '';
+                                                                                                      phonenum.text = selectedOwner!.phoneNumber;
+                                                                                                      businessnum.text = selectedOwner!.businessNumber ?? '';
+                                                                                                      street2.text = selectedOwner!.streetAddress;
+                                                                                                      city2.text = selectedOwner!.city;
+                                                                                                      state2.text = selectedOwner!.state;
+                                                                                                      county2.text = selectedOwner!.country;
+                                                                                                      code2.text = selectedOwner!.postalCode;
+                                                                                                      proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
+                                                                                                    } else {
+                                                                                                      selectedIndex = null;
+                                                                                                    }
+                                                                                                    isChecked = false;
+                                                                                                    _processorGroups.clear();
+                                                                                                    for (Processor processor in selectedOwner!.processorList) {
+                                                                                                      _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController(text: processor.processorId)));
+                                                                                                    }
+                                                                                                  });
+                                                                                                },
+                                                                                                activeColor: Color.fromRGBO(
+                                                                                                    21,
+                                                                                                    43,
+                                                                                                    81,
+                                                                                                    1),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                                height: 16.0),
+                                                                            Row(
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .start,
+                                                                              children: [
+                                                                                GestureDetector(
+                                                                                  onTap: () async {
+                                                                                    if (!isChecked2) {
+                                                                                      print(!isChecked2);
+                                                                                      var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                                        rentalOwner_firstName: firstname.text,
+                                                                                        rentalOwner_lastName: lastname.text,
+                                                                                        rentalOwner_companyName: comname.text,
+                                                                                        rentalOwner_primaryEmail: primaryemail.text,
+                                                                                        rentalOwner_alternativeEmail: alternativeemail.text,
+                                                                                        rentalOwner_phoneNumber: phonenum.text,
+                                                                                        rentalOwner_homeNumber: homenum.text,
+                                                                                        rentalOwner_businessNumber: businessnum.text,
+                                                                                        // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
+                                                                                      );
+                                                                                      if(response == true){
+                                                                                        print("check true");
+
+                                                                                        Ownersdetails = RentalOwner(
+                                                                                          // rentalOwnerFirstName: firstname.text,
+                                                                                          rentalOwnerLastName: lastname.text,
+                                                                                          rentalOwnerPhoneNumber: phonenum.text,
+                                                                                          rentalOwnerFirstName: firstname.text,
+                                                                                        );
+                                                                                        context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
+                                                                                        //  Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
+
+                                                                                        Fluttertoast.showToast(
+                                                                                          msg: "Rental Owner Added Successfully!",
+                                                                                          toastLength: Toast.LENGTH_SHORT,
+                                                                                          gravity: ToastGravity.TOP,
+                                                                                          timeInSecForIosWeb: 1,
+                                                                                          backgroundColor: Colors.green,
+                                                                                          textColor: Colors.white,
+                                                                                          fontSize: 16.0,
+                                                                                        );
+                                                                                        setState(() {
+                                                                                          hasError = false; // Set error state if the response is not true
+                                                                                        });
+                                                                                        Navigator.pop(context);
+                                                                                        // SetshowRentalOwnerTable();
+
+                                                                                      }
+
+                                                                                    } else {
+                                                                                      Fluttertoast.showToast(
+                                                                                        msg: "Rental Owner Successfully!",
+                                                                                        toastLength: Toast.LENGTH_SHORT,
+                                                                                        gravity: ToastGravity.TOP,
+                                                                                        timeInSecForIosWeb: 1,
+                                                                                        backgroundColor: Colors.red,
+                                                                                        textColor: Colors.white,
+                                                                                        fontSize: 16.0,
+                                                                                      );
+                                                                                    }
+                                                                                  },
+                                                                                  child:
+                                                                                  ClipRRect(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5.0),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height:
+                                                                                      30.0,
+                                                                                      width: 50,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5.0),
+                                                                                        color: Color
+                                                                                            .fromRGBO(
+                                                                                            21,
+                                                                                            43,
+                                                                                            81,
+                                                                                            1),
+                                                                                        boxShadow: [
+                                                                                          BoxShadow(
+                                                                                            color:
+                                                                                            Colors.grey,
+                                                                                            offset: Offset(
+                                                                                                0.0,
+                                                                                                1.0), //(x,y)
+                                                                                            blurRadius:
+                                                                                            6.0,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      child:
+                                                                                      Center(
+                                                                                        child: isLoading
+                                                                                            ? SpinKitFadingCircle(
+                                                                                          color: Colors.white,
+                                                                                          size: 25.0,
+                                                                                        )
+                                                                                            : Text(
+                                                                                          "Add",
+                                                                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                    width: MediaQuery.of(
+                                                                                        context)
+                                                                                        .size
+                                                                                        .width *
+                                                                                        0.03),
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    Navigator.pop(
+                                                                                        context);
+                                                                                  },
+                                                                                  child:
+                                                                                  ClipRRect(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5.0),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height:
+                                                                                      30.0,
+                                                                                      width: 50,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5.0),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        boxShadow: [
+                                                                                          BoxShadow(
+                                                                                            color:
+                                                                                            Colors.grey,
+                                                                                            offset: Offset(
+                                                                                                0.0,
+                                                                                                1.0), //(x,y)
+                                                                                            blurRadius:
+                                                                                            6.0,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      child:
+                                                                                      Center(
+                                                                                        child: isLoading
+                                                                                            ? SpinKitFadingCircle(
+                                                                                          color: Colors.white,
+                                                                                          size: 25.0,
+                                                                                        )
+                                                                                            : Text(
+                                                                                          "Cancel",
+                                                                                          style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold, fontSize: 10),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        )
+                                                                            :
+                                                                        Column(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              height: 25,
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Name",
+                                                                                  style: TextStyle(
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontSize:
+                                                                                      14),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            //firstname
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  firstnameerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              firstname,
+                                                                                              //  keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: firstnameerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter first name",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            firstnameerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  firstnamemessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.02),
+                                                                            //lastname
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  lastnameerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              lastname,
+                                                                                              //  keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: lastnameerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter last name ",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            lastnameerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  lastnamemessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.02),
+                                                                            //company name
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Company Name",
+                                                                                  style: TextStyle(
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontSize:
+                                                                                      14),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  comnameerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              comname,
+                                                                                              //keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: comnameerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter company name",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            comnameerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  comnamemessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.02),
+                                                                            //primary email
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Primary Email",
+                                                                                  style: TextStyle(
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontSize:
+                                                                                      14),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  primaryemailerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              primaryemail,
+                                                                                              keyboardType:
+                                                                                              TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: primaryemailerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                                                                prefixIcon: Padding(
+                                                                                                  padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                                                                  child: FaIcon(
+                                                                                                    FontAwesomeIcons.envelope,
+                                                                                                    size: 18,
+                                                                                                    color: Color(0xFF8A95A8),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                hintText: "Enter primery email",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            primaryemailerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  primaryemailmessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.02),
+                                                                            //Alternative Email
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Alternative Email",
+                                                                                  style: TextStyle(
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontSize:
+                                                                                      14),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  alternativeerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              alternativeemail,
+                                                                                              keyboardType:
+                                                                                              TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: alternativeerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                                                                prefixIcon: Padding(
+                                                                                                  padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                                                                  child: FaIcon(
+                                                                                                    FontAwesomeIcons.envelope,
+                                                                                                    size: 18,
+                                                                                                    color: Color(0xFF8A95A8),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                hintText: "Enter alternative email",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            alternativeerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  alternativemessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.02),
+                                                                            //Phone Numbers
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Phone Numbers",
+                                                                                  style: TextStyle(
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontSize:
+                                                                                      14),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  phonenumerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              phonenum,
+                                                                                              keyboardType:
+                                                                                              TextInputType.phone,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: phonenumerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                                                                prefixIcon: Padding(
+                                                                                                  padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                                                                  child: FaIcon(
+                                                                                                    FontAwesomeIcons.phone,
+                                                                                                    size: 18,
+                                                                                                    color: Color(0xFF8A95A8),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                hintText: "Enter phone number",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            phonenumerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  phonenummessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            //homenumber
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  homenumerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              homenum,
+                                                                                              keyboardType:
+                                                                                              TextInputType.phone,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: homenumerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                                                                prefixIcon: Padding(
+                                                                                                  padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                                                                  child: FaIcon(
+                                                                                                    FontAwesomeIcons.home,
+                                                                                                    size: 18,
+                                                                                                    color: Color(0xFF8A95A8),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                hintText: "Enter home number",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            homenumerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  homenummessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  businessnumerror = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              businessnum,
+                                                                                              keyboardType:
+                                                                                              TextInputType.phone,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: businessnumerror
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                                                                prefixIcon: Padding(
+                                                                                                  padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                                                                  child: FaIcon(
+                                                                                                    FontAwesomeIcons.businessTime,
+                                                                                                    size: 18,
+                                                                                                    color: Color(0xFF8A95A8),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                hintText: "Enter business number",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            businessnumerror
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  businessnummessage,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.02),
+                                                                            //Address information
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Address Information",
+                                                                                  style: TextStyle(
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontSize:
+                                                                                      14),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            //Street Address
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  street2error = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              street2,
+                                                                                              //  keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: street2error
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter street address",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            street2error
+                                                                                ? Center(
+                                                                                child: Text(
+                                                                                  street2message,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .red),
+                                                                                ))
+                                                                                : Container(),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            //city and state
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  city2error = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              city2,
+                                                                                              //  keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: city2error
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter city here",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: MediaQuery.of(
+                                                                                      context)
+                                                                                      .size
+                                                                                      .width *
+                                                                                      .03,
+                                                                                ),
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  state2error = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              state2,
+                                                                                              // keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: state2error
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter state",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            Row(
+                                                                              children: [
+                                                                                city2error
+                                                                                    ? Center(
+                                                                                    child:
+                                                                                    Text(
+                                                                                      city2message,
+                                                                                      style: TextStyle(
+                                                                                          color:
+                                                                                          Colors.red),
+                                                                                    ))
+                                                                                    : Container(),
+                                                                                SizedBox(
+                                                                                  width: 70,
+                                                                                ),
+                                                                                state2error
+                                                                                    ? Center(
+                                                                                    child:
+                                                                                    Text(
+                                                                                      state2message,
+                                                                                      style: TextStyle(
+                                                                                          color:
+                                                                                          Colors.red),
+                                                                                    ))
+                                                                                    : Container(),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            // counrty and postal code
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  county2error = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              county2,
+                                                                                              // keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: county2error
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter country",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: MediaQuery.of(
+                                                                                      context)
+                                                                                      .size
+                                                                                      .width *
+                                                                                      .03,
+                                                                                ),
+                                                                                Expanded(
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 35,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        border: Border.all(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Stack(
+                                                                                        children: [
+                                                                                          Positioned
+                                                                                              .fill(
+                                                                                            child:
+                                                                                            TextField(
+                                                                                              onChanged:
+                                                                                                  (value) {
+                                                                                                setState(() {
+                                                                                                  code2error = false;
+                                                                                                });
+                                                                                              },
+                                                                                              controller:
+                                                                                              code2,
+                                                                                              //  keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(
+                                                                                                  21,
+                                                                                                  43,
+                                                                                                  81,
+                                                                                                  1),
+                                                                                              decoration:
+                                                                                              InputDecoration(
+                                                                                                border: InputBorder.none,
+                                                                                                enabledBorder: code2error
+                                                                                                    ? OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                                  borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                                                )
+                                                                                                    : InputBorder.none,
+                                                                                                contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                // prefixIcon: Padding(
+                                                                                                //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                                                //   child: FaIcon(
+                                                                                                //     FontAwesomeIcons.envelope,
+                                                                                                //     size: 18,
+                                                                                                //     color: Color(0xFF8A95A8),
+                                                                                                //   ),
+                                                                                                // ),
+                                                                                                hintText: "Enter postal code",
+                                                                                                hintStyle: TextStyle(
+                                                                                                  color: Color(0xFF8A95A8),
+                                                                                                  fontSize: 13,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            Row(
+                                                                              children: [
+                                                                                county2error
+                                                                                    ? Center(
+                                                                                    child:
+                                                                                    Text(
+                                                                                      county2message,
+                                                                                      style: TextStyle(
+                                                                                          color:
+                                                                                          Colors.red),
+                                                                                    ))
+                                                                                    : Container(),
+                                                                                SizedBox(
+                                                                                  width: 70,
+                                                                                ),
+                                                                                code2error
+                                                                                    ? Center(
+                                                                                    child:
+                                                                                    Text(
+                                                                                      code2message,
+                                                                                      style: TextStyle(
+                                                                                          color:
+                                                                                          Colors.red),
+                                                                                    ))
+                                                                                    : Container(),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            //merchant id
+                                                                            // Row(
+                                                                            //   children: [
+                                                                            //     Text(
+                                                                            //       "Merchant Id",
+                                                                            //       style: TextStyle(
+                                                                            //           fontWeight:
+                                                                            //               FontWeight
+                                                                            //                   .bold,
+                                                                            //           color: Color(
+                                                                            //               0xFF8A95A8),
+                                                                            //           fontSize:
+                                                                            //               14),
+                                                                            //     ),
+                                                                            //   ],
+                                                                            // ),
+                                                                            // SizedBox(
+                                                                            //   height: 5,
+                                                                            // ),
+                                                                            // Row(
+                                                                            //   children: [
+                                                                            //     SizedBox(
+                                                                            //       width:
+                                                                            //           20.0, // Standard width for checkbox
+                                                                            //       height: 20.0,
+                                                                            //       child: Checkbox(
+                                                                            //         value:
+                                                                            //             isChecked2,
+                                                                            //         onChanged:
+                                                                            //             (value) {
+                                                                            //           setState(
+                                                                            //               () {
+                                                                            //             isChecked2 =
+                                                                            //                 value ??
+                                                                            //                     false;
+                                                                            //           });
+                                                                            //         },
+                                                                            //         activeColor: isChecked2
+                                                                            //             ? Color.fromRGBO(
+                                                                            //                 21,
+                                                                            //                 43,
+                                                                            //                 81,
+                                                                            //                 1)
+                                                                            //             : Colors
+                                                                            //                 .black,
+                                                                            //       ),
+                                                                            //     ),
+                                                                            //     SizedBox(
+                                                                            //       width: MediaQuery.of(
+                                                                            //                   context)
+                                                                            //               .size
+                                                                            //               .width *
+                                                                            //           .02,
+                                                                            //     ),
+                                                                            //     Expanded(
+                                                                            //       child: Material(
+                                                                            //         elevation: 3,
+                                                                            //         borderRadius:
+                                                                            //             BorderRadius
+                                                                            //                 .circular(
+                                                                            //                     5),
+                                                                            //         child:
+                                                                            //             Container(
+                                                                            //           height: 50,
+                                                                            //           decoration:
+                                                                            //               BoxDecoration(
+                                                                            //             borderRadius:
+                                                                            //                 BorderRadius.circular(
+                                                                            //                     5),
+                                                                            //             color: Colors
+                                                                            //                 .white,
+                                                                            //             border: Border.all(
+                                                                            //                 color:
+                                                                            //                     Color(0xFF8A95A8)),
+                                                                            //           ),
+                                                                            //           child:
+                                                                            //               Stack(
+                                                                            //             children: [
+                                                                            //               Positioned
+                                                                            //                   .fill(
+                                                                            //                 child:
+                                                                            //                     TextField(
+                                                                            //                   onChanged:
+                                                                            //                       (value) {
+                                                                            //                     setState(() {
+                                                                            //                       proiderror = false;
+                                                                            //                     });
+                                                                            //                   },
+                                                                            //                   controller:
+                                                                            //                    proid
+                                                                            //                       ,
+                                                                            //                   // keyboardType: TextInputType.emailAddress,
+                                                                            //                   cursorColor: Color.fromRGBO(
+                                                                            //                       21,
+                                                                            //                       43,
+                                                                            //                       81,
+                                                                            //                       1),
+                                                                            //                   decoration:
+                                                                            //                       InputDecoration(
+                                                                            //                     border: InputBorder.none,
+                                                                            //                     enabledBorder: proiderror
+                                                                            //                         ? OutlineInputBorder(
+                                                                            //                             borderRadius: BorderRadius.circular(5),
+                                                                            //                             borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                            //                           )
+                                                                            //                         : InputBorder.none,
+                                                                            //                     contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                            //                     // prefixIcon: Padding(
+                                                                            //                     //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                                            //                     //   child: FaIcon(
+                                                                            //                     //     FontAwesomeIcons.envelope,
+                                                                            //                     //     size: 18,
+                                                                            //                     //     color: Color(0xFF8A95A8),
+                                                                            //                     //   ),
+                                                                            //                     // ),
+                                                                            //                     hintText: "Enter proccesor",
+                                                                            //                     hintStyle: TextStyle(
+                                                                            //                       color: Color(0xFF8A95A8),
+                                                                            //                       fontSize: 13,
+                                                                            //                     ),
+                                                                            //                   ),
+                                                                            //                 ),
+                                                                            //               ),
+                                                                            //             ],
+                                                                            //           ),
+                                                                            //         ),
+                                                                            //       ),
+                                                                            //     ),
+                                                                            //     SizedBox(
+                                                                            //       width: MediaQuery.of(
+                                                                            //                   context)
+                                                                            //               .size
+                                                                            //               .width *
+                                                                            //           .02,
+                                                                            //     ),
+                                                                            //     InkWell(
+                                                                            //       onTap: () {
+                                                                            //         // onDelete(property);
+                                                                            //       },
+                                                                            //       child:
+                                                                            //           Container(
+                                                                            //         //    color: Colors.redAccent,
+                                                                            //         padding:
+                                                                            //             EdgeInsets
+                                                                            //                 .zero,
+                                                                            //         child: FaIcon(
+                                                                            //           FontAwesomeIcons
+                                                                            //               .trashCan,
+                                                                            //           size: 20,
+                                                                            //           color: Color
+                                                                            //               .fromRGBO(
+                                                                            //                   21,
+                                                                            //                   43,
+                                                                            //                   81,
+                                                                            //                   1),
+                                                                            //         ),
+                                                                            //       ),
+                                                                            //     ),
+                                                                            //   ],
+                                                                            // ),
+                                                                            // SizedBox(
+                                                                            //     height: MediaQuery.of(
+                                                                            //                 context)
+                                                                            //             .size
+                                                                            //             .height *
+                                                                            //         0.01),
+                                                                            // Row(
+                                                                            //   children: [
+                                                                            //     proiderror
+                                                                            //         ? Center(
+                                                                            //             child:
+                                                                            //                 Text(
+                                                                            //             proidmessage,
+                                                                            //             style: TextStyle(
+                                                                            //                 color:
+                                                                            //                     Colors.red),
+                                                                            //           ))
+                                                                            //         : Container(),
+                                                                            //   ],
+                                                                            if (selectedOwner !=
+                                                                                null)
+                                                                              Column(
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment
+                                                                                    .start,
+                                                                                children: [
+                                                                                  if (selectedOwner!
+                                                                                      .processorList
+                                                                                      .isNotEmpty) ...[
+                                                                                    Row(
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          "Merchant Id",
+                                                                                          style: TextStyle(
+                                                                                              fontWeight:
+                                                                                              FontWeight.bold,
+                                                                                              color: Color(0xFF8A95A8),
+                                                                                              fontSize: 14),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                        height:
+                                                                                        5),
+                                                                                    Column(
+                                                                                      children: [
+                                                                                        Column(
+                                                                                            children:
+                                                                                            _processorGroups.map((group) {
+                                                                                              return Padding(
+                                                                                                padding: const EdgeInsets
+                                                                                                    .symmetric(
+                                                                                                    vertical: 8.0),
+                                                                                                child:
+                                                                                                Row(
+                                                                                                  children: [
+                                                                                                    SizedBox(
+                                                                                                      width: 20.0,
+                                                                                                      height: 20.0,
+                                                                                                      child: Checkbox(
+                                                                                                        value: group?.isChecked,
+                                                                                                        onChanged: (value) {
+                                                                                                          setState(() {
+                                                                                                            group?.isChecked = value ?? false;
+                                                                                                          });
+                                                                                                        },
+                                                                                                        activeColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    SizedBox(width: MediaQuery.of(context).size.width * .02),
+                                                                                                    Expanded(
+                                                                                                      child: Material(
+                                                                                                        elevation: 3,
+                                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                                        child: Container(
+                                                                                                          height: 50,
+                                                                                                          decoration: BoxDecoration(
+                                                                                                            borderRadius: BorderRadius.circular(5),
+                                                                                                            color: Colors.white,
+                                                                                                            border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                                          ),
+                                                                                                          child: Stack(
+                                                                                                            children: [
+                                                                                                              Positioned.fill(
+                                                                                                                child: TextField(
+                                                                                                                  controller: group.controller,
+                                                                                                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                                                  decoration: InputDecoration(
+                                                                                                                    border: InputBorder.none,
+                                                                                                                    contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                                                                    hintText: "Enter processor",
+                                                                                                                    hintStyle: TextStyle(
+                                                                                                                      color: Color(0xFF8A95A8),
+                                                                                                                      fontSize: 13,
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    SizedBox(width: MediaQuery.of(context).size.width * .02),
+                                                                                                    InkWell(
+                                                                                                      onTap: () {
+                                                                                                        setState(() {
+                                                                                                          _processorGroups.remove(group);
+                                                                                                        });
+                                                                                                      },
+                                                                                                      child: Container(
+                                                                                                        padding: EdgeInsets.zero,
+                                                                                                        child: FaIcon(
+                                                                                                          FontAwesomeIcons.trashCan,
+                                                                                                          size: 20,
+                                                                                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              );
+                                                                                            }).toList())
+                                                                                      ],
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                        height: MediaQuery.of(context)
+                                                                                            .size
+                                                                                            .height *
+                                                                                            0.01),
+                                                                                    Row(
+                                                                                      children: [
+                                                                                        // Handle error display here if needed
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ],
+                                                                              ),
+
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.01),
+                                                                            Row(
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .start,
+                                                                              children: [
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    setState(() {
+                                                                                      _processorGroups.add(ProcessorGroup(
+                                                                                          isChecked:
+                                                                                          false,
+                                                                                          controller:
+                                                                                          TextEditingController()));
+                                                                                    });
+                                                                                  },
+                                                                                  child:
+                                                                                  ClipRRect(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5.0),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height:
+                                                                                      30.0,
+                                                                                      width: MediaQuery.of(context)
+                                                                                          .size
+                                                                                          .width *
+                                                                                          .3,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5.0),
+                                                                                        color: Color
+                                                                                            .fromRGBO(
+                                                                                            21,
+                                                                                            43,
+                                                                                            81,
+                                                                                            1),
+                                                                                        boxShadow: [
+                                                                                          BoxShadow(
+                                                                                            color:
+                                                                                            Colors.grey,
+                                                                                            offset: Offset(
+                                                                                                0.0,
+                                                                                                1.0), //(x,y)
+                                                                                            blurRadius:
+                                                                                            6.0,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      child:
+                                                                                      Center(
+                                                                                        child: isLoading
+                                                                                            ? SpinKitFadingCircle(
+                                                                                          color: Colors.white,
+                                                                                          size: 25.0,
+                                                                                        )
+                                                                                            : Text(
+                                                                                          "Add another",
+                                                                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                                height: MediaQuery.of(
+                                                                                    context)
+                                                                                    .size
+                                                                                    .height *
+                                                                                    0.05),
+                                                                            Row(
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .start,
+                                                                              children: [
+                                                                                //                       GestureDetector(
+                                                                                //                         // onTap: () async {
+                                                                                //                         //   if (selectedValue == null || subtype.text.isEmpty) {
+                                                                                //                         //     setState(() {
+                                                                                //                         //       iserror = true;
+                                                                                //                         //     });
+                                                                                //                         //   } else {
+                                                                                //                         //     setState(() {
+                                                                                //                         //       isLoading = true;
+                                                                                //                         //       iserror = false;
+                                                                                //                         //     });
+                                                                                //                         //     SharedPreferences prefs =
+                                                                                //                         //     await SharedPreferences.getInstance();
+                                                                                //                         //
+                                                                                //                         //     String? id = prefs.getString("adminId");
+                                                                                //                         //     PropertyTypeRepository()
+                                                                                //                         //         .addPropertyType(
+                                                                                //                         //       adminId: id!,
+                                                                                //                         //       propertyType: selectedValue,
+                                                                                //                         //       propertySubType: subtype.text,
+                                                                                //                         //       isMultiUnit: isChecked,
+                                                                                //                         //     )
+                                                                                //                         //         .then((value) {
+                                                                                //                         //       setState(() {
+                                                                                //                         //         isLoading = false;
+                                                                                //                         //       });
+                                                                                //                         //     }).catchError((e) {
+                                                                                //                         //       setState(() {
+                                                                                //                         //         isLoading = false;
+                                                                                //                         //       });
+                                                                                //                         //     });
+                                                                                //                         //   }
+                                                                                //                         //   print(selectedValue);
+                                                                                //                         // },
+                                                                                //                         onTap:()async{
+                                                                                //                          if(isChecked2 == false){
+                                                                                //                            Rental_PropertiesRepository().
+                                                                                //                            checkIfRentalOwnerExists(
+                                                                                //                              rentalowner_id: rentalOwnerId!.rentalOwnerId,
+                                                                                //                              rentalOwner_firstName: firstname.text,
+                                                                                //                              rentalOwner_lastName: lastname.text,
+                                                                                //                              rentalOwner_companyName: comname.text,
+                                                                                //                              rentalOwner_primaryEmail: primaryemail.text,
+                                                                                //                              rentalOwner_alternativeEmail: alternativeemail.text,
+                                                                                //                              rentalOwner_phoneNumber: phonenum.text,
+                                                                                //                              rentalOwner_homeNumber: homenum.text,
+                                                                                //                              rentalOwner_businessNumber: businessnum.text,
+                                                                                //                            ) ;
+                                                                                //                          }
+                                                                                //                           else {
+                                                                                //                             // setSelectedRentalOwnerData(values);
+                                                                                //                             // setshowRentalOwnerTable(false);
+                                                                                //                           // handleAddrentalOwner();
+                                                                                //                            // handleClose();
+                                                                                //                            Fluttertoast.showToast(
+                                                                                //                                msg: "Rental Owner Added Successfully!",
+                                                                                //                                toastLength: Toast.LENGTH_SHORT,
+                                                                                //                                gravity: ToastGravity.TOP,
+                                                                                //                                timeInSecForIosWeb: 1,
+                                                                                //                                backgroundColor: Colors.red,
+                                                                                //                                textColor: Colors.white,
+                                                                                //                                fontSize: 16.0
+                                                                                //                            );
+                                                                                //                            Navigator.pop(context);
+                                                                                //                           }
+                                                                                //
+                                                                                // },
+                                                                                //                         child:
+                                                                                //                             ClipRRect(
+                                                                                //                           borderRadius:
+                                                                                //                               BorderRadius
+                                                                                //                                   .circular(
+                                                                                //                                       5.0),
+                                                                                //                           child:
+                                                                                //                               Container(
+                                                                                //                             height:
+                                                                                //                                 30.0,
+                                                                                //                             width: 50,
+                                                                                //                             decoration:
+                                                                                //                                 BoxDecoration(
+                                                                                //                               borderRadius:
+                                                                                //                                   BorderRadius.circular(
+                                                                                //                                       5.0),
+                                                                                //                               color: Color
+                                                                                //                                   .fromRGBO(
+                                                                                //                                       21,
+                                                                                //                                       43,
+                                                                                //                                       81,
+                                                                                //                                       1),
+                                                                                //                               boxShadow: [
+                                                                                //                                 BoxShadow(
+                                                                                //                                   color:
+                                                                                //                                       Colors.grey,
+                                                                                //                                   offset: Offset(
+                                                                                //                                       0.0,
+                                                                                //                                       1.0), //(x,y)
+                                                                                //                                   blurRadius:
+                                                                                //                                       6.0,
+                                                                                //                                 ),
+                                                                                //                               ],
+                                                                                //                             ),
+                                                                                //                             child:
+                                                                                //                                 Center(
+                                                                                //                               child: isLoading
+                                                                                //                                   ? SpinKitFadingCircle(
+                                                                                //                                       color: Colors.white,
+                                                                                //                                       size: 25.0,
+                                                                                //                                     )
+                                                                                //                                   : Text(
+                                                                                //                                       "Add",
+                                                                                //                                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                                                                //                                     ),
+                                                                                //                             ),
+                                                                                //                           ),
+                                                                                //                         ),
+                                                                                //                       ),
+                                                                                GestureDetector(
+                                                                                  // onTap:
+                                                                                  //     () async {
+                                                                                  //   if (!isChecked) {
+                                                                                  //     await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                                  //       rentalowner_id: rentalOwnerId!.rentalOwnerId,
+                                                                                  //       rentalOwner_firstName: firstname.text,
+                                                                                  //       rentalOwner_lastName: lastname.text,
+                                                                                  //       rentalOwner_companyName: comname.text,
+                                                                                  //       rentalOwner_primaryEmail: primaryemail.text,
+                                                                                  //       rentalOwner_alternativeEmail: alternativeemail.text,
+                                                                                  //       rentalOwner_phoneNumber: phonenum.text,
+                                                                                  //       rentalOwner_homeNumber: homenum.text,
+                                                                                  //       rentalOwner_businessNumber: businessnum.text,
+                                                                                  //     )
+                                                                                  //         .then((value) {
+                                                                                  //       setState(() {
+                                                                                  //         isLoading = false;
+                                                                                  //       });
+                                                                                  //       Navigator.pop(context,true);
+                                                                                  //     }).catchError((e) {
+                                                                                  //       setState(() {
+                                                                                  //         isLoading = false;
+                                                                                  //       });
+                                                                                  //     });
+                                                                                  //   } else {
+                                                                                  //     Fluttertoast
+                                                                                  //         .showToast(
+                                                                                  //       msg:
+                                                                                  //           "Rental Owner Added Successfully!",
+                                                                                  //       toastLength:
+                                                                                  //           Toast
+                                                                                  //               .LENGTH_SHORT,
+                                                                                  //       gravity:
+                                                                                  //           ToastGravity
+                                                                                  //               .TOP,
+                                                                                  //       timeInSecForIosWeb:
+                                                                                  //           1,
+                                                                                  //       backgroundColor:
+                                                                                  //           Colors
+                                                                                  //               .green,
+                                                                                  //       textColor:
+                                                                                  //           Colors
+                                                                                  //               .white,
+                                                                                  //       fontSize:
+                                                                                  //           16.0,
+                                                                                  //     );
+                                                                                  //   }
+                                                                                  // },
+                                                                                  onTap: () async {
+                                                                                    if (!isChecked2) {
+                                                                                      print(!isChecked2);
+                                                                                      var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                                        rentalOwner_firstName: firstname.text,
+                                                                                        rentalOwner_lastName: lastname.text,
+                                                                                        rentalOwner_companyName: comname.text,
+                                                                                        rentalOwner_primaryEmail: primaryemail.text,
+                                                                                        rentalOwner_alternativeEmail: alternativeemail.text,
+                                                                                        rentalOwner_phoneNumber: phonenum.text,
+                                                                                        rentalOwner_homeNumber: homenum.text,
+                                                                                        rentalOwner_businessNumber: businessnum.text,
+                                                                                        // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
+                                                                                      );
+                                                                                      if(response == true){
+                                                                                        print("check true");
+
+                                                                                        Ownersdetails = RentalOwner(
+                                                                                          // rentalOwnerFirstName: firstname.text,
+                                                                                          rentalOwnerLastName: lastname.text,
+                                                                                          rentalOwnerPhoneNumber: phonenum.text,
+                                                                                          rentalOwnerFirstName: firstname.text,
+                                                                                        );
+                                                                                        context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
+                                                                                        //  Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
+
+                                                                                        Fluttertoast.showToast(
+                                                                                          msg: "Rental Owner Added Successfully!",
+                                                                                          toastLength: Toast.LENGTH_SHORT,
+                                                                                          gravity: ToastGravity.TOP,
+                                                                                          timeInSecForIosWeb: 1,
+                                                                                          backgroundColor: Colors.green,
+                                                                                          textColor: Colors.white,
+                                                                                          fontSize: 16.0,
+                                                                                        );
+                                                                                        setState(() {
+                                                                                          hasError = false; // Set error state if the response is not true
+                                                                                        });
+                                                                                        Navigator.pop(context);
+                                                                                        // SetshowRentalOwnerTable();
+
+                                                                                      }
+
+                                                                                    } else {
+                                                                                      Fluttertoast.showToast(
+                                                                                        msg: "Rental Owner Successfully!",
+                                                                                        toastLength: Toast.LENGTH_SHORT,
+                                                                                        gravity: ToastGravity.TOP,
+                                                                                        timeInSecForIosWeb: 1,
+                                                                                        backgroundColor: Colors.red,
+                                                                                        textColor: Colors.white,
+                                                                                        fontSize: 16.0,
+                                                                                      );
+                                                                                    }
+                                                                                  },
+                                                                                  child:
+                                                                                  ClipRRect(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5.0),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height:
+                                                                                      30.0,
+                                                                                      width: 50,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5.0),
+                                                                                        color: Color
+                                                                                            .fromRGBO(
+                                                                                            21,
+                                                                                            43,
+                                                                                            81,
+                                                                                            1),
+                                                                                        boxShadow: [
+                                                                                          BoxShadow(
+                                                                                            color:
+                                                                                            Colors.grey,
+                                                                                            offset: Offset(
+                                                                                                0.0,
+                                                                                                1.0), // (x,y)
+                                                                                            blurRadius:
+                                                                                            6.0,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      child:
+                                                                                      Center(
+                                                                                        child: isLoading
+                                                                                            ? SpinKitFadingCircle(
+                                                                                          color: Colors.white,
+                                                                                          size: 25.0,
+                                                                                        )
+                                                                                            : Text(
+                                                                                          "Add",
+                                                                                          style: TextStyle(
+                                                                                            color: Colors.white,
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            fontSize: 10,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                    width: MediaQuery.of(
+                                                                                        context)
+                                                                                        .size
+                                                                                        .width *
+                                                                                        0.03),
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                  child:
+                                                                                  ClipRRect(
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5.0),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height:
+                                                                                      30.0,
+                                                                                      width: 50,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5.0),
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        boxShadow: [
+                                                                                          BoxShadow(
+                                                                                            color:
+                                                                                            Colors.grey,
+                                                                                            offset: Offset(
+                                                                                                0.0,
+                                                                                                1.0), //(x,y)
+                                                                                            blurRadius:
+                                                                                            6.0,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      child:
+                                                                                      Center(
+                                                                                        child: isLoading
+                                                                                            ? SpinKitFadingCircle(
+                                                                                          color: Colors.white,
+                                                                                          size: 25.0,
+                                                                                        )
+                                                                                            : Text(
+                                                                                          "Cancel",
+                                                                                          style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold, fontSize: 10),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        padding: EdgeInsets.zero,
+                                                        child: FaIcon(
+                                                          FontAwesomeIcons.edit,
+                                                          size: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 4),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        // Ownersdetails!.rentalOwnerFirstName;
+                                                      //  OwnersdetailsGroups.removeAt(index);
+                                                      //   Ownersdetails = RentalOwner(
+                                                      //     // rentalOwnerFirstName: firstname.text,
+                                                      //     rentalOwnerLastName: lastname.text,
+                                                      //     rentalOwnerPhoneNumber: phonenum.text,
+                                                      //     rentalOwnerFirstName: firstname.text,
+                                                      //   );
+
+                                                        print("hello");
+                                                        setState(() {
+                                                          RentalOwner? owner  ;
+                                                          Ownersdetails  = owner;
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        padding: EdgeInsets.zero,
+                                                        child: FaIcon(
+                                                          FontAwesomeIcons.trashCan,
+                                                          size: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                    : Text('');
+                              },
                             ),
                           ],
                         )),
@@ -5366,8 +8663,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                 SizedBox(
                   height: 20,
                 ),
-                if (selectedpropertytype != null &&
-                    selectedpropertytype!.propertyType == "Residential")
+                if (selectedpropertytypedata != null &&
+                    selectedpropertytypedata!.propertyType == "Residential")
                   Material(
                     elevation: 6,
                     borderRadius: BorderRadius.circular(10),
@@ -5416,211 +8713,327 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ],
                             ),
                             SizedBox(height: 5.0),
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Spacer(),
-                                    IconButton(
-                                      icon: Icon(Icons.close),
-                                      onPressed: () {
-                                        setState(() {});
-                                      },
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        height: 45,
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            labelText: 'SQFT *',
-                                            border: OutlineInputBorder(),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter the square footage';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 16.0),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        height: 45,
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            labelText: 'Bath',
-                                            border: OutlineInputBorder(),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter the unit address';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 16.0),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        height: 45,
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            labelText: 'Bed',
-                                            border: OutlineInputBorder(),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter the square footage';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 16.0),
-                            if (selectedpropertytype != null &&
-                                selectedpropertytype!.propertyType ==
-                                    "Residential" &&
-                                selectedpropertytype!.isMultiunit == true)
+                            // Column(
+                            //   children: [
+                            //     Row(
+                            //       children: [
+                            //         Spacer(),
+                            //         IconButton(
+                            //           icon: Icon(Icons.close),
+                            //           onPressed: () {
+                            //             setState(() {});
+                            //           },
+                            //         ),
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     SizedBox(height: 5.0),
+                            //     Row(
+                            //       children: [
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //         Expanded(
+                            //           child: Container(
+                            //             height: 45,
+                            //             child: TextFormField(
+                            //               decoration: InputDecoration(
+                            //                 labelText: 'SQFT *',
+                            //                 border: OutlineInputBorder(),
+                            //               ),
+                            //               validator: (value) {
+                            //                 if (value == null ||
+                            //                     value.isEmpty) {
+                            //                   return 'Please enter the square footage';
+                            //                 }
+                            //                 return null;
+                            //               },
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     SizedBox(height: 16.0),
+                            //     Row(
+                            //       children: [
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //         Expanded(
+                            //           child: Container(
+                            //             height: 45,
+                            //             child: TextFormField(
+                            //               decoration: InputDecoration(
+                            //                 labelText: 'Bath',
+                            //                 border: OutlineInputBorder(),
+                            //               ),
+                            //               validator: (value) {
+                            //                 if (value == null ||
+                            //                     value.isEmpty) {
+                            //                   return 'Please enter the unit address';
+                            //                 }
+                            //                 return null;
+                            //               },
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     SizedBox(height: 16.0),
+                            //     Row(
+                            //       children: [
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //         Expanded(
+                            //           child: Container(
+                            //             height: 45,
+                            //             child: TextFormField(
+                            //               decoration: InputDecoration(
+                            //                 labelText: 'Bed',
+                            //                 border: OutlineInputBorder(),
+                            //               ),
+                            //               validator: (value) {
+                            //                 if (value == null ||
+                            //                     value.isEmpty) {
+                            //                   return 'Please enter the square footage';
+                            //                 }
+                            //                 return null;
+                            //               },
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     if (propertyGroups.isNotEmpty)
+                            //       Column(
+                            //         crossAxisAlignment: CrossAxisAlignment.start,
+                            //         children: [
+                            //           SingleChildScrollView(
+                            //             child: Column(
+                            //               children: propertyGroups.map((group) {
+                            //                 int index = propertyGroups.indexOf(group);
+                            //                 return Padding(
+                            //                   padding: const EdgeInsets.all(16.0),
+                            //                   child: Column(
+                            //                     crossAxisAlignment: CrossAxisAlignment.start,
+                            //                     children: [
+                            //                       Align(
+                            //                         alignment: Alignment.centerRight,
+                            //                         child: InkWell(
+                            //                           onTap: () => removePropertyGroup(index),
+                            //                           child: Icon(Icons.close, color: Colors.black),
+                            //                         ),
+                            //                       ),
+                            //                       SizedBox(height: 5),
+                            //                       ...group,
+                            //                     ],
+                            //                   ),
+                            //                 );
+                            //               }).toList(),
+                            //             ),
+                            //           ),
+                            //           SizedBox(height: 10),
+                            //           Align(
+                            //             alignment: Alignment.centerRight,
+                            //             child: ElevatedButton(
+                            //               onPressed: addPropertyGroup,
+                            //               child: Text('Add More'),
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //
+                            //
+                            //   ],
+                            // ),
+                            if (propertyGroups.isNotEmpty)
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.close),
-                                        onPressed: () {
-                                          // setState(() {
-                                          //   units.removeAt(index);
-                                          // });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                              labelText: 'Unit *',
-                                              border: OutlineInputBorder(),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter the unit';
-                                              }
-                                              return null;
-                                            },
+                                  SingleChildScrollView(
+                                    child:
+                                    Column(
+                                      children: propertyGroups.map((group) {
+                                        int index =
+                                            propertyGroups.indexOf(group);
+                                        return Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: InkWell(
+                                                  onTap: () =>
+                                                      removePropertyGroup(
+                                                          index),
+                                                  child: Icon(Icons.close,
+                                                      color: Colors.black),
+                                                ),
+                                              ),
+                                              SizedBox(height: 5),
+                                              ...group,
+                                            ],
                                           ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 16.0),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                              labelText: 'Unit Address',
-                                              border: OutlineInputBorder(),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter the unit address';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
                                 ],
                               ),
+                            // SizedBox(height: 16.0),
+                            // if (selectedpropertytypedata != null &&
+                            //     selectedpropertytypedata!.propertyType ==
+                            //         "Residential" &&
+                            //     selectedpropertytypedata!.isMultiunit == true)
+                            //   if (propertyGroups.isNotEmpty)
+                            //     Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       children: [
+                            //         SingleChildScrollView(
+                            //           child: Column(
+                            //             children: propertyGroups.map((group) {
+                            //               int index = propertyGroups.indexOf(group);
+                            //               return Padding(
+                            //                 padding: const EdgeInsets.all(16.0),
+                            //                 child: Column(
+                            //                   crossAxisAlignment: CrossAxisAlignment.start,
+                            //                   children: [
+                            //                     Align(
+                            //                       alignment: Alignment.centerRight,
+                            //                       child: InkWell(
+                            //                         onTap: () => removePropertyGroup(index),
+                            //                         child: Icon(Icons.close, color: Colors.black),
+                            //                       ),
+                            //                     ),
+                            //                     SizedBox(height: 5),
+                            //                     ...group,
+                            //                   ],
+                            //                 ),
+                            //               );
+                            //             }).toList(),
+                            //           ),
+                            //         ),
+                            //         SizedBox(height: 10),
+                            //         Align(
+                            //           alignment: Alignment.centerRight,
+                            //           child: ElevatedButton(
+                            //             onPressed: addPropertyGroup,
+                            //             child: Text('Add More'),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            // Column(
+                            //   children: [
+                            //     Row(
+                            //       children: [
+                            //         SizedBox(
+                            //           width: 10,
+                            //         ),
+                            //         IconButton(
+                            //           icon: Icon(Icons.close),
+                            //           onPressed: () {
+                            //             // setState(() {
+                            //             //   units.removeAt(index);
+                            //             // });
+                            //           },
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     SizedBox(height: 10.0),
+                            //     Row(
+                            //       children: [
+                            //         Expanded(
+                            //           child: Container(
+                            //             child: TextFormField(
+                            //               decoration: InputDecoration(
+                            //                 labelText: 'Unit *',
+                            //                 border: OutlineInputBorder(),
+                            //               ),
+                            //               validator: (value) {
+                            //                 if (value == null ||
+                            //                     value.isEmpty) {
+                            //                   return 'Please enter the unit';
+                            //                 }
+                            //                 return null;
+                            //               },
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     SizedBox(height: 16.0),
+                            //     Row(
+                            //       children: [
+                            //         Expanded(
+                            //           child: Container(
+                            //             child: TextFormField(
+                            //               decoration: InputDecoration(
+                            //                 labelText: 'Unit Address',
+                            //                 border: OutlineInputBorder(),
+                            //               ),
+                            //               validator: (value) {
+                            //                 if (value == null ||
+                            //                     value.isEmpty) {
+                            //                   return 'Please enter the unit address';
+                            //                 }
+                            //                 return null;
+                            //               },
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
                             SizedBox(height: 16.0),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      'Photo',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    SizedBox(height: 8.0),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Add photo action
-                                      },
-                                      child: Text(
-                                        '+ Add',
-                                        style: TextStyle(color: Colors.green),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     SizedBox(
+                            //       width: 10,
+                            //     ),
+                            //     Column(
+                            //       children: [
+                            //         Text(
+                            //           'Photo',
+                            //           style: TextStyle(color: Colors.black),
+                            //         ),
+                            //         SizedBox(height: 8.0),
+                            //         GestureDetector(
+                            //           onTap: () {
+                            //             // Add photo action
+                            //           },
+                            //           child: Text(
+                            //             '+ Add',
+                            //             style: TextStyle(color: Colors.green),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
                             SizedBox(height: 20),
                             GestureDetector(
                               onTap: () {
-                                if (selectedProperty != null) {
-                                  addPropertyGroup();
-                                }
+                                // if (selectedProperty != null) {
+                                //   addPropertyGroup();
+                                // }
+                                addPropertyGroup();
                               },
                               child: Row(
                                 children: [
@@ -5670,8 +9083,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       ),
                     ),
                   ),
-                if (selectedpropertytype != null &&
-                    selectedpropertytype!.propertyType == "Commercial")
+                if (selectedpropertytypedata != null &&
+                    selectedpropertytypedata!.propertyType == "Commercial")
                   Material(
                     elevation: 6,
                     borderRadius: BorderRadius.circular(10),
@@ -5719,53 +9132,53 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 16.0),
-                              Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Spacer(),
-                                      IconButton(
-                                        icon: Icon(Icons.close),
-                                        onPressed: () {
-                                          // setState(() {
-                                          //   units.removeAt(index);
-                                          // });
-                                        },
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Expanded(
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            labelText: 'SQft *',
-                                            border: OutlineInputBorder(),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter the unit';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 16.0),
+                              //SizedBox(height: 16.0),
+                              // Column(
+                              //   children: [
+                              //     Row(
+                              //       children: [
+                              //         Spacer(),
+                              //         IconButton(
+                              //           icon: Icon(Icons.close),
+                              //           onPressed: () {
+                              //             // setState(() {
+                              //             //   units.removeAt(index);
+                              //             // });
+                              //           },
+                              //         ),
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     Row(
+                              //       children: [
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //         Expanded(
+                              //           child: TextFormField(
+                              //             decoration: InputDecoration(
+                              //               labelText: 'SQft *',
+                              //               border: OutlineInputBorder(),
+                              //             ),
+                              //             validator: (value) {
+                              //               if (value == null ||
+                              //                   value.isEmpty) {
+                              //                 return 'Please enter the unit';
+                              //               }
+                              //               return null;
+                              //             },
+                              //           ),
+                              //         ),
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
+                              //SizedBox(height: 16.0),
                               //  if (selectedIsMultiUnit?.isMultiunit == true)
                               //   Visibility(
                               //     visible: selectedIsMultiUnit == true,
@@ -5803,66 +9216,140 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               //       ],
                               //     ),
                               //   ),
-                              if (selectedpropertytype != null &&
-                                  selectedpropertytype!.propertyType ==
-                                      "Commercial" &&
-                                  selectedpropertytype!.isMultiunit == true)
+                              if (propertyGroups.isNotEmpty)
                                 Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: 10.0),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                              labelText: 'Unit *',
-                                              border: OutlineInputBorder(),
+                                    SingleChildScrollView(
+                                      child: Column(
+                                        children: propertyGroups.map((group) {
+                                          int index =
+                                              propertyGroups.indexOf(group);
+                                          return Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: InkWell(
+                                                    onTap: () =>
+                                                        removePropertyGroup(
+                                                            index),
+                                                    child: Icon(Icons.close,
+                                                        color: Colors.black),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 5),
+                                                ...group,
+                                              ],
                                             ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter the unit';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 16.0),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                              labelText: 'Unit Address',
-                                              border: OutlineInputBorder(),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter the unit address';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                      ],
+                                          );
+                                        }).toList(),
+                                      ),
                                     ),
                                   ],
                                 ),
+                              // if (selectedpropertytypedata != null &&
+                              //     selectedpropertytypedata!.propertyType ==
+                              //         "Commercial" &&
+                              //     selectedpropertytypedata!.isMultiunit == true)
+                              //   if (propertyGroups.isNotEmpty)
+                              //     Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         SingleChildScrollView(
+                              //           child: Column(
+                              //             children: propertyGroups.map((group) {
+                              //               int index = propertyGroups.indexOf(group);
+                              //               return Padding(
+                              //                 padding: const EdgeInsets.all(16.0),
+                              //                 child: Column(
+                              //                   crossAxisAlignment: CrossAxisAlignment.start,
+                              //                   children: [
+                              //                     Align(
+                              //                       alignment: Alignment.centerRight,
+                              //                       child: InkWell(
+                              //                         onTap: () => removePropertyGroup(index),
+                              //                         child: Icon(Icons.close, color: Colors.black),
+                              //                       ),
+                              //                     ),
+                              //                     SizedBox(height: 5),
+                              //                     ...group,
+                              //                   ],
+                              //                 ),
+                              //               );
+                              //             }).toList(),
+                              //           ),
+                              //         ),
+                              //         SizedBox(height: 10),
+                              //         Align(
+                              //           alignment: Alignment.centerRight,
+                              //           child: ElevatedButton(
+                              //             onPressed: addPropertyGroup,
+                              //             child: Text('Add More'),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              // Column(
+                              //   children: [
+                              //     SizedBox(height: 10.0),
+                              //     Row(
+                              //       children: [
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //         Expanded(
+                              //           child: TextFormField(
+                              //             decoration: InputDecoration(
+                              //               labelText: 'Unit *',
+                              //               border: OutlineInputBorder(),
+                              //             ),
+                              //             validator: (value) {
+                              //               if (value == null ||
+                              //                   value.isEmpty) {
+                              //                 return 'Please enter the unit';
+                              //               }
+                              //               return null;
+                              //             },
+                              //           ),
+                              //         ),
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     SizedBox(height: 16.0),
+                              //     Row(
+                              //       children: [
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //         Expanded(
+                              //           child: TextFormField(
+                              //             decoration: InputDecoration(
+                              //               labelText: 'Unit Address',
+                              //               border: OutlineInputBorder(),
+                              //             ),
+                              //             validator: (value) {
+                              //               if (value == null ||
+                              //                   value.isEmpty) {
+                              //                 return 'Please enter the unit address';
+                              //               }
+                              //               return null;
+                              //             },
+                              //           ),
+                              //         ),
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
                               /*  Row(
                                 children: [
                                   Expanded(
@@ -5896,39 +9383,36 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ],
                               ),*/
-
-                              SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        'Photo',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      SizedBox(height: 8.0),
-                                      GestureDetector(
-                                        onTap: () {
-                                          // Add photo action
-                                        },
-                                        child: Text(
-                                          '+ Add',
-                                          style: TextStyle(color: Colors.green),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                              // SizedBox(height: 20),
+                              // Row(
+                              //   children: [
+                              //     SizedBox(
+                              //       width: 10,
+                              //     ),
+                              //     Column(
+                              //       children: [
+                              //         Text(
+                              //           'Photo',
+                              //           style: TextStyle(color: Colors.black),
+                              //         ),
+                              //         SizedBox(height: 8.0),
+                              //         GestureDetector(
+                              //           onTap: () {
+                              //             // Add photo action
+                              //           },
+                              //           child: Text(
+                              //             '+ Add',
+                              //             style: TextStyle(color: Colors.green),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
                               SizedBox(height: 20),
                               GestureDetector(
                                 onTap: () {
-                                  if (selectedProperty != null) {
-                                    addPropertyGroup();
-                                  }
+                                  addPropertyGroup();
                                 },
                                 child: Row(
                                   children: [
@@ -5979,144 +9463,362 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           )),
                     ),
                   ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 150,
-                  child: ListView.builder(
-                    itemCount: propertyGroups.length,
-                    itemBuilder: (context, index) {
-                      print(propertyGroups);
-                      return Column(
-                        children: [
-                          ...propertyGroups[index],
-                          SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () => removePropertyGroup(index),
-                            child: Text('Remove'),
-                          ),
-                          Divider(),
-                        ],
-                      );
-                    },
+                if (iserror2)
+                  Text(
+                    "required",
+                    style: TextStyle(color: Colors.redAccent),
                   ),
-                ),
                 SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () async {
-                    if (selectedValue == null) {
-                      setState(() {
-                        propertyTypeError = true;
-                        propertyTypeErrorMessage = "required";
-                      });
-                    } else {
-                      setState(() {
-                        propertyTypeError = false;
-                      });
-                    }
-                    if (address.text.isEmpty) {
-                      setState(() {
-                        addresserror = true;
-                        addressmessage = "required";
-                      });
-                    } else {
-                      setState(() {
-                        addresserror = false;
-                      });
-                    }
-                    if (city.text.isEmpty) {
-                      setState(() {
-                        cityerror = true;
-                        citymessage = "required";
-                      });
-                    } else {
-                      setState(() {
-                        cityerror = false;
-                      });
-                    }
-                    if (state.text.isEmpty) {
-                      setState(() {
-                        stateerror = true;
-                        statemessage = "required";
-                      });
-                    } else {
-                      setState(() {
-                        stateerror = false;
-                      });
-                    }
-                    if (country.text.isEmpty) {
-                      setState(() {
-                        countryerror = true;
-                        countrymessage = "required";
-                      });
-                    } else {
-                      setState(() {
-                        countryerror = false;
-                      });
-                    }
-                    if (postalcode.text.isEmpty) {
-                      setState(() {
-                        postalcodeerror = true;
-                        postalcodemessage = "required";
-                      });
-                    } else {
-                      setState(() {
-                        postalcodeerror = false;
-                      });
-                    }
-                    if (addresserror &&
-                        cityerror &&
-                        stateerror &&
-                        countryerror &&
-                        postalcodeerror) {
-                      setState(() {
-                        loading = true;
-                      });
-                    }
+                // GestureDetector(
+                //   onTap: () async {
+                //     if (selectedProperty == null) {
+                //       setState(() {
+                //         propertyTypeError = true;
+                //         propertyTypeErrorMessage = "required";
+                //       });
+                //     } else {
+                //       setState(() {
+                //         propertyTypeError = false;
+                //       });
+                //     }
+                //     if (address.text.isEmpty) {
+                //       setState(() {
+                //         addresserror = true;
+                //         addressmessage = "required";
+                //       });
+                //     } else {
+                //       setState(() {
+                //         addresserror = false;
+                //       });
+                //     }
+                //     if (city.text.isEmpty) {
+                //       setState(() {
+                //         cityerror = true;
+                //         citymessage = "required";
+                //       });
+                //     } else {
+                //       setState(() {
+                //         cityerror = false;
+                //       });
+                //     }
+                //     if (state.text.isEmpty) {
+                //       setState(() {
+                //         stateerror = true;
+                //         statemessage = "required";
+                //       });
+                //     } else {
+                //       setState(() {
+                //         stateerror = false;
+                //       });
+                //     }
+                //     if (country.text.isEmpty) {
+                //       setState(() {
+                //         countryerror = true;
+                //         countrymessage = "required";
+                //       });
+                //     } else {
+                //       setState(() {
+                //         countryerror = false;
+                //       });
+                //     }
+                //     if (postalcode.text.isEmpty) {
+                //       setState(() {
+                //         postalcodeerror = true;
+                //         postalcodemessage = "required";
+                //       });
+                //     } else {
+                //       setState(() {
+                //         postalcodeerror = false;
+                //       });
+                //     }
+                //     if (addresserror &&
+                //         cityerror &&
+                //         stateerror &&
+                //         countryerror &&
+                //         postalcodeerror) {
+                //       setState(() {
+                //         loading = true;
+                //       });
+                //     }
+                //
+                //     SharedPreferences prefs =
+                //         await SharedPreferences.getInstance();
+                //
+                //     String? id = prefs.getString("adminId");
+                //     Rental_PropertiesRepository()
+                //         .addProperties(
+                //       adminId: id!,
+                //       property_id: widget.property?.propertyId,
+                //       rental_adress: address.text,
+                //       rental_city: city.text,
+                //       rental_state: state.text,
+                //       rental_country: country.text,
+                //       rental_postcode: postalcode.text,
+                //       staffmember_id: widget.staff!.staffmemberId,
+                //       processor_id: proid.text,
+                //     )
+                //         .then((value) {
+                //       setState(() {
+                //         isLoading = false;
+                //       });
+                //       Navigator.of(context).pop(true);
+                //     }).catchError((e) {
+                //       setState(() {
+                //         isLoading = false;
+                //       });
+                //     });
+                //   },
+                //   child: Row(
+                //     children: [
+                //       SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                //       ClipRRect(
+                //         borderRadius: BorderRadius.circular(5.0),
+                //         child: Container(
+                //           height: 30,
+                //           width: MediaQuery.of(context).size.width * .3,
+                //           decoration: BoxDecoration(
+                //             // borderRadius: BorderRadius.circular(3),
+                //             color: Color.fromRGBO(21, 43, 81, 1),
+                //             boxShadow: [
+                //               BoxShadow(
+                //                 color: Colors.grey,
+                //                 offset: Offset(0.0, 1.0), //(x,y)
+                //                 blurRadius: 6.0,
+                //               ),
+                //             ],
+                //           ),
+                //           child: Center(
+                //             child: Text(
+                //               "Create Property",
+                //               style: TextStyle(
+                //                   color: Colors.white,
+                //                   // fontWeight: FontWeight.bold,
+                //                   fontSize: 10),
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //       SizedBox(
+                //         width: 15,
+                //       ),
+                //       Text("Cancel"),
+                //     ],
+                //   ),
+                // ),
+                Row(
+                  children: [
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                    GestureDetector(
+                      onTap: () async {
+                        // if (unit.text.isEmpty || unitaddress.text.isEmpty || bath.text.isEmpty || bed.text.isEmpty || sqft.text.isEmpty) {
+                        //   iserror2 = true;
+                        //
+                        // } else {
+                        //   iserror2 = false;
+                        // }
+                        if (address.text.isEmpty) {
+                          setState(() {
+                            addresserror = true;
+                            addressmessage = "required";
 
-                    SharedPreferences prefs =
+                          });
+                        } else {
+                          setState(() {
+                            addresserror = false;
+                          });
+                        }
+                        if (city.text.isEmpty) {
+                          setState(() {
+                            cityerror = true;
+                            citymessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            cityerror = false;
+                          });
+                        }
+                        if (state.text.isEmpty) {
+                          setState(() {
+                            stateerror = true;
+                            statemessage = "required";
+
+                          });
+                        } else {
+                          setState(() {
+                            stateerror = false;
+                          });
+                        }
+                        if (country.text.isEmpty) {
+                          setState(() {
+                            countryerror = true;
+                            countrymessage = "required";
+
+                          });
+                        } else {
+                          setState(() {
+                            countryerror = false;
+                          });
+                        }
+                        if (postalcode.text.isEmpty) {
+                          setState(() {
+                            postalcodeerror = true;
+                            postalcodemessage = "required";
+
+                          });
+                        } else {
+                          setState(() {
+                            postalcodeerror = false;
+                          });
+                        }
+                        if (Ownersdetails == null) {
+                          setState(() {
+                            hasError = true;
+                            postalcodemessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            hasError = false;
+                          });
+                        }
+                        if (!addresserror &&
+                            !cityerror &&
+                            !stateerror &&
+                            !countryerror &&
+                            !postalcodeerror
+                        ) {
+                          setState(() {
+                            loading = true;
+                          });
+                        }
+                        SharedPreferences prefs =
                         await SharedPreferences.getInstance();
+                        String? adminId = prefs.getString("adminId");
+                        if (adminId != null) {
+                          try {
+                            RentalOwners owners =  RentalOwners(
+                              firstName: firstname.text,
+                                lastName: lastname.text,
+                              companyName: comname.text,
+                              primaryEmail: primaryemail.text,
+                              phoneNumber: phonenum.text,
+                              city:city2.text,
+                                 state:state2.text,
+                                 country:county2.text,
+                                postalCode:code2.text,
+                            );
+                            Rental rentals = Rental(
+                                adminId: adminId,
+                                propertyId: widget.property?.propertyId,
+                                address: address.text,
+                                city: city.text,
+                                state: state.text,
+                                country: country.text,
+                                postcode: postalcode.text,
+                                staffMemberId: widget.staff!.staffmemberId,
+                            );
+                            List<Unit> units = [];
+                            if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
+                              for (int i = 0; i <
+                                  propertyGroupControllers.length; i++) {
+                                List<
+                                    TextEditingController> controllers = propertyGroupControllers[i];
+                                  units[i].unit = controllers[0].text;
+                                  units[i].address = controllers[1].text;
+                                  units[i].sqft = controllers[2].text;
+                                  units[i].Image = propertyGroupImagenames[i];
+                            //      units[i].bath = controllers[3].text;
+                             //     units[i].bed = controllers[4].text;
 
-                    String? id = prefs.getString("adminId");
-                    Rental_PropertiesRepository()
-                        .addProperties(
-                      adminId: id!,
-                      property_id: widget.property?.propertyId,
-                      rental_adress: address.text,
-                      rental_city: city.text,
-                      rental_state: state.text,
-                      rental_country: country.text,
-                      rental_postcode: postalcode.text,
-                      staffmember_id: widget.staff!.staffmemberId,
-                      processor_id: proid.text,
-                    )
-                        .then((value) {
-                      setState(() {
-                        isLoading = false;
-                      });
-                      Navigator.of(context).pop(true);
-                    }).catchError((e) {
-                      setState(() {
-                        isLoading = false;
-                      });
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-                      ClipRRect(
+//                                  units[i].unit = controllers[0].text;
+
+                              }
+                            }
+                           else if (selectedpropertytype == 'Residential' &&
+                            selectedIsMultiUnit == true) {
+                              for (int i = 0; i <
+                                  propertyGroupControllers.length; i++) {
+                                List<
+                                    TextEditingController> controllers = propertyGroupControllers[i];
+                                units[i].unit = controllers[0].text;
+                                units[i].address = controllers[1].text;
+                                units[i].sqft = controllers[2].text;
+                                units[i].bath = controllers[3].text;
+                                units[i].bed = controllers[4].text;
+                                units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+
+                              }
+                          }
+                           else if (selectedpropertytype == 'Residential') {
+
+                              for (int i = 0; i <
+                                  propertyGroupControllers.length; i++) {
+                                List<
+                                    TextEditingController> controllers = propertyGroupControllers[i];
+                                units[i].sqft= controllers[0].text;
+                                units[i].bath = controllers[1].text;
+                                units[i].bed = controllers[2].text;
+                                units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+
+                              }
+                            }
+                           else if (selectedpropertytype == 'Commercial') {
+
+                              for (int i = 0; i <
+                                  propertyGroupControllers.length; i++) {
+                                List<
+                                    TextEditingController> controllers = propertyGroupControllers[i];
+                                units[i].sqft = controllers[0].text;
+                                units[i].Image = propertyGroupImagenames[i];
+                                //units[i].address = controllers[1].text;
+                                //units[i].sqft = controllers[2].text;
+//                                  units[i].unit = controllers[0].text;
+
+                              }
+                            }
+
+                            RentalRequest rentalrequest = RentalRequest(
+                              rentalOwner: owners,
+                              rental: rentals,
+                              units: units
+                            );
+                            Rental_PropertiesRepository().createRental(rentalrequest);
+
+                            // await  Rental_PropertiesRepository().addProperties(
+                            //   adminId: adminId!,
+                            //   property_id: widget.property?.propertyId,
+                            //   rental_adress: address.text,
+                            //   rental_city: city.text,
+                            //   rental_state: state.text,
+                            //   rental_country: country.text,
+                            //   rental_postcode: postalcode.text,
+                            //   staffmember_id: widget.staff!.staffmemberId,
+                            //   processor_id: proid.text,
+                            // );
+                            setState(() {
+                              loading = false;
+                            });
+                            Navigator.of(context).pop(true);
+                          } catch (e) {
+                            setState(() {
+                              loading = false;
+                            });
+                            // Handle error
+                          }
+                        }
+                      },
+                      child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 30,
                           width: MediaQuery.of(context).size.width * .3,
                           decoration: BoxDecoration(
-                            // borderRadius: BorderRadius.circular(3),
                             color: Color.fromRGBO(21, 43, 81, 1),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey,
-                                offset: Offset(0.0, 1.0), //(x,y)
+                                offset: Offset(0.0, 1.0),
                                 blurRadius: 6.0,
                               ),
                             ],
@@ -6125,19 +9827,27 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             child: Text(
                               "Create Property",
                               style: TextStyle(
-                                  color: Colors.white,
-                                  // fontWeight: FontWeight.bold,
-                                  fontSize: 10),
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Text("Cancel"),
-                    ],
-                  ),
+                    ),
+                    SizedBox(width: 15),
+                    InkWell(
+                        onTap: () {
+                        //  displayPropertyData();
+                          Navigator.pop(context);
+                        },
+                        child: Text("Cancel")),
+                  ],
+                ),
+                Column(
+                  children: [
+                    //SetshowRentalOwnerTable(),
+                  ],
                 ),
               ],
             ),
@@ -6146,62 +9856,506 @@ class _Add_new_propertyState extends State<Add_new_property> {
       ),
     );
   }
+
+  // Future<void> checkIfRentalOwnerExists() async {
+  //
+  //     await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+  //       rentalowner_id: rentalOwnerId!.rentalOwnerId,
+  //       rentalOwner_firstName: firstname.text,
+  //       rentalOwner_lastName: lastname.text,
+  //       rentalOwner_companyName: comname.text,
+  //       rentalOwner_primaryEmail: primaryemail.text,
+  //       rentalOwner_alternativeEmail: alternativeemail.text,
+  //       rentalOwner_phoneNumber: phonenum.text,
+  //       rentalOwner_homeNumber: homenum.text,
+  //       rentalOwner_businessNumber: businessnum.text,
+  //     )
+  //         .then((value) {
+  //   setState(() {
+  //   isLoading = false;
+  //   });
+  //   Navigator.pop(context,true);
+  //   }).catchError((e) {
+  //   setState(() {
+  //   isLoading = false;
+  //   });
+  //   });
+  // }
+
+  Widget _buildProcessorGroup(int index) {
+    ProcessorGroup group = _processorGroups[index];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 20.0,
+            height: 20.0,
+            child: Checkbox(
+              value: group.isChecked,
+              onChanged: (value) {
+                setState(() {
+                  group.isChecked = value ?? false;
+                });
+              },
+              activeColor: Color.fromRGBO(21, 43, 81, 1),
+            ),
+          ),
+          SizedBox(width: MediaQuery.of(context).size.width * .02),
+          Expanded(
+            child: Material(
+              elevation: 3,
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.white,
+                  border: Border.all(color: Color(0xFF8A95A8)),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: TextField(
+                        controller: group.controller,
+                        cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              top: 12.5, bottom: 12.5, left: 15),
+                          hintText: "Enter processor",
+                          hintStyle: TextStyle(
+                            color: Color(0xFF8A95A8),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: MediaQuery.of(context).size.width * .02),
+          InkWell(
+            onTap: () {
+              _removeGroup(index);
+            },
+            child: Container(
+              padding: EdgeInsets.zero,
+              child: FaIcon(
+                FontAwesomeIcons.trashCan,
+                size: 20,
+                color: Color.fromRGBO(21, 43, 81, 1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  SetshowRentalOwnerTable(){
+
+    Row(
+      children: [
+        Text("Hello"),
+      ],
+    );
+
+  }
+
+  void _addNewGroup() {
+    setState(() {
+      _processorGroups.add(ProcessorGroup(
+          isChecked: false, controller: TextEditingController()));
+    });
+  }
+
+  void _removeGroup(int index) {
+    setState(() {
+      _processorGroups.removeAt(index);
+    });
+  }
+
+
+
+
+  List<Widget> generateOwnerWidgets(
+      List<Owner> filteredOwners, BuildContext context) {
+    return List<Widget>.generate(filteredOwners.length, (index) {
+      Owner owner = filteredOwners[index];
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (owner.processorList.isNotEmpty) ...[
+            Row(
+              children: [
+                Text(
+                  "Merchant Id",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF8A95A8),
+                      fontSize: 14),
+                ),
+              ],
+            ),
+            SizedBox(height: 5),
+            Column(
+              children: [
+                Container(
+                  height: 150,
+                  child: ListView.builder(
+                    itemCount: _processorGroups.length,
+                    itemBuilder: (context, index) {
+                      ProcessorGroup group = _processorGroups[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 20.0,
+                              height: 20.0,
+                              child: Checkbox(
+                                value: group.isChecked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    group.isChecked = value ?? false;
+                                  });
+                                },
+                                activeColor: Color.fromRGBO(21, 43, 81, 1),
+                              ),
+                            ),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * .02),
+                            Expanded(
+                              child: Material(
+                                elevation: 3,
+                                borderRadius: BorderRadius.circular(5),
+                                child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: Color(0xFF8A95A8)),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: TextField(
+                                          controller: group.controller,
+                                          cursorColor:
+                                              Color.fromRGBO(21, 43, 81, 1),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.only(
+                                                top: 12.5,
+                                                bottom: 12.5,
+                                                left: 15),
+                                            hintText: "Enter processor",
+                                            hintStyle: TextStyle(
+                                              color: Color(0xFF8A95A8),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * .02),
+                            InkWell(
+                              onTap: () {
+                                _removeGroup(index);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.zero,
+                                child: FaIcon(
+                                  FontAwesomeIcons.trashCan,
+                                  size: 20,
+                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: _addNewGroup,
+                  child: Text("Add Processor Group"),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            Row(
+              children: [
+                // Handle error display here if needed
+              ],
+            ),
+          ],
+        ],
+      );
+    });
+  }
+
+  Future<Map<String, dynamic>> addRentals({
+    required String? adminId,
+    required String? rentalowner_id,
+    required String? processor_list,
+    required String? rentalOwner_firstName,
+    required String? rentalOwner_lastName,
+    required String? rentalOwner_companyName,
+    required String? rentalOwner_primaryEmail,
+    required String? rentalOwner_phoneNumber,
+    required String? rentalOwner_businessNumber,
+  }) async {
+    final Map<String, dynamic> data = {
+      'admin_id': adminId,
+      'rentalowner_id': rentalowner_id,
+      'processor_list': processor_list,
+      'rentalOwner_firstName': rentalOwner_firstName,
+      'rentalOwner_lastName': rentalOwner_lastName,
+      ' rentalOwner_companyName': rentalOwner_companyName,
+      '  rentalOwner_primaryEmail': rentalOwner_primaryEmail,
+      ' rentalOwner_phoneNumber': rentalOwner_phoneNumber,
+      ' rentalOwner_businessNumber': rentalOwner_businessNumber,
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse('https://saas.cloudrentalmanager.com/api/rentals/rentals'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? rental_id = prefs.getString("adminId");
+    var responseData = json.decode(response.body);
+
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add property type');
+    }
+  }
+
+
+
+
+  void handleAddrentalOwner() {
+    print(rentalOwnerId);
+    if (rentalOwnerId != null) {
+      print(rentalOwnerId);
+      Fluttertoast.showToast(
+          msg: "Rental Owner Added Successfully!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    // setDisplay(false);
+  }
 }
-
-class RentalOwner {
-  final String name;
-  final String id;
-  final List<String> processorIds;
-
-  RentalOwner({
-    required this.name,
-    required this.id,
-    required this.processorIds,
-  });
-}
-
-// models.dart
-
-// models.dart
 
 class Owner {
-  String id;
-  String firstName;
-  String lastName;
-  String phoneNumber;  // Added phone number
-  List<Processor> processorList;
+  final String id;
+  final String rentalOwnerId;
+  final String adminId;
+  final String firstName;
+  final String lastName;
+  final String companyName;
+  final String primaryEmail;
+  final String alternateEmail;
+  final String phoneNumber;
+  final String? homeNumber;
+  final String? businessNumber;
+  final String birthDate;
+  final String startDate;
+  final String endDate;
+  final String taxpayerId;
+  final String identityType;
+  final String streetAddress;
+  final String city;
+  final String state;
+  final String country;
+  final String postalCode;
+  final String createdAt;
+  final String updatedAt;
+  final bool isDelete;
+  final List<Processor> processorList;
 
   Owner({
     required this.id,
+    required this.rentalOwnerId,
+    required this.adminId,
     required this.firstName,
     required this.lastName,
-    required this.phoneNumber,  // Added phone number
+    required this.companyName,
+    required this.primaryEmail,
+    required this.alternateEmail,
+    required this.phoneNumber,
+    required this.homeNumber,
+    required this.businessNumber,
+    required this.birthDate,
+    required this.startDate,
+    required this.endDate,
+    required this.taxpayerId,
+    required this.identityType,
+    required this.streetAddress,
+    required this.city,
+    required this.state,
+    required this.country,
+    required this.postalCode,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDelete,
     required this.processorList,
   });
 
   factory Owner.fromJson(Map<String, dynamic> json) {
     var list = json['processor_list'] as List;
-    List<Processor> processorList = list.map((i) => Processor.fromJson(i)).toList();
+    List<Processor> processorList =
+        list.map((i) => Processor.fromJson(i)).toList();
 
     return Owner(
-      id: json['rentalowner_id'],
-      firstName: json['rentalOwner_firstName'],
-      lastName: json['rentalOwner_lastName'],
-      phoneNumber: json['rentalOwner_phoneNumber'],  // Added phone number
+      id: json['_id'],
+      rentalOwnerId: json['rentalowner_id']??"",
+      adminId: json['admin_id']??"",
+      firstName: json['rentalOwner_firstName']??"",
+      lastName: json['rentalOwner_lastName']??"",
+      companyName: json['rentalOwner_companyName']??"",
+      primaryEmail: json['rentalOwner_primaryEmail']??"",
+      alternateEmail: json['rentalOwner_alternateEmail']??"",
+      phoneNumber: json['rentalOwner_phoneNumber']??"",
+      homeNumber: json['rentalOwner_homeNumber']??"", // Nullable field
+      businessNumber: json['rentalOwner_businessNumber']??"", // Nullable field
+      birthDate: json['birth_date']??"",
+      startDate: json['start_date']??"",
+      endDate: json['end_date']??"",
+      taxpayerId: json['texpayer_id']??"",
+      identityType: json['text_identityType']??"",
+      streetAddress: json['street_address']??"",
+      city: json['city']??"",
+      state: json['state']??"",
+      country: json['country']??"",
+      postalCode: json['postal_code']??"",
+      createdAt: json['createdAt']??"",
+      updatedAt: json['updatedAt']??"",
+      isDelete: json['is_delete'],
       processorList: processorList,
     );
   }
 }
 
+// class Processor {
+//   final String processorId;
+//   final String id;
+//
+//   Processor({required this.processorId, required this.id});
+//
+//   factory Processor.fromJson(Map<String, dynamic> json) {
+//     return Processor(
+//       processorId: json['processor_id'],
+//       id: json['_id'],
+//     );
+//   }
+// }
 class Processor {
-  String processorId;
+  final String processorId;
+  final String id;
 
-  Processor({required this.processorId});
+  Processor({required this.processorId, required this.id});
 
   factory Processor.fromJson(Map<String, dynamic> json) {
     return Processor(
       processorId: json['processor_id'],
+      id: json['_id'],
     );
   }
 }
 
+class ProcessorGroup {
+  bool isChecked;
+  TextEditingController controller;
+
+  ProcessorGroup({required this.isChecked, required this.controller});
+}
+class OwnersDetails{
+  RentalOwner? Ownersdetails;
+  OwnersDetails({required this.Ownersdetails,});
+
+}
+
+class RentalOwnerSource extends DataTableSource {
+  final List<RentalOwner> rentalowner;
+  final Function(RentalOwner) onEdit;
+  final Function(RentalOwner) onDelete;
+
+  RentalOwnerSource(this.rentalowner, {required this.onEdit, required this.onDelete});
+
+  @override
+  DataRow getRow(int index) {
+    final rental = rentalowner[index];
+    return DataRow(cells: [
+      DataCell(Text(rental.rentalOwnerFirstName!)),
+      DataCell(Text(rental.rentalOwnerLastName!)),
+      DataCell(Text(rental.rentalOwnerPhoneNumber!)),
+      DataCell(Row(
+        children: [
+          InkWell(
+            onTap: () {
+              onEdit(rental);
+            },
+            child: Container(
+              //  color: Colors.redAccent,
+              padding: EdgeInsets.zero,
+              child: FaIcon(
+                FontAwesomeIcons.edit,
+                size: 20,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 4,
+          ),
+          InkWell(
+            onTap: () {
+              onDelete(rental);
+            },
+            child: Container(
+              //    color: Colors.redAccent,
+              padding: EdgeInsets.zero,
+              child: FaIcon(
+                FontAwesomeIcons.trashCan,
+                size: 20,
+              ),
+            ),
+          ),
+
+        ],
+      )),
+    ]);
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => rentalowner.length;
+
+  @override
+  int get selectedRowCount => 0;
+}
