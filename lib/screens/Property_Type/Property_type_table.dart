@@ -12,20 +12,7 @@ import '../../widgets/drawer_tiles.dart';
 import 'Edit_property_type.dart';
 import 'Add_property_type.dart';
 
-class _Dessert {
-  _Dessert(
-    this.name,
-    this.property,
-    this.subtype,
-    this.rentalowenername,
-  );
 
-  final String name;
-  final String property;
-  final String subtype;
-  final String rentalowenername;
-  bool selected = false;
-}
 
 class PropertyTable extends StatefulWidget {
   @override
@@ -33,6 +20,7 @@ class PropertyTable extends StatefulWidget {
 }
 
 class _PropertyTableState extends State<PropertyTable> {
+
   late Future<List<propertytype>> futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
@@ -55,26 +43,23 @@ class _PropertyTableState extends State<PropertyTable> {
             builder: (context) => Edit_property_type(
                   property: property,
                 )));
-   /* if (result == true) {
+    /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
       });
     }*/
   }
 
-  void _showAlert(BuildContext context,String id) {
+  void _showAlert(BuildContext context, String id) {
     Alert(
-
       context: context,
       type: AlertType.warning,
-
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this property!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
-
         DialogButton(
           child: Text(
             "Cancel",
@@ -88,11 +73,12 @@ class _PropertyTableState extends State<PropertyTable> {
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
-          onPressed: () async{
-            var data =  PropertyTypeRepository().DeletePropertyType(id: id);
+          onPressed: () async {
+            var data = PropertyTypeRepository().DeletePropertyType(id: id);
             // Add your delete logic here
             setState(() {
-              futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+              futurePropertyTypes =
+                  PropertyTypeRepository().fetchPropertyTypes();
             });
             Navigator.pop(context);
           },
@@ -102,27 +88,145 @@ class _PropertyTableState extends State<PropertyTable> {
     ).show();
   }
 
-  void _sort<T>(Comparable<T> Function(propertytype) getField, int columnIndex,
-      bool ascending) {
-    futurePropertyTypes.then((propertyTypes) {
-      propertyTypes.sort((a, b) {
+  List<propertytype> _tableData = [];
+  int _rowsPerPage = 5;
+  int _currentPage = 0;
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
+
+  List<propertytype> get _pagedData {
+    int startIndex = _currentPage * _rowsPerPage;
+    int endIndex = startIndex + _rowsPerPage;
+    return _tableData.sublist(startIndex,
+        endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void _changeRowsPerPage(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPage = selectedRowsPerPage;
+      _currentPage = 0; // Reset to the first page when changing rows per page
+    });
+  }
+
+  void _sort<T>(Comparable<T> Function(propertytype d) getField,
+      int columnIndex, bool ascending) {
+    setState(() {
+      _sortColumnIndex = columnIndex;
+      _sortAscending = ascending;
+      _tableData.sort((a, b) {
         final aValue = getField(a);
         final bValue = getField(b);
-        return ascending
-            ? Comparable.compare(aValue, bValue)
-            : Comparable.compare(bValue, aValue);
-      });
-      setState(() {
-        sortColumnIndex = columnIndex;
-        sortAscending = ascending;
+        final result = aValue.compareTo(bValue as T);
+        return _sortAscending ? result : -result;
       });
     });
   }
 
   void handleDelete(propertytype property) {
-    _showAlert(context,property.propertyId!);
+    _showAlert(context, property.propertyId!);
     // Handle delete action
     print('Delete ${property.sId}');
+  }
+
+  Widget _buildHeader<T>(String text, int columnIndex,
+      Comparable<T> Function(propertytype d)? getField) {
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+                _sort(getField, columnIndex, !_sortAscending);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(
+                    _sortAscending ? Icons.arrow_drop_down_outlined : Icons.arrow_drop_up_outlined),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(text),
+      ),
+    );
+  }
+
+  Widget _buildActionsCell(propertytype data) {
+    return TableCell(
+      child: Row(
+        children: [
+          IconButton(
+            icon: FaIcon(
+              FontAwesomeIcons.edit,
+              size: 20,
+            ),
+            onPressed: () => handleEdit(data),
+          ),
+          IconButton(
+            icon: FaIcon(
+              FontAwesomeIcons.trashCan,
+              size: 20,
+            ),
+            onPressed: () => handleDelete(data),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text('Rows per page: '),
+        DropdownButton<int>(
+          value: _rowsPerPage,
+          items: [5, 10, 15, 20].map((int value) {
+            return DropdownMenuItem<int>(
+              value: value,
+              child: Text(value.toString()),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            if (newValue != null) {
+              _changeRowsPerPage(newValue);
+            }
+          },
+        ),
+        SizedBox(width: 20),
+        IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: _currentPage == 0
+              ? null
+              : () {
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
+        ),
+        Text('Page ${_currentPage + 1}'),
+        IconButton(
+          icon: Icon(Icons.arrow_forward),
+          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+              ? null
+              : () {
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
+        ),
+      ],
+    );
   }
 
   final _scrollController = ScrollController();
@@ -161,18 +265,24 @@ class _PropertyTableState extends State<PropertyTable> {
                   true),
               buildListTile(context, Icon(CupertinoIcons.person_add),
                   "Add Staff Member", false),
-              buildDropdownListTile(context, FaIcon(
-                FontAwesomeIcons.key,
-                size: 20,
-                color: Colors.black,
-              ), "Rental",
+              buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.key,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Rental",
                   ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(context, FaIcon(
-                FontAwesomeIcons.thumbsUp,
-                size: 20,
-                color: Colors.black,
-              ),
-                  "Leasing", ["Rent Roll", "Applicants"]),
+              buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.thumbsUp,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Leasing",
+                  ["Rent Roll", "Applicants"]),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
@@ -195,15 +305,17 @@ class _PropertyTableState extends State<PropertyTable> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GestureDetector(
-                    onTap: () async{
-                     final result = await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Add_property()));
-                      if(result == true){
+                    onTap: () async {
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => Add_property()));
+                      if (result == true) {
                         setState(() {
-                          futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                          futurePropertyTypes =
+                              PropertyTypeRepository().fetchPropertyTypes();
                         });
                       }
-                     },
+                    },
                     child: Container(
                       height: 40,
                       width: MediaQuery.of(context).size.width * 0.4,
@@ -400,22 +512,24 @@ class _PropertyTableState extends State<PropertyTable> {
               future: futurePropertyTypes,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: SpinKitFadingCircle(
-                    color: Colors.black,
-                    size: 40.0,
-                  ));
+                  return Center(
+                    child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 40.0,
+                    ),
+                  );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No data available'));
                 } else {
-                  List<propertytype>? filteredData = [];
-                  if (selectedValue == null && searchvalue == "") {
-                    filteredData = snapshot.data;
+                  _tableData = snapshot.data!;
+                  if (selectedValue == null && searchvalue.isEmpty) {
+                    _tableData = snapshot.data!;
                   } else if (selectedValue == "All") {
-                    filteredData = snapshot.data;
-                  } else if (searchvalue != null && searchvalue.isNotEmpty) {
-                    filteredData = snapshot.data!
+                    _tableData = snapshot.data!;
+                  } else if (searchvalue.isNotEmpty) {
+                    _tableData = snapshot.data!
                         .where((property) =>
                             property.propertyType!
                                 .toLowerCase()
@@ -425,7 +539,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                 .contains(searchvalue.toLowerCase()))
                         .toList();
                   } else {
-                    filteredData = snapshot.data!
+                    _tableData = snapshot.data!
                         .where((property) =>
                             property.propertyType == selectedValue)
                         .toList();
@@ -434,120 +548,84 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Column(
                       children: [
                         Container(
-                          child: Scrollbar(
-                            thickness: 20,
-                            controller: _scrollController,
-                            thumbVisibility: true,
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 50),
-                              child: Theme(
-                                data: Theme.of(context).copyWith(
-                                  cardTheme: CardTheme(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius
-                                          .zero, // Remove border radius
-                                    ),
-                                  ),
-                                  dataTableTheme: DataTableThemeData(
-                                    dataRowColor: MaterialStateProperty.all(Colors
-                                        .transparent), // Set data row color to transparent
-                                    headingRowColor: MaterialStateProperty.all(
-                                        Colors
-                                            .transparent), // Set heading row color to transparent
-                                    dividerThickness: 0, // Remove divider
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color:
-                                              Colors.black), // Add black border
-                                    ),
-                                    child: PaginatedDataTable(
-                                      sortAscending: sortAscending,
-                                      sortColumnIndex: sortColumnIndex,
-                                      rowsPerPage: rowsPerPage,
-                                      //  showEmptyRows: false,
-                                      columnSpacing: 15,
-                                      availableRowsPerPage: [5, 10, 15, 20],
-                                      onRowsPerPageChanged: (value) {
-                                        setState(() {
-                                          rowsPerPage = value!;
-                                        });
-                                      },
-                                      columns: [
-                                        DataColumn(
-                                          label: Text(
-                                            'Main Type',
-                                            style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Table(
+                                    defaultColumnWidth: IntrinsicColumnWidth(),
+                                    children: [
+                                      TableRow(
+                                        decoration:
+                                            BoxDecoration(border: Border.all()),
+                                        children: [
+                                          _buildHeader(
+                                              'Main Type',
+                                              0,
+                                              (property) =>
+                                                  property.propertyType!),
+                                          _buildHeader(
+                                              'Subtype',
+                                              1,
+                                              (property) =>
+                                                  property.propertysubType!),
+                                          _buildHeader('Created At', 2, null),
+                                          _buildHeader('Updated At', 3, null),
+                                          _buildHeader('Actions', 4, null),
+                                        ],
+                                      ),
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          border: Border.symmetric(
+                                              horizontal: BorderSide.none),
+                                        ),
+                                        children: List.generate(
+                                            5,
+                                            (index) => TableCell(
+                                                child: Container(height: 20))),
+                                      ),
+                                      for (var i = 0;
+                                          i < _pagedData.length;
+                                          i++)
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              left: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              right: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              top: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              bottom: i == _pagedData.length - 1
+                                                  ? BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 81, 1))
+                                                  : BorderSide.none,
                                             ),
                                           ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                (property) =>
-                                                    property.propertyType!,
-                                                columnIndex,
-                                                ascending);
-                                          },
+                                          children: [
+                                            _buildDataCell(
+                                                _pagedData[i].propertyType!),
+                                            _buildDataCell(
+                                                _pagedData[i].propertysubType!),
+                                            _buildDataCell(
+                                                _pagedData[i].createdAt!),
+                                            _buildDataCell(
+                                                _pagedData[i].updatedAt!),
+                                            _buildActionsCell(_pagedData[i]),
+                                          ],
                                         ),
-                                        DataColumn(
-                                          label: Text(
-                                            'Subtype',
-                                            style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                (property) =>
-                                                    property.propertysubType!,
-                                                columnIndex,
-                                                ascending);
-                                          },
-                                        ),
-                                        DataColumn(
-                                            label: Text(
-                                          'Created At',
-                                          style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold),
-                                        )),
-                                        DataColumn(
-                                            label: Text(
-                                          'Updated At',
-                                          style: TextStyle(
-                                            color:
-                                                Color.fromRGBO(21, 43, 81, 1),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )),
-                                        DataColumn(
-                                            label: Text(
-                                          'Actions',
-                                          style: TextStyle(
-                                            color:
-                                                Color.fromRGBO(21, 43, 81, 1),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )),
-                                      ],
-                                      source: PropertyDataSource(
-                                        filteredData!,
-                                        onEdit: handleEdit,
-                                        onDelete: handleDelete,
-                                      ),
-                                    ),
+                                    ],
                                   ),
                                 ),
-                              ),
+                                SizedBox(height: 10),
+                                _buildPaginationControls(),
+                              ],
                             ),
                           ),
                         ),

@@ -4,10 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Staff_Member/Edit_staff_member.dart';
 
+import '../constant/constant.dart';
 import '../model/staffmember.dart';
 
 class StaffMemberRepository {
-  final String apiUrl = 'https://saas.cloudrentalmanager.com/api/staffmember/staff_member';
+  final String apiUrl = '${Api_url}/api/staffmember/staff_member';
 
   Future<Map<String, dynamic>> addStaffMember({
     required String? adminId,
@@ -45,7 +46,7 @@ class StaffMemberRepository {
   // Future<List<Staffmembers>> fetchStaffmembers() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? id = prefs.getString("adminId");
-  //   final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/staffmember/staff_member/$id'));
+  //   final response = await http.get(Uri.parse('${Api_url}/api/staffmember/staff_member/$id'));
   //   print(response.body);
   //   if (response.statusCode == 200) {
   //     List jsonResponse = json.decode(response.body)['data'];
@@ -85,7 +86,7 @@ class StaffMemberRepository {
 
     };
     print(data);
-    String apiUrl = "https://saas.cloudrentalmanager.com/api/staffmember/staff_member/$Sid";
+    String apiUrl = "${Api_url}/api/staffmember/staff_member/$Sid";
     print(apiUrl);
     final http.Response response = await http.put(
       Uri.parse(apiUrl),

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../constant/constant.dart';
 import '../Dashboard/dashboard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -810,7 +811,7 @@ class _Signup2State extends State<Signup2> {
     });
 
     final response = await http.post(
-        Uri.parse('https://saas.cloudrentalmanager.com/api/admin/register'),
+        Uri.parse('${Api_url}/api/admin/register'),
         body: {"email": email.text,
           "password": password.text,"first_name":firstname.text,"last_name":lastname.text,"company_name":companyname.text,"phone_number":phonenumber.text});
     final jsonData = json.decode(response.body);

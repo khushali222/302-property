@@ -4,6 +4,8 @@ import '../screens/Leasing/Applicants/Applicants_table.dart';
 import '../screens/Leasing/RentalRoll/RentalRoll_table.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
+import '../screens/Rental/Properties/Properties_table.dart';
+import '../screens/Rental/Rentalowner/Add_RentalOwners.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
 import '../screens/Rental/Properties/add_new_property.dart';
 import '../screens/Staff_Member/Add_staffmember.dart';
@@ -45,8 +47,8 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
 
 void navigateToOption(BuildContext context, String option,) {
   Map<String, WidgetBuilder> routes = {
-    "Properties": (context) => Add_new_property(),
-    "RentalOwner": (context) => Rentalowner_table(),
+    "Properties": (context) => PropertiesTable(),
+    "RentalOwner": (context) => Add_rentalowners(),
     "Tenants": (context) => Tenants_table(),
     "Vendor":(context)=>Vendor_table(),
     "Work Order":(context)=>Workorder_table(),

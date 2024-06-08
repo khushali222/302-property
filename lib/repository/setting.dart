@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
 
 
+import '../constant/constant.dart';
 import '../model/setting.dart';
 
 
@@ -34,7 +35,7 @@ class SurchargeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(jsonEncode(data));
     String? id = prefs.getString("adminId");
-    final response = await http.put(Uri.parse('https://saas.cloudrentalmanager.com/api/surcharge/surcharge/$id'),body:data );
+    final response = await http.put(Uri.parse('${Api_url}/api/surcharge/surcharge/$id'),body:data );
     final response_Data = jsonDecode(response.body,);
     if (response_Data["statusCode"] == 200) {
       final apiResponse = ApiResponse.fromJson(jsonDecode(response.body)["data"]);

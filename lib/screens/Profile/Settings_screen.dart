@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 
 
+import '../../constant/constant.dart';
 import '../../model/setting.dart';
 import '../../widgets/drawer_tiles.dart';
 
@@ -42,9 +43,9 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   final SurchargeRepository surchargeRepository =
-      SurchargeRepository(baseUrl: 'https://saas.cloudrentalmanager.com');
+      SurchargeRepository(baseUrl: '${Api_url}');
   final latefeeRepository latefeerepository =
-  latefeeRepository(baseUrl: 'https://saas.cloudrentalmanager.com');
+  latefeeRepository(baseUrl: '${Api_url}');
 
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

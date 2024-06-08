@@ -7,6 +7,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/screens/Signup/signup2_screen.dart';
 import 'package:http/http.dart'as http;
 
+import '../../constant/constant.dart';
+
 class Signup extends StatefulWidget {
   @override
   _SignupState createState() => _SignupState();
@@ -55,7 +57,7 @@ class _SignupState extends State<Signup> {
     setState(() {
       loading = true;
     });
-    final url = Uri.parse('https://saas.cloudrentalmanager.com/api/admin/check_email');
+    final url = Uri.parse('${Api_url}/api/admin/check_email');
     final response = await http.post(url, body: {'email': email});
     print(response.statusCode);
       final jsonData = json.decode(response.body);
@@ -98,7 +100,7 @@ class _SignupState extends State<Signup> {
   //     loading = true;
   //   });
   //   final response = await http.post(
-  //       Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
+  //       Uri.parse('${Api_url}/api/admin/login'),
   //       body: {"email": email.text});
   //   print(response.statusCode);
   //   final jsonData = json.decode(response.body);

@@ -352,7 +352,6 @@ class _Add_propertyState extends State<Add_property> {
                                 });
                                 SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
-
                                 String? id = prefs.getString("adminId");
                                 PropertyTypeRepository()
                                     .addPropertyType(
@@ -360,8 +359,7 @@ class _Add_propertyState extends State<Add_property> {
                                   propertyType: selectedValue,
                                   propertySubType: subtype.text,
                                   isMultiUnit: isChecked,
-                                )
-                                    .then((value) {
+                                ).then((value) {
                                   setState(() {
                                     isLoading = false;
                                   });

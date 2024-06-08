@@ -29,7 +29,6 @@ class _Edit_property_typeState extends State<Edit_property_type> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     selectedValue = widget.property.propertyType;
     subtype.text = widget.property.propertysubType!;
     isChecked = widget.property.isMultiunit!;

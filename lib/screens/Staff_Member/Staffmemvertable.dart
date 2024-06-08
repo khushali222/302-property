@@ -49,7 +49,44 @@ class _StaffTableState extends State<StaffTable> {
     super.initState();
     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
   }
+  List<Staffmembers> _tableData = [];
+  int _rowsPerPage = 5;
+  int _currentPage = 0;
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
 
+  List<Staffmembers> get _pagedData {
+    int startIndex = _currentPage * _rowsPerPage;
+    int endIndex = startIndex + _rowsPerPage;
+    return _tableData.sublist(startIndex, endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void _changeRowsPerPage(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPage = selectedRowsPerPage;
+      _currentPage = 0; // Reset to the first page when changing rows per page
+    });
+  }
+
+  void _sort<T>(Comparable<T> Function(Staffmembers d) getField, int columnIndex, bool ascending) {
+    setState(() {
+      _sortColumnIndex = columnIndex;
+      _sortAscending = ascending;
+      _tableData.sort((a, b) {
+        final aValue = getField(a);
+        final bValue = getField(b);
+
+        int result;
+        if (aValue is String && bValue is String) {
+          result = aValue.toString().toLowerCase().compareTo(bValue.toString().toLowerCase());
+        } else {
+          result = aValue.compareTo(bValue as T);
+        }
+
+        return _sortAscending ? result : -result;
+      });
+    });
+  }
 
   void handleEdit(Staffmembers staff) async {
     // Handle edit action
@@ -103,7 +140,7 @@ class _StaffTableState extends State<StaffTable> {
     ).show();
   }
 
-  void _sort<T>(Comparable<T> Function(Staffmembers) getField, int columnIndex, bool ascending) {
+ /* void _sort<T>(Comparable<T> Function(Staffmembers) getField, int columnIndex, bool ascending) {
     futureStaffMembers.then((staffMembers) {
       staffMembers.sort((a, b) {
         final aValue = getField(a);
@@ -118,7 +155,7 @@ class _StaffTableState extends State<StaffTable> {
       });
     });
   }
-
+*/
   void handleDelete(Staffmembers staff) {
     _showDeleteAlert(context, staff.staffmemberId!);
     // Handle delete action
@@ -360,118 +397,57 @@ class _StaffTableState extends State<StaffTable> {
                         .where((staff) => staff.staffmemberDesignation == selectedRole)
                         .toList();
                   }
-                  return SingleChildScrollView(
+                  _tableData = snapshot.data!;
+                  return  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Column(
                       children: [
-                        Container(
-                          child: Scrollbar(
-                            thickness: 20,
-                            controller: _scrollController,
-                            thumbVisibility: true,
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 50),
-                              child: Theme(
-                                data: Theme.of(context).copyWith(
-                                  cardTheme: CardTheme(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.zero,
-                                    ),
-                                  ),
-                                  dataTableTheme: DataTableThemeData(
-                                    dataRowColor: MaterialStateProperty.all(Colors.transparent),
-                                    headingRowColor: MaterialStateProperty.all(Colors.transparent),
-                                    dividerThickness: 0,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.black),
-                                    ),
-                                    child: PaginatedDataTable(
-                                      sortAscending: sortAscending,
-                                      sortColumnIndex: sortColumnIndex,
-                                      rowsPerPage: rowsPerPage,
-                                      columnSpacing: 15,
-                                      availableRowsPerPage: [5, 10, 15, 20],
-                                      onRowsPerPageChanged: (value) {
-                                        setState(() {
-                                          rowsPerPage = value!;
-                                        });
-                                      },
-                                      columns: [
-                                        DataColumn(
-                                          label: Text(
-                                            'Name',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                    (staff) => staff.staffmemberName!,
-                                                columnIndex,
-                                                ascending);
-                                          },
-                                        ),
-                                        DataColumn(
-                                          label: Text(
-                                            'Role',
-                                            style: TextStyle(
-                                                color: Color.fromRGBO(21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                    (staff) => staff.staffmemberDesignation!,
-                                                columnIndex,
-                                                ascending);
-                                          },
-                                        ),
-                                        DataColumn(
-                                          label: Text(
-                                            'Email',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: Text(
-                                            'Phone',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: Text(
-                                            'Actions',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                      source: StaffDataSource(
-                                        filteredData!,
-                                        onEdit: handleEdit,
-                                        onDelete: handleDelete,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Table(
+                            defaultColumnWidth: IntrinsicColumnWidth(),
+                            children: [
+                              TableRow(
+                                decoration: BoxDecoration(border: Border.all()),
+                                children: [
+                                  _buildHeader('Name', 0, (staff) => staff.staffmemberName!),
+                                  _buildHeader('Role', 1, (staff) => staff.staffmemberDesignation!),
+                                  _buildHeader('Email', 2, null),
+                                  _buildHeader('Phone', 3, null),
+                                  _buildHeader('Actions', 4, null),
+                                ],
                               ),
-                            ),
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  border: Border.symmetric(horizontal: BorderSide.none),
+                                ),
+                                children: List.generate(5, (index) => TableCell(child: Container(height: 20))),
+                              ),
+                              for (var i = 0; i < _pagedData.length; i++)
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                      right: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                      top: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                      bottom: i == _pagedData.length - 1
+                                          ? BorderSide(color: Color.fromRGBO(21, 43, 81, 1))
+                                          : BorderSide.none,
+                                    ),
+                                  ),
+                                  children: [
+                                    _buildDataCell(_pagedData[i].staffmemberName!),
+                                    _buildDataCell(_pagedData[i].staffmemberDesignation!),
+                                    _buildDataCell(_pagedData[i].staffmemberEmail!),
+                                    _buildDataCell(_pagedData[i].staffmemberPhoneNumber!),
+                                    _buildActionsCell(_pagedData[i]),
+                                  ],
+                                ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 25),
+                        SizedBox(height: 10),
+                        _buildPaginationControls(),
                       ],
                     ),
                   );
@@ -481,6 +457,104 @@ class _StaffTableState extends State<StaffTable> {
           ],
         ),
       ),
+    );
+  }
+  Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(Staffmembers d)? getField) {
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+          _sort(getField, columnIndex, !_sortAscending);
+        }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending ?   Icons.arrow_drop_down_outlined : Icons.arrow_drop_up_outlined),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(text),
+      ),
+    );
+  }
+
+  Widget _buildActionsCell(Staffmembers data) {
+    return TableCell(
+      child: Row(
+        children: [
+          IconButton(
+            icon: FaIcon(
+              FontAwesomeIcons.edit,
+              size: 20,
+            ),
+            onPressed: () => handleEdit(data),
+          ),
+          IconButton(
+            icon: FaIcon(
+              FontAwesomeIcons.trashCan,
+              size: 20,
+            ),
+            onPressed: () => handleDelete(data),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text('Rows per page: '),
+        DropdownButton<int>(
+          value: _rowsPerPage,
+          items: [5, 10, 15, 20].map((int value) {
+            return DropdownMenuItem<int>(
+              value: value,
+              child: Text(value.toString()),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            if (newValue != null) {
+              _changeRowsPerPage(newValue);
+            }
+          },
+        ),
+        SizedBox(width: 20),
+        IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: _currentPage == 0
+              ? null
+              : () {
+            setState(() {
+              _currentPage--;
+            });
+          },
+        ),
+        Text('Page ${_currentPage + 1}'),
+        IconButton(
+          icon: Icon(Icons.arrow_forward),
+          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+              ? null
+              : () {
+            setState(() {
+              _currentPage++;
+            });
+          },
+        ),
+      ],
     );
   }
 }

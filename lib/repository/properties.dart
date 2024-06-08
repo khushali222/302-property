@@ -1,59 +1,32 @@
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/model/properties.dart';
 
-import '../Model/propertytype.dart';
 import '../constant/constant.dart';
+import 'package:http/http.dart'as http;
 
-class PropertyTypeRepository {
+class PropertiesRepository {
   final String apiUrl = '${Api_url}/api/propertytype/property_type';
 
-  Future<Map<String, dynamic>> addPropertyType({
-    required String? adminId,
-    required String? propertyType,
-    required String? propertySubType,
-    required bool isMultiUnit,
-  }) async {
-    final Map<String, dynamic> data = {
-      'admin_id': adminId,
-      'property_type': propertyType,
-      'propertysub_type': propertySubType,
-      'is_multiunit': isMultiUnit,
-    };
 
-    final http.Response response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(data),
-    );
-    var responseData = json.decode(response.body);
 
-    if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      return json.decode(response.body);
-
-    } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add property type');
-    }
-  }
-
-  Future<List<propertytype>> fetchPropertyTypes() async {
+  Future<List<Rentals>> fetchProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('${Api_url}/api/propertytype/property_type/$id'));
+    final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
-      return jsonResponse.map((data) => propertytype.fromJson(data)).toList();
+      return jsonResponse.map((data) => Rentals.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load data');
     }
   }
 
-  Future<Map<String, dynamic>> EditPropertyType({
+
+  Future<Map<String, dynamic>> EditProperties({
     required String? adminId,
     required String? propertyType,
     required String? propertySubType,
@@ -87,7 +60,7 @@ class PropertyTypeRepository {
       throw Exception('Failed to add property type');
     }
   }
-  Future<Map<String, dynamic>> DeletePropertyType({
+  Future<Map<String, dynamic>> DeleteProperties({
     required String? id
   }) async {
 

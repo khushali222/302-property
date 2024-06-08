@@ -2,15 +2,23 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/add_property.dart';
+import 'package:three_zero_two_property/provider/property_summery.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
+    MultiProvider(providers: [ ChangeNotifierProvider(
       create: (context) => OwnerDetailsProvider(),
-      child: MyApp(),
+      // child: MyApp(),
     ),
+      ChangeNotifierProvider(
+        create: (context) => Tenants_counts(),
+      ),
+    ],
+      child: MyApp(),
+    )
+
     // DevicePreview(
     //   enabled: true,
     //   tools: [

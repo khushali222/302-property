@@ -145,7 +145,7 @@
 //     });
 //     SharedPreferences prefs = await SharedPreferences.getInstance();
 //     String? id = prefs.getString("adminId");
-//     final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/rentals/rental-owners/$id'));
+//     final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'));
 //
 //     if (response.statusCode == 200) {
 //       List<dynamic> data = json.decode(response.body);

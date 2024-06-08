@@ -83,6 +83,7 @@
 // }
 
 class RentalOwner {
+  String? propertyId;
   String? sId;
   String? rentalOwnerId;
   String? adminId;
@@ -111,6 +112,7 @@ class RentalOwner {
   int? v;
 
   RentalOwner({
+    this.propertyId,
     this.sId,
     this.rentalOwnerId,
     this.adminId,
@@ -143,6 +145,7 @@ class RentalOwner {
     var processorListFromJson = json['processor_list'] as List;
     List<Processor> processorList = processorListFromJson.map((processorJson) => Processor.fromJson(processorJson)).toList();
     return RentalOwner(
+      propertyId: json['property_id'],
       sId: json['_id'],
       rentalOwnerId: json['rentalowner_id'],
       adminId: json['admin_id'],
@@ -174,6 +177,7 @@ class RentalOwner {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['property_id'] = this.propertyId;
     data['_id'] = this.sId;
     data['rentalowner_id'] = this.rentalOwnerId;
     data['admin_id'] = this.adminId;

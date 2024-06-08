@@ -19,6 +19,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../Model/propertytype.dart';
 import '../../../constant/constant.dart';
 import '../../../model/add_property.dart';
+import '../../../model/properties.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
 import '../../../repository/Property_type.dart';
@@ -28,23 +29,23 @@ import 'package:http/http.dart' as http;
 
 import '../../Staff_Member/Edit_staff_member.dart';
 
-class Add_new_property extends StatefulWidget {
+class Edit_properties extends StatefulWidget {
   propertytype? property;
   Staffmembers? staff;
+  Rentals properties;
 
-  Add_new_property({super.key, this.property, this.staff});
+
+  Edit_properties({super.key, this.property, this.staff,required this.properties});
 
   @override
-  State<Add_new_property> createState() => _Add_new_propertyState();
+  State<Edit_properties> createState() => _Edit_propertiesState();
 }
 
-class _Add_new_propertyState extends State<Add_new_property> {
-  List<String> months = ['Residential', "Commercial"];
+class _Edit_propertiesState extends State<Edit_properties> {
+
   List<Widget> fields = [];
   int? selectedIndex;
   List<ProcessorGroup> _processorGroups = [];
-
-
 
   final List<String> items = [
     'Residential',
@@ -137,9 +138,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
   String? selectedProperty;
   Future<List<RentalOwner>>? futureRentalOwner;
 
-
-
-
   Map<String, List<propertytype>> groupPropertiesByType(
       List<propertytype> properties) {
     Map<String, List<propertytype>> groupedProperties = {};
@@ -150,6 +148,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
       groupedProperties[property.propertyType!]!.add(property);
     }
     return groupedProperties;
+  }
+  Map<String, List<Staffmembers>> groupstaffmemberByType(
+      List<Staffmembers> member) {
+    Map<String, List<Staffmembers>> groupedmember = {};
+    for (var staff in member) {
+      if (!groupedmember.containsKey(staff.staffmemberName)) {
+        groupedmember[staff.staffmemberName!] = [];
+      }
+      groupedmember[staff.staffmemberName!]!.add(staff);
+    }
+    return groupedmember;
   }
 
   List<Owner> owners = [];
@@ -200,6 +209,57 @@ class _Add_new_propertyState extends State<Add_new_property> {
     // Add property group based on selected subproperty type
     addPropertyGroup();
     fetchOwners();
+    // selectedValue = widget.properties?.propertyTypeData?.propertyType!;
+    // selectedValue = widget.properties?.propertyTypeData?.propertySubType!;
+    selectedpropertytype = widget.properties.propertyTypeData?.propertyType!;
+    selectedpropertytype = widget.properties.propertyTypeData?.propertySubType!;
+    address.text = widget.properties.rentalAddress!;
+    city.text = widget.properties.rentalCity!;
+    state.text = widget.properties.rentalState!;
+    postalcode.text = widget.properties.rentalPostcode!;
+    country.text = widget.properties.rentalCountry!;
+    selectedProperty = widget.properties.propertyTypeData!.propertySubType;
+    Ownersdetails = RentalOwner(
+      // rentalOwnerFirstName: firstname.text,
+      rentalOwnerLastName: widget.properties.rentalOwnerData!
+          .rentalOwnerLastName,
+      rentalOwnerPhoneNumber: widget.properties.rentalOwnerData!
+          .rentalOwnerPhoneNumber,
+      rentalOwnerFirstName: widget.properties.rentalOwnerData!
+          .rentalOwnerFirstName,
+    );
+    firstname.text = widget.properties.rentalOwnerData!.rentalOwnerFirstName!;
+    lastname.text = widget.properties.rentalOwnerData!.rentalOwnerLastName!;
+    comname.text = widget.properties.rentalOwnerData!.rentalOwnerCompanyName!;
+    primaryemail.text =
+    widget.properties.rentalOwnerData!.rentalOwnerPrimaryEmail!;
+    alternativeemail.text =
+    widget.properties.rentalOwnerData!.rentalOwnerAlternativeEmail!;
+    print(alternativeemail);
+    phonenum.text = widget.properties.rentalOwnerData!.rentalOwnerPhoneNumber!;
+    print(phonenum);
+    homenum.text = widget.properties.rentalOwnerData!.rentalOwnerHomeNumber!;
+    print(homenum);
+    businessnum.text =
+    widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber!;
+    print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
+    street2.text = widget.properties.rentalOwnerData!.Address!;
+    city2.text = widget.properties.rentalOwnerData!.city!;
+    state2.text = widget.properties.rentalOwnerData!.state!;
+    county2.text = widget.properties.rentalOwnerData!.country!;
+    code2.text = widget.properties.rentalOwnerData!.postalCode!;
+    // selectedStaffmember = widget.properties.staffMemberData!.staffmemberName!;
+
+   print( widget.properties.staffMemberData!.staffmemberName!);
+   print(selectedStaff);
+   // selectedStaff = widget.properties.staffMemberData!.staffmemberName;
+    // proid.text = widget.properties!.rentalOwnerData!.processorList!.map((
+    //     processor) => processor.processorId).join(', ');
+    // for (Processor processor in selectedOwner!.processorList) {
+    //   _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController(text: processor.processorId)));
+    // }
+    //  futureStaffMembers = widget.properties.staffMemberData!.staffmemberName! as Future<List<Staffmembers>>;
+
   }
 
   @override
@@ -473,8 +533,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
     );
   }
 
-
-
   Widget photo(int index) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -662,7 +720,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
       }
     }
   }
-
 
   void handleEdit(RentalOwner rental) async {
     // Handle edit action
@@ -911,7 +968,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             ),
                                             onChanged: (String? newValue) {
                                               if (newValue ==
-                                                  'add_new_property') {
+                                                  'Edit_properties') {
                                                 // Prevent the dropdown from changing the selected item
                                                 setState(() {
                                                   selectedProperty = null;
@@ -1399,7 +1456,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   //  propertyGroups = [];
                                                   //    addPropertyGroup();
                                                   //    print(addPropertyGroup);
-
                                                   print(snapshot.data!
                                                       .where((element) =>
                                                   element
@@ -1471,7 +1527,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 ];
                                               }).toList(),
                                               DropdownMenuItem<String>(
-                                                value: 'add_new_property',
+                                                value: 'Edit_properties',
                                                 child: Row(
                                                   children: [
                                                     Icon(Icons.add,
@@ -2434,6 +2490,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               comname.text = selectedOwner!.companyName;
                                                                               primaryemail.text = selectedOwner!.primaryEmail;
                                                                               alternativeemail.text = selectedOwner!.alternateEmail;
+                                                                              print(alternativeemail);
                                                                               homenum.text = selectedOwner!.homeNumber ?? '';
                                                                               phonenum.text = selectedOwner!.phoneNumber;
                                                                               businessnum.text = selectedOwner!.businessNumber ?? '';
@@ -7717,7 +7774,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           .map<DropdownMenuItem<String>>(
                                               (Staffmembers staffMember) {
                                             return DropdownMenuItem<String>(
-                                              value: staffMember.sId,
+                                              value: staffMember.staffmemberName,
                                               onTap:(){
                                                 setState(() {
                                                   sid = staffMember.staffmemberId;
@@ -8555,7 +8612,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           ),
                                         ),
                                       );
-
+                                      if (selectedStaff == null && staffMembers.isNotEmpty) {
+                                        selectedStaff = widget.properties.staffMemberData!.staffmemberName;
+                                      }
                                       return Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: Container(
@@ -9602,6 +9661,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                 //     ],
                 //   ),
                 // ),
+                //create property
                 Row(
                   children: [
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
@@ -9860,7 +9920,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     SizedBox(width: 15),
                     InkWell(
                         onTap: () {
-                         // displayPropertyData();
+                          // displayPropertyData();
                           Navigator.pop(context);
                         },
                         child: Text("Cancel")),

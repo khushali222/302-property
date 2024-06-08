@@ -10,6 +10,7 @@ import 'package:three_zero_two_property/widgets/pie_chart.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import '../../constant/constant.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../Rental/Properties/add_new_property.dart';
 import '../../widgets/barchart.dart';
@@ -83,7 +84,7 @@ class _DashboardState extends State<Dashboard> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       final response = await http.get(Uri.parse(
-          'https://saas.cloudrentalmanager.com/api/admin/counts/${id!}'));
+          '${Api_url}/api/admin/counts/${id!}'));
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
@@ -110,10 +111,11 @@ class _DashboardState extends State<Dashboard> {
   int lastMonthCollectedAmount = 0;
   double nextMonthCharge = 0.0;
   Future<void> fetchData() async {
+    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     final response = await http.get(Uri.parse(
-        'https://saas.cloudrentalmanager.com/api/payment/admin_balance/${id!}'));
+        '${Api_url}/api/payment/admin_balance/${id!}'));
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       // setState(() {
@@ -154,7 +156,7 @@ class _DashboardState extends State<Dashboard> {
   var appBarHeight = AppBar().preferredSize.height;
   @override
   Widget build(BuildContext context) {
-    fetchData();
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(

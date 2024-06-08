@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/screens/Password/changepassword.dart';
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
 
+import '../../constant/constant.dart';
 import '../Dashboard/dashboard_one.dart';
 import '../Password/forgotpassword.dart';
 import '../Password/otp_vrify.dart';
@@ -475,7 +476,7 @@ class _Login_ScreenState extends State<Login_Screen> {
    // String? token = prefs.getString('token');
 
     final response = await http.post(
-        Uri.parse('https://saas.cloudrentalmanager.com/api/admin/token_check_api'),
+        Uri.parse('${Api_url}/api/admin/token_check_api'),
         body: {"token": token}
     );
     print(response.body);
@@ -505,7 +506,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       loading = true;
     });
     final response = await http.post(
-        Uri.parse('https://saas.cloudrentalmanager.com/api/admin/login'),
+        Uri.parse('${Api_url}/api/admin/login'),
         body: {"email": email.text, "password": password.text});
     print(response.body);
     final jsonData = json.decode(response.body);

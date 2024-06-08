@@ -6,11 +6,12 @@ import 'package:http/http.dart'as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
 
+import '../constant/constant.dart';
 import '../model/add_property.dart';
 
 class Rental_PropertiesRepository{
 
-  final String apiUrl = 'https://saas.cloudrentalmanager.com/api/rentals/rentals';
+  final String apiUrl = '${Api_url}/api/rentals/rentals';
 
   Future<Map<String, dynamic>> addProperties({
 
@@ -140,7 +141,7 @@ class Rental_PropertiesRepository{
       'rentalOwner_businessNumber': rentalOwner_businessNumber,
     };
     final response = await http.post(
-      Uri.parse('https://saas.cloudrentalmanager.com/api/rental_owner/check_rental_owner'),
+      Uri.parse('${Api_url}/api/rental_owner/check_rental_owner'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -187,7 +188,7 @@ class Rental_PropertiesRepository{
   //     'rentalOwner_businessNumber': rentalOwner_businessNumber,
   //   };
   //   final response = await http.post(
-  //     Uri.parse('https://saas.cloudrentalmanager.com/api/rental_owner/check_rental_owner'),
+  //     Uri.parse('${Api_url}/api/rental_owner/check_rental_owner'),
   //     headers: <String, String>{
   //       'Content-Type': 'application/json; charset=UTF-8',
   //     },
@@ -207,17 +208,21 @@ class Rental_PropertiesRepository{
   //   }
   // }
 
-  Future<List<RentalOwner>> fetchRentalOwner() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('https://saas.cloudrentalmanager.com/api/rentals/rental-owners/$id'));
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);//['data'];
-      return jsonResponse.map((data) => RentalOwner.fromJson(data)).toList();
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
+  // Future<List<Rental>> fetchRentalOwner() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? id = prefs.getString("adminId");
+  //   final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'));
+  //   if (response.statusCode == 200) {
+  //     List jsonResponse = json.decode(response.body);//['data'];
+  //     return jsonResponse.map((data) => RentalOwner.fromJson(data)).toList();
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }
+// Fetch rental owner data
+
+
+
 
   Future<Map<String, dynamic>> DeleteRentalOwner({
     required String? id
@@ -251,11 +256,13 @@ class Rental_PropertiesRepository{
     );
 
     if (response.statusCode == 200) {
+      Fluttertoast.showToast(msg: "Properties added successfully");
       // Handle success
-      print('Rental created successfully');
+      print('Properties added successfully');
     } else {
+      Fluttertoast.showToast(msg: "Failed to add properties");
       // Handle error
-      print('Failed to create rental: ${response.body}');
+      print('Failed to add properties: ${response.body}');
     }
   }
 

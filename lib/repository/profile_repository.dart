@@ -4,8 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Model/profile.dart';
 import 'package:http/http.dart'as http;
+
+import '../constant/constant.dart';
 class ProfileRepository {
-  final String apiUrl = "https://saas.cloudrentalmanager.com/api/admin/admin_profile/";
+  final String apiUrl = "${Api_url}/api/admin/admin_profile/";
 
   Future<profile> fetchProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -22,7 +24,7 @@ class ProfileRepository {
     }
   }
   Future<profile> Edit_profile(Map<String,dynamic> data) async {
-    final String apiUrl = "https://saas.cloudrentalmanager.com/api/admin/admin_edit/";
+    final String apiUrl = "${Api_url}/api/admin/admin_edit/";
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(jsonEncode(data));
