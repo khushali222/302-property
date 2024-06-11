@@ -6,28 +6,50 @@ import 'package:three_zero_two_property/provider/property_summery.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
+// void main() {
+//   runApp(
+//     MultiProvider(providers: [ ChangeNotifierProvider(
+//       create: (context) => OwnerDetailsProvider(),
+//       // child: MyApp(),
+//     ),
+//       ChangeNotifierProvider(
+//         create: (context) => Tenants_counts(),
+//       ),
+//     ],
+//       child: MyApp(),
+//     ),
+//     // DevicePreview(
+//     //   enabled: true,
+//     //   tools: [
+//     //     ...DevicePreview.defaultTools,
+//     //   ],
+//     //   builder: (context) => MyApp(),
+//     // ),
+//   );
+// }
+
 void main() {
   runApp(
-    MultiProvider(providers: [ ChangeNotifierProvider(
-      create: (context) => OwnerDetailsProvider(),
-      // child: MyApp(),
-    ),
-      ChangeNotifierProvider(
-        create: (context) => Tenants_counts(),
+    DevicePreview(
+      enabled: true,
+      tools: [
+        ...DevicePreview.defaultTools,
+      ],
+      builder: (context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => OwnerDetailsProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => Tenants_counts(),
+          ),
+        ],
+        child: MyApp(),
       ),
-    ],
-      child: MyApp(),
-    )
-
-    // DevicePreview(
-    //   enabled: true,
-    //   tools: [
-    //     ...DevicePreview.defaultTools,
-    //   ],
-    //   builder: (context) => MyApp(),
-    // ),
+    ),
   );
 }
+
 
 
 

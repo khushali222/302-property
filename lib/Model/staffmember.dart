@@ -27,18 +27,18 @@ class Staffmembers {
         this.iV});
 
   Staffmembers.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    adminId = json['admin_id'];
-    staffmemberId = json['staffmember_id'];
-    staffmemberName = json['staffmember_name'];
-    staffmemberDesignation = json['staffmember_designation'];
-    staffmemberPhoneNumber = json['staffmember_phoneNumber'];
-    staffmemberEmail = json['staffmember_email'];
-    staffmemberPassword = json['staffmember_password'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    isDelete = json['is_delete'];
-    iV = json['__v'];
+    sId = json['_id']??"";
+    adminId = json['admin_id']??"";
+    staffmemberId = json['staffmember_id']??"";
+    staffmemberName = json['staffmember_name']??"";
+    staffmemberDesignation = json['staffmember_designation']??"";
+    staffmemberPhoneNumber = json['staffmember_phoneNumber']??"";
+    staffmemberEmail = json['staffmember_email']??"";
+    staffmemberPassword = json['staffmember_password']??"";
+    createdAt = json['createdAt']??"";
+    updatedAt = json['updatedAt']??"";
+    isDelete = json['is_delete']??"";
+    iV = json['__v']??"";
   }
 
   Map<String, dynamic> toJson() {

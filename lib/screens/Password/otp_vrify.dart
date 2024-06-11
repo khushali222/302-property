@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import '../../constant/constant.dart';
 import 'changepassword.dart';
 
 class otp_verify extends StatefulWidget {
@@ -26,7 +27,7 @@ class _otp_verifyState extends State<otp_verify> {
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.1.32:4000/api/admin/verifyOTP'),
+      Uri.parse('${Api_url}/api/admin/verifyOTP'),
       headers:{
     'Content-Type': 'application/json',
     },// Your OTP verification API endpoint
@@ -72,7 +73,7 @@ class _otp_verifyState extends State<otp_verify> {
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.1.32:4000/api/admin/sendOTP'),
+      Uri.parse('$Api_url/api/admin/sendOTP'),
       body: {'email': email},
     );
 
@@ -143,26 +144,31 @@ class _otp_verifyState extends State<otp_verify> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.09),
-              OtpTextField(
-                fieldHeight: 50,
-                fieldWidth: 50,
-                numberOfFields: 6,
-                enabledBorderColor: Colors.grey,
-                disabledBorderColor: Colors.black,
-                cursorColor: Colors.black,
-                // borderColor: Color(0xFF512DA8),
-                showFieldAsBox: true,
-                borderRadius: BorderRadius.circular(10),
-                contentPadding: EdgeInsets.symmetric(vertical: 10.0), // Adjust padding if necessary
-                textStyle: TextStyle(fontSize: 20),
-                onCodeChanged: (String code) {
-                  otp = int.parse(code); // Update OTP variable as user types
-                },
-                onSubmit: (String verificationCode) {
-                  setState(() {
-                    otp = int.parse(verificationCode);
-                  });
-                }, // end onSubmit
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: OtpTextField(
+                  //fieldHeight: MediaQuery.of(context).size.width * .13,
+                //  fieldWidth: MediaQuery.of(context).size.width * .13,
+                  fieldHeight: 50,
+                  fieldWidth: 50,
+                  numberOfFields: 6,
+                  enabledBorderColor: Colors.grey,
+                  disabledBorderColor: Colors.black,
+                  cursorColor: Colors.black,
+                  // borderColor: Color(0xFF512DA8),
+                  showFieldAsBox: true,
+                  borderRadius: BorderRadius.circular(10),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0), // Adjust padding if necessary
+                  textStyle: TextStyle(fontSize: 20),
+                  onCodeChanged: (String code) {
+                    otp = int.parse(code); // Update OTP variable as user types
+                  },
+                  onSubmit: (String verificationCode) {
+                    setState(() {
+                      otp = int.parse(verificationCode);
+                    });
+                  }, // end onSubmit
+                ),
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.1,
@@ -214,8 +220,8 @@ class _otp_verifyState extends State<otp_verify> {
                     child: Center(
                       child: loading
                           ? SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 50.0,
+                        color: Colors.white,
+                        size: 40.0,
                       )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,

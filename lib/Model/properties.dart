@@ -67,9 +67,9 @@ class Rentals {
       createdAt: json['createdAt']?? "",
       updatedAt: json['updatedAt']?? "",
       isDelete: json['is_delete']?? "",
-      rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data']?? ""),
-      propertyTypeData: PropertyTypeData.fromJson(json['property_type_data']?? ""),
-      staffMemberData: StaffMemberData.fromJson(json['staffmember_data']?? "")
+      rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data']?? {}),
+      propertyTypeData: PropertyTypeData.fromJson(json['property_type_data']?? {}),
+      staffMemberData: StaffMemberData.fromJson(json['staffmember_data']?? {})
     );
   }
 }

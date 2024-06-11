@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Password/changepassword.dart';
 
@@ -15,8 +16,6 @@ import '../../constant/constant.dart';
 import '../Dashboard/dashboard_one.dart';
 import '../Password/forgotpassword.dart';
 import '../Password/otp_vrify.dart';
-
-
 
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
@@ -40,7 +39,6 @@ class _Login_ScreenState extends State<Login_Screen> {
   String emailmessage = "";
   final GlobalKey formkey = GlobalKey<FormState>();
   @override
-
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -78,7 +76,9 @@ class _Login_ScreenState extends State<Login_Screen> {
               Center(
                 child: Text(
                   "Please login here...",
-                  style: TextStyle(color: Colors.black,fontSize: MediaQuery.of(context).size.width * 0.036),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: MediaQuery.of(context).size.width * 0.036),
                 ),
               ),
               SizedBox(
@@ -90,17 +90,60 @@ class _Login_ScreenState extends State<Login_Screen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.099,
                   ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.065,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(196, 196, 196, .3),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Center(
+                  // Container(
+                  //   height: MediaQuery.of(context).size.height * 0.065,
+                  //   width: MediaQuery.of(context).size.width * 0.8,
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(10),
+                  //     color: Color.fromRGBO(196, 196, 196, .3),
+                  //   ),
+                  //   child: Stack(
+                  //     children: [
+                  //       Positioned.fill(
+                  //         child: Center(
+                  //           child: TextField(
+                  //             keyboardType: TextInputType.emailAddress,
+                  //             onChanged: (value) {
+                  //               setState(() {
+                  //                 emailerror = false;
+                  //               });
+                  //             },
+                  //             controller: email,
+                  //             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                  //             decoration: InputDecoration(
+                  //               border: InputBorder.none,
+                  //               enabledBorder: emailerror
+                  //                   ? OutlineInputBorder(
+                  //                       borderRadius: BorderRadius.circular(10),
+                  //                       borderSide: BorderSide(
+                  //                           color: Colors
+                  //                               .red), // Set border color here
+                  //                     )
+                  //                   : InputBorder.none,
+                  //               contentPadding: EdgeInsets.all(15),
+                  //               prefixIcon: Padding(
+                  //                 padding: const EdgeInsets.all(17.0),
+                  //                 child: Image.asset(
+                  //                     "assets/icons/email_icon.png"),
+                  //               ),
+                  //               hintText: "Business Email",
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  Expanded(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromRGBO(196, 196, 196, .3),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
                             child: TextField(
                               keyboardType: TextInputType.emailAddress,
                               onChanged: (value) {
@@ -111,7 +154,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                               controller: email,
                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
                               decoration: InputDecoration(
-                                border: InputBorder.none,
                                 enabledBorder: emailerror
                                     ? OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -120,32 +162,40 @@ class _Login_ScreenState extends State<Login_Screen> {
                                           .red), // Set border color here
                                 )
                                     : InputBorder.none,
-                                contentPadding: EdgeInsets.all(15),
-                                prefixIcon:
-                                Padding(
-                                  padding: const EdgeInsets.all(17.0),
-                                  child: Image.asset(
-                                          "assets/icons/email_icon.png"),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.all(10),
+                                prefixIcon: Container(
+                                    height: 20,
+                                    width: 20,
+                                    padding: EdgeInsets.all(13),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.envelope,
+                                      size: 20,
+                                      color: Colors.grey[600],
+                                    ),
                                 ),
                                 hintText: "Business Email",
+                                hintStyle: TextStyle(color:Colors.grey[600],fontSize: 15 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.05,
+                    width: MediaQuery.of(context).size.width * 0.095,
                   ),
                 ],
               ),
               emailerror
                   ? Center(
-                  child: Text(
-                    emailmessage,
-                    style: TextStyle(color: Colors.red,),
-                  ))
+                      child: Text(
+                      emailmessage,
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ))
                   : Container(),
 
               SizedBox(
@@ -157,18 +207,75 @@ class _Login_ScreenState extends State<Login_Screen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.099,
                   ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.065,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(196, 196, 196, .3),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Center(
+                  // Container(
+                  //   height: MediaQuery.of(context).size.height * 0.065,
+                  //   width: MediaQuery.of(context).size.width * 0.8,
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(10),
+                  //     color: Color.fromRGBO(196, 196, 196, .3),
+                  //   ),
+                  //   child: Stack(
+                  //     children: [
+                  //       Positioned.fill(
+                  //         child: Center(
+                  //           child: TextField(
+                  //             onChanged: (value) {
+                  //               setState(() {
+                  //                 passworderror = false;
+                  //               });
+                  //             },
+                  //             controller: password,
+                  //             obscureText: visiable_password,
+                  //             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                  //             decoration: InputDecoration(
+                  //               enabledBorder: passworderror
+                  //                   ? OutlineInputBorder(
+                  //                 borderRadius: BorderRadius.circular(10),
+                  //                 borderSide: BorderSide(
+                  //                     color: Colors
+                  //                         .red), // Set border color here
+                  //               )
+                  //                   : InputBorder.none,
+                  //               border: InputBorder.none,
+                  //               contentPadding: EdgeInsets.all(15),
+                  //               prefixIcon: Padding(
+                  //                 padding: const EdgeInsets.all(15.0),
+                  //                 child: Image.asset('assets/icons/pasword.png'),
+                  //               ),
+                  //               hintText: "Password",
+                  //               suffixIcon:
+                  //               InkWell(
+                  //                 onTap: () {
+                  //                   setState(() {
+                  //                     visiable_password = !visiable_password;
+                  //                   });
+                  //                 },
+                  //                 child: Icon(
+                  //                   visiable_password
+                  //                       ? Icons.remove_red_eye_outlined
+                  //                       : Icons.visibility_off_outlined,
+                  //                   color: Colors.grey,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  Expanded(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromRGBO(196, 196, 196, .3),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
                             child: TextField(
+                              keyboardType: TextInputType.number,
                               onChanged: (value) {
                                 setState(() {
                                   passworderror = false;
@@ -187,111 +294,55 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 )
                                     : InputBorder.none,
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(15),
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Image.asset('assets/icons/pasword.png'),
-                                ),
-                                hintText: "Password",
-                                suffixIcon:
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      visiable_password = !visiable_password;
-                                    });
-                                  },
-                                  child: Icon(
-                                    visiable_password
-                                        ? Icons.remove_red_eye_outlined
-                                        : Icons.visibility_off_outlined,
-                                    color: Colors.grey,
+                                contentPadding: EdgeInsets.all(10),
+
+                                prefixIcon: Container(
+                                  height: 20,
+                                  width: 20,
+                                  // color: Colors.blue,
+                                  padding: EdgeInsets.all(13),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.lock,
+                                    size: 20,
+                                    color: Colors.grey[600],
                                   ),
                                 ),
+                                hintText: "Password",
+                                hintStyle: TextStyle(color:Colors.grey[600],fontSize: 15 ),
+                                suffixIcon:
+                                InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    visiable_password = !visiable_password;
+                                                  });
+                                                },
+                                                child: Icon(
+                                                  visiable_password
+                                                      ? Icons.remove_red_eye_outlined
+                                                      : Icons.visibility_off_outlined,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  // Material(
-                  //  // elevation: 3,
-                  //   borderRadius: BorderRadius.circular(10),
-                  //   child: Container(
-                  //     // height: 35,
-                  //     // width: MediaQuery.of(context).size.width * .6,
-                  //     height: MediaQuery.of(context).size.height * 0.065,
-                  //     width: MediaQuery.of(context).size.width * 0.8,
-                  //     // margin: EdgeInsets.all(8),
-                  //     decoration: BoxDecoration(
-                  //       // color: Colors.pink,
-                  //      // border: Border.all(color: Color(0xFF8A95A8)),
-                  //       borderRadius: BorderRadius.circular(10),
-                  //       color: Color.fromRGBO(196, 196, 196, .3),
-                  //     ),
-                  //     child: Center(
-                  //       child: TextField(
-                  //         controller: password,
-                  //         style: TextStyle(color: Color(0xFF8A95A8),fontSize: 12,),
-                  //         cursorColor: Color.fromRGBO(196, 196, 196, .3),
-                  //         keyboardType: TextInputType.number,
-                  //         obscureText: visiable_password,
-                  //         onChanged: (value) {
-                  //           setState(() {
-                  //             passworderror = false;
-                  //           });
-                  //         },
-                  //         decoration: InputDecoration(
-                  //           contentPadding: EdgeInsets.only(left: 10,bottom: 16,),
-                  //           enabledBorder: passworderror
-                  //               ? OutlineInputBorder(
-                  //             borderRadius:
-                  //             BorderRadius.circular(2),
-                  //             borderSide: BorderSide(
-                  //               color: Colors.red,
-                  //             ),
-                  //           )
-                  //               : InputBorder.none,
-                  //           border: InputBorder.none,
-                  //           // labelText: "Amount",
-                  //           hintText: "Password",
-                  //           hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                  //           prefixIcon: Padding(
-                  //                             padding: const EdgeInsets.all(15.0),
-                  //                             child: Image.asset('assets/icons/pasword.png'),
-                  //                           ),
-                  //           prefixIconConstraints:
-                  //           BoxConstraints(minWidth: 0, minHeight: 0),
-                  //           suffixIcon:
-                  //           InkWell(
-                  //             onTap: () {
-                  //               setState(() {
-                  //                 visiable_password = !visiable_password;
-                  //               });
-                  //             },
-                  //             child: Icon(
-                  //               visiable_password
-                  //                   ? Icons.remove_red_eye_outlined
-                  //                   : Icons.visibility_off_outlined,
-                  //               color: Colors.grey,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.05,
+                    width: MediaQuery.of(context).size.width * 0.099,
                   ),
                 ],
               ),
               passworderror
                   ? Center(
-                  child: Text(
-                    passwordmessage,
-                    style: TextStyle(color: Colors.red),
-                  ))
+                      child: Text(
+                      passwordmessage,
+                      style: TextStyle(color: Colors.red),
+                    ))
                   : Container(),
 
               SizedBox(
@@ -325,9 +376,11 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                   Spacer(),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => ForgotPassword()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPassword()));
                     },
                     child: Text(
                       "Forgot password?",
@@ -402,30 +455,34 @@ class _Login_ScreenState extends State<Login_Screen> {
                     child: Center(
                       child: loading
                           ? SpinKitFadingCircle(
-                        color: Colors.white,
-                        size: 50.0,
-                      )
-                          : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Login",
-                            style: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.045
+                              size: 40.0,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Login",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.045
+                                  ),
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.015,
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios_sharp,
+                                  color: Colors.white,
+                                  size:
+                                      MediaQuery.of(context).size.width * 0.045,
+                                ),
+                              ],
                             ),
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.width * 0.015,
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios_sharp,
-                            color: Colors.white,
-                            size: MediaQuery.of(context).size.width * 0.045,
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),
@@ -440,9 +497,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                   Text(
                     "Don't have an account ? ",
                     style: TextStyle(
-                      color: Colors.black,
-                        fontSize: MediaQuery.of(context).size.width * 0.04
-                    ),
+                        color: Colors.black,
+                        fontSize: MediaQuery.of(context).size.width * 0.04),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -453,10 +509,10 @@ class _Login_ScreenState extends State<Login_Screen> {
                       child: Text(
                         "Register now",
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                            fontSize: MediaQuery.of(context).size.width * 0.037
-                        ),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                            fontSize:
+                                MediaQuery.of(context).size.width * 0.037),
                       ),
                     ),
                   ),
@@ -471,42 +527,39 @@ class _Login_ScreenState extends State<Login_Screen> {
       ),
     );
   }
+
   Future<void> checkToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-   // String? token = prefs.getString('token');
+    // String? token = prefs.getString('token');
 
     final response = await http.post(
         Uri.parse('${Api_url}/api/admin/token_check_api'),
-        body: {"token": token}
-    );
+        body: {"token": token});
     print(response.body);
     final jsonData = json.decode(response.body);
-      if (jsonData['id'] != "") {
-        print(jsonData);
-        //prefs.setString('checkedToken',jsonData["token"]);
-        String? adminId = jsonData['data']['admin_id'];
-        print('Admin ID: $adminId');
-        prefs.setString('checkedToken', token);
-        prefs.setString('adminId', adminId!);
-        prefs.setString('first_name', jsonData['data']['first_name']);
-        prefs.setString('last_name', jsonData['data']['last_name']);
-        prefs.setString('first_name', jsonData['data']['first_name']);
-        prefs.setString('last_name', jsonData['data']['last_name']);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Dashboard())
-        );
-      }  else {
+    if (jsonData['id'] != "") {
+      print(jsonData);
+      //prefs.setString('checkedToken',jsonData["token"]);
+      String? adminId = jsonData['data']['admin_id'];
+      print('Admin ID: $adminId');
+      prefs.setString('checkedToken', token);
+      prefs.setString('adminId', adminId!);
+      prefs.setString('first_name', jsonData['data']['first_name']);
+      prefs.setString('last_name', jsonData['data']['last_name']);
+      prefs.setString('first_name', jsonData['data']['first_name']);
+      prefs.setString('last_name', jsonData['data']['last_name']);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
+    } else {
       print('Failed to check token');
     }
   }
-
 
   Future<void> loginsubmit() async {
     setState(() {
       loading = true;
     });
-    final response = await http.post(
-        Uri.parse('${Api_url}/api/admin/login'),
+    final response = await http.post(Uri.parse('${Api_url}/api/admin/login'),
         body: {"email": email.text, "password": password.text});
     print(response.body);
     final jsonData = json.decode(response.body);
@@ -514,7 +567,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       print(jsonData);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
-      prefs.setString('token',jsonData["token"]);
+      prefs.setString('token', jsonData["token"]);
 
       await checkToken(jsonData["token"]);
       // Navigator.push(

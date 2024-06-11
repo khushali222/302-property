@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
+
+import '../../constant/constant.dart';
 
 class Changepassword extends StatefulWidget {
   final String email;
@@ -32,7 +34,7 @@ class _ChangepasswordState extends State<Changepassword> {
     });
 
     final response = await http.put(
-      Uri.parse('http://192.168.1.32:4000/api/admin/app/reset_password'),
+      Uri.parse('${Api_url}/api/admin/app/reset_password'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -49,7 +51,8 @@ class _ChangepasswordState extends State<Changepassword> {
       final jsonData = json.decode(response.body);
       if (jsonData["message"] == "Password Updated Successfully") {
         print(jsonData);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> Login_Screen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Login_Screen()));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Password updated successfully")),
         );
@@ -102,7 +105,9 @@ class _ChangepasswordState extends State<Changepassword> {
               Center(
                 child: Text(
                   "change Password ?",
-                  style: TextStyle(color: Colors.black,fontSize: MediaQuery.of(context).size.width * 0.034),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: MediaQuery.of(context).size.width * 0.034),
                 ),
               ),
               SizedBox(
@@ -115,7 +120,7 @@ class _ChangepasswordState extends State<Changepassword> {
                   ),
                   Expanded(
                     child: Container(
-                      height:50,
+                      height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(
                             MediaQuery.of(context).size.width * 0.02),
@@ -127,8 +132,7 @@ class _ChangepasswordState extends State<Changepassword> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal:
-                                  MediaQuery.of(context).size.width *
-                                      0.00),
+                                      MediaQuery.of(context).size.width * 0.00),
                               child: Center(
                                 child: TextField(
                                   onChanged: (value) {
@@ -138,31 +142,30 @@ class _ChangepasswordState extends State<Changepassword> {
                                   },
                                   obscureText: true,
                                   controller: password,
-                                  cursorColor:
-                                  Color.fromRGBO(21, 43, 81, 1),
+                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(10),
                                     enabledBorder: passworderror
                                         ? OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .red), // Set border color here
-                                    )
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors
+                                                    .red), // Set border color here
+                                          )
                                         : InputBorder.none,
                                     prefixIcon: Padding(
                                       padding: const EdgeInsets.all(15.0),
                                       child: Image.asset(
                                           'assets/icons/pasword.png'),
-
                                     ),
                                     hintText: "Password",
-                                    suffixIcon:
-                                    InkWell(
+                                    suffixIcon: InkWell(
                                       onTap: () {
                                         setState(() {
-                                          visiable_password = !visiable_password;
+                                          visiable_password =
+                                              !visiable_password;
                                         });
                                       },
                                       child: Icon(
@@ -172,7 +175,6 @@ class _ChangepasswordState extends State<Changepassword> {
                                         color: Colors.grey,
                                       ),
                                     ),
-
                                   ),
                                 ),
                               ),
@@ -189,10 +191,10 @@ class _ChangepasswordState extends State<Changepassword> {
               ),
               passworderror
                   ? Center(
-                  child: Text(
-                    passwordmessage,
-                    style: TextStyle(color: Colors.red),
-                  ))
+                      child: Text(
+                      passwordmessage,
+                      style: TextStyle(color: Colors.red),
+                    ))
                   : Container(),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
@@ -204,7 +206,7 @@ class _ChangepasswordState extends State<Changepassword> {
                   ),
                   Expanded(
                     child: Container(
-                      height:50,
+                      height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(
                             MediaQuery.of(context).size.width * 0.02),
@@ -216,8 +218,7 @@ class _ChangepasswordState extends State<Changepassword> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal:
-                                  MediaQuery.of(context).size.width *
-                                      0.00),
+                                      MediaQuery.of(context).size.width * 0.00),
                               child: Center(
                                 child: TextField(
                                   onChanged: (value) {
@@ -227,18 +228,18 @@ class _ChangepasswordState extends State<Changepassword> {
                                   },
                                   obscureText: true,
                                   controller: confirmpassword,
-                                  cursorColor:
-                                  Color.fromRGBO(21, 43, 81, 1),
+                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(10),
                                     enabledBorder: confirmpassworderror
                                         ? OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .red), // Set border color here
-                                    )
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors
+                                                    .red), // Set border color here
+                                          )
                                         : InputBorder.none,
                                     prefixIcon: Padding(
                                       padding: const EdgeInsets.all(15.0),
@@ -246,11 +247,11 @@ class _ChangepasswordState extends State<Changepassword> {
                                           'assets/icons/pasword.png'),
                                     ),
                                     hintText: "Confirmpassword",
-                                    suffixIcon:
-                                    InkWell(
+                                    suffixIcon: InkWell(
                                       onTap: () {
                                         setState(() {
-                                          visiable_password = !visiable_password;
+                                          visiable_password =
+                                              !visiable_password;
                                         });
                                       },
                                       child: Icon(
@@ -260,7 +261,6 @@ class _ChangepasswordState extends State<Changepassword> {
                                         color: Colors.grey,
                                       ),
                                     ),
-
                                   ),
                                 ),
                               ),
@@ -277,10 +277,10 @@ class _ChangepasswordState extends State<Changepassword> {
               ),
               confirmpassworderror
                   ? Center(
-                  child: Text(
-                    confirmpasswordmessage,
-                    style: TextStyle(color: Colors.red),
-                  ))
+                      child: Text(
+                      confirmpasswordmessage,
+                      style: TextStyle(color: Colors.red),
+                    ))
                   : Container(),
 
               Spacer(),
@@ -295,23 +295,20 @@ class _ChangepasswordState extends State<Changepassword> {
                       passworderror = true;
                       passwordmessage = "Password is required";
                     });
-                  }
-                  else if (password.text.length < 8) {
+                  } else if (password.text.length < 8) {
                     setState(() {
                       passworderror = true;
                       passwordmessage = "Password must have 8 Characters";
                     });
-                  }
-                  else if (!RegExp(
-                      r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                  } else if (!RegExp(
+                          r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                       .hasMatch(password.text)) {
                     setState(() {
                       passworderror = true;
                       passwordmessage =
-                      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                          'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
                     });
-                  }
-                  else {
+                  } else {
                     setState(() {
                       passworderror = false;
                     });
@@ -321,14 +318,12 @@ class _ChangepasswordState extends State<Changepassword> {
                       confirmpassworderror = true;
                       confirmpasswordmessage = "Confirm password is required";
                     });
-                  }
-                  else if (confirmpassword.text != password.text) {
+                  } else if (confirmpassword.text != password.text) {
                     setState(() {
                       confirmpassworderror = true;
                       confirmpasswordmessage = "Both password is not match";
                     });
-                  }
-                  else {
+                  } else {
                     setState(() {
                       confirmpassworderror = false;
                     });
@@ -336,8 +331,7 @@ class _ChangepasswordState extends State<Changepassword> {
                   if (!passworderror && !confirmpassworderror) {
                     changePassword();
                   }
-                  },
-
+                },
                 child: Center(
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.06,
@@ -347,26 +341,25 @@ class _ChangepasswordState extends State<Changepassword> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
-                      child:
-                      loading
+                      child: loading
                           ? SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 50.0,
-                      )
+                              color: Colors.black,
+                              size: 40.0,
+                            )
                           : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Change password",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.045
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Change password",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.045),
+                                ),
+                              ],
                             ),
-                          ),
-
-                        ],
-                      ),
                     ),
                   ),
                 ),
@@ -379,7 +372,7 @@ class _ChangepasswordState extends State<Changepassword> {
               ),
               GestureDetector(
                 onTap: () {
-
+                  Navigator.pop(context);
                 },
                 child: Center(
                   child: Container(
@@ -388,32 +381,25 @@ class _ChangepasswordState extends State<Changepassword> {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.black)
-                    ),
-                    child: Center(
-                      child: loading
-                          ? CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                          : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Cancel",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.045
-                            ),
-                          ),
-
-                        ],
-                      ),
+                        border: Border.all(color: Colors.black)),
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                              MediaQuery.of(context).size.width *
+                                  0.045),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-
             ],
           ),
         ),

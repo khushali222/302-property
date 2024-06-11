@@ -4,9 +4,11 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart'as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../constant/constant.dart';
 import 'otp_vrify.dart';
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -27,10 +29,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.1.32:4000/api/admin/sendOTP'),
+      Uri.parse('${Api_url}/api/admin/sendOTP'),
       body: {'email': email},
     );
-
     setState(() {
       loading = false; // Hide loading indicator after receiving response
     });
@@ -116,23 +117,77 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.028,
               ),
-              // Email
+             // Email
+             //  Row(
+             //    children: [
+             //      SizedBox(
+             //        width: MediaQuery.of(context).size.width * 0.099,
+             //      ),
+             //      Container(
+             //        height: MediaQuery.of(context).size.height * 0.065,
+             //        width: MediaQuery.of(context).size.width * 0.8,
+             //        decoration: BoxDecoration(
+             //          borderRadius: BorderRadius.circular(10),
+             //          color: Color.fromRGBO(196, 196, 196, .3),
+             //        ),
+             //        child: Stack(
+             //          children: [
+             //            Positioned.fill(
+             //              child: Center(
+             //                child: TextField(
+             //                  keyboardType: TextInputType.emailAddress,
+             //                  onChanged: (value) {
+             //                    setState(() {
+             //                      emailerror = false;
+             //                    });
+             //                  },
+             //                  controller: email,
+             //                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
+             //                  decoration: InputDecoration(
+             //                    border: InputBorder.none,
+             //                    enabledBorder: emailerror
+             //                        ? OutlineInputBorder(
+             //                      borderRadius: BorderRadius.circular(10),
+             //                      borderSide: BorderSide(
+             //                          color: Colors
+             //                              .red), // Set border color here
+             //                    )
+             //                        : InputBorder.none,
+             //                    contentPadding: EdgeInsets.all(15),
+             //                    prefixIcon:
+             //                    Padding(
+             //                      padding: const EdgeInsets.all(17.0),
+             //                      child: Image.asset(
+             //                          "assets/icons/email_icon.png"),
+             //                    ),
+             //                    hintText: "Email",
+             //                  ),
+             //                ),
+             //              ),
+             //            ),
+             //          ],
+             //        ),
+             //      ),
+             //      SizedBox(
+             //        width: MediaQuery.of(context).size.width * 0.05,
+             //      ),
+             //    ],
+             //  ),
               Row(
                 children: [
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.099,
                   ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.065,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(196, 196, 196, .3),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Center(
+                  Expanded(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromRGBO(196, 196, 196, .3),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
                             child: TextField(
                               keyboardType: TextInputType.emailAddress,
                               onChanged: (value) {
@@ -143,7 +198,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               controller: email,
                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
                               decoration: InputDecoration(
-                                border: InputBorder.none,
                                 enabledBorder: emailerror
                                     ? OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -152,23 +206,29 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                           .red), // Set border color here
                                 )
                                     : InputBorder.none,
-                                contentPadding: EdgeInsets.all(15),
-                                prefixIcon:
-                                Padding(
-                                  padding: const EdgeInsets.all(17.0),
-                                  child: Image.asset(
-                                      "assets/icons/email_icon.png"),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.all(10),
+                                prefixIcon: Container(
+                                  height: 20,
+                                  width: 20,
+                                  padding: EdgeInsets.all(13),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.envelope,
+                                    size: 20,
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                                 hintText: "Email",
+                                hintStyle: TextStyle(color:Colors.grey[600],fontSize: 15 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.05,
+                    width: MediaQuery.of(context).size.width * 0.099,
                   ),
                 ],
               ),
@@ -222,7 +282,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       child: loading
                           ?  SpinKitFadingCircle(
                         color: Colors.white,
-                        size: 50.0,
+                        size: 40.0,
                       )
                           : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -249,7 +309,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
               GestureDetector(
                 onTap: () {
-
+                  Navigator.pop(context);
                 },
                 child: Center(
                   child: Container(
@@ -260,25 +320,20 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: Colors.black)
                     ),
-                    child: Center(
-                      child: loading
-                          ? CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                          : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Cancel",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width * 0.045
-                            ),
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width * 0.045
                           ),
+                        ),
 
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ),

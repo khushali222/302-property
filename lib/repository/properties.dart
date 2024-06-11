@@ -17,6 +17,7 @@ class PropertiesRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+    print('${Api_url}/api/rentals/rentals/$id');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Rentals.fromJson(data)).toList();
@@ -25,41 +26,58 @@ class PropertiesRepository {
     }
   }
 
+  Future<void> updateRental(Rentals properties) async {
 
-  Future<Map<String, dynamic>> EditProperties({
-    required String? adminId,
-    required String? propertyType,
-    required String? propertySubType,
-    required bool isMultiUnit,
-    required String? id
-  }) async {
-    final Map<String, dynamic> data = {
-      'admin_id': adminId,
-      'property_type': propertyType,
-      'propertysub_type': propertySubType,
-      'is_multiunit': isMultiUnit,
+    final url = Uri.parse('${Api_url}/api/rentals/rentals/${properties.rentalId}');
+    print(properties.rentalId);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString("token");
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
     };
-
-    print('$apiUrl/$id');
-
-    final http.Response response = await http.put(
-      Uri.parse('$apiUrl/$id'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+    final body = jsonEncode({
+      "rentalOwner": {
+        "admin_id": properties.adminId,
+        "rentalowner_id": properties.rentalOwnerId,
+        "rentalOwner_firstName": properties.rentalOwnerData?.rentalOwnerFirstName,
+        "rentalOwner_lastName": properties.rentalOwnerData?.rentalOwnerLastName,
+        "rentalOwner_companyName": properties.rentalOwnerData?.rentalOwnerCompanyName,
+        "rentalOwner_primaryEmail": properties.rentalOwnerData?.rentalOwnerPrimaryEmail,
+        "rentalOwner_phoneNumber": properties.rentalOwnerData?.rentalOwnerPhoneNumber,
+        "rentalOwner_homeNumber": properties.rentalOwnerData?.rentalOwnerHomeNumber,
+        "rentalOwner_businessNumber": properties.rentalOwnerData?.rentalOwnerBuisinessNumber,
+        "city": properties.rentalOwnerData?.city,
+        "state": properties.rentalOwnerData?.state,
+        "country": properties.rentalOwnerData?.country,
+        "postal_code": properties.rentalOwnerData?.postalCode,
       },
-      body: jsonEncode(data),
-    );
-    var responseData = json.decode(response.body);
+      "rental": {
+        "company_name": properties.rentalOwnerData?.rentalOwnerCompanyName,
+        "rental_id": properties.rentalId,
+        "property_id": properties.propertyId,
+        "rental_adress": properties.rentalAddress,
+        "rental_city": properties.rentalCity,
+        "rental_state": properties.rentalState,
+        "rental_country": properties.rentalCountry,
+        "rental_postcode": properties.rentalPostcode,
+        "staffmember_id": properties.staffMemberId,
+      },
+    });
+    final response = await http.put(url, headers: headers, body: body);
     print(response.body);
-    if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      return json.decode(response.body);
+    if (response.statusCode == 200) {
 
+      Fluttertoast.showToast(msg: "Rental Owner Updated Successfully");
+      print('Rental and Rental Owner Updated Successfully');
     } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add property type');
+      Fluttertoast.showToast(msg: "Failed to update rental");
+      print("object");
+      throw Exception('Failed to update rental');
     }
   }
+
   Future<Map<String, dynamic>> DeleteProperties({
     required String? id
   }) async {

@@ -39,8 +39,6 @@ class Rental_PropertiesRepository{
 
     };
 
-
-
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{

@@ -13,6 +13,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
 import 'package:three_zero_two_property/repository/Staffmember.dart';
+import 'package:three_zero_two_property/repository/properties.dart';
 import 'package:three_zero_two_property/repository/rental_properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
@@ -33,9 +34,9 @@ class Edit_properties extends StatefulWidget {
   propertytype? property;
   Staffmembers? staff;
   Rentals properties;
+  Rentals? rental;
 
-
-  Edit_properties({super.key, this.property, this.staff,required this.properties});
+  Edit_properties({super.key, this.property, this.staff,required this.properties , this.rental});
 
   @override
   State<Edit_properties> createState() => _Edit_propertiesState();
@@ -248,9 +249,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
     state2.text = widget.properties.rentalOwnerData!.state!;
     county2.text = widget.properties.rentalOwnerData!.country!;
     code2.text = widget.properties.rentalOwnerData!.postalCode!;
-    // selectedStaffmember = widget.properties.staffMemberData!.staffmemberName!;
+     selectedStaffmember = widget.properties.staffMemberData!.staffmemberName!;
 
-   print( widget.properties.staffMemberData!.staffmemberName!);
+   //print( widget.properties.staffMemberData!.staffmemberName!);
    print(selectedStaff);
    // selectedStaff = widget.properties.staffMemberData!.staffmemberName;
     // proid.text = widget.properties!.rentalOwnerData!.processorList!.map((
@@ -839,7 +840,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                       ],
                     ),
                     child: Text(
-                      "Add Property",
+                      "Edit Property",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -7685,6 +7686,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                   ),
                 ),
                 SizedBox(height: 25),
+                //staff
                 Material(
                   elevation: 6,
                   borderRadius: BorderRadius.circular(10),
@@ -7753,967 +7755,967 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
-                              children: [
-                                FutureBuilder<List<Staffmembers>>(
-                                  future: futureStaffMembers,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    } else if (!snapshot.hasData ||
-                                        snapshot.data!.isEmpty) {
-                                      return Text('No staff members found');
-                                    } else {
-                                      List<Staffmembers> staffMembers =
-                                      snapshot.data!;
-                                      List<DropdownMenuItem<String>>
-                                      dropdownItems = staffMembers
-                                          .map<DropdownMenuItem<String>>(
-                                              (Staffmembers staffMember) {
-                                            return DropdownMenuItem<String>(
-                                              value: staffMember.staffmemberName,
-                                              onTap:(){
-                                                setState(() {
-                                                  sid = staffMember.staffmemberId;
-                                                });
-                                              },
-                                              child: Text(
-                                                staffMember.staffmemberName ?? '',
-                                                style: TextStyle(fontSize: 14),
-                                              ),
-                                            );
-                                          }).toList();
-
-                                      // Add the special "Add new property" item
-                                      dropdownItems.add(
-                                        DropdownMenuItem<String>(
-                                          value: 'add_new_property',
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  bool isChecked =
-                                                  false; // Moved isChecked inside the StatefulBuilder
-                                                  return StatefulBuilder(
-                                                    builder: (BuildContext
-                                                    context,
-                                                        StateSetter setState) {
-                                                      return AlertDialog(
-                                                        backgroundColor:
-                                                        Colors.white,
-                                                        surfaceTintColor:
-                                                        Colors.white,
-                                                        content:
-                                                        SingleChildScrollView(
-                                                          child: Column(
-                                                            children: [
-                                                              SizedBox(
-                                                                  height: 15),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "New Staff Member",
-                                                                    style: TextStyle(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        fontSize:
-                                                                        18),
-                                                                  ),
-                                                                  Spacer(),
-                                                                  InkWell(
-                                                                    onTap: () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child:
-                                                                    Container(
-                                                                      //    color: Colors.redAccent,
-                                                                      padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                      child:
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .xmark,
-                                                                        size:
-                                                                        15,
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 5,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Staff member name..*",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        fontSize:
-                                                                        13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  nameerror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: name,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter a staff member name here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: nameerror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              nameerror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    namemessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Designation...*",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  designationerror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: designation,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Designation here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: designationerror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              designationerror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    designationmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Phone Number...",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  phonenumbererror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: phonenumber,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Phone Number here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: phonenumbererror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              phonenumbererror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    phonenumbermessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Email...*",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  emailerror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: email,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Email here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: emailerror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              emailerror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    emailmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Password...*",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  passworderror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: password,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Password here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: passworderror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              passworderror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    passwordmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 20,
-                                                              ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (name.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          nameerror =
-                                                                          true;
-                                                                          namemessage =
-                                                                          "name is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          nameerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (designation
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          designationerror =
-                                                                          true;
-                                                                          designationmessage =
-                                                                          "designation is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          designationerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (phonenumber
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          phonenumbererror =
-                                                                          true;
-                                                                          phonenumbermessage =
-                                                                          "number is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          phonenumbererror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (email.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          emailerror =
-                                                                          true;
-                                                                          emailmessage =
-                                                                          "email is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          emailerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (password
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          passworderror =
-                                                                          true;
-                                                                          passwordmessage =
-                                                                          "password is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          passworderror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (!nameerror &&
-                                                                      !designationerror &&
-                                                                      !phonenumbererror &&
-                                                                      !emailerror &&
-                                                                      !phonenumbererror) {
-                                                                    setState(
-                                                                            () {
-                                                                          loading =
-                                                                          true;
-                                                                        });
-                                                                  }
-                                                                  SharedPreferences
-                                                                  prefs =
-                                                                  await SharedPreferences
-                                                                      .getInstance();
-                                                                  String?
-                                                                  adminId =
-                                                                  prefs.getString(
-                                                                      "adminId");
-                                                                  if (adminId !=
-                                                                      null) {
-                                                                    try {
-                                                                      await StaffMemberRepository()
-                                                                          .addStaffMember(
-                                                                        adminId:
-                                                                        adminId,
-                                                                        staffmemberName:
-                                                                        name.text,
-                                                                        staffmemberDesignation:
-                                                                        designation.text,
-                                                                        staffmemberPhoneNumber:
-                                                                        phonenumber.text,
-                                                                        staffmemberEmail:
-                                                                        email.text,
-                                                                        staffmemberPassword:
-                                                                        password.text,
-                                                                      );
-                                                                      setState(
-                                                                              () {
-                                                                            loading =
-                                                                            false;
-                                                                          });
-                                                                      Navigator.of(
-                                                                          context)
-                                                                          .pop(
-                                                                          true);
-                                                                    } catch (e) {
-                                                                      setState(
-                                                                              () {
-                                                                            loading =
-                                                                            false;
-                                                                          });
-                                                                      // Handle error
-                                                                    }
-                                                                  }
-                                                                },
-                                                                child: Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    ClipRRect(
-                                                                      borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          5.0),
-                                                                      child:
-                                                                      Container(
-                                                                        height:
-                                                                        30.0,
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            .36,
-                                                                        decoration:
-                                                                        BoxDecoration(
-                                                                          borderRadius:
-                                                                          BorderRadius.circular(5.0),
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                          boxShadow: [
-                                                                            BoxShadow(
-                                                                              color: Colors.grey,
-                                                                              offset: Offset(0.0, 1.0), //(x,y)
-                                                                              blurRadius: 6.0,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        child:
-                                                                        Center(
-                                                                          child:
-                                                                          Text(
-                                                                            "Add staff Member",
-                                                                            style: TextStyle(
-                                                                                color: Colors.white,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 13),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
-                                                                        "Cancel"),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.add,
-                                                  size: 16,
-                                                ),
-                                                SizedBox(width: 4),
-                                                Text(
-                                                  'Add New Staffmember',
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .027),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                      if (selectedStaff == null && staffMembers.isNotEmpty) {
-                                        selectedStaff = widget.properties.staffMemberData!.staffmemberName;
-                                      }
-                                      return Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Container(
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height *
-                                              .05,
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              .36,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Color(0xFF8A95A8),
-                                            ),
-                                            borderRadius:
-                                            BorderRadius.circular(5),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
-                                              value: selectedStaff,
-                                              hint: Text(
-                                                'Select',
-                                                style: TextStyle(
-                                                  fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .04,
-                                                  color: Color(0xFF8A95A8),
-                                                ),
-                                              ),
-                                              onChanged: (String? newValue) {
-                                                if (newValue ==
-                                                    'add_new_property') {
-                                                  // Prevent the dropdown from changing the selected item
-                                                  setState(() {
-                                                    selectedStaff = null;
-                                                  });
-                                                  // Show the dialog
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
-                                                      return StatefulBuilder(
-                                                        builder: (BuildContext
-                                                        context,
-                                                            StateSetter
-                                                            setState) {
-                                                          return AlertDialog(
-                                                            backgroundColor:
-                                                            Colors.white,
-                                                            surfaceTintColor:
-                                                            Colors.white,
-                                                            title: Text(
-                                                              "Add Rental Owner",
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      81,
-                                                                      1),
-                                                                  fontSize: 15),
-                                                            ),
-                                                            content:
-                                                            SingleChildScrollView(
-                                                                child:
-                                                                Column(
-                                                                  children: [],
-                                                                )),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                  );
-                                                } else {
-                                                  setState(() {
-                                                    selectedStaff = newValue;
-                                                  });
-                                                }
-                                              },
-                                              items: dropdownItems,
-                                              isExpanded: true,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     FutureBuilder<List<Staffmembers>>(
+                            //       future: futureStaffMembers,
+                            //       builder: (context, snapshot) {
+                            //         if (snapshot.connectionState ==
+                            //             ConnectionState.waiting) {
+                            //           return CircularProgressIndicator();
+                            //         } else if (snapshot.hasError) {
+                            //           return Text('Error: ${snapshot.error}');
+                            //         } else if (!snapshot.hasData ||
+                            //             snapshot.data!.isEmpty) {
+                            //           return Text('No staff members found');
+                            //         } else {
+                            //           List<Staffmembers> staffMembers =
+                            //           snapshot.data!;
+                            //           List<DropdownMenuItem<String>>
+                            //           dropdownItems = staffMembers
+                            //               .map<DropdownMenuItem<String>>(
+                            //                   (Staffmembers staffMember) {
+                            //                 return DropdownMenuItem<String>(
+                            //                   value: staffMember.staffmemberName,
+                            //                   onTap:(){
+                            //                     setState(() {
+                            //                       sid = staffMember.staffmemberId;
+                            //                     });
+                            //                   },
+                            //                   child: Text(
+                            //                     staffMember.staffmemberName ?? '',
+                            //                     style: TextStyle(fontSize: 14),
+                            //                   ),
+                            //                 );
+                            //               }).toList();
+                            //
+                            //           // Add the special "Add new property" item
+                            //           dropdownItems.add(
+                            //             DropdownMenuItem<String>(
+                            //               value: 'add_new_property',
+                            //               child: GestureDetector(
+                            //                 onTap: () {
+                            //                   showDialog(
+                            //                     context: context,
+                            //                     builder:
+                            //                         (BuildContext context) {
+                            //                       bool isChecked =
+                            //                       false; // Moved isChecked inside the StatefulBuilder
+                            //                       return StatefulBuilder(
+                            //                         builder: (BuildContext
+                            //                         context,
+                            //                             StateSetter setState) {
+                            //                           return AlertDialog(
+                            //                             backgroundColor:
+                            //                             Colors.white,
+                            //                             surfaceTintColor:
+                            //                             Colors.white,
+                            //                             content:
+                            //                             SingleChildScrollView(
+                            //                               child: Column(
+                            //                                 children: [
+                            //                                   SizedBox(
+                            //                                       height: 15),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width: 15,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         "New Staff Member",
+                            //                                         style: TextStyle(
+                            //                                             color: Color.fromRGBO(
+                            //                                                 21,
+                            //                                                 43,
+                            //                                                 81,
+                            //                                                 1),
+                            //                                             fontWeight:
+                            //                                             FontWeight
+                            //                                                 .bold,
+                            //                                             fontSize:
+                            //                                             18),
+                            //                                       ),
+                            //                                       Spacer(),
+                            //                                       InkWell(
+                            //                                         onTap: () {
+                            //                                           Navigator.pop(
+                            //                                               context);
+                            //                                         },
+                            //                                         child:
+                            //                                         Container(
+                            //                                           //    color: Colors.redAccent,
+                            //                                           padding:
+                            //                                           EdgeInsets
+                            //                                               .zero,
+                            //                                           child:
+                            //                                           FaIcon(
+                            //                                             FontAwesomeIcons
+                            //                                                 .xmark,
+                            //                                             size:
+                            //                                             15,
+                            //                                             color: Color(
+                            //                                                 0xFF8A95A8),
+                            //                                           ),
+                            //                                         ),
+                            //                                       ),
+                            //                                       SizedBox(
+                            //                                         width: 5,
+                            //                                       ),
+                            //                                     ],
+                            //                                   ),
+                            //                                   SizedBox(
+                            //                                     height: 10,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width: 15,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         "Staff member name..*",
+                            //                                         style: TextStyle(
+                            //                                             color: Color(
+                            //                                                 0xFF8A95A8),
+                            //                                             fontWeight:
+                            //                                             FontWeight
+                            //                                                 .bold,
+                            //                                             fontSize:
+                            //                                             13),
+                            //                                       ),
+                            //                                     ],
+                            //                                   ),
+                            //                                   SizedBox(
+                            //                                     height: 5,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           15),
+                            //                                       Material(
+                            //                                         elevation:
+                            //                                         4,
+                            //                                         child:
+                            //                                         Container(
+                            //                                           height:
+                            //                                           50,
+                            //                                           width: MediaQuery.of(context)
+                            //                                               .size
+                            //                                               .width *
+                            //                                               .54,
+                            //                                           decoration:
+                            //                                           BoxDecoration(
+                            //                                             borderRadius:
+                            //                                             BorderRadius.circular(2),
+                            //                                             border:
+                            //                                             Border.all(
+                            //                                               color:
+                            //                                               Color(0xFF8A95A8),
+                            //                                             ),
+                            //                                           ),
+                            //                                           child:
+                            //                                           Stack(
+                            //                                             children: [
+                            //                                               Positioned
+                            //                                                   .fill(
+                            //                                                 child:
+                            //                                                 TextField(
+                            //                                                   onChanged: (value) {
+                            //                                                     setState(() {
+                            //                                                       nameerror = false;
+                            //                                                     });
+                            //                                                   },
+                            //                                                   controller: name,
+                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                                   decoration: InputDecoration(
+                            //                                                     hintText: "Enter a staff member name here..*",
+                            //                                                     hintStyle: TextStyle(
+                            //                                                       fontSize: 13,
+                            //                                                       color: Color(0xFF8A95A8),
+                            //                                                     ),
+                            //                                                     enabledBorder: nameerror
+                            //                                                         ? OutlineInputBorder(
+                            //                                                       borderRadius: BorderRadius.circular(2),
+                            //                                                       borderSide: BorderSide(
+                            //                                                         color: Colors.red,
+                            //                                                       ),
+                            //                                                     )
+                            //                                                         : InputBorder.none,
+                            //                                                     border: InputBorder.none,
+                            //                                                     contentPadding: EdgeInsets.all(12),
+                            //                                                   ),
+                            //                                                 ),
+                            //                                               ),
+                            //                                             ],
+                            //                                           ),
+                            //                                         ),
+                            //                                       ),
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           20),
+                            //                                     ],
+                            //                                   ),
+                            //                                   nameerror
+                            //                                       ? Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width:
+                            //                                         117,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         namemessage,
+                            //                                         style:
+                            //                                         TextStyle(color: Colors.red),
+                            //                                       ),
+                            //                                     ],
+                            //                                   )
+                            //                                       : Container(),
+                            //                                   SizedBox(
+                            //                                     height: 10,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width: 15,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         "Designation...*",
+                            //                                         style: TextStyle(
+                            //                                           // color: Colors.grey,
+                            //                                             color: Color(0xFF8A95A8),
+                            //                                             fontWeight: FontWeight.bold,
+                            //                                             fontSize: 13),
+                            //                                       ),
+                            //                                     ],
+                            //                                   ),
+                            //                                   SizedBox(
+                            //                                     height: 5,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           15),
+                            //                                       Material(
+                            //                                         elevation:
+                            //                                         4,
+                            //                                         child:
+                            //                                         Container(
+                            //                                           height:
+                            //                                           50,
+                            //                                           width: MediaQuery.of(context)
+                            //                                               .size
+                            //                                               .width *
+                            //                                               .54,
+                            //                                           decoration:
+                            //                                           BoxDecoration(
+                            //                                             borderRadius:
+                            //                                             BorderRadius.circular(2),
+                            //                                             border:
+                            //                                             Border.all(
+                            //                                               color:
+                            //                                               Color(0xFF8A95A8),
+                            //                                             ),
+                            //                                           ),
+                            //                                           child:
+                            //                                           Stack(
+                            //                                             children: [
+                            //                                               Positioned
+                            //                                                   .fill(
+                            //                                                 child:
+                            //                                                 TextField(
+                            //                                                   onChanged: (value) {
+                            //                                                     setState(() {
+                            //                                                       designationerror = false;
+                            //                                                     });
+                            //                                                   },
+                            //                                                   controller: designation,
+                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                                   decoration: InputDecoration(
+                            //                                                     hintText: "Enter Designation here..*",
+                            //                                                     hintStyle: TextStyle(
+                            //                                                       fontSize: 13,
+                            //                                                       color: Color(0xFF8A95A8),
+                            //                                                     ),
+                            //                                                     enabledBorder: designationerror
+                            //                                                         ? OutlineInputBorder(
+                            //                                                       borderRadius: BorderRadius.circular(2),
+                            //                                                       borderSide: BorderSide(
+                            //                                                         color: Colors.red,
+                            //                                                       ),
+                            //                                                     )
+                            //                                                         : InputBorder.none,
+                            //                                                     border: InputBorder.none,
+                            //                                                     contentPadding: EdgeInsets.all(12),
+                            //                                                   ),
+                            //                                                 ),
+                            //                                               ),
+                            //                                             ],
+                            //                                           ),
+                            //                                         ),
+                            //                                       ),
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           20),
+                            //                                     ],
+                            //                                   ),
+                            //                                   designationerror
+                            //                                       ? Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width:
+                            //                                         117,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         designationmessage,
+                            //                                         style:
+                            //                                         TextStyle(color: Colors.red),
+                            //                                       ),
+                            //                                     ],
+                            //                                   )
+                            //                                       : Container(),
+                            //                                   SizedBox(
+                            //                                     height: 10,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width: 15,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         "Phone Number...",
+                            //                                         style: TextStyle(
+                            //                                           // color: Colors.grey,
+                            //                                             color: Color(0xFF8A95A8),
+                            //                                             fontWeight: FontWeight.bold,
+                            //                                             fontSize: 13),
+                            //                                       ),
+                            //                                     ],
+                            //                                   ),
+                            //                                   SizedBox(
+                            //                                     height: 5,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           15),
+                            //                                       Material(
+                            //                                         elevation:
+                            //                                         4,
+                            //                                         child:
+                            //                                         Container(
+                            //                                           height:
+                            //                                           50,
+                            //                                           width: MediaQuery.of(context)
+                            //                                               .size
+                            //                                               .width *
+                            //                                               .54,
+                            //                                           decoration:
+                            //                                           BoxDecoration(
+                            //                                             borderRadius:
+                            //                                             BorderRadius.circular(2),
+                            //                                             border:
+                            //                                             Border.all(
+                            //                                               color:
+                            //                                               Color(0xFF8A95A8),
+                            //                                             ),
+                            //                                           ),
+                            //                                           child:
+                            //                                           Stack(
+                            //                                             children: [
+                            //                                               Positioned
+                            //                                                   .fill(
+                            //                                                 child:
+                            //                                                 TextField(
+                            //                                                   onChanged: (value) {
+                            //                                                     setState(() {
+                            //                                                       phonenumbererror = false;
+                            //                                                     });
+                            //                                                   },
+                            //                                                   controller: phonenumber,
+                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                                   decoration: InputDecoration(
+                            //                                                     hintText: "Enter Phone Number here..*",
+                            //                                                     hintStyle: TextStyle(
+                            //                                                       fontSize: 13,
+                            //                                                       color: Color(0xFF8A95A8),
+                            //                                                     ),
+                            //                                                     enabledBorder: phonenumbererror
+                            //                                                         ? OutlineInputBorder(
+                            //                                                       borderRadius: BorderRadius.circular(2),
+                            //                                                       borderSide: BorderSide(
+                            //                                                         color: Colors.red,
+                            //                                                       ),
+                            //                                                     )
+                            //                                                         : InputBorder.none,
+                            //                                                     border: InputBorder.none,
+                            //                                                     contentPadding: EdgeInsets.all(12),
+                            //                                                   ),
+                            //                                                 ),
+                            //                                               ),
+                            //                                             ],
+                            //                                           ),
+                            //                                         ),
+                            //                                       ),
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           20),
+                            //                                     ],
+                            //                                   ),
+                            //                                   phonenumbererror
+                            //                                       ? Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width:
+                            //                                         117,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         phonenumbermessage,
+                            //                                         style:
+                            //                                         TextStyle(color: Colors.red),
+                            //                                       ),
+                            //                                     ],
+                            //                                   )
+                            //                                       : Container(),
+                            //                                   SizedBox(
+                            //                                     height: 10,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width: 15,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         "Email...*",
+                            //                                         style: TextStyle(
+                            //                                           // color: Colors.grey,
+                            //                                             color: Color(0xFF8A95A8),
+                            //                                             fontWeight: FontWeight.bold,
+                            //                                             fontSize: 13),
+                            //                                       ),
+                            //                                     ],
+                            //                                   ),
+                            //                                   SizedBox(
+                            //                                     height: 5,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           15),
+                            //                                       Material(
+                            //                                         elevation:
+                            //                                         4,
+                            //                                         child:
+                            //                                         Container(
+                            //                                           height:
+                            //                                           50,
+                            //                                           width: MediaQuery.of(context)
+                            //                                               .size
+                            //                                               .width *
+                            //                                               .54,
+                            //                                           decoration:
+                            //                                           BoxDecoration(
+                            //                                             borderRadius:
+                            //                                             BorderRadius.circular(2),
+                            //                                             border:
+                            //                                             Border.all(
+                            //                                               color:
+                            //                                               Color(0xFF8A95A8),
+                            //                                             ),
+                            //                                           ),
+                            //                                           child:
+                            //                                           Stack(
+                            //                                             children: [
+                            //                                               Positioned
+                            //                                                   .fill(
+                            //                                                 child:
+                            //                                                 TextField(
+                            //                                                   onChanged: (value) {
+                            //                                                     setState(() {
+                            //                                                       emailerror = false;
+                            //                                                     });
+                            //                                                   },
+                            //                                                   controller: email,
+                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                                   decoration: InputDecoration(
+                            //                                                     hintText: "Enter Email here..*",
+                            //                                                     hintStyle: TextStyle(
+                            //                                                       fontSize: 13,
+                            //                                                       color: Color(0xFF8A95A8),
+                            //                                                     ),
+                            //                                                     enabledBorder: emailerror
+                            //                                                         ? OutlineInputBorder(
+                            //                                                       borderRadius: BorderRadius.circular(2),
+                            //                                                       borderSide: BorderSide(
+                            //                                                         color: Colors.red,
+                            //                                                       ),
+                            //                                                     )
+                            //                                                         : InputBorder.none,
+                            //                                                     border: InputBorder.none,
+                            //                                                     contentPadding: EdgeInsets.all(12),
+                            //                                                   ),
+                            //                                                 ),
+                            //                                               ),
+                            //                                             ],
+                            //                                           ),
+                            //                                         ),
+                            //                                       ),
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           20),
+                            //                                     ],
+                            //                                   ),
+                            //                                   emailerror
+                            //                                       ? Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width:
+                            //                                         117,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         emailmessage,
+                            //                                         style:
+                            //                                         TextStyle(color: Colors.red),
+                            //                                       ),
+                            //                                     ],
+                            //                                   )
+                            //                                       : Container(),
+                            //                                   SizedBox(
+                            //                                     height: 10,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width: 15,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         "Password...*",
+                            //                                         style: TextStyle(
+                            //                                           // color: Colors.grey,
+                            //                                             color: Color(0xFF8A95A8),
+                            //                                             fontWeight: FontWeight.bold,
+                            //                                             fontSize: 13),
+                            //                                       ),
+                            //                                     ],
+                            //                                   ),
+                            //                                   SizedBox(
+                            //                                     height: 5,
+                            //                                   ),
+                            //                                   Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           15),
+                            //                                       Material(
+                            //                                         elevation:
+                            //                                         4,
+                            //                                         child:
+                            //                                         Container(
+                            //                                           height:
+                            //                                           50,
+                            //                                           width: MediaQuery.of(context)
+                            //                                               .size
+                            //                                               .width *
+                            //                                               .54,
+                            //                                           decoration:
+                            //                                           BoxDecoration(
+                            //                                             borderRadius:
+                            //                                             BorderRadius.circular(2),
+                            //                                             border:
+                            //                                             Border.all(
+                            //                                               color:
+                            //                                               Color(0xFF8A95A8),
+                            //                                             ),
+                            //                                           ),
+                            //                                           child:
+                            //                                           Stack(
+                            //                                             children: [
+                            //                                               Positioned
+                            //                                                   .fill(
+                            //                                                 child:
+                            //                                                 TextField(
+                            //                                                   onChanged: (value) {
+                            //                                                     setState(() {
+                            //                                                       passworderror = false;
+                            //                                                     });
+                            //                                                   },
+                            //                                                   controller: password,
+                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            //                                                   decoration: InputDecoration(
+                            //                                                     hintText: "Enter Password here..*",
+                            //                                                     hintStyle: TextStyle(
+                            //                                                       fontSize: 13,
+                            //                                                       color: Color(0xFF8A95A8),
+                            //                                                     ),
+                            //                                                     enabledBorder: passworderror
+                            //                                                         ? OutlineInputBorder(
+                            //                                                       borderRadius: BorderRadius.circular(2),
+                            //                                                       borderSide: BorderSide(
+                            //                                                         color: Colors.red,
+                            //                                                       ),
+                            //                                                     )
+                            //                                                         : InputBorder.none,
+                            //                                                     border: InputBorder.none,
+                            //                                                     contentPadding: EdgeInsets.all(12),
+                            //                                                   ),
+                            //                                                 ),
+                            //                                               ),
+                            //                                             ],
+                            //                                           ),
+                            //                                         ),
+                            //                                       ),
+                            //                                       SizedBox(
+                            //                                           width:
+                            //                                           20),
+                            //                                     ],
+                            //                                   ),
+                            //                                   passworderror
+                            //                                       ? Row(
+                            //                                     children: [
+                            //                                       SizedBox(
+                            //                                         width:
+                            //                                         117,
+                            //                                       ),
+                            //                                       Text(
+                            //                                         passwordmessage,
+                            //                                         style:
+                            //                                         TextStyle(color: Colors.red),
+                            //                                       ),
+                            //                                     ],
+                            //                                   )
+                            //                                       : Container(),
+                            //                                   SizedBox(
+                            //                                     height: 20,
+                            //                                   ),
+                            //                                   GestureDetector(
+                            //                                     onTap:
+                            //                                         () async {
+                            //                                       if (name.text
+                            //                                           .isEmpty) {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               nameerror =
+                            //                                               true;
+                            //                                               namemessage =
+                            //                                               "name is required";
+                            //                                             });
+                            //                                       } else {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               nameerror =
+                            //                                               false;
+                            //                                             });
+                            //                                       }
+                            //                                       if (designation
+                            //                                           .text
+                            //                                           .isEmpty) {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               designationerror =
+                            //                                               true;
+                            //                                               designationmessage =
+                            //                                               "designation is required";
+                            //                                             });
+                            //                                       } else {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               designationerror =
+                            //                                               false;
+                            //                                             });
+                            //                                       }
+                            //                                       if (phonenumber
+                            //                                           .text
+                            //                                           .isEmpty) {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               phonenumbererror =
+                            //                                               true;
+                            //                                               phonenumbermessage =
+                            //                                               "number is required";
+                            //                                             });
+                            //                                       } else {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               phonenumbererror =
+                            //                                               false;
+                            //                                             });
+                            //                                       }
+                            //                                       if (email.text
+                            //                                           .isEmpty) {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               emailerror =
+                            //                                               true;
+                            //                                               emailmessage =
+                            //                                               "email is required";
+                            //                                             });
+                            //                                       } else {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               emailerror =
+                            //                                               false;
+                            //                                             });
+                            //                                       }
+                            //                                       if (password
+                            //                                           .text
+                            //                                           .isEmpty) {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               passworderror =
+                            //                                               true;
+                            //                                               passwordmessage =
+                            //                                               "password is required";
+                            //                                             });
+                            //                                       } else {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               passworderror =
+                            //                                               false;
+                            //                                             });
+                            //                                       }
+                            //                                       if (!nameerror &&
+                            //                                           !designationerror &&
+                            //                                           !phonenumbererror &&
+                            //                                           !emailerror &&
+                            //                                           !phonenumbererror) {
+                            //                                         setState(
+                            //                                                 () {
+                            //                                               loading =
+                            //                                               true;
+                            //                                             });
+                            //                                       }
+                            //                                       SharedPreferences
+                            //                                       prefs =
+                            //                                       await SharedPreferences
+                            //                                           .getInstance();
+                            //                                       String?
+                            //                                       adminId =
+                            //                                       prefs.getString(
+                            //                                           "adminId");
+                            //                                       if (adminId !=
+                            //                                           null) {
+                            //                                         try {
+                            //                                           await StaffMemberRepository()
+                            //                                               .addStaffMember(
+                            //                                             adminId:
+                            //                                             adminId,
+                            //                                             staffmemberName:
+                            //                                             name.text,
+                            //                                             staffmemberDesignation:
+                            //                                             designation.text,
+                            //                                             staffmemberPhoneNumber:
+                            //                                             phonenumber.text,
+                            //                                             staffmemberEmail:
+                            //                                             email.text,
+                            //                                             staffmemberPassword:
+                            //                                             password.text,
+                            //                                           );
+                            //                                           setState(
+                            //                                                   () {
+                            //                                                 loading =
+                            //                                                 false;
+                            //                                               });
+                            //                                           Navigator.of(
+                            //                                               context)
+                            //                                               .pop(
+                            //                                               true);
+                            //                                         } catch (e) {
+                            //                                           setState(
+                            //                                                   () {
+                            //                                                 loading =
+                            //                                                 false;
+                            //                                               });
+                            //                                           // Handle error
+                            //                                         }
+                            //                                       }
+                            //                                     },
+                            //                                     child: Row(
+                            //                                       children: [
+                            //                                         SizedBox(
+                            //                                             width: MediaQuery.of(context).size.width *
+                            //                                                 0.05),
+                            //                                         ClipRRect(
+                            //                                           borderRadius:
+                            //                                           BorderRadius.circular(
+                            //                                               5.0),
+                            //                                           child:
+                            //                                           Container(
+                            //                                             height:
+                            //                                             30.0,
+                            //                                             width: MediaQuery.of(context).size.width *
+                            //                                                 .36,
+                            //                                             decoration:
+                            //                                             BoxDecoration(
+                            //                                               borderRadius:
+                            //                                               BorderRadius.circular(5.0),
+                            //                                               color: Color.fromRGBO(
+                            //                                                   21,
+                            //                                                   43,
+                            //                                                   81,
+                            //                                                   1),
+                            //                                               boxShadow: [
+                            //                                                 BoxShadow(
+                            //                                                   color: Colors.grey,
+                            //                                                   offset: Offset(0.0, 1.0), //(x,y)
+                            //                                                   blurRadius: 6.0,
+                            //                                                 ),
+                            //                                               ],
+                            //                                             ),
+                            //                                             child:
+                            //                                             Center(
+                            //                                               child:
+                            //                                               Text(
+                            //                                                 "Add staff Member",
+                            //                                                 style: TextStyle(
+                            //                                                     color: Colors.white,
+                            //                                                     fontWeight: FontWeight.bold,
+                            //                                                     fontSize: 13),
+                            //                                               ),
+                            //                                             ),
+                            //                                           ),
+                            //                                         ),
+                            //                                         SizedBox(
+                            //                                           width: 15,
+                            //                                         ),
+                            //                                         Text(
+                            //                                             "Cancel"),
+                            //                                       ],
+                            //                                     ),
+                            //                                   ),
+                            //                                 ],
+                            //                               ),
+                            //                             ),
+                            //                           );
+                            //                         },
+                            //                       );
+                            //                     },
+                            //                   );
+                            //                 },
+                            //                 child: Row(
+                            //                   children: [
+                            //                     Icon(
+                            //                       Icons.add,
+                            //                       size: 16,
+                            //                     ),
+                            //                     SizedBox(width: 4),
+                            //                     Text(
+                            //                       'Add New Staffmember',
+                            //                       style: TextStyle(
+                            //                           fontSize:
+                            //                           MediaQuery.of(context)
+                            //                               .size
+                            //                               .width *
+                            //                               .027),
+                            //                     ),
+                            //                   ],
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //           );
+                            //           if (selectedStaff == null && staffMembers.isNotEmpty) {
+                            //             selectedStaff = widget.properties.staffMemberData!.staffmemberName;
+                            //           }
+                            //           return Padding(
+                            //             padding: const EdgeInsets.all(10.0),
+                            //             child: Container(
+                            //               height: MediaQuery.of(context)
+                            //                   .size
+                            //                   .height *
+                            //                   .05,
+                            //               width: MediaQuery.of(context)
+                            //                   .size
+                            //                   .width *
+                            //                   .36,
+                            //               padding: EdgeInsets.symmetric(
+                            //                   horizontal: 8, vertical: 4),
+                            //               decoration: BoxDecoration(
+                            //                 border: Border.all(
+                            //                   color: Color(0xFF8A95A8),
+                            //                 ),
+                            //                 borderRadius:
+                            //                 BorderRadius.circular(5),
+                            //               ),
+                            //               child: DropdownButtonHideUnderline(
+                            //                 child: DropdownButton<String>(
+                            //                   value: selectedStaff,
+                            //                   hint: Text(
+                            //                     'Select',
+                            //                     style: TextStyle(
+                            //                       fontSize:
+                            //                       MediaQuery.of(context)
+                            //                           .size
+                            //                           .width *
+                            //                           .04,
+                            //                       color: Color(0xFF8A95A8),
+                            //                     ),
+                            //                   ),
+                            //                   onChanged: (String? newValue) {
+                            //                     if (newValue ==
+                            //                         'add_new_property') {
+                            //                       // Prevent the dropdown from changing the selected item
+                            //                       setState(() {
+                            //                         selectedStaff = null;
+                            //                       });
+                            //                       // Show the dialog
+                            //                       showDialog(
+                            //                         context: context,
+                            //                         builder:
+                            //                             (BuildContext context) {
+                            //                           //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
+                            //                           return StatefulBuilder(
+                            //                             builder: (BuildContext
+                            //                             context,
+                            //                                 StateSetter
+                            //                                 setState) {
+                            //                               return AlertDialog(
+                            //                                 backgroundColor:
+                            //                                 Colors.white,
+                            //                                 surfaceTintColor:
+                            //                                 Colors.white,
+                            //                                 title: Text(
+                            //                                   "Add Rental Owner",
+                            //                                   style: TextStyle(
+                            //                                       fontWeight:
+                            //                                       FontWeight
+                            //                                           .bold,
+                            //                                       color: Color
+                            //                                           .fromRGBO(
+                            //                                           21,
+                            //                                           43,
+                            //                                           81,
+                            //                                           1),
+                            //                                       fontSize: 15),
+                            //                                 ),
+                            //                                 content:
+                            //                                 SingleChildScrollView(
+                            //                                     child:
+                            //                                     Column(
+                            //                                       children: [],
+                            //                                     )),
+                            //                               );
+                            //                             },
+                            //                           );
+                            //                         },
+                            //                       );
+                            //                     } else {
+                            //                       setState(() {
+                            //                         selectedStaff = newValue;
+                            //                       });
+                            //                     }
+                            //                   },
+                            //                   items: dropdownItems,
+                            //                   isExpanded: true,
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //           );
+                            //         }
+                            //       },
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         )),
                   ),
@@ -9667,224 +9669,304 @@ class _Edit_propertiesState extends State<Edit_properties> {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
-                        // if (unit.text.isEmpty || unitaddress.text.isEmpty || bath.text.isEmpty || bed.text.isEmpty || sqft.text.isEmpty) {
-                        //   iserror2 = true;
-                        //
-                        // } else {
-                        //   iserror2 = false;
-                        // }
                         if (address.text.isEmpty) {
-                          setState(() {
-                            addresserror = true;
-                            addressmessage = "required";
+                            setState(() {
+                              addresserror = true;
+                              addressmessage = "required";
 
-                          });
-                        } else {
-                          setState(() {
-                            addresserror = false;
-                          });
-                        }
-                        if (city.text.isEmpty) {
-                          setState(() {
-                            cityerror = true;
-                            citymessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            cityerror = false;
-                          });
-                        }
-                        if (state.text.isEmpty) {
-                          setState(() {
-                            stateerror = true;
-                            statemessage = "required";
-
-                          });
-                        } else {
-                          setState(() {
-                            stateerror = false;
-                          });
-                        }
-                        if (country.text.isEmpty) {
-                          setState(() {
-                            countryerror = true;
-                            countrymessage = "required";
-
-                          });
-                        } else {
-                          setState(() {
-                            countryerror = false;
-                          });
-                        }
-                        if (postalcode.text.isEmpty) {
-                          setState(() {
-                            postalcodeerror = true;
-                            postalcodemessage = "required";
-
-                          });
-                        } else {
-                          setState(() {
-                            postalcodeerror = false;
-                          });
-                        }
-                        if (Ownersdetails == null) {
-                          setState(() {
-                            hasError = true;
-                            postalcodemessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            hasError = false;
-                          });
-                        }
-                        if (!addresserror &&
-                            !cityerror &&
-                            !stateerror &&
-                            !countryerror &&
-                            !postalcodeerror
-                        ) {
-                          setState(() {
-                            loading = true;
-                          });
-                        }
-                        SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                        String? adminId = prefs.getString("adminId");
-                        if (adminId != null) {
-                          //  try {
-                          RentalOwners owners =  RentalOwners(
-                            firstName: firstname.text,
-                            lastName: lastname.text,
-                            companyName: comname.text,
-                            primaryEmail: primaryemail.text,
-                            phoneNumber: phonenum.text,
-                            city:city2.text,
-                            state:state2.text,
-                            country:county2.text,
-                            postalCode:code2.text,
-                          );
-                          Rental rentals = Rental(
-                            adminId: adminId,
-                            propertyId: selectedpropertytypedata!.propertyId,
-                            address: address.text,
-                            city: city.text,
-                            state: state.text,
-                            country: country.text,
-                            postcode: postalcode.text,
-                            staffMemberId: sid,
-                          );
-                          List<Unit> units = [];
-                          if (propertyGroupControllers.isNotEmpty) {
-                            List<TextEditingController> firstControllers = propertyGroupControllers[0];
-                            bool isFirstBlank = firstControllers.every((controller) => controller.text.isEmpty);
-
-                            if (isFirstBlank) {
-                              propertyGroupControllers.removeAt(0);
-                            }
+                            });
+                          } else {
+                            setState(() {
+                              addresserror = false;
+                            });
                           }
-                          if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
-                            for (int i = 0; i <
-                                propertyGroupControllers.length; i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<
-                                  TextEditingController> controllers = propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //      units[i].bath = controllers[3].text;
-                              //     units[i].bed = controllers[4].text;
-
-//                                  units[i].unit = controllers[0].text;
-
-                            }
+                          if (city.text.isEmpty) {
+                            setState(() {
+                              cityerror = true;
+                              citymessage = "required";
+                            });
+                          } else {
+                            setState(() {
+                              cityerror = false;
+                            });
                           }
-                          else if (selectedpropertytype == 'Residential' &&
-                              selectedIsMultiUnit == true) {
-                            for (int i = 0; i <
-                                propertyGroupControllers.length; i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<
-                                  TextEditingController> controllers = propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].bath = controllers[3].text;
-                              units[i].bed = controllers[4].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
+                          if (state.text.isEmpty) {
+                            setState(() {
+                              stateerror = true;
+                              statemessage = "required";
 
-                            }
+                            });
+                          } else {
+                            setState(() {
+                              stateerror = false;
+                            });
                           }
-                          else if (selectedpropertytype == 'Residential') {
+                          if (country.text.isEmpty) {
+                            setState(() {
+                              countryerror = true;
+                              countrymessage = "required";
 
-                            for (int i = 0; i <
-                                propertyGroupControllers.length; i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<
-                                  TextEditingController> controllers = propertyGroupControllers[i];
-                              print(controllers.length);
-                              units[i].sqft= controllers[0].text;
-                              units[i].bath = controllers[1].text;
-                              units[i].bed = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-
-                            }
+                            });
+                          } else {
+                            setState(() {
+                              countryerror = false;
+                            });
                           }
-                          else if (selectedpropertytype == 'Commercial') {
+                          if (postalcode.text.isEmpty) {
+                            setState(() {
+                              postalcodeerror = true;
+                              postalcodemessage = "required";
 
-                            for (int i = 0; i <
-                                propertyGroupControllers.length; i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<
-                                  TextEditingController> controllers = propertyGroupControllers[i];
-                              units[i].sqft = controllers[0].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //units[i].address = controllers[1].text;
-                              //units[i].sqft = controllers[2].text;
-//                                  units[i].unit = controllers[0].text;
-
-                            }
+                            });
+                          } else {
+                            setState(() {
+                              postalcodeerror = false;
+                            });
                           }
-                          print(units.first.Image);
-
-                          RentalRequest rentalrequest = RentalRequest(
-                              rentalOwner: owners,
-                              rental: rentals,
-                              units: units
-                          );
-                          Rental_PropertiesRepository().createRental(rentalrequest);
-
-                          // await  Rental_PropertiesRepository().addProperties(
-                          //   adminId: adminId!,
-                          //   property_id: widget.property?.propertyId,
-                          //   rental_adress: address.text,
-                          //   rental_city: city.text,
-                          //   rental_state: state.text,
-                          //   rental_country: country.text,
-                          //   rental_postcode: postalcode.text,
-                          //   staffmember_id: widget.staff!.staffmemberId,
-                          //   processor_id: proid.text,
-                          // );
-                          setState(() {
-                            loading = false;
+                          if (Ownersdetails == null) {
+                            setState(() {
+                              hasError = true;
+                              postalcodemessage = "required";
+                            });
+                          } else {
+                            setState(() {
+                              hasError = false;
+                            });
+                            SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                            String? id = prefs.getString("adminId");
+                          PropertiesRepository().updateRental(widget.properties).then((value) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            Navigator.of(context).pop(true);
+                          }).catchError((e) {
+                            setState(() {
+                              isLoading = false;
+                            });
                           });
-                          // Navigator.of(context).pop(true);
-                          //  } catch (e) {
-                          //   print(e);
-
-
                         }
+                        print(selectedValue);
                       },
+//                       onTap: () async {
+//                         // if (unit.text.isEmpty || unitaddress.text.isEmpty || bath.text.isEmpty || bed.text.isEmpty || sqft.text.isEmpty) {
+//                         //   iserror2 = true;
+//                         //
+//                         // } else {
+//                         //   iserror2 = false;
+//                         // }
+//                         if (address.text.isEmpty) {
+//                           setState(() {
+//                             addresserror = true;
+//                             addressmessage = "required";
+//
+//                           });
+//                         } else {
+//                           setState(() {
+//                             addresserror = false;
+//                           });
+//                         }
+//                         if (city.text.isEmpty) {
+//                           setState(() {
+//                             cityerror = true;
+//                             citymessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             cityerror = false;
+//                           });
+//                         }
+//                         if (state.text.isEmpty) {
+//                           setState(() {
+//                             stateerror = true;
+//                             statemessage = "required";
+//
+//                           });
+//                         } else {
+//                           setState(() {
+//                             stateerror = false;
+//                           });
+//                         }
+//                         if (country.text.isEmpty) {
+//                           setState(() {
+//                             countryerror = true;
+//                             countrymessage = "required";
+//
+//                           });
+//                         } else {
+//                           setState(() {
+//                             countryerror = false;
+//                           });
+//                         }
+//                         if (postalcode.text.isEmpty) {
+//                           setState(() {
+//                             postalcodeerror = true;
+//                             postalcodemessage = "required";
+//
+//                           });
+//                         } else {
+//                           setState(() {
+//                             postalcodeerror = false;
+//                           });
+//                         }
+//                         if (Ownersdetails == null) {
+//                           setState(() {
+//                             hasError = true;
+//                             postalcodemessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             hasError = false;
+//                           });
+//                         }
+//                         if (!addresserror &&
+//                             !cityerror &&
+//                             !stateerror &&
+//                             !countryerror &&
+//                             !postalcodeerror
+//                         ) {
+//                           setState(() {
+//                             loading = true;
+//                           });
+//                         }
+//                         SharedPreferences prefs =
+//                         await SharedPreferences.getInstance();
+//                         String? adminId = prefs.getString("adminId");
+//                         if (adminId != null) {
+//                           //  try {
+//                           RentalOwners owners =  RentalOwners(
+//                             firstName: firstname.text,
+//                             lastName: lastname.text,
+//                             companyName: comname.text,
+//                             primaryEmail: primaryemail.text,
+//                             phoneNumber: phonenum.text,
+//                             city:city2.text,
+//                             state:state2.text,
+//                             country:county2.text,
+//                             postalCode:code2.text,
+//                           );
+//                           Rental rentals = Rental(
+//                             adminId: adminId,
+//                             propertyId: selectedpropertytypedata!.propertyId,
+//                             address: address.text,
+//                             city: city.text,
+//                             state: state.text,
+//                             country: country.text,
+//                             postcode: postalcode.text,
+//                             staffMemberId: sid,
+//                           );
+//                           List<Unit> units = [];
+//                           if (propertyGroupControllers.isNotEmpty) {
+//                             List<TextEditingController> firstControllers = propertyGroupControllers[0];
+//                             bool isFirstBlank = firstControllers.every((controller) => controller.text.isEmpty);
+//
+//                             if (isFirstBlank) {
+//                               propertyGroupControllers.removeAt(0);
+//                             }
+//                           }
+//                           if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
+//                             for (int i = 0; i <
+//                                 propertyGroupControllers.length; i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<
+//                                   TextEditingController> controllers = propertyGroupControllers[i];
+//                               units[i].unit = controllers[0].text;
+//                               units[i].address = controllers[1].text;
+//                               units[i].sqft = controllers[2].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+//                               //      units[i].bath = controllers[3].text;
+//                               //     units[i].bed = controllers[4].text;
+//
+// //                                  units[i].unit = controllers[0].text;
+//
+//                             }
+//                           }
+//                           else if (selectedpropertytype == 'Residential' &&
+//                               selectedIsMultiUnit == true) {
+//                             for (int i = 0; i <
+//                                 propertyGroupControllers.length; i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<
+//                                   TextEditingController> controllers = propertyGroupControllers[i];
+//                               units[i].unit = controllers[0].text;
+//                               units[i].address = controllers[1].text;
+//                               units[i].sqft = controllers[2].text;
+//                               units[i].bath = controllers[3].text;
+//                               units[i].bed = controllers[4].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+// //                                  units[i].unit = controllers[0].text;
+//
+//                             }
+//                           }
+//                           else if (selectedpropertytype == 'Residential') {
+//
+//                             for (int i = 0; i <
+//                                 propertyGroupControllers.length; i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<
+//                                   TextEditingController> controllers = propertyGroupControllers[i];
+//                               print(controllers.length);
+//                               units[i].sqft= controllers[0].text;
+//                               units[i].bath = controllers[1].text;
+//                               units[i].bed = controllers[2].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+// //                                  units[i].unit = controllers[0].text;
+//
+//                             }
+//                           }
+//                           else if (selectedpropertytype == 'Commercial') {
+//
+//                             for (int i = 0; i <
+//                                 propertyGroupControllers.length; i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<
+//                                   TextEditingController> controllers = propertyGroupControllers[i];
+//                               units[i].sqft = controllers[0].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+//                               //units[i].address = controllers[1].text;
+//                               //units[i].sqft = controllers[2].text;
+// //                                  units[i].unit = controllers[0].text;
+//
+//                             }
+//                           }
+//                           print(units.first.Image);
+//
+//                           RentalRequest rentalrequest = RentalRequest(
+//                               rentalOwner: owners,
+//                               rental: rentals,
+//                               units: units
+//                           );
+//                           Rental_PropertiesRepository().createRental(rentalrequest);
+//
+//                           // await  Rental_PropertiesRepository().addProperties(
+//                           //   adminId: adminId!,
+//                           //   property_id: widget.property?.propertyId,
+//                           //   rental_adress: address.text,
+//                           //   rental_city: city.text,
+//                           //   rental_state: state.text,
+//                           //   rental_country: country.text,
+//                           //   rental_postcode: postalcode.text,
+//                           //   staffmember_id: widget.staff!.staffmemberId,
+//                           //   processor_id: proid.text,
+//                           // );
+//                           setState(() {
+//                             loading = false;
+//                           });
+//                           // Navigator.of(context).pop(true);
+//                           //  } catch (e) {
+//                           //   print(e);
+//
+//
+//                         }
+//                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(

@@ -197,7 +197,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             child: Material(
                               elevation: 4,
                               child: Container(
-                                height: 50,
+                                height: 55,
                                 width: MediaQuery.of(context).size.width * .6,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),

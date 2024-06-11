@@ -122,8 +122,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       setState(() {
         birthdate = picked;
         birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
+
       });
     }
   }
@@ -137,9 +136,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     if (picked != null && picked != startdate) {
       setState(() {
         startdate = picked;
-        birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
+
       });
 
     }
@@ -154,8 +152,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     if (picked != null && picked != enddate) {
       setState(() {
         enddate = picked;
-        birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
 
@@ -987,11 +983,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         onChanged: (value) {
 
                                           setState(() {
-                                            startdatederror = false;
+                                          //  startdatederror = false;
                                             // _selectDate(context);
                                           });
                                         },
-                                        controller: startdateController,
+                                        controller: birthdateController,
                                         cursorColor:
                                         Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
