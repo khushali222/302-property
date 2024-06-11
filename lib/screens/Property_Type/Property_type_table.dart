@@ -20,7 +20,7 @@ class PropertyTable extends StatefulWidget {
 }
 
 class _PropertyTableState extends State<PropertyTable> {
-
+  int totalrecords = 0;
   late Future<List<propertytype>> futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
@@ -89,7 +89,7 @@ class _PropertyTableState extends State<PropertyTable> {
   }
 
   List<propertytype> _tableData = [];
-  int _rowsPerPage = 5;
+  int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
@@ -185,45 +185,73 @@ class _PropertyTableState extends State<PropertyTable> {
   }
 
   Widget _buildPaginationControls() {
+    int numorpages = 1;
+    numorpages = (totalrecords /_rowsPerPage).ceil();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Text('Rows per page: '),
-        DropdownButton<int>(
-          value: _rowsPerPage,
-          items: [5, 10, 15, 20].map((int value) {
-            return DropdownMenuItem<int>(
-              value: value,
-              child: Text(value.toString()),
-            );
-          }).toList(),
-          onChanged: (newValue) {
-            if (newValue != null) {
-              _changeRowsPerPage(newValue);
-            }
-          },
+        SizedBox(width: 10),
+        Material(
+          elevation: 2,
+          color: Colors.white,
+          child: Container(
+            height: 40,
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _rowsPerPage,
+                items: [10,25,50,100].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  if (newValue != null) {
+                    _changeRowsPerPage(newValue);
+                  }
+                },
+                icon: Icon(Icons.arrow_drop_down),
+                style: TextStyle(color: Colors.black),
+                dropdownColor: Colors.white,
+              ),
+            ),
+          ),
         ),
-        SizedBox(width: 20),
+        SizedBox(width: 10),
         IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: FaIcon(
+            FontAwesomeIcons.circleChevronLeft,
+            color: _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+          ),
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
-        Text('Page ${_currentPage + 1}'),
+        Text('Page ${_currentPage + 1} of $numorpages'),
         IconButton(
-          icon: Icon(Icons.arrow_forward),
+          icon: FaIcon(
+            FontAwesomeIcons.circleChevronRight,
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length ? Colors.grey : Color.fromRGBO(21, 43, 83, 1), // Change color based on availability
+
+          ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
@@ -544,6 +572,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             property.propertyType == selectedValue)
                         .toList();
                   }
+                  totalrecords = _tableData.length;
                   return SingleChildScrollView(
                     child: Column(
                       children: [

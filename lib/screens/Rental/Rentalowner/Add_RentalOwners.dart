@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
+import '../../../Model/RentalOwnersData.dart';
+import '../../../repository/Rental_ownersData.dart';
 import '../../../repository/Staffmember.dart';
 import '../../../widgets/drawer_tiles.dart';
 
@@ -117,29 +119,62 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       initialDate: birthdate ?? DateTime.now(),
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color.fromRGBO(21, 43, 83, 1), // Header background color
+            // accentColor: Colors.white, // Button text color
+            colorScheme: ColorScheme.light(
+              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != birthdate) {
       setState(() {
         birthdate = picked;
         birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        //enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
   Future<void> _startDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
+
       initialDate: startdate ?? DateTime.now(),
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color.fromRGBO(21, 43, 83, 1), // Header background color
+           // accentColor: Colors.white, // Button text color
+            colorScheme: ColorScheme.light(
+              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != startdate) {
       setState(() {
         startdate = picked;
-        birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+       // birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
+       // enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
 
     }
@@ -150,12 +185,28 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       initialDate: enddate ?? DateTime.now(),
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color.fromRGBO(21, 43, 83, 1), // Header background color
+            // accentColor: Colors.white, // Button text color
+            colorScheme: ColorScheme.light(
+              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != enddate) {
       setState(() {
         enddate = picked;
-        birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        //birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
 
@@ -650,7 +701,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         cursorColor:
                                         Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
-                                          hintText: "mm/dd/yyyy",
+                                          hintText: "yyyy/mm/dd",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
                                                 .size
@@ -676,7 +727,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         ),
                                         readOnly: true,
                                         onTap: () {
-                                          _startDate(context);
+                                          _birthDate(context);
                                           setState(() {
                                             birthdateerror = false;
                                           });
@@ -1016,7 +1067,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           contentPadding: EdgeInsets.all(12),
                                           suffixIcon: IconButton(
                                             icon: Icon(Icons.calendar_today),
-                                            onPressed: () =>_birthDate(context),
+                                            onPressed: () {
+                                              _startDate(context);
+                                              setState(() {
+                                                startdatederror = false;
+                                              });
+                                            },
                                           ),
                                         ),
                                         readOnly: true,
@@ -2663,7 +2719,47 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     setState(() {
                       loading = true;
                     });
+
+                    List<ProcessorList> processor  = [];
+                    for(var i=0;i<_controllers.length;i++){
+                      if(_controllers.isNotEmpty)
+                      processor.add(ProcessorList(
+                        processorId:_controllers[i]!.text
+                      ));
+                    }
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                    var adminId = prefs.getString("adminId");
+                    final RentalOwnerData rentalOwner = RentalOwnerData(
+                      adminId:adminId ,
+                      rentalOwnerFirstName: firstname.text,
+                      rentalOwnerLastName: lastname.text,
+                      rentalOwnerCompanyName: comname.text,
+                      birthDate: birthdateController.text,
+                      startDate: startdateController.text,
+                      endDate: enddateController.text,
+                      rentalOwnerPrimaryEmail: primaryemail.text,
+                      rentalOwnerAlternateEmail: alternativeemail.text,
+                      rentalOwnerPhoneNumber: phonenum.text,
+                      rentalOwnerHomeNumber: homenum.text,
+                      rentalOwnerBusinessNumber: businessnum.text,
+                      streetAddress: street2.text,
+                      city: city2.text,
+                      state: state2.text,
+                      postalCode: code2.text,
+                      country: county2.text,
+                      processorList: processor,
+                      textIdentityType: taxtype.text,
+                      texpayerId: taxid.text,
+
+                    );
+                    var result =   await RentalOwnerService().addRentalOwner(rentalOwner);
+                    if(result){
+                      Navigator.of(context).pop(result);
+                    }
+
                   }
+
+
                   // SharedPreferences prefs =
                   // await SharedPreferences.getInstance();
                   // String? adminId = prefs.getString("adminId");

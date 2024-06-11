@@ -17,11 +17,14 @@ class PropertiesRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+    print(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
+      print(jsonResponse);
       return jsonResponse.map((data) => Rentals.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load data');
+      return [];
+      //throw Exception('Failed to load data');
     }
   }
 

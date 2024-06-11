@@ -49,6 +49,25 @@ class _PropertiesTableState extends State<PropertiesTable> {
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
+  List<Rentals> _tableData = [];
+  int totalrecords = 0;
+  int _rowsPerPage = 10;
+  int _currentPage = 0;
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
+
+  List<Rentals> get _pagedData {
+    int startIndex = _currentPage * _rowsPerPage;
+    int endIndex = startIndex + _rowsPerPage;
+    return _tableData.sublist(startIndex, endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void _changeRowsPerPage(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPage = selectedRowsPerPage;
+      _currentPage = 0; // Reset to the first page when changing rows per page
+    });
+  }
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
@@ -86,7 +105,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
       });
     }*/
   }
-
   void _showAlert(BuildContext context, String id) {
     Alert(
       context: context,
@@ -95,6 +113,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
       desc: "Once deleted, you will not be able to recover this property!",
       style: AlertStyle(
         backgroundColor: Colors.white,
+        //  overlayColor: Colors.black.withOpacity(.8)
       ),
       buttons: [
         DialogButton(
@@ -111,7 +130,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-             var data = PropertiesRepository().DeleteProperties(id: id);
+            var data = PropertiesRepository().DeleteProperties(id: id);
 
             setState(() {
               futureRentalOwners = PropertiesRepository().fetchProperties();
@@ -121,6 +140,47 @@ class _PropertiesTableState extends State<PropertiesTable> {
           },
           color: Colors.red,
         )
+      ],
+    ).show();
+  }
+
+
+  void _showAlertforLimit(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Plan Limitation",
+      desc: "The limit for adding rentalowners according to the plan has been reached.",
+      style: AlertStyle(
+        backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+        descStyle: TextStyle(fontSize: 14)
+      //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Color.fromRGBO(21, 43, 83, 1),
+        ),
+       /* DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+             var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )*/
       ],
     ).show();
   }
@@ -203,10 +263,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   context,
                   Icon(
                     CupertinoIcons.house,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Add Property Type",
-                  true),
+                  false),
               buildListTile(context, Icon(CupertinoIcons.person_add),
                   "Add Staff Member", false),
               buildDropdownListTile(
@@ -217,7 +277,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     color: Colors.black,
                   ),
                   "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
+                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Properties"),
               buildDropdownListTile(
                   context,
                   FaIcon(
@@ -226,13 +286,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     color: Colors.black,
                   ),
                   "Leasing",
-                  ["Rent Roll", "Applicants"]),
+                  ["Rent Roll", "Applicants"],selectedSubtopic: "Properties"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"]),
+                  ["Vendor", "Work Order"],selectedSubtopic: "Properties"),
             ],
           ),
         ),
@@ -250,16 +310,24 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Add_new_property()));
-                      if (result == true) {
-                        setState(() {
-                          futureRentalOwners =
-                              PropertiesRepository().fetchProperties();
-                          //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                        });
+                      if(rentalCount < propertyCountLimit  )
+                        {
+                          final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => Add_new_property()));
+                          if (result == true) {
+                            setState(() {
+                              futureRentalOwners =
+                                  PropertiesRepository().fetchProperties();
+                              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                            });
+                          }
+                        }
+                      else{
+                        _showAlertforLimit(context);
                       }
+
+
                     },
                     child: Container(
                       height: 40,
@@ -313,7 +381,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     ],
                   ),
                   child: Text(
-                    "Property Type",
+                    "Properties",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -324,7 +392,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             ),
             SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 13, right: 20,),
               child: Row(
                 children: [
                   SizedBox(width: 5),
@@ -477,6 +545,101 @@ class _PropertiesTableState extends State<PropertiesTable> {
             ),
             SizedBox(height: 25),
             FutureBuilder<List<Rentals>>(
+              future: futureRentalOwners,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: SpinKitFadingCircle(
+                    color: Colors.black,
+                    size: 40.0,
+                  ));
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No data available'));
+                } else {
+                  List<Rentals>? filteredData = [];
+                  _tableData = snapshot.data!;
+                /*  if (selectedRole == null && searchValue == "") {
+                    filteredData = snapshot.data;
+                  } else if (selectedRole == "All") {
+                    filteredData = snapshot.data;
+                  } else if (searchValue.isNotEmpty) {
+                    filteredData = snapshot.data!
+                        .where((staff) =>
+                    staff.rentalOwnerFirstName!.toLowerCase().contains(searchValue.toLowerCase()) ||
+                        staff.rentalOwnerLastName!.toLowerCase().contains(searchValue.toLowerCase()))
+                        .toList();
+                  }*/
+                 // _tableData = filteredData!;
+                  totalrecords = _tableData.length;
+
+                  return  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      children: [
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Table(
+                            defaultColumnWidth: IntrinsicColumnWidth(),
+                            children: [
+                              TableRow(
+                                decoration: BoxDecoration(border: Border.all()),
+                                children: [
+                                  _buildHeader('Property', 0, (staff) => staff.rentalAddress!),
+                                  _buildHeader('PropertyType', 1, (staff) => staff.propertyTypeData!.propertyType!),
+                                  _buildHeader('PropertySubTYpe', 2, (staff) => staff.propertyTypeData!.propertySubType!),
+                                  _buildHeader('RentalOwnersName', 3, (staff) => staff.rentalOwnerData!.rentalOwnerFirstName!),
+                                  _buildHeader('RentalCompanyName', 4, (staff) => staff.rentalOwnerData!.rentalOwnerCompanyName!),
+                                  _buildHeader('Locality', 5, (staff) => staff.rentalCity!),
+                                  _buildHeader('PrimaryEmail', 6, (staff) => staff.rentalOwnerData!.rentalOwnerPrimaryEmail!),
+                                  _buildHeader('PhoneNumber', 7, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                  _buildHeader('Actions', 8, null),
+                                ],
+                              ),
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  border: Border.symmetric(horizontal: BorderSide.none),
+                                ),
+                                children: List.generate(9, (index) => TableCell(child: Container(height: 20))),
+                              ),
+                              for (var i = 0; i < _pagedData.length; i++)
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                      right: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                      top: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                      bottom: i == _pagedData.length - 1
+                                          ? BorderSide(color: Color.fromRGBO(21, 43, 81, 1))
+                                          : BorderSide.none,
+                                    ),
+                                  ),
+                                  children: [
+                                    _buildDataCell(_pagedData[i].rentalAddress!),
+                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertyType!),
+                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertySubType!),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerCompanyName!),
+                                    _buildDataCell(_pagedData[i].rentalCity!),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPrimaryEmail!),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                    _buildActionsCell(_pagedData[i]),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        if(_tableData.isEmpty)
+                          Text("No Search Records Found"),
+                        SizedBox(height: 10),
+                        _buildPaginationControls(),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+           /* FutureBuilder<List<Rentals>>(
               future: futureRentalOwners,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -757,12 +920,157 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   );
                 }
               },
-            ),
+            ),*/
           ],
         ),
       ),
     );
   }
+  Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(Rentals d)? getField) {
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+          _sort(getField, columnIndex, !_sortAscending);
+        }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+              if ( getField != null)
+                Icon(
+                  _sortColumnIndex == columnIndex
+                      ? (_sortAscending ? Icons.arrow_drop_up_outlined : Icons.arrow_drop_down_outlined)
+                      : Icons.arrow_drop_down_outlined, // Default icon for unsorted columns
+
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(text),
+      ),
+    );
+  }
+
+  Widget _buildActionsCell(Rentals data) {
+    return TableCell(
+      child: Row(
+        children: [
+          InkWell(
+            onTap: (){
+              handleEdit(data);
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 8,left: 8),
+              child: FaIcon(
+                FontAwesomeIcons.edit,
+                size: 20,
+              ),
+
+            ),
+          ),
+          SizedBox(width: 6,),
+          InkWell(
+            onTap: (){
+              handleDelete(data);
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 8,left: 8),
+              child: FaIcon(
+                FontAwesomeIcons.trashCan,
+                size: 20,
+              ),
+
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    int numorpages = 1;
+    numorpages = (totalrecords /_rowsPerPage).ceil();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text('Rows per page: '),
+        SizedBox(width: 10),
+        Material(
+          elevation: 2,
+          color: Colors.white,
+          child: Container(
+            height: 40,
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _rowsPerPage,
+                items: [10, 2,5 , 1].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  if (newValue != null) {
+                    _changeRowsPerPage(newValue);
+                  }
+                },
+                icon: Icon(Icons.arrow_drop_down),
+                style: TextStyle(color: Colors.black),
+                dropdownColor: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.circleChevronLeft,
+            color: _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+          ),
+          onPressed: _currentPage == 0
+              ? null
+              : () {
+            setState(() {
+              _currentPage--;
+            });
+          },
+        ),
+        Text('Page ${_currentPage + 1} of $numorpages'),
+        IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.circleChevronRight,
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length ? Colors.grey : Color.fromRGBO(21, 43, 83, 1), // Change color based on availability
+
+          ),
+          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+              ? null
+              : () {
+            setState(() {
+              _currentPage++;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
 }
 
 void main() => runApp(MaterialApp(home: PropertiesTable()));

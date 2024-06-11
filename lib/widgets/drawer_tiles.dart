@@ -48,7 +48,7 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
 void navigateToOption(BuildContext context, String option,) {
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
-    "RentalOwner": (context) => Add_rentalowners(),
+    "RentalOwner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
     "Vendor":(context)=>Vendor_table(),
     "Work Order":(context)=>Workorder_table(),

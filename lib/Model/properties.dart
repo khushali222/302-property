@@ -69,7 +69,7 @@ class Rentals {
       isDelete: json['is_delete']?? "",
       rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data']?? ""),
       propertyTypeData: PropertyTypeData.fromJson(json['property_type_data']?? ""),
-      staffMemberData: StaffMemberData.fromJson(json['staffmember_data']?? "")
+      staffMemberData: StaffMemberData.fromJson(json['staffmember_data']?? {})
     );
   }
 }
