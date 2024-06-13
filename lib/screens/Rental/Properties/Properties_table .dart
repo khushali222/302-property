@@ -130,15 +130,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            print(id);
-            var data = PropertiesRepository().DeleteProperties(id: id).then((value) {
-              setState(() {
-                futureRentalOwners = PropertiesRepository().fetchProperties();
-                //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-              });
+            var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
             });
-
-
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -206,9 +203,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   void handleDelete(Rentals properties) {
-    print(properties.propertyId);
     // _showAlert(context,property.propertyId!);
-    _showAlert(context, properties.rentalId!);
+    _showAlert(context, properties.propertyId!);
 
     // Handle delete action
     print('Delete ${properties.propertyId}');
@@ -224,8 +220,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
     final response =
         await http.get(Uri.parse('${Api_url}/api/rentals/limitation/$id'));
     final jsonData = json.decode(response.body);
-    print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201 ) {
+    if (jsonData["statusCode"] == 200) {
       print(rentalCount);
       print(propertyCountLimit);
       setState(() {
@@ -452,7 +447,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         hint: const Row(
                           children: [
                             SizedBox(
-                              width: 4,
+                              width: 38,
                             ),
                             Expanded(
                               child: Text(
@@ -530,18 +525,18 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8A95A8),
-                            fontSize: 13),
+                            fontSize: 10),
                       ),
-                      SizedBox(
-                        width: 5,
-                      ),
+                      // SizedBox(
+                      //   width: 5,
+                      // ),
                       //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
                       Text(
                         'Total: ${propertyCountLimit.toString()}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8A95A8),
-                            fontSize: 13),
+                            fontSize: 10),
                       ),
                     ],
                   ),
@@ -564,19 +559,29 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 } else {
                   List<Rentals>? filteredData = [];
                   _tableData = snapshot.data!;
-                /*  if (selectedRole == null && searchValue == "") {
-                    filteredData = snapshot.data;
-                  } else if (selectedRole == "All") {
-                    filteredData = snapshot.data;
-                  } else if (searchValue.isNotEmpty) {
-                    filteredData = snapshot.data!
-                        .where((staff) =>
-                    staff.rentalOwnerFirstName!.toLowerCase().contains(searchValue.toLowerCase()) ||
-                        staff.rentalOwnerLastName!.toLowerCase().contains(searchValue.toLowerCase()))
+                  if (selectedValue == null && searchvalue.isEmpty) {
+                    _tableData = snapshot.data!;
+                  } else if (selectedValue == "All") {
+                    _tableData = snapshot.data!;
+                  } else if (searchvalue.isNotEmpty) {
+                    _tableData = snapshot.data!
+                        .where((property) =>
+                    property.rentalAddress!
+                        .toLowerCase()
+                        .contains(searchvalue.toLowerCase()) ||
+                        property.propertyTypeData!.propertyType!
+                            .toLowerCase()
+                            .contains(searchvalue.toLowerCase()))
                         .toList();
-                  }*/
-                 // _tableData = filteredData!;
+                  } else {
+                    _tableData = snapshot.data!
+                        .where((property) =>
+                    property.propertyTypeData!.propertyType == selectedValue)
+                        .toList();
+                  }
                   totalrecords = _tableData.length;
+                 // _tableData = filteredData!;
+                  //totalrecords = _tableData.length;
 
                   return  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -620,22 +625,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     ),
                                   ),
                                   children: [
-                                    InkWell(
-                                        onTap:()async{
-                                          final result = await Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Summery_page(properties: _pagedData[i])));
-
-                                        },
-                                        child: _buildDataCell(_pagedData[i].rentalAddress!)),
-                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertyType!),
-                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertySubType!),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerCompanyName!),
-                                    _buildDataCell(_pagedData[i].rentalCity!),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPrimaryEmail!),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                    _buildDataCell(_pagedData[i].rentalAddress!,_pagedData[i]),
+                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertyType!,_pagedData[i]),
+                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertySubType!,_pagedData[i]),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!,_pagedData[i]),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerCompanyName!,_pagedData[i]),
+                                    _buildDataCell(_pagedData[i].rentalCity!,_pagedData[i]),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPrimaryEmail!,_pagedData[i]),
+                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPhoneNumber!,_pagedData[i]),
                                     _buildActionsCell(_pagedData[i]),
                                   ],
                                 ),
@@ -966,11 +963,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
     );
   }
 
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text,Rentals data) {
     return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(text),
+      child: InkWell(
+        onTap: (){
+          handleTap(data);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(text),
+        ),
       ),
     );
   }
@@ -1018,8 +1020,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // Text('Rows per page: '),
-        // SizedBox(width: 10),
+        Text('Rows per page: '),
+        SizedBox(width: 10),
         Material(
           elevation: 2,
           color: Colors.white,

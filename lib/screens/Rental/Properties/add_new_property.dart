@@ -10111,6 +10111,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
+                        RentalOwners owners = RentalOwners(
+                          firstName: firstname.text,
+                          lastName: lastname.text,
+                          companyName: comname.text,
+                          primaryEmail: primaryemail.text,
+                          phoneNumber: phonenum.text,
+                          city: city2.text,
+                          state: state2.text,
+                          country: county2.text,
+                          postalCode: code2.text,
+                        );
                         // if (unit.text.isEmpty || unitaddress.text.isEmpty || bath.text.isEmpty || bed.text.isEmpty || sqft.text.isEmpty) {
                         //   iserror2 = true;
                         //
@@ -10181,143 +10192,138 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             !cityerror &&
                             !stateerror &&
                             !countryerror &&
-                            !postalcodeerror) {
+                            !postalcodeerror
+                        &&!hasError
+                        ) {
+
                           setState(() {
                             loading = true;
                           });
-                        }
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        String? adminId = prefs.getString("adminId");
-                        if (adminId != null) {
-                          //  try {
-                          RentalOwners owners = RentalOwners(
-                            firstName: firstname.text,
-                            lastName: lastname.text,
-                            companyName: comname.text,
-                            primaryEmail: primaryemail.text,
-                            phoneNumber: phonenum.text,
-                            city: city2.text,
-                            state: state2.text,
-                            country: county2.text,
-                            postalCode: code2.text,
-                          );
-                          Rental rentals = Rental(
-                            adminId: adminId,
-                            propertyId: selectedpropertytypedata!.propertyId,
-                            address: address.text,
-                            city: city.text,
-                            state: state.text,
-                            country: country.text,
-                            postcode: postalcode.text,
-                            staffMemberId: sid,
-                          );
-                          List<Unit> units = [];
-                          if (propertyGroupControllers.isNotEmpty) {
-                            List<TextEditingController> firstControllers =
-                                propertyGroupControllers[0];
-                            bool isFirstBlank = firstControllers
-                                .every((controller) => controller.text.isEmpty);
 
-                            if (isFirstBlank) {
-                              propertyGroupControllers.removeAt(0);
+                          SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                          String? adminId = prefs.getString("adminId");
+                          if (adminId != null) {
+                            //  try {
+
+                            Rental rentals = Rental(
+                              adminId: adminId,
+                              propertyId: selectedpropertytypedata!.propertyId,
+                              address: address.text,
+                              city: city.text,
+                              state: state.text,
+                              country: country.text,
+                              postcode: postalcode.text,
+                              staffMemberId: sid,
+                            );
+                            List<Unit> units = [];
+                            if (propertyGroupControllers.isNotEmpty) {
+                              List<TextEditingController> firstControllers =
+                              propertyGroupControllers[0];
+                              bool isFirstBlank = firstControllers
+                                  .every((controller) =>
+                              controller.text.isEmpty);
+
+                              if (isFirstBlank) {
+                                propertyGroupControllers.removeAt(0);
+                              }
                             }
+                            if (selectedpropertytype == 'Commercial' &&
+                                selectedIsMultiUnit == true) {
+                              for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                                if (units.length <= i) {
+                                  units.add(Unit());
+                                }
+                                List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                                units[i].unit = controllers[0].text;
+                                units[i].address = controllers[1].text;
+                                units[i].sqft = controllers[2].text;
+                                units[i].Image = propertyGroupImagenames[i];
+                                //      units[i].bath = controllers[3].text;
+                                //     units[i].bed = controllers[4].text;
+
+//                                  units[i].unit = controllers[0].text;
+                              }
+                            } else if (selectedpropertytype == 'Residential' &&
+                                selectedIsMultiUnit == true) {
+                              for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                                if (units.length <= i) {
+                                  units.add(Unit());
+                                }
+                                List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                                units[i].unit = controllers[0].text;
+                                units[i].address = controllers[1].text;
+                                units[i].sqft = controllers[2].text;
+                                units[i].bath = controllers[3].text;
+                                units[i].bed = controllers[4].text;
+                                units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+                              }
+                            } else if (selectedpropertytype == 'Residential') {
+                              for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                                if (units.length <= i) {
+                                  units.add(Unit());
+                                }
+                                List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                                print(controllers.length);
+                                units[i].sqft = controllers[0].text;
+                                units[i].bath = controllers[1].text;
+                                units[i].bed = controllers[2].text;
+                                units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+                              }
+                            } else if (selectedpropertytype == 'Commercial') {
+                              for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                                if (units.length <= i) {
+                                  units.add(Unit());
+                                }
+                                List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                                units[i].sqft = controllers[0].text;
+                                units[i].Image = propertyGroupImagenames[i];
+                                //units[i].address = controllers[1].text;
+                                //units[i].sqft = controllers[2].text;
+//                                  units[i].unit = controllers[0].text;
+                              }
+                            }
+
+
+                            RentalRequest rentalrequest = RentalRequest(
+                                rentalOwner: owners,
+                                rental: rentals,
+                                units: units);
+                            Rental_PropertiesRepository()
+                                .createRental(rentalrequest);
+
+                            // await  Rental_PropertiesRepository().addProperties(
+                            //   adminId: adminId!,
+                            //   property_id: widget.property?.propertyId,
+                            //   rental_adress: address.text,
+                            //   rental_city: city.text,
+                            //   rental_state: state.text,
+                            //   rental_country: country.text,
+                            //   rental_postcode: postalcode.text,
+                            //   staffmember_id: widget.staff!.staffmemberId,
+                            //   processor_id: proid.text,
+                            // );
+                            setState(() {
+                              loading = false;
+                            });
+                            // Navigator.of(context).pop(true);
+                            //  } catch (e) {
+                            //   print(e);
                           }
-                          if (selectedpropertytype == 'Commercial' &&
-                              selectedIsMultiUnit == true) {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //      units[i].bath = controllers[3].text;
-                              //     units[i].bed = controllers[4].text;
-
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Residential' &&
-                              selectedIsMultiUnit == true) {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].bath = controllers[3].text;
-                              units[i].bed = controllers[4].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Residential') {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              print(controllers.length);
-                              units[i].sqft = controllers[0].text;
-                              units[i].bath = controllers[1].text;
-                              units[i].bed = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Commercial') {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              units[i].sqft = controllers[0].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //units[i].address = controllers[1].text;
-                              //units[i].sqft = controllers[2].text;
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          }
-                          print(units.first.Image);
-
-                          RentalRequest rentalrequest = RentalRequest(
-                              rentalOwner: owners,
-                              rental: rentals,
-                              units: units);
-                          Rental_PropertiesRepository()
-                              .createRental(rentalrequest);
-
-                          // await  Rental_PropertiesRepository().addProperties(
-                          //   adminId: adminId!,
-                          //   property_id: widget.property?.propertyId,
-                          //   rental_adress: address.text,
-                          //   rental_city: city.text,
-                          //   rental_state: state.text,
-                          //   rental_country: country.text,
-                          //   rental_postcode: postalcode.text,
-                          //   staffmember_id: widget.staff!.staffmemberId,
-                          //   processor_id: proid.text,
-                          // );
-                          setState(() {
-                            loading = false;
-                          });
-                          // Navigator.of(context).pop(true);
-                          //  } catch (e) {
-                          //   print(e);
                         }
                       },
                       child: ClipRRect(
