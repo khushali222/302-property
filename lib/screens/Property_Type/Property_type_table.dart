@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../Model/propertytype.dart';
+import '../../constant/constant.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'Edit_property_type.dart';
@@ -643,9 +644,11 @@ class _PropertyTableState extends State<PropertyTable> {
                                             _buildDataCell(
                                                 _pagedData[i].propertysubType!),
                                             _buildDataCell(
-                                                _pagedData[i].createdAt!),
+                                                formatDate(_pagedData[i].createdAt!),
+                                                ),
                                             _buildDataCell(
-                                                _pagedData[i].updatedAt!),
+                                                formatDate(_pagedData[i].updatedAt!),
+                                                ),
                                             _buildActionsCell(_pagedData[i]),
                                           ],
                                         ),

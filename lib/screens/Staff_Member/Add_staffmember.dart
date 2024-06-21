@@ -1,5 +1,7 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/Staffmember.dart';
@@ -33,7 +35,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
   String emailmessage = "";
   String passwordmessage = "";
 
-  bool loading = false;
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -411,6 +413,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           });
                                         },
                                         controller: phonenumber,
+                                        keyboardType: TextInputType.number,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -508,6 +511,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                             emailerror = false;
                                           });
                                         },
+                                        keyboardType: TextInputType.emailAddress,
                                         controller: email,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
@@ -606,6 +610,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                             passworderror = false;
                                           });
                                         },
+
                                         controller: password,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
@@ -702,11 +707,17 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               if (email.text.isEmpty) {
                                 setState(() {
                                   emailerror = true;
-                                  emailmessage = "email is required";
+                                  emailmessage = "Email is required";
+                                });
+                              } else if (!EmailValidator.validate(email.text)) {
+                                setState(() {
+                                  emailerror = true;
+                                  emailmessage = "Email is not valid";
                                 });
                               } else {
                                 setState(() {
                                   emailerror = false;
+                                  //firstnamemessage = "Firstname is required";
                                 });
                               }
                               if (password.text.isEmpty) {
@@ -725,7 +736,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                   !emailerror &&
                                   !phonenumbererror) {
                                 setState(() {
-                                  loading = true;
+                                  isLoading = true;
                                 });
                               }
                               SharedPreferences prefs =
@@ -742,12 +753,12 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                     staffmemberPassword: password.text,
                                   );
                                   setState(() {
-                                    loading = false;
+                                    isLoading = false;
                                   });
                                   Navigator.of(context).pop(true);
                                 } catch (e) {
                                   setState(() {
-                                    loading = false;
+                                    isLoading = false;
                                   });
                                   // Handle error
                                 }
@@ -770,24 +781,35 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                     ),
                                   ],
                                 ),
-                                child: Center(
-                                  child: Text(
+                                child:
+                                Center(
+                                  child: isLoading
+                                      ? SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 25.0,
+                                  )
+                                      : Text(
                                     "Add Staff Member",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .034),
+                                        MediaQuery.of(context).size.width *
+                                            .034),
                                   ),
                                 ),
+
                               ),
                             ),
                           ),
                           SizedBox(
                             width: 15,
                           ),
-                          Text("Cancel"),
+                          GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: Text("Cancel")),
                         ],
                       ),
                     ],

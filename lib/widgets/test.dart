@@ -501,7 +501,10 @@
 //                                 builder: (context, snapshot) {
 //                                   if (snapshot.connectionState ==
 //                                       ConnectionState.waiting) {
-//                                     return CircularProgressIndicator();
+//                                     return Center(child: SpinKitFadingCircle(
+                //     color: Colors.black,
+                //     size: 40.0,
+                //   ));
 //                                   } else if (snapshot.hasError) {
 //                                     return Text('Error: ${snapshot.error}');
 //                                   } else if (!snapshot.hasData ||
@@ -4264,7 +4267,10 @@
 //                                   builder: (context, snapshot) {
 //                                     if (snapshot.connectionState ==
 //                                         ConnectionState.waiting) {
-//                                       return CircularProgressIndicator();
+//                                       return Center(child: SpinKitFadingCircle(
+                //     color: Colors.black,
+                //     size: 40.0,
+                //   ));
 //                                     } else if (snapshot.hasError) {
 //                                       return Text('Error: ${snapshot.error}');
 //                                     } else if (!snapshot.hasData ||

@@ -855,7 +855,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return Center(child: SpinKitFadingCircle(
+                                      color: Colors.black,
+                                      size: 40.0,
+                                    ));
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
                                   } else if (!snapshot.hasData ||
@@ -2973,7 +2976,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           ),
                                                         ],
                                                       )
-                                                    : Column(
+                                                    :
+                                                Column(
                                                         children: [
                                                           SizedBox(
                                                             height: 25,
@@ -3573,6 +3577,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               primaryemailerror = false;
                                                                             });
                                                                           },
+                                                                          keyboardType: TextInputType.emailAddress,
                                                                           controller: primaryemail,
                                                                           cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                                                           decoration: InputDecoration(
@@ -3740,6 +3745,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             });
                                                                           },
                                                                           controller: alternativeemail,
+                                                                          keyboardType: TextInputType.emailAddress,
                                                                           cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                                                           decoration: InputDecoration(
                                                                             enabledBorder: alternativeerror
@@ -8206,7 +8212,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
+                                      return Center(child: SpinKitFadingCircle(
+                                        color: Colors.black,
+                                        size: 40.0,
+                                      ));
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else if (!snapshot.hasData ||
@@ -9215,151 +9224,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ],
                             ),
 
-                            // Column(
-                            //   children: [
-                            //     Row(
-                            //       children: [
-                            //         Spacer(),
-                            //         IconButton(
-                            //           icon: Icon(Icons.close),
-                            //           onPressed: () {
-                            //             setState(() {});
-                            //           },
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 5.0),
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         Expanded(
-                            //           child: Container(
-                            //             height: 45,
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'SQFT *',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the square footage';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 16.0),
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         Expanded(
-                            //           child: Container(
-                            //             height: 45,
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Bath',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the unit address';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 16.0),
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         Expanded(
-                            //           child: Container(
-                            //             height: 45,
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Bed',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the square footage';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     if (propertyGroups.isNotEmpty)
-                            //       Column(
-                            //         crossAxisAlignment: CrossAxisAlignment.start,
-                            //         children: [
-                            //           SingleChildScrollView(
-                            //             child: Column(
-                            //               children: propertyGroups.map((group) {
-                            //                 int index = propertyGroups.indexOf(group);
-                            //                 return Padding(
-                            //                   padding: const EdgeInsets.all(16.0),
-                            //                   child: Column(
-                            //                     crossAxisAlignment: CrossAxisAlignment.start,
-                            //                     children: [
-                            //                       Align(
-                            //                         alignment: Alignment.centerRight,
-                            //                         child: InkWell(
-                            //                           onTap: () => removePropertyGroup(index),
-                            //                           child: Icon(Icons.close, color: Colors.black),
-                            //                         ),
-                            //                       ),
-                            //                       SizedBox(height: 5),
-                            //                       ...group,
-                            //                     ],
-                            //                   ),
-                            //                 );
-                            //               }).toList(),
-                            //             ),
-                            //           ),
-                            //           SizedBox(height: 10),
-                            //           Align(
-                            //             alignment: Alignment.centerRight,
-                            //             child: ElevatedButton(
-                            //               onPressed: addPropertyGroup,
-                            //               child: Text('Add More'),
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //
-                            //
-                            //   ],
-                            // ),
                             if (propertyGroups.isNotEmpty)
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -9397,137 +9261,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ],
                               ),
-                            // SizedBox(height: 16.0),
-                            // if (selectedpropertytypedata != null &&
-                            //     selectedpropertytypedata!.propertyType ==
-                            //         "Residential" &&
-                            //     selectedpropertytypedata!.isMultiunit == true)
-                            //   if (propertyGroups.isNotEmpty)
-                            //     Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.start,
-                            //       children: [
-                            //         SingleChildScrollView(
-                            //           child: Column(
-                            //             children: propertyGroups.map((group) {
-                            //               int index = propertyGroups.indexOf(group);
-                            //               return Padding(
-                            //                 padding: const EdgeInsets.all(16.0),
-                            //                 child: Column(
-                            //                   crossAxisAlignment: CrossAxisAlignment.start,
-                            //                   children: [
-                            //                     Align(
-                            //                       alignment: Alignment.centerRight,
-                            //                       child: InkWell(
-                            //                         onTap: () => removePropertyGroup(index),
-                            //                         child: Icon(Icons.close, color: Colors.black),
-                            //                       ),
-                            //                     ),
-                            //                     SizedBox(height: 5),
-                            //                     ...group,
-                            //                   ],
-                            //                 ),
-                            //               );
-                            //             }).toList(),
-                            //           ),
-                            //         ),
-                            //         SizedBox(height: 10),
-                            //         Align(
-                            //           alignment: Alignment.centerRight,
-                            //           child: ElevatedButton(
-                            //             onPressed: addPropertyGroup,
-                            //             child: Text('Add More'),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            // Column(
-                            //   children: [
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         IconButton(
-                            //           icon: Icon(Icons.close),
-                            //           onPressed: () {
-                            //             // setState(() {
-                            //             //   units.removeAt(index);
-                            //             // });
-                            //           },
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 10.0),
-                            //     Row(
-                            //       children: [
-                            //         Expanded(
-                            //           child: Container(
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Unit *',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the unit';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 16.0),
-                            //     Row(
-                            //       children: [
-                            //         Expanded(
-                            //           child: Container(
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Unit Address',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the unit address';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ],
-                            // ),
-                            // Row(
-                            //   children: [
-                            //     SizedBox(
-                            //       width: 10,
-                            //     ),
-                            //     Column(
-                            //       children: [
-                            //         Text(
-                            //           'Photo',
-                            //           style: TextStyle(color: Colors.black),
-                            //         ),
-                            //         SizedBox(height: 8.0),
-                            //         GestureDetector(
-                            //           onTap: () {
-                            //             // Add photo action
-                            //           },
-                            //           child: Text(
-                            //             '+ Add',
-                            //             style: TextStyle(color: Colors.green),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ],
-                            // ),
+
                             GestureDetector(
                               onTap: () {
                                 // if (selectedProperty != null) {
@@ -9970,142 +9704,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     style: TextStyle(color: Colors.redAccent),
                   ),
                 SizedBox(height: 10),
-                // GestureDetector(
-                //   onTap: () async {
-                //     if (selectedProperty == null) {
-                //       setState(() {
-                //         propertyTypeError = true;
-                //         propertyTypeErrorMessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         propertyTypeError = false;
-                //       });
-                //     }
-                //     if (address.text.isEmpty) {
-                //       setState(() {
-                //         addresserror = true;
-                //         addressmessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         addresserror = false;
-                //       });
-                //     }
-                //     if (city.text.isEmpty) {
-                //       setState(() {
-                //         cityerror = true;
-                //         citymessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         cityerror = false;
-                //       });
-                //     }
-                //     if (state.text.isEmpty) {
-                //       setState(() {
-                //         stateerror = true;
-                //         statemessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         stateerror = false;
-                //       });
-                //     }
-                //     if (country.text.isEmpty) {
-                //       setState(() {
-                //         countryerror = true;
-                //         countrymessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         countryerror = false;
-                //       });
-                //     }
-                //     if (postalcode.text.isEmpty) {
-                //       setState(() {
-                //         postalcodeerror = true;
-                //         postalcodemessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         postalcodeerror = false;
-                //       });
-                //     }
-                //     if (addresserror &&
-                //         cityerror &&
-                //         stateerror &&
-                //         countryerror &&
-                //         postalcodeerror) {
-                //       setState(() {
-                //         loading = true;
-                //       });
-                //     }
-                //
-                //     SharedPreferences prefs =
-                //         await SharedPreferences.getInstance();
-                //
-                //     String? id = prefs.getString("adminId");
-                //     Rental_PropertiesRepository()
-                //         .addProperties(
-                //       adminId: id!,
-                //       property_id: widget.property?.propertyId,
-                //       rental_adress: address.text,
-                //       rental_city: city.text,
-                //       rental_state: state.text,
-                //       rental_country: country.text,
-                //       rental_postcode: postalcode.text,
-                //       staffmember_id: widget.staff!.staffmemberId,
-                //       processor_id: proid.text,
-                //     )
-                //         .then((value) {
-                //       setState(() {
-                //         isLoading = false;
-                //       });
-                //       Navigator.of(context).pop(true);
-                //     }).catchError((e) {
-                //       setState(() {
-                //         isLoading = false;
-                //       });
-                //     });
-                //   },
-                //   child: Row(
-                //     children: [
-                //       SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-                //       ClipRRect(
-                //         borderRadius: BorderRadius.circular(5.0),
-                //         child: Container(
-                //           height: 30,
-                //           width: MediaQuery.of(context).size.width * .3,
-                //           decoration: BoxDecoration(
-                //             // borderRadius: BorderRadius.circular(3),
-                //             color: Color.fromRGBO(21, 43, 81, 1),
-                //             boxShadow: [
-                //               BoxShadow(
-                //                 color: Colors.grey,
-                //                 offset: Offset(0.0, 1.0), //(x,y)
-                //                 blurRadius: 6.0,
-                //               ),
-                //             ],
-                //           ),
-                //           child: Center(
-                //             child: Text(
-                //               "Create Property",
-                //               style: TextStyle(
-                //                   color: Colors.white,
-                //                   // fontWeight: FontWeight.bold,
-                //                   fontSize: 10),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         width: 15,
-                //       ),
-                //       Text("Cancel"),
-                //     ],
-                //   ),
-                // ),
+
                 Row(
                   children: [
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
@@ -10380,30 +9979,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
     );
   }
 
-  // Future<void> checkIfRentalOwnerExists() async {
-  //
-  //     await Rental_PropertiesRepository().checkIfRentalOwnerExists(
-  //       rentalowner_id: rentalOwnerId!.rentalOwnerId,
-  //       rentalOwner_firstName: firstname.text,
-  //       rentalOwner_lastName: lastname.text,
-  //       rentalOwner_companyName: comname.text,
-  //       rentalOwner_primaryEmail: primaryemail.text,
-  //       rentalOwner_alternativeEmail: alternativeemail.text,
-  //       rentalOwner_phoneNumber: phonenum.text,
-  //       rentalOwner_homeNumber: homenum.text,
-  //       rentalOwner_businessNumber: businessnum.text,
-  //     )
-  //         .then((value) {
-  //   setState(() {
-  //   isLoading = false;
-  //   });
-  //   Navigator.pop(context,true);
-  //   }).catchError((e) {
-  //   setState(() {
-  //   isLoading = false;
-  //   });
-  //   });
-  // }
+
 
   Widget _buildProcessorGroup(int index) {
     ProcessorGroup group = _processorGroups[index];

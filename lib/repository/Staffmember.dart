@@ -73,7 +73,7 @@ class StaffMemberRepository {
     required String? staffmemberDesignation,
     required String staffmemberPhoneNumber,
     required String? staffmemberEmail,
-    required String? staffmemberPassword,
+     String? staffmemberPassword,
     required String? Sid
   }) async {
     final Map<String, dynamic> data = {

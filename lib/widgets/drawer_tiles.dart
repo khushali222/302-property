@@ -8,6 +8,7 @@ import '../screens/Rental/Properties/Properties_table.dart';
 import '../screens/Rental/Rentalowner/Add_RentalOwners.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
 import '../screens/Rental/Properties/add_new_property.dart';
+import '../screens/Rental/Tenants/add_tenants.dart';
 import '../screens/Staff_Member/Add_staffmember.dart';
 import '../screens/Dashboard/dashboard_one.dart';
 import '../screens/Rental/Properties/properties.dart';
@@ -15,6 +16,8 @@ import '../screens/Property_Type/Property_type_table.dart';
 import '../screens/Staff_Member/Staffmember_table.dart';
 import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
 import '../screens/Staff_Member/Staffmemvertable.dart';
+
+import '../screens/test_table/table.dart';
 
 Widget buildListTile(BuildContext context, Widget leadingIcon, String title, bool active,) {
   return Container(
@@ -46,13 +49,17 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
 }
 
 void navigateToOption(BuildContext context, String option,) {
-  Map<String, WidgetBuilder> routes = {
+ int index = 0;
+
+
+ Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
-    "RentalOwner": (context) => Add_rentalowners(),
-    "Tenants": (context) => Tenants_table(),
+    "RentalOwner": (context) => Rentalowner_table(),
+    //"Tenants": (context) => Tenants_table(),
+   "Tenants": (context) => Add_Tenants(),
     "Vendor":(context)=>Vendor_table(),
     "Work Order":(context)=>Workorder_table(),
-    "Rent Roll":(context)=>RentalRoll_table(),
+    "Rent Roll":(context)=>ExpandTable(),
     "Applicants":(context)=>Applicants_table(),
   };
   Navigator.push(
@@ -62,7 +69,7 @@ void navigateToOption(BuildContext context, String option,) {
 }
 
 
-Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String title, List<String> subTopics ,{String? selectedSubtopic}) {
+Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String title, List<String> subTopics ,{String? selectedSubtopic,bool? initvalue }) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     padding: EdgeInsets.symmetric(horizontal: 16),
@@ -71,6 +78,7 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String ti
     //   borderRadius: BorderRadius.circular(10),
     // ),
     child: ExpansionTile(
+     // initiallyExpanded: initvalue!,
       leading: leadingIcon,
       title: Text(title),
       children: subTopics.map((subTopic,) {
@@ -101,3 +109,5 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String ti
     ),
   );
 }
+
+

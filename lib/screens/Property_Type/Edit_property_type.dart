@@ -402,7 +402,6 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 });
                                 SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
-
                                 String? id = prefs.getString("adminId");
                                 PropertyTypeRepository()
                                     .EditPropertyType(
@@ -411,9 +410,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   propertySubType: subtype.text,
                                   isMultiUnit: isChecked,
                                   id: widget.property.propertyId
-                                )
-                                    .then((value) {
-
+                                ).then((value) {
                                   setState(() {
                                     isLoading = false;
                                   });
@@ -462,13 +459,18 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           SizedBox(
                             width: 15,
                           ),
-                          Material(
-                            elevation: 2,
-                            child: Container(
-                                width: 100,
-                                height: 30,
-                                color: Colors.white,
-                                child: Center(child: Text("Cancel"))),
+                          InkWell(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Material(
+                              elevation: 2,
+                              child: Container(
+                                  width: 100,
+                                  height: 30,
+                                  color: Colors.white,
+                                  child: Center(child: Text("Cancel"))),
+                            ),
                           ),
                         ],
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -40,10 +41,10 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     designation.text = widget.staff!.staffmemberDesignation!;
     phonenumber.text = widget.staff!.staffmemberPhoneNumber!.toString();
     email.text = widget.staff!.staffmemberEmail.toString();
-    password.text = widget.staff!.staffmemberPassword.toString();
+   // password.text = widget.staff!.staffmemberPassword.toString();
   }
 
-  bool loading = false;
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -555,98 +556,6 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Password",
-                            style: TextStyle(
-                              // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width * .036),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            passworderror = false;
-                                          });
-                                        },
-                                        controller: password,
-                                        cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
-                                        decoration: InputDecoration(
-                                          hintText: "Enter Password",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                .037,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: passworderror
-                                              ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      passworderror
-                          ? Row(
-                        children: [
-                        Spacer(),
-                          Text(
-                            passwordmessage,
-                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
-                                .035),
-                          ),
-                          SizedBox(width: 2,),
-                        ],
-                      )
-                          : Container(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
                               width:
                               MediaQuery.of(context).size.width * 0.01),
                           GestureDetector(
@@ -691,23 +600,13 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   emailerror = false;
                                 });
                               }
-                              if (password.text.isEmpty) {
-                                setState(() {
-                                  passworderror = true;
-                                  passwordmessage = "password is required";
-                                });
-                              } else {
-                                setState(() {
-                                  passworderror = false;
-                                });
-                              }
                               if (!nameerror &&
                                   !designationerror &&
                                   !phonenumbererror &&
-                                  !emailerror &&
-                                  !phonenumbererror) {
+                                  !emailerror
+                                  ) {
                                 setState(() {
-                                  loading = true;
+                                  isLoading = true;
                                 });
                               }
                               SharedPreferences prefs =
@@ -721,15 +620,14 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                       staffmemberDesignation: designation.text,
                                       staffmemberPhoneNumber: phonenumber.text,
                                       staffmemberEmail: email.text,
-                                      staffmemberPassword: password.text,
                                       Sid: widget.staff!.staffmemberId
                                   );
                                   setState(() {
-                                    loading = false;
+                                    isLoading = false;
                                   });
                                 } catch (e) {
                                   setState(() {
-                                    loading = false;
+                                    isLoading = false;
                                   });
                                   // Handle error
                                 }
@@ -752,22 +650,35 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     ),
                                   ],
                                 ),
-                                child: Center(
-                                  child: Text(
+                                child:
+                                Center(
+                                  child: isLoading
+                                      ? SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 25.0,
+                                  )
+                                      : Text(
                                     "Edit staff Member",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 14),
+                                        fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            .034),
                                   ),
                                 ),
+
                               ),
                             ),
                           ),
                           SizedBox(
                             width: 15,
                           ),
-                          Text("Cancel"),
+                          GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: Text("Cancel")),
                         ],
                       ),
                     ],

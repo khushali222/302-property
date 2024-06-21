@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Model/unit.dart';
+import '../../../constant/constant.dart';
 import '../../../model/properties.dart';
 import '../../../model/properties_summery.dart';
 import '../../../model/unitsummery_propeties.dart';
@@ -20,7 +22,7 @@ import '../../../repository/unit_data.dart';
 class unitScreen extends StatefulWidget {
   Rentals? properties;
   unit_properties? unit;
-  unitScreen({
+  unitScreen(BuildContext context, {
     super.key,
     this.properties,
     this.unit,
@@ -36,7 +38,8 @@ class _unitScreenState extends State<unitScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SingleChildScrollView(
+      body:
+      SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -123,7 +126,7 @@ class _unitScreenState extends State<unitScreen> {
                         borderRadius: BorderRadius.circular(8.0),
                         child: const Image(
                           image: NetworkImage(
-                              'https://images.unsplash.com/photo-1718002125137-5582481c462f?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -327,7 +330,8 @@ class _LeasesTableState extends State<LeasesTable> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    return Padding(
+    return
+      Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -388,7 +392,12 @@ class _LeasesTableState extends State<LeasesTable> {
           //   ),
           // ),
           isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? Center(child:
+          Center(child: SpinKitFadingCircle(
+            color: Colors.black,
+            size: 40.0,
+          ),),
+          )
               : leases.isEmpty
                   ? Center(
                       child: Text(
@@ -519,7 +528,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
   }
   reload_screen(){
     setState(() {
-
     });
   }
   DateTime? _selectedDate;
@@ -559,6 +567,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                     StateSetter setState) {
                                   return
                                     AlertDialog(
+                                      backgroundColor: Colors.white,
+                                      surfaceTintColor: Colors.white,
                                       title: const Text('Add Appliances'),
                                       content: Form(
                                         key: _formKey,
@@ -596,12 +606,30 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                   initialDate: DateTime.now(),
                                                   firstDate: DateTime(2000),
                                                   lastDate: DateTime(2100),
+                                            builder: (BuildContext context, Widget? child) {
+                                              return Theme(
+                                                data: ThemeData.light().copyWith(
+                                                  // primaryColor: Color.fromRGBO(21, 43, 83, 1),
+                                                  //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                  colorScheme: ColorScheme.light(
+                                                    primary: Color.fromRGBO(21, 43, 83, 1),
+                                                    // onPrimary:Color.fromRGBO(21, 43, 83, 1),
+                                                    //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                    onSurface: Colors.black,
+                                                  ),
+                                                  buttonTheme: ButtonThemeData(
+                                                    textTheme: ButtonTextTheme.primary,
+                                                  ),
+                                                ),
+                                                child: child!,
+                                              );
+                                            },
                                                 ).then((date) {
                                                   if (date != null) {
                                                     setState(() {
                                                       _selectedDate = date;
                                                       _installedDate.text =
-                                                          date.toString();
+                                                          formatDate(date.toString());
                                                     });
                                                   }
                                                 });
@@ -622,6 +650,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 ),
                                               ),
                                             ),
+
                                             Row(
                                               mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -698,8 +727,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                             print(widget.unit?.unitId);
                                                             setState(() {
                                                               isLoading = false;
+
+                                                              leases.add(
+                                                                unit_appliance(
+                                                                  applianceName:_name.text,
+                                                                  applianceDescription: _description.text,
+                                                                  installedDate: _installedDate.text,
+                                                                  adminId: id,
+                                                                  unitId: widget.unit?.unitId,
+                                                                )
+                                                              );
                                                             });
                                                             reload_screen();
+
                                                             Navigator.pop(context,true);
                                                           }).catchError((e) {
                                                             setState(() {
@@ -786,6 +826,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 SizedBox(
                   height: 15,
                 ),
+              isLoading
+                  ?
+              Center(child: SpinKitFadingCircle(
+                color: Colors.black,
+                size: 40.0,
+              ))
+                  : leases.isEmpty
+                  ? Center(
+                  child: Text(
+                      'You don\'t have any applience for this unit right now ..'))
+                  :
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Padding(
@@ -801,12 +852,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       headingTextStyle: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
+                      columnSpacing: 10,
                       columns: [
+
                         DataColumn(label: Text('Name')),
                         DataColumn(label: Text('Description')),
                         DataColumn(label: Text('Installed Date')),
                         DataColumn(label: Text('Action')),
-
                       ],
                       rows: leases.map((lease) {
                         return DataRow(cells: [
@@ -817,7 +869,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                             style: TextStyle(color: Colors.blue),
                           )),
                           DataCell(Text(
-                              '${lease.installedDate} ')),
+                              '${formatDate(lease.installedDate.toString())} ')),
                           DataCell( IconButton(
                               icon: FaIcon(
                                 FontAwesomeIcons.edit,

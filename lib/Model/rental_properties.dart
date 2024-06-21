@@ -86,6 +86,7 @@ class RentalOwner {
   String? propertyId;
   String? sId;
   String? rentalOwnerId;
+  String? rentalOwnerName;
   String? adminId;
   String? rentalOwnerFirstName;
   String? rentalOwnerLastName;
@@ -115,6 +116,7 @@ class RentalOwner {
     this.propertyId,
     this.sId,
     this.rentalOwnerId,
+    this.rentalOwnerName,
     this.adminId,
     this.rentalOwnerFirstName,
     this.rentalOwnerLastName,
@@ -149,6 +151,7 @@ class RentalOwner {
       sId: json['_id'],
       rentalOwnerId: json['rentalowner_id'],
       adminId: json['admin_id'],
+      rentalOwnerName: json['rentalOwner_name'],
       rentalOwnerFirstName: json['rentalOwner_firstName'],
       rentalOwnerLastName: json['rentalOwner_lastName'],
       rentalOwnerCompanyName: json['rentalOwner_companyName'],
@@ -181,6 +184,7 @@ class RentalOwner {
     data['_id'] = this.sId;
     data['rentalowner_id'] = this.rentalOwnerId;
     data['admin_id'] = this.adminId;
+    data['rentalOwner_name'] = this.rentalOwnerName;
     data['rentalOwner_firstName'] = this.rentalOwnerFirstName;
     data['rentalOwner_lastName'] = this.rentalOwnerLastName;
     data['rentalOwner_companyName'] = this.rentalOwnerCompanyName;

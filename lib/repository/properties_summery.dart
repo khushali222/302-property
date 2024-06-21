@@ -149,7 +149,6 @@ class Properies_summery_Repo{
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
-
       'unit_id': unitId,
       'rental_unit': rentalunit,
       'rental_id': rentalId,
@@ -168,6 +167,8 @@ class Properies_summery_Repo{
       body: jsonEncode(data),
     );
     print(jsonEncode(data));
+    print(unitId);
+
     var responseData = json.decode(response.body);
     print(response.body);
     if (responseData["statusCode"] == 200) {
@@ -179,13 +180,14 @@ class Properies_summery_Repo{
       throw Exception('Failed to add property type');
     }
   }
-  Future<Map<String, dynamic>> DeletePropertyType({
-    required String? id
-  }) async {
 
-   // print('$apiUrl/$id');
+  Future<Map<String, dynamic>> Deleteunit({
+    required String? unitId
+  }) async {
+    // print('$apiUrl/$id');
+    print('hello 123 ${unitId}');
     final http.Response response = await http.delete(
-      Uri.parse('${Api_url}/api/unit/unit/$id'),
+      Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

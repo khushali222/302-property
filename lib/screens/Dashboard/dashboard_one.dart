@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -28,12 +29,13 @@ class DashboardData {
   ];
   List<int> amountList = [];
 
-  List<IconData> icons = [
-    Icons.home,
-    Icons.work,
-    Icons.shopping_cart,
-    Icons.school,
-    Icons.restaurant,
+  List<String> icons = [
+    "assets/images/Properti-icon.svg",
+    "assets/images/tenant-icon.svg",
+    "assets/images/applicant-icon.svg",
+    "assets/images/vendor-icon.svg",
+    "assets/images/workorder-icon.svg"
+
   ];
 
   List<String> titles = [
@@ -106,34 +108,38 @@ class _DashboardState extends State<Dashboard> {
       });
     }
   }
-  double pastDueAmount = 0.0;
-  int totalCollectedAmount = 0;
-  int lastMonthCollectedAmount = 0;
-  double nextMonthCharge = 0.0;
+  double currentMonthRentDue = 0.0;
+  double lastMonthRentDue = 0.0;
+  double currentMonthRentPaid = 0.0;
+  double lastMonthRentPaid = 0.0;
+  double totalRentPastDue = 0.0;
+
   Future<void> fetchData() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse(
-        '${Api_url}/api/payment/admin_balance/${id!}'));
-    final jsonData = json.decode(response.body);
-    if (jsonData["statusCode"] == 200) {
-      // setState(() {
-      //   pastDueAmount = jsonData['PastDueAmount'];
-      //   totalCollectedAmount = jsonData['TotalCollectedAmount'];
-      //   lastMonthCollectedAmount = jsonData['LastMonthCollectedAmount'];
-      //   nextMonthCharge = jsonData['NextMonthCharge'];
-      // });
-      setState(() {
-        pastDueAmount = double.parse(jsonData['PastDueAmount'].toString());
-        totalCollectedAmount = jsonData['TotalCollectedAmount'];
-        lastMonthCollectedAmount = jsonData['LastMonthCollectedAmount'];
-        nextMonthCharge = double.parse(jsonData['NextMonthCharge'].toString());
-      });
+    final response = await http.get(Uri.parse('${Api_url}/api/payment/admin_balance/$id'));
+    print('${Api_url}/api/payment/admin_balance/$id');
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      if (jsonData["statusCode"] == 200) {
+        final data = jsonData["data"];
+        setState(() {
+          currentMonthRentDue = double.parse(data['currentMonthRentDue'].toString());
+          lastMonthRentDue = double.parse(data['lastMonthRentDue'].toString());
+          currentMonthRentPaid = double.parse(data['currentMonthRentPaid'].toString());
+          lastMonthRentPaid = double.parse(data['lastMonthRentPaid'].toString());
+          totalRentPastDue = double.parse(data['totalRentPastDue'].toString());
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
     } else {
       throw Exception('Failed to load data');
     }
   }
+
   late DashboardData dashboardData;
   List<int> countList = List.filled(5, 0);
   List<int> amountList = List.filled(5, 0);
@@ -220,7 +226,7 @@ class _DashboardState extends State<Dashboard> {
               Row(
                 children: [
                   SizedBox(
-                    width: width * 0.1,
+                    width: width * 0.07,
                   ),
                   Text(
                     "Hello $firstname $lastname, Welcome back",
@@ -235,7 +241,7 @@ class _DashboardState extends State<Dashboard> {
               Row(
                 children: [
                   SizedBox(
-                    width: width * 0.1,
+                    width: width * 0.07,
                   ),
                   Text(
                     "My Dashboard",
@@ -279,19 +285,14 @@ class _DashboardState extends State<Dashboard> {
                                           elevation: 5,
                                           borderRadius: BorderRadius.circular(20),
                                           child: Container(
-                                            height: 30,
-                                            width: 30,
-                                            decoration: BoxDecoration(
-                                              color: dashboardData.colors[index],
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                            child: Center(
-                                              child: Icon(
-                                                dashboardData.icons[index],
-                                                color: Colors.white,
-                                                size: 18,
+                                              height: 40,
+                                              width: 40,
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: dashboardData.colors[index],
+                                                borderRadius: BorderRadius.circular(20),
                                               ),
-                                            ),
+                                              child: SvgPicture.asset("${dashboardData.icons[index]}",fit: BoxFit.cover,height: 27,width: 27,)
                                           ),
                                         ),
                                       ],
@@ -319,7 +320,7 @@ class _DashboardState extends State<Dashboard> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 17),
+                                              fontSize: 20),
                                         ),
                                       ],
                                     ),
@@ -338,90 +339,88 @@ class _DashboardState extends State<Dashboard> {
                         SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                         Padding(
                           padding: const EdgeInsets.only(left: 25, right: 25),
-                          child: Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: MediaQuery.of(context).size.width * 0.02,
-                            runSpacing: MediaQuery.of(context).size.width * 0.02,
-                            children: List.generate(
-                              5,
-                                  (index) {
-                                return Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: 95,
-                                    height: 95,
-                                    decoration: BoxDecoration(
-                                      color: dashboardData.colorc[index],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 10),
-                                            Material(
-                                              elevation: 5,
-                                              borderRadius: BorderRadius.circular(20),
-                                              child: Container(
-                                                height: 20,
-                                                width: 20,
-                                                decoration: BoxDecoration(
-                                                  color: dashboardData.colors[index],
-                                                  borderRadius: BorderRadius.circular(20),
-                                                ),
-                                                child: Center(
-                                                  child: Icon(
-                                                    dashboardData.icons[index],
-                                                    color: Colors.white,
-                                                    size: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 10),
-                                            Text(
-                                              countList[index].toString(),
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 10),
-                                            Text(
-                                              dashboardData.titles[index],
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
+                          child: GridView.builder(
+                            itemCount: 5,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, // Number of items per row
+                              crossAxisSpacing: MediaQuery.of(context).size.width * 0.02,
+                              mainAxisSpacing: MediaQuery.of(context).size.width * 0.02,
+                              childAspectRatio: .85, // Adjust as needed for your design
                             ),
+                            itemBuilder: (context, index) {
+                              return Material(
+                                elevation: 3,
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: dashboardData.colorc[index],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          SizedBox(width: 10),
+                                          Material(
+                                            elevation: 5,
+                                            borderRadius: BorderRadius.circular(20),
+                                            child: Container(
+                                              height: 40,
+                                              width: 40,
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: dashboardData.colors[index],
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              child: SvgPicture.asset("${dashboardData.icons[index]}",fit: BoxFit.cover,height: 27,width: 27,)
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          SizedBox(width: 10),
+                                          Text(
+                                            countList[index].toString(),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          SizedBox(width: 10),
+                                          Text(
+                                            dashboardData.titles[index],
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            shrinkWrap: true, // If you want the GridView to take only the space it needs
+                            physics: NeverScrollableScrollPhysics(), // If you don't want it to scroll
                           ),
-                        ),
+                        )
+
                       ],
                     );
                   }
                 },
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+            /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
               Row(
                 children: [
                   SizedBox(
@@ -766,11 +765,239 @@ class _DashboardState extends State<Dashboard> {
                     width: width * 0.1,
                   ),
                 ],
+              ),*/
+              SizedBox(height: 20,),
+              Container(
+                height: 110,
+                margin: EdgeInsets.symmetric(horizontal: width * .05),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(50 , 75, 119, 1),
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                          ),
+                          child: Center(child: Text("Rent Due",style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold
+                          ),)),
+
+                        ),
+                      ),
+                      Expanded(
+                        flex: 8,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Current Month",
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                                      color: Color.fromRGBO(138, 149, 168, 1)
+                                      ),
+
+                                    ),
+                                   // SizedBox(height: 8), // Space between the text
+                                    Text(
+                                      "\$${currentMonthRentDue}",
+                                      style: TextStyle(fontSize: 16,
+                                          color: Color.fromRGBO(90, 134, 213, 1),
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Last Month",
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(138, 149, 168, 1)
+                                      ),
+                                    ),
+                                    // SizedBox(height: 8), // Space between the text
+                                    Text(
+                                      "\$${lastMonthRentDue}",
+                                      style: TextStyle(fontSize: 16,
+                                          color: Color.fromRGBO(90, 134, 213, 1),
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+              SizedBox(height: 10,),
+              Container(
+                height: 110,
+                margin: EdgeInsets.symmetric(horizontal: width * .05),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(50 , 75, 119, 1),
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                          ),
+                          child: Center(child: Text("Rent Paid",style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                          ),)),
+
+                        ),
+                      ),
+                      Expanded(
+                        flex: 8,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Current Month",
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(138, 149, 168, 1)
+                                      ),
+
+                                    ),
+                                    // SizedBox(height: 8), // Space between the text
+                                    Text(
+                                      "\$${currentMonthRentPaid}",
+                                      style: TextStyle(fontSize: 16,
+                                          color: Color.fromRGBO(90, 134, 213, 1),
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Last Month",
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(138, 149, 168, 1)
+                                      ),
+                                    ),
+                                    // SizedBox(height: 8), // Space between the text
+                                    Text(
+                                      "\$${lastMonthRentPaid}",
+                                      style: TextStyle(fontSize: 16,
+                                          color: Color.fromRGBO(90, 134, 213, 1),
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 10,),
+              Container(
+                height: 110,
+                margin: EdgeInsets.symmetric(horizontal: width * .05),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(50 , 75, 119, 1),
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                          ),
+                          child: Center(child: Text("Rent Past Due",style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                          ),)),
+
+                        ),
+                      ),
+                      Expanded(
+                        flex: 8,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "\$${totalRentPastDue}",style: TextStyle(fontSize: 18,
+                                color: Color.fromRGBO(90, 134, 213, 1),
+                                fontWeight: FontWeight.bold
+                            ),
+                            ),
+                          )
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
               // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
               // PieCharts(),
               // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
               // Barchart()
+              SizedBox(height: 10,),
               LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   // Check if the device width is less than 600 (considered as phone screen)

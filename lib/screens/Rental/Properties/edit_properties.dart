@@ -926,14 +926,17 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return Center(child: SpinKitFadingCircle(
+                                      color: Colors.black,
+                                      size: 40.0,
+                                    ));
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
                                     return Text('No properties found');
                                   } else {
-                                    Map<String, List<propertytype>>
+                                    Map<String, List< propertytype>>
                                     groupedProperties =
                                     groupPropertiesByType(snapshot.data!);
                                     return Padding(
@@ -7653,7 +7656,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                         //     rentalOwnerPhoneNumber: phonenum.text,
                                                         //     rentalOwnerFirstName: firstname.text,
                                                         //   );
-
                                                         print("hello");
                                                         setState(() {
                                                           RentalOwner? owner  ;
@@ -9716,7 +9718,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             setState(() {
                               postalcodeerror = true;
                               postalcodemessage = "required";
-
                             });
                           } else {
                             setState(() {
@@ -9989,7 +9990,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               color: Colors.white,
                               size: 25.0,
                             ) :Text(
-                              "Create Property",
+                              "Edit Property",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,

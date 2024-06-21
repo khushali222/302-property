@@ -12,9 +12,6 @@ import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
-import '../screens/test/add.dart';
-import '../screens/test/custom_datatable.dart';
-
 class widget_302 {
   static App_Bar(
       {var suffixIcon,

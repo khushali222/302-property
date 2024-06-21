@@ -105,6 +105,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
       });
     }*/
   }
+
   void _showAlert(BuildContext context, String id) {
     Alert(
       context: context,
@@ -146,8 +147,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
       ],
     ).show();
   }
-
-
   void _showAlertforLimit(BuildContext context) {
     Alert(
       context: context,
@@ -282,7 +281,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     color: Colors.black,
                   ),
                   "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Properties"),
+
+                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Properties",initvalue: true),
               buildDropdownListTile(
                   context,
                   FaIcon(
@@ -291,13 +291,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     color: Colors.black,
                   ),
                   "Leasing",
-                  ["Rent Roll", "Applicants"],selectedSubtopic: "Properties"),
+                  ["Rent Roll", "Applicants"],selectedSubtopic: "Properties",initvalue: false),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"],selectedSubtopic: "Properties"),
+                  ["Vendor", "Work Order"],selectedSubtopic: "Properties",initvalue: false),
             ],
           ),
         ),
@@ -332,8 +332,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         _showAlertforLimit(context);
                       }
 
-
-                    },
+                      },
                     child: Container(
                       height: 40,
                       width: MediaQuery.of(context).size.width * 0.4,
@@ -577,7 +576,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   }*/
                  // _tableData = filteredData!;
                   totalrecords = _tableData.length;
-
                   return  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Column(
@@ -598,6 +596,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   _buildHeader('Locality', 5, (staff) => staff.rentalCity!),
                                   _buildHeader('PrimaryEmail', 6, (staff) => staff.rentalOwnerData!.rentalOwnerPrimaryEmail!),
                                   _buildHeader('PhoneNumber', 7, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                //  _buildHeader('Created At', 8, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                  //_buildHeader('Last Updated At', 9, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
                                   _buildHeader('Actions', 8, null),
                                 ],
                               ),
@@ -631,7 +631,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         child: _buildDataCell(_pagedData[i].rentalAddress!)),
                                     _buildDataCell(_pagedData[i].propertyTypeData!.propertyType!),
                                     _buildDataCell(_pagedData[i].propertyTypeData!.propertySubType!),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
+                                   // _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
+                                    _buildDataCell('${_pagedData[i].rentalOwnerData?.rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerData?.rentalOwnerLastName ?? ''}'),
                                     _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerCompanyName!),
                                     _buildDataCell(_pagedData[i].rentalCity!),
                                     _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPrimaryEmail!),
@@ -652,288 +653,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 }
               },
             ),
-           /* FutureBuilder<List<Rentals>>(
-              future: futureRentalOwners,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                      child: SpinKitFadingCircle(
-                    color: Colors.black,
-                    size: 40.0,
-                  ));
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No data available'));
-                } else {
-                  List<Rentals>? filteredData = [];
-                  if (selectedValue == null && searchvalue == "") {
-                    filteredData = snapshot.data;
-                  } else if (selectedValue == "All") {
-                    filteredData = snapshot.data;
-                  } else if (searchvalue != null && searchvalue.isNotEmpty) {
-                    filteredData = snapshot.data!
-                        .where((property) =>
-                            property.rentalAddress!
-                                .toLowerCase()
-                                .contains(searchvalue.toLowerCase()) ||
-                            property.rentalCity!
-                                .toLowerCase()
-                                .contains(searchvalue.toLowerCase()))
-                        .toList();
-                  } else {
-                    filteredData = snapshot.data!
-                        .where((property) =>
-                            property.rentalAddress == selectedValue)
-                        .toList();
-                  }
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          child: Scrollbar(
-                            thickness: 20,
-                            controller: _scrollController,
-                            thumbVisibility: true,
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 50),
-                              child: Theme(
-                                data: Theme.of(context).copyWith(
-                                  cardTheme: CardTheme(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius
-                                          .zero, // Remove border radius
-                                    ),
-                                  ),
-                                  dataTableTheme: DataTableThemeData(
-                                    dataRowColor: MaterialStateProperty.all(Colors
-                                        .transparent), // Set data row color to transparent
-                                    headingRowColor: MaterialStateProperty.all(
-                                        Colors
-                                            .transparent), // Set heading row color to transparent
-                                    dividerThickness: 0, // Remove divider
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color:
-                                              Colors.black), // Add black border
-                                    ),
-                                    child: PaginatedDataTable(
-                                      sortAscending: sortAscending,
-                                      sortColumnIndex: sortColumnIndex,
-                                      rowsPerPage: rowsPerPage,
-                                      //  showEmptyRows: false,
-                                      columnSpacing: 15,
-                                      availableRowsPerPage: [5, 10, 15, 20],
-                                      onRowsPerPageChanged: (value) {
-                                        setState(() {
-                                          rowsPerPage = value!;
-                                        });
-                                      },
-                                      columns: [
-                                        DataColumn(
-                                          label: Text(
-                                            'PROPERTY',
-                                            style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                    (properties) => properties.rentalAddress ?? "",
-                                                columnIndex,
-                                                ascending);
-                                          },
-                                        ),
-                                        DataColumn(
-                                          label: Text(
-                                            'PROPERTY TYPE',
-                                            style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                    (properties) => properties
-                                                    .propertyTypeData
-                                                    ?.propertyType ?? "",
-                                                columnIndex,
-                                                ascending);
-                                          },
-                                        ),
-                                        DataColumn(
-                                          label: Text(
-                                            'PROPERTY SUBTYPE',
-                                            style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                (properties) => properties
-                                                    .propertyTypeData
-                                                    ?.propertySubType ?? "",
-                                                columnIndex,
-                                                ascending);
-                                          },
-                                        ),
-                                        DataColumn(
-                                            label: Text(
-                                              'RENTALOWNERS NAME',
-                                              style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1),
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            onSort: (columnIndex, ascending) {
-                                              _sort<String>(
-                                                  (properties) => properties
-                                                      .rentalOwnerData
-                                                      ?.rentalOwnerFirstName ?? "",
-                                                  columnIndex,
-                                                  ascending);
-                                            }),
-                                        DataColumn(
-                                            label: Text(
-                                              'RENTAL COMPANY NAME',
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            onSort: (columnIndex, ascending) {
-                                              _sort<String>(
-                                                  (properties) => properties
-                                                      .rentalOwnerData
-                                                      ?.rentalOwnerCompanyName ?? "",
-                                                  columnIndex,
-                                                  ascending);
-                                            }),
-                                        DataColumn(
-                                            label: Text(
-                                              'LOCALITY',
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            onSort: (columnIndex, ascending) {
-                                              _sort<String>(
-                                                  (properties) =>
-                                                      properties.rentalCity ?? "",
-                                                  columnIndex,
-                                                  ascending);
-                                            }),
-                                        DataColumn(
-                                            label: Text(
-                                              'PRIMARY EMAIL',
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            onSort: (columnIndex, ascending) {
-                                              _sort<String>(
-                                                  (properties) => properties
-                                                      .rentalOwnerData
-                                                      ?.rentalOwnerPrimaryEmail ?? "",
-                                                  columnIndex,
-                                                  ascending);
-                                            }),
-                                        DataColumn(
-                                          label: Text(
-                                            'PHONE NUMBER',
-                                            style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          onSort: (columnIndex, ascending) {
-                                            _sort<String>(
-                                                    (properties) =>
-                                                properties.rentalOwnerData?.rentalOwnerPhoneNumber ?? "",
-                                                columnIndex,
-                                                ascending);
-                                          }
 
-                                        ),
-                                        DataColumn(
-                                            label: Text(
-                                              'CREATED AT',
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            onSort: (columnIndex, ascending) {
-                                              _sort<String>(
-                                                  (properties) => properties
-                                                      .createdAt
-                                                      .toString(),
-                                                  columnIndex,
-                                                  ascending);
-                                            }),
-                                        DataColumn(
-                                            label: Text(
-                                              'UPDATED AT',
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            onSort: (columnIndex, ascending) {
-                                              _sort<String>(
-                                                  (properties) => properties
-                                                      .createdAt
-                                                      .toString(),
-                                                  columnIndex,
-                                                  ascending);
-                                            }),
-                                        DataColumn(
-                                            label: Text(
-                                          'ACTION',
-                                          style: TextStyle(
-                                            color:
-                                                Color.fromRGBO(21, 43, 81, 1),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )),
-                                      ],
-
-                                      source: PropertyDataSource(filteredData!,
-                                          onTap:handleTap,
-                                          onEdit: handleEdit,
-                                          onDelete: handleDelete),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 25),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),*/
           ],
         ),
       ),

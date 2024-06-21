@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +7,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../Model/propertytype.dart';
+import '../../constant/constant.dart';
 import '../../model/staffmember.dart';
 import '../../repository/Property_type.dart';
 import '../../repository/Staffmember.dart';
@@ -14,6 +18,7 @@ import '../../widgets/drawer_tiles.dart';
 import '../Property_Type/Add_property_type.dart';
 import 'Add_staffmember.dart';
 import 'Edit_staff_member.dart';
+import 'package:http/http.dart'as http;
 
 
 class _Dessert {
@@ -48,6 +53,7 @@ class _StaffTableState extends State<StaffTable> {
   void initState() {
     super.initState();
     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+    fetchstaffadded();
   }
   int totalrecords = 0;
   List<Staffmembers> _tableData = [];
@@ -133,6 +139,7 @@ class _StaffTableState extends State<StaffTable> {
             setState(() {
               futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
             });
+            fetchstaffadded();
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -159,12 +166,75 @@ class _StaffTableState extends State<StaffTable> {
 */
   void handleDelete(Staffmembers staff) {
     _showDeleteAlert(context, staff.staffmemberId!);
+
     // Handle delete action
     print('Delete ${staff.staffmemberId}');
   }
 
   final _scrollController = ScrollController();
 
+  int staffCountLimit = 0;
+  int rentalCount = 0;
+  Future<void> fetchstaffadded() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    final response =
+    await http.get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'));
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201 ) {
+      print(rentalCount);
+      print(staffCountLimit);
+      setState(() {
+        rentalCount = jsonData['rentalCount'];
+        print(rentalCount);
+        staffCountLimit = jsonData['staffCountLimit'];
+        print(staffCountLimit);
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+  void _showAlertforLimit(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Plan Limitation",
+      desc: "The limit for adding staffmember according to the plan has been reached.",
+      style: AlertStyle(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+          descStyle: TextStyle(fontSize: 14)
+        //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Color.fromRGBO(21, 43, 83, 1),
+        ),
+        /* DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+             var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )*/
+      ],
+    ).show();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -208,12 +278,29 @@ class _StaffTableState extends State<StaffTable> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      final result = await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Add_staffmember()));
-                      if (result == true) {
-                        setState(() {
-                          futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
-                        });
+                      print(rentalCount);
+                      print(staffCountLimit);
+                      // final result = await Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => Add_staffmember()));
+                      // if (result == true) {
+                      //   setState(() {
+                      //     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+                      //   });
+                      // }
+                      if(rentalCount < staffCountLimit  )
+                      {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => Add_staffmember()));
+                        if (result == true) {
+                          setState(() {
+                            futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+                          });
+                          fetchstaffadded();
+                        }
+                      }
+                      else{
+                        _showAlertforLimit(context);
                       }
                     },
                     child: Container(
@@ -302,69 +389,30 @@ class _StaffTableState extends State<StaffTable> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 10),
-                /*  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                'Role',
-                                style: TextStyle(fontSize: 14, color: Color(0xFF8A95A8)),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: roles.map((String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(fontSize: 14, color: Colors.black),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )).toList(),
-                        value: selectedRole,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedRole = value;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height: 40,
-                          width: 160,
-                          padding: const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(color: Color(0xFF8A95A8)),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
-                        ),
+                   Spacer(),
+                  Row(
+                    children: [
+                      Text(
+                        'Added : ${rentalCount.toString()}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF8A95A8),
+                            fontSize: 13),
                       ),
-                    ),
-                  ),*/
+                      SizedBox(
+                        width: 5,
+                      ),
+                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                      Text(
+                        'Total: ${staffCountLimit.toString()}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF8A95A8),
+                            fontSize: 13),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 10),
                 ],
               ),
             ),
@@ -484,7 +532,6 @@ class _StaffTableState extends State<StaffTable> {
       ),
     );
   }
-
   Widget _buildDataCell(String text) {
     return TableCell(
       child: Padding(
@@ -493,7 +540,6 @@ class _StaffTableState extends State<StaffTable> {
       ),
     );
   }
-
   Widget _buildActionsCell(Staffmembers data) {
     return TableCell(
       child: Row(
@@ -516,7 +562,6 @@ class _StaffTableState extends State<StaffTable> {
       ),
     );
   }
-
   Widget _buildPaginationControls() {
     int numorpages = 1;
     numorpages = (totalrecords /_rowsPerPage).ceil();
@@ -589,7 +634,6 @@ class _StaffTableState extends State<StaffTable> {
       ],
     );
   }
-
 }
 void main() => runApp(MaterialApp(home: StaffTable()));
 class PropertyDataSource extends DataTableSource {
