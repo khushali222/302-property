@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:device_preview/device_preview.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,22 +7,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/screens/Staff_Member/Add_staffmember.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../Model/propertytype.dart';
 import '../../constant/constant.dart';
+import '../../model/properties.dart';
+import '../../model/rentalOwner.dart';
+import '../../model/staffmember.dart';
 import '../../repository/Property_type.dart';
+import '../../repository/Rental_ownersData.dart';
+import '../../repository/Staffmember.dart';
+import '../../repository/properties.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../Property_Type/Add_property_type.dart';
 import '../Property_Type/Edit_property_type.dart';
+import '../Rental/Properties/edit_properties.dart';
+import '../Rental/Rentalowner/Add_RentalOwners.dart';
+import '../Rental/Rentalowner/Edit_RentalOwners.dart';
+import '../Staff_Member/Edit_staff_member.dart';
+import 'package:http/http.dart'as http;
 
-class DataRow {
-  final String field1;
-  final String field2;
-  final String field3;
-  bool isExpanded;
-  DataRow(this.field1, this.field2, this.field3, {this.isExpanded = false});
-}
 
 void main() {
   runApp(
@@ -29,28 +37,29 @@ void main() {
       tools: [
         ...DevicePreview.defaultTools,
       ],
-      builder: (context) => ExpandTable(),
+      builder: (context) => RentalOwners_table(),
     ),
   );
 }
 
-class ExpandTable extends StatefulWidget {
+class RentalOwners_table extends StatefulWidget {
   // final propertytype data;
   // final int index;
-  // ExpandTable({required this.data, required this.index});
+  // RentalOwners_table({required this.data, required this.index});
   @override
-  State<ExpandTable> createState() => _ExpandTableState();
+  State<RentalOwners_table> createState() => _RentalOwners_tableState();
 }
 
-class _ExpandTableState extends State<ExpandTable> {
-  late Future<List<propertytype>> futurePropertyTypes;
+class _RentalOwners_tableState extends State<RentalOwners_table> {
+  late Future<List<RentalOwner>> futureRentalOwners;
   int currentPage = 0;
   int itemsPerPage = 10; // Adjust the number of items per page as needed
   @override
   void initState() {
     super.initState();
-    futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+    futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
     isExpanded = false;
+    fetchRentalOwneradded();
   }
 
   List<int> itemsPerPageOptions = [
@@ -59,7 +68,6 @@ class _ExpandTableState extends State<ExpandTable> {
     50,
     100,
   ]; // Options for items per page
-
   late bool isExpanded;
   bool sorting1 = false;
   bool sorting2 = false;
@@ -67,9 +75,9 @@ class _ExpandTableState extends State<ExpandTable> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
-  void handleEdit(propertytype property) async {
+  void handleEdit(RentalOwner rentals) async {
     // Handle edit action
-    print('Edit ${property.sId}');
+    print('Edit ${rentals.rentalownerId}');
     // final result = await Navigator.push(
     //   context,
     //   MaterialPageRoute(
@@ -81,13 +89,13 @@ class _ExpandTableState extends State<ExpandTable> {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Edit_property_type(
-            property: property,
+          builder: (context) => Edit_rentalowners(
+              rentalOwner: rentals,
           ),
         ));
     /* if (result == true) {
       setState(() {
-        futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+        futureStaffmemberss = StaffmembersRepository().fetchStaffmemberss();
       });
     }*/
   }
@@ -116,11 +124,12 @@ class _ExpandTableState extends State<ExpandTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(id: id);
-            // Add your delete logic here
+           // var data = StaffMemberRepository().DeleteStaffMember(id: id);
+            var data =RentalOwnerService().DeleteRentalOwners(rentalownerId: id);
+            // Add your delete logic heri
             setState(() {
-              futurePropertyTypes =
-                  PropertyTypeRepository().fetchPropertyTypes();
+              futureRentalOwners =  RentalOwnerService().fetchRentalOwners("");
+
             });
             Navigator.pop(context);
           },
@@ -130,26 +139,26 @@ class _ExpandTableState extends State<ExpandTable> {
     ).show();
   }
 
-  void sortData(List<propertytype> data) {
+  void sortData(List<RentalOwner> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.propertyType!.compareTo(b.propertyType!)
-          : b.propertyType!.compareTo(a.propertyType!));
+          ? a.rentalOwnerName!.compareTo(b.rentalOwnerName!)
+          : b.rentalOwnerName!.compareTo(a.rentalOwnerName!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.propertysubType!.compareTo(b.propertysubType!)
-          : b.propertysubType!.compareTo(a.propertysubType!));
+          ? a.rentalOwnerPhoneNumber!.compareTo(b.rentalOwnerPhoneNumber!)
+          : b.rentalOwnerPhoneNumber!.compareTo(a.rentalOwnerPhoneNumber!));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.createdAt!.compareTo(b.createdAt!)
-          : b.createdAt!.compareTo(a.createdAt!));
+          ? a.rentalOwnerPrimaryEmail!.compareTo(b.rentalOwnerPrimaryEmail!)
+          : b.rentalOwnerPrimaryEmail!.compareTo(a.rentalOwnerPrimaryEmail!));
     }
   }
 
-  void handleDelete(propertytype property) {
-    _showAlert(context, property.propertyId!);
+  void handleDelete(Staffmembers staff) {
+    _showAlert(context, staff.staffmemberId!);
     // Handle delete action
-    print('Delete ${property.sId}');
+    print('Delete ${staff.sId}');
   }
 
   int? expandedIndex;
@@ -159,6 +168,69 @@ class _ExpandTableState extends State<ExpandTable> {
 
   final List<String> items = ['Residential', "Commercial", "All"];
 
+  int rentalownerCount = 0;
+  int rentalOwnerCountLimit = 0;
+  Future<void> fetchRentalOwneradded() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    final response =
+    await http.get(Uri.parse('${Api_url}/api/rental_owner/limitation/$id'));
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201 ) {
+      print(rentalownerCount);
+      print(rentalOwnerCountLimit);
+      setState(() {
+        rentalownerCount = jsonData['rentalownerCount'];
+        print(rentalownerCount);
+        rentalOwnerCountLimit = jsonData['rentalOwnerCountLimit'];
+        print(rentalOwnerCountLimit);
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  void _showAlertforLimit(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Plan Limitation",
+      desc: "The limit for adding rentalowners according to the plan has been reached.",
+      style: AlertStyle(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+          descStyle: TextStyle(fontSize: 14)
+        //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Color.fromRGBO(21, 43, 83, 1),
+        ),
+        /* DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+             var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )*/
+      ],
+    ).show();
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -237,11 +309,11 @@ class _ExpandTableState extends State<ExpandTable> {
                       onTap: () async {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => Add_property()));
+                                builder: (context) => Add_rentalowners()));
                         if (result == true) {
                           setState(() {
-                            futurePropertyTypes = PropertyTypeRepository()
-                                .fetchPropertyTypes();
+                            futureRentalOwners =  RentalOwnerService().fetchRentalOwners("");
+
                           });
                         }
                       },
@@ -257,7 +329,7 @@ class _ExpandTableState extends State<ExpandTable> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Add New Property",
+                                "Add Rental Owner",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -297,8 +369,7 @@ class _ExpandTableState extends State<ExpandTable> {
                         ),
                       ],
                     ),
-                    child: Text(
-                      "Property Type",
+                    child: Text('Rental Owners',
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -337,7 +408,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                 // controller: cvv,
                                 onChanged: (value) {
                                   setState(() {
-                                     searchvalue = value;
+                                    searchvalue = value;
                                   });
                                 },
                                 cursorColor:
@@ -357,96 +428,38 @@ class _ExpandTableState extends State<ExpandTable> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
-                    DropdownButtonHideUnderline(
-                      child: Material(
-                        elevation: 3,
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Row(
-                            children: [
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Type',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    // fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          items: items
-                              .map((String item) =>
-                              DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ))
-                              .toList(),
-                          value: selectedValue,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedValue = value;
-                            });
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            height: 40,
-                            width: 160,
-                            padding: const EdgeInsets.only(
-                                left: 14, right: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              border: Border.all(
-                                // color: Colors.black26,
-                                color: Color(0xFF8A95A8),
-                              ),
-                              color: Colors.white,
-                            ),
-                            elevation: 0,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: 200,
-                            width: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              //color: Colors.redAccent,
-                            ),
-                            offset: const Offset(-20, 0),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(40),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility:
-                              MaterialStateProperty.all(true),
-                            ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                            padding: EdgeInsets.only(left: 14, right: 14),
-                          ),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Text(
+                          'Added : ${rentalownerCount.toString()}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF8A95A8),
+                              fontSize: 13),
                         ),
-                      ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                        Text(
+                          'Total: ${rentalOwnerCountLimit.toString()}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF8A95A8),
+                              fontSize: 13),
+                        ),
+                      ],
                     ),
+                    SizedBox(width: 20),
                   ],
                 ),
               ),
               // SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<propertytype>>(
-                  future: futurePropertyTypes,
+                child: FutureBuilder<List<RentalOwner>>(
+                  future: futureRentalOwners,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -462,18 +475,16 @@ class _ExpandTableState extends State<ExpandTable> {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
-                            .where((property) =>
-                        property.propertyType!
+                            .where((rentals) =>
+                        rentals.rentalOwnerName!
                             .toLowerCase()
-                            .contains(searchvalue!.toLowerCase()) ||
-                            property.propertysubType!
-                                .toLowerCase()
-                                .contains(searchvalue!.toLowerCase()))
+                            .contains(searchvalue!.toLowerCase())
+                        )
                             .toList();
                       } else {
                         data = snapshot.data!
-                            .where((property) =>
-                        property.propertyType == selectedValue)
+                            .where((rentals) =>
+                        rentals.rentalOwnerName== selectedValue)
                             .toList();
                       }
                       sortData(data);
@@ -495,7 +506,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                 children: currentPageData.asMap().entries.map((entry) {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
-                                  propertytype Propertytype = entry.value;
+                                  RentalOwner rentals = entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
@@ -552,7 +563,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                               children: <Widget>[
                                                 Expanded(
                                                   child: Text(
-                                                    '${Propertytype.propertyType}',
+                                                    '${rentals.rentalOwnerName}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight: FontWeight.bold,
@@ -567,11 +578,11 @@ class _ExpandTableState extends State<ExpandTable> {
                                                         .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${Propertytype.propertysubType}',
+                                                    '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight: FontWeight.bold,
-                                                      fontSize: 13,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
@@ -581,17 +592,55 @@ class _ExpandTableState extends State<ExpandTable> {
                                                         .width *
                                                         .08),
                                                 Expanded(
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${Propertytype.createdAt}'),
-                                  
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child:  Container(
+
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(width: 10,),
+
+                                                          InkWell(
+                                                            onTap:(){
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                          Edit_rentalowners(
+                                                                            rentalOwner: rentals,
+                                                                          )));
+                                                            },
+                                                            child: Container(
+                                                              child: FaIcon(
+                                                                FontAwesomeIcons.edit,
+                                                                size: 20,
+                                                                color: Color.fromRGBO(
+                                                                    21, 43, 83, 1),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        SizedBox(width: 10,),
+                                                        InkWell(
+                                                          onTap:(){
+                                                            _showAlert(
+                                                                context,
+                                                                rentals
+                                                                    .rentalownerId!);
+                                                          },
+                                                          child: Container(
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons.trashCan,
+                                                              size: 20,
+                                                              color: Color.fromRGBO(
+                                                                  21, 43, 83, 1),
+                                                            ),
+                                                          ),
+                                                        ),
+
+
+                                                      ],
                                                     ),
                                                   ),
+
                                                 ),
                                                 SizedBox(
                                                     width: MediaQuery.of(context)
@@ -631,7 +680,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Updated At : ',
+                                                                    'Primery E-mail: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
@@ -640,8 +689,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                                                         blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate(
-                                                                        '${Propertytype.updatedAt}'),
+                                                                    text: '${rentals.rentalOwnerPrimaryEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
@@ -652,190 +700,12 @@ class _ExpandTableState extends State<ExpandTable> {
                                                                 ],
                                                               ),
                                                             ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Sample Header : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: 'Sample Data',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Sample Header : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: 'Sample Data',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            // _buildInfoText('Rental Owner Name', widget.data.field1),
-                                                            // _buildInfoText('Locality', widget.data.field2),
-                                                            // _buildInfoText('Phone No', widget.data.field3),
-                                                            // _buildInfoText('Last Updated At', widget.data.field3),
+                                                            SizedBox(height: MediaQuery.of(context).size.height * .01,),
+
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Sample Header: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: 'Sample Data',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Sample Header : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: 'Sample Data',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Sample Header : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: 'Sample Data',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons.edit,
-                                                                size: 20,
-                                                                color: Color.fromRGBO(
-                                                                    21, 43, 83, 1),
-                                                              ),
-                                                              onPressed: () {
-                                                                // handleEdit(Propertytype);
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                            Edit_property_type(
-                                                                              property:
-                                                                              Propertytype,
-                                                                            )));
-                                                              },
-                                                            ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color.fromRGBO(
-                                                                    21, 43, 83, 1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .propertyId!);
-                                                              },
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
+
                                                     ],
                                                   ),
                                                 ],
@@ -951,7 +821,7 @@ class _ExpandTableState extends State<ExpandTable> {
                   },
                 ),
               ),
-          
+
             ],
           ),
         ),
@@ -1004,29 +874,29 @@ class _ExpandTableState extends State<ExpandTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Main Type ",
-                            style: TextStyle(color: Colors.white))
-                        : Text("Main Type",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("Name",
+                        style: TextStyle(color: Colors.white))
+                        : Text("Name",
+                        style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -1055,25 +925,25 @@ class _ExpandTableState extends State<ExpandTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Subtypes", style: TextStyle(color: Colors.white)),
+                    Text("Phone", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -1103,25 +973,25 @@ class _ExpandTableState extends State<ExpandTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Created At", style: TextStyle(color: Colors.white)),
+                    Text("   Action", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),

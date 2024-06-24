@@ -159,30 +159,27 @@ class RentalOwnerService {
       throw Exception('Failed to add RentalOwners ');
     }
   }
-  //
-  // Future<Map<String, dynamic>> DeleteProperties({
-  //   required String? id
-  // }) async {
-  //
-  //   print('$apiUrl/$id');
-  //
-  //   final http.Response response = await http.delete(
-  //     Uri.parse('$apiUrl/$id'),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //   );
-  //   var responseData = json.decode(response.body);
-  //   print(response.body);
-  //   if (responseData["statusCode"] == 200) {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     return json.decode(response.body);
-  //
-  //   } else {
-  //     Fluttertoast.showToast(msg: responseData["message"]);
-  //     throw Exception('Failed to add property type');
-  //   }
-  // }
+
+  Future<Map<String, dynamic>> DeleteRentalOwners({
+    required String? rentalownerId
+  }) async {
+    final http.Response response = await http.delete(
+      Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add property type');
+    }
+  }
 
   Future<List<RentalOwner>> fetchRentalOwnerssummery(String rentalOwnerId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

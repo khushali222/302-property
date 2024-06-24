@@ -82,14 +82,12 @@ class _StaffTableState extends State<StaffTable> {
       _tableData.sort((a, b) {
         final aValue = getField(a);
         final bValue = getField(b);
-
         int result;
         if (aValue is String && bValue is String) {
           result = aValue.toString().toLowerCase().compareTo(bValue.toString().toLowerCase());
         } else {
           result = aValue.compareTo(bValue as T);
         }
-
         return _sortAscending ? result : -result;
       });
     });

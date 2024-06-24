@@ -179,7 +179,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     // // Handle delete action
     // print('Delete ${staff.staffmemberId}');
   }
-
   final _scrollController = ScrollController();
   void handleTap(RentalOwnerSummey rentalownersummery ) async {
     // Handle edit action

@@ -17,7 +17,10 @@ import '../screens/Staff_Member/Staffmember_table.dart';
 import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
 import '../screens/Staff_Member/Staffmemvertable.dart';
 
-import '../screens/test_table/table.dart';
+import '../screens/test_table/Property_table.dart';
+import '../screens/test_table/properties_table.dart';
+import '../screens/test_table/rentalowners_table.dart';
+import '../screens/test_table/staff_table.dart';
 
 Widget buildListTile(BuildContext context, Widget leadingIcon, String title, bool active,) {
   return Container(
@@ -50,8 +53,6 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
 
 void navigateToOption(BuildContext context, String option,) {
  int index = 0;
-
-
  Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
     "RentalOwner": (context) => Rentalowner_table(),
@@ -59,7 +60,7 @@ void navigateToOption(BuildContext context, String option,) {
    "Tenants": (context) => Add_Tenants(),
     "Vendor":(context)=>Vendor_table(),
     "Work Order":(context)=>Workorder_table(),
-    "Rent Roll":(context)=>ExpandTable(),
+    "Rent Roll":(context)=>Properties_table(),
     "Applicants":(context)=>Applicants_table(),
   };
   Navigator.push(
@@ -67,7 +68,6 @@ void navigateToOption(BuildContext context, String option,) {
     MaterialPageRoute(builder: routes[option]!),
   );
 }
-
 
 Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String title, List<String> subTopics ,{String? selectedSubtopic,bool? initvalue }) {
   return Container(
