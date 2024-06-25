@@ -16,6 +16,7 @@ class PropertiesRepository {
   Future<List<Rentals>> fetchProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+
     final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
     print('${Api_url}/api/rentals/rentals/$id');
     if (response.statusCode == 200) {

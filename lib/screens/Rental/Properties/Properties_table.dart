@@ -55,7 +55,212 @@ class _PropertiesTableState extends State<PropertiesTable> {
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
+  int currentPage = 0;
+  int itemsPerPage = 10;
+  int? expandedIndex;
+  Set<int> expandedIndices = {};
 
+  List<int> itemsPerPageOptions = [
+    10,
+    25,
+    50,
+    100,
+  ]; // Options for items per page
+  late bool isExpanded;
+  bool sorting1 = false;
+  bool sorting2 = false;
+  bool sorting3 = false;
+  bool ascending1 = false;
+  bool ascending2 = false;
+  bool ascending3 = false;
+  void sortData(List<Rentals> data) {
+    if (sorting1) {
+      data.sort((a, b) => ascending1
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
+    } else if (sorting2) {
+      data.sort((a, b) => ascending2
+          ? a.propertyTypeData!.propertyType!.compareTo(b.propertyTypeData!.propertyType!)
+          : b.propertyTypeData!.propertyType!.compareTo(a.propertyTypeData!.propertyType!));
+    } else if (sorting3) {
+      data.sort((a, b) => ascending3
+          ? a.propertyTypeData!.propertySubType!.compareTo(b.propertyTypeData!.propertySubType!)
+          : b.propertyTypeData!.propertySubType!.compareTo(a.propertyTypeData!.propertySubType!));
+    }
+  }
+  Widget _buildHeaders() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+        color: blueColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Container(
+          child: Icon(
+            Icons.expand_less,
+            color: Colors.transparent,
+          ),
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Property",
+                        style: TextStyle(color: Colors.white))
+                        : Text("Property",
+                        style: TextStyle(color: Colors.white)),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 3),
+                    ascending1
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Property\n Type", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("   Property\n  SubType", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   List<Rentals> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
@@ -334,7 +539,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
                       },
                     child: Container(
-                      height: 40,
+                      // height: 40,
+                      height: (MediaQuery.of(context).size.width < 500) ?
+                      40 :MediaQuery.of(context).size.width * 0.065,
                       width: MediaQuery.of(context).size.width * 0.4,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -358,7 +565,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 5),
+                  if(MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 6),
+                  if(MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 22),
+
                 ],
               ),
             ),
@@ -368,7 +579,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5.0),
                 child: Container(
-                  height: 50.0,
+                  height: (MediaQuery.of(context).size.width < 500) ?
+                  50 :60,
                   padding: EdgeInsets.only(top: 8, left: 10),
                   width: MediaQuery.of(context).size.width * .91,
                   margin: const EdgeInsets.only(
@@ -389,7 +601,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 22),
+                      fontSize:
+                      MediaQuery.of(context).size.width < 500 ?22 : MediaQuery.of(context).size.width * 0.035,),
                   ),
                 ),
               ),
@@ -399,12 +612,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
               padding: const EdgeInsets.only(left: 13, right: 20,),
               child: Row(
                 children: [
-                  SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 22),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
                     child: Container(
-                      height: 40,
+                      // height: 40,
+                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
                       width: 100,
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -487,7 +704,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           });
                         },
                         buttonStyleData: ButtonStyleData(
-                          height: 40,
+                          // height: 40,
+                          height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
                           width: 110,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
@@ -529,7 +747,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8A95A8),
-                            fontSize: 13),
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
                       ),
                       SizedBox(
                         width: 5,
@@ -540,21 +758,566 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8A95A8),
-                            fontSize: 13),
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
                       ),
                     ],
                   ),
+                  if(MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 6),
+                  if(MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 22),
                 ],
               ),
             ),
+            if(MediaQuery.of(context).size.width > 500)
             SizedBox(height: 25),
+            if(MediaQuery.of(context).size.width < 500)
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: FutureBuilder<List<Rentals>>(
+                future: futureRentalOwners,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 40.0,
+                    ));
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No data available'));
+                  } else {
+                    var data = snapshot.data!;
+                    if (selectedValue == null && searchvalue!.isEmpty) {
+                      data = snapshot.data!;
+                    } else if (selectedValue == "All") {
+                      data = snapshot.data!;
+                    } else if (searchvalue!.isNotEmpty) {
+                      data = snapshot.data!
+                          .where((rentals) =>
+                      rentals.rentalAddress!
+                          .toLowerCase()
+                          .contains(searchvalue!.toLowerCase()) ||
+                          rentals.propertyTypeData!.propertyType!
+                              .toLowerCase()
+                              .contains(searchvalue!.toLowerCase())
+                          ||
+                          rentals.propertyTypeData!.propertySubType!
+                              .toLowerCase()
+                              .contains(searchvalue!.toLowerCase())
+
+                      ).toList();
+                    } else {
+                      data = snapshot.data!
+                          .where((rentals) =>
+                      rentals.rentalAddress== selectedValue)
+                          .toList();
+                    }
+                    sortData(data);
+                    final totalPages = (data.length / itemsPerPage).ceil();
+                    final currentPageData = data
+                        .skip(currentPage * itemsPerPage)
+                        .take(itemsPerPage)
+                        .toList();
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          _buildHeaders(),
+                          SizedBox(height: 20),
+                          Container(
+                            decoration:
+                            BoxDecoration(border: Border.all(color: blueColor)),
+                            child: Column(
+                              children: currentPageData.asMap().entries.map((entry) {
+                                int index = entry.key;
+                                bool isExpanded = expandedIndex == index;
+                                Rentals rentals = entry.value;
+                                //return CustomExpansionTile(data: Propertytype, index: index);
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: blueColor),
+                                  ),
+                                  child: Column(
+                                    children: <Widget>[
+                                      ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        leading: InkWell(
+                                          onTap: () {
+                                            // setState(() {
+                                            //    isExpanded = !isExpanded;
+                                            // //  expandedIndex = !expandedIndex;
+                                            //
+                                            // });
+                                            // setState(() {
+                                            //   if (isExpanded) {
+                                            //     expandedIndex = null;
+                                            //     isExpanded = !isExpanded;
+                                            //   } else {
+                                            //     expandedIndex = index;
+                                            //   }
+                                            // });
+                                            setState(() {
+                                              if (expandedIndex == index) {
+                                                expandedIndex = null;
+                                              } else {
+                                                expandedIndex = index;
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(left: 5),
+                                            padding: !isExpanded
+                                                ? EdgeInsets.only(bottom: 10)
+                                                : EdgeInsets.only(top: 10),
+                                            child: FaIcon(
+                                              isExpanded
+                                                  ? FontAwesomeIcons.sortUp
+                                                  : FontAwesomeIcons.sortDown,
+                                              size: 20,
+                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                            ),
+                                          ),
+                                        ),
+                                        title: Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(
+                                                  '${rentals.rentalAddress}',
+                                                  style: TextStyle(
+                                                    color: blueColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .08),
+                                              Expanded(
+                                                child: Text(
+                                                  '${rentals.propertyTypeData!.propertyType}',
+                                                  style: TextStyle(
+                                                    color: blueColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .08),
+                                              Expanded(
+                                                child: Text(
+                                                  '${rentals.propertyTypeData!.propertySubType}',
+                                                  style: TextStyle(
+                                                    color: blueColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .02),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (isExpanded)
+                                        Container(
+                                          padding:
+                                          EdgeInsets.symmetric(horizontal: 8.0),
+                                          margin: EdgeInsets.only(bottom: 20),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  children: [
+                                                    FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons.sortUp
+                                                          : FontAwesomeIcons.sortDown,
+                                                      size: 50,
+                                                      color: Colors.transparent,
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                        children: <Widget>[
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Rental Owners Name: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: '${rentals.rentalOwnerData!.rentalOwnerFirstName}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: MediaQuery.of(context).size.height * .01,),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Locality : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: '${rentals.rentalOwnerData!.city}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: MediaQuery.of(context).size.height * .01,),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Phone Number : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: '${rentals.rentalOwnerData!.rentalOwnerPhoneNumber}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: MediaQuery.of(context).size.height * .01,),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Updated At : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: formatDate('${rentals.updatedAt}'),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 7),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                        children: <Widget>[
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Rental Company Name: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: '${rentals.rentalOwnerData!.rentalOwnerCompanyName}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: MediaQuery.of(context).size.height * .01,),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Primery E-mail: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: '${rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: MediaQuery.of(context).size.height * .01,),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Created At: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: formatDate('${rentals.createdAt}'),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: 40,
+                                                      child: Column(
+                                                        children: [
+                                                          IconButton(
+                                                            icon: FaIcon(
+                                                              FontAwesomeIcons.edit,
+                                                              size: 20,
+                                                              color: Color.fromRGBO(
+                                                                  21, 43, 83, 1),
+                                                            ),
+                                                            onPressed: () {
+                                                              // handleEdit(Propertytype);
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                          Edit_properties(
+                                                                            properties: rentals,
+                                                                          )));
+                                                            },
+                                                          ),
+                                                          IconButton(
+                                                            icon: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .trashCan,
+                                                              size: 20,
+                                                              color: Color.fromRGBO(
+                                                                  21, 43, 83, 1),
+                                                            ),
+                                                            onPressed: () {
+                                                              //handleDelete(Propertytype);
+                                                              _showAlert(
+                                                                  context,
+                                                                  rentals
+                                                                      .rentalId!);
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      //SizedBox(height: 13,),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  // Text('Rows per page:'),
+                                  SizedBox(width: 10),
+                                  Material(
+                                    elevation: 3,
+                                    child: Container(
+                                      height: 40,
+                                      padding: EdgeInsets.symmetric(horizontal: 12.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<int>(
+                                          value: itemsPerPage,
+                                          items: itemsPerPageOptions.map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(value.toString()),
+                                            );
+                                          }).toList(),
+                                          onChanged: (newValue) {
+                                            setState(() {
+                                              itemsPerPage = newValue!;
+                                              currentPage =
+                                              0; // Reset to first page when items per page change
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronLeft,
+                                      color: currentPage == 0
+                                          ? Colors.grey
+                                          : Color.fromRGBO(21, 43, 83, 1),
+                                    ),
+                                    onPressed: currentPage == 0
+                                        ? null
+                                        : () {
+                                      setState(() {
+                                        currentPage--;
+                                      });
+                                    },
+                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.arrow_back),
+                                  //   onPressed: currentPage > 0
+                                  //       ? () {
+                                  //     setState(() {
+                                  //       currentPage--;
+                                  //     });
+                                  //   }
+                                  //       : null,
+                                  // ),
+                                  Text('Page ${currentPage + 1} of $totalPages'),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.arrow_forward),
+                                  //   onPressed: currentPage < totalPages - 1
+                                  //       ? () {
+                                  //     setState(() {
+                                  //       currentPage++;
+                                  //     });
+                                  //   }
+                                  //       : null,
+                                  // ),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronRight,
+                                      color: currentPage < totalPages - 1
+                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: currentPage < totalPages - 1
+                                        ? () {
+                                      setState(() {
+                                        currentPage++;
+                                      });
+                                    }
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            if(MediaQuery.of(context).size.width > 500)
             FutureBuilder<List<Rentals>>(
               future: futureRentalOwners,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: SpinKitFadingCircle(
                     color: Colors.black,
-                    size: 40.0,
+                    size: 55.0,
                   ));
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
@@ -577,75 +1340,78 @@ class _PropertiesTableState extends State<PropertiesTable> {
                  // _tableData = filteredData!;
                   totalrecords = _tableData.length;
                   return  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 5),
                     child: Column(
                       children: [
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child: Table(
-                            defaultColumnWidth: IntrinsicColumnWidth(),
-                            children: [
-                              TableRow(
-                                decoration: BoxDecoration(border: Border.all()),
-                                children: [
-                                  _buildHeader('Property', 0, (staff) => staff.rentalAddress!),
-                                  _buildHeader('PropertyType', 1, (staff) => staff.propertyTypeData!.propertyType!),
-                                  _buildHeader('PropertySubTYpe', 2, (staff) => staff.propertyTypeData!.propertySubType!),
-                                  _buildHeader('RentalOwnersName', 3, (staff) => staff.rentalOwnerData!.rentalOwnerFirstName!),
-                                  _buildHeader('RentalCompanyName', 4, (staff) => staff.rentalOwnerData!.rentalOwnerCompanyName!),
-                                  _buildHeader('Locality', 5, (staff) => staff.rentalCity!),
-                                  _buildHeader('PrimaryEmail', 6, (staff) => staff.rentalOwnerData!.rentalOwnerPrimaryEmail!),
-                                  _buildHeader('PhoneNumber', 7, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
-                                //  _buildHeader('Created At', 8, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
-                                  //_buildHeader('Last Updated At', 9, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
-                                  _buildHeader('Actions', 8, null),
-                                ],
-                              ),
-                              TableRow(
-                                decoration: BoxDecoration(
-                                  border: Border.symmetric(horizontal: BorderSide.none),
-                                ),
-                                children: List.generate(9, (index) => TableCell(child: Container(height: 20))),
-                              ),
-                              for (var i = 0; i < _pagedData.length; i++)
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 22,right: 22),
+                            child: Table(
+                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              children: [
                                 TableRow(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      left: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
-                                      right: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
-                                      top: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
-                                      bottom: i == _pagedData.length - 1
-                                          ? BorderSide(color: Color.fromRGBO(21, 43, 81, 1))
-                                          : BorderSide.none,
-                                    ),
-                                  ),
+                                  decoration: BoxDecoration(border: Border.all()),
                                   children: [
-                                    InkWell(
-                                        onTap:()async{
-                                          final result = await Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Summery_page(properties: _pagedData[i])));
-
-                                        },
-                                        child: _buildDataCell(_pagedData[i].rentalAddress!)),
-                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertyType!),
-                                    _buildDataCell(_pagedData[i].propertyTypeData!.propertySubType!),
-                                   // _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
-                                    _buildDataCell('${_pagedData[i].rentalOwnerData?.rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerData?.rentalOwnerLastName ?? ''}'),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerCompanyName!),
-                                    _buildDataCell(_pagedData[i].rentalCity!),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPrimaryEmail!),
-                                    _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPhoneNumber!),
-                                    _buildActionsCell(_pagedData[i]),
+                                    _buildHeader('Property', 0, (staff) => staff.rentalAddress!),
+                                    _buildHeader('PropertyType', 1, (staff) => staff.propertyTypeData!.propertyType!),
+                                    _buildHeader('PropertySubTYpe', 2, (staff) => staff.propertyTypeData!.propertySubType!),
+                                    _buildHeader('RentalOwnersName', 3, (staff) => staff.rentalOwnerData!.rentalOwnerFirstName!),
+                                    _buildHeader('RentalCompanyName', 4, (staff) => staff.rentalOwnerData!.rentalOwnerCompanyName!),
+                                    _buildHeader('Locality', 5, (staff) => staff.rentalCity!),
+                                    _buildHeader('PrimaryEmail', 6, (staff) => staff.rentalOwnerData!.rentalOwnerPrimaryEmail!),
+                                    _buildHeader('PhoneNumber', 7, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                  //  _buildHeader('Created At', 8, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                    //_buildHeader('Last Updated At', 9, (staff) => staff.rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                    _buildHeader('Actions', 8, null),
                                   ],
                                 ),
-                            ],
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                    border: Border.symmetric(horizontal: BorderSide.none),
+                                  ),
+                                  children: List.generate(9, (index) => TableCell(child: Container(height: 20))),
+                                ),
+                                for (var i = 0; i < _pagedData.length; i++)
+                                  TableRow(
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        left: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                        right: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                        top: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                                        bottom: i == _pagedData.length - 1
+                                            ? BorderSide(color: Color.fromRGBO(21, 43, 81, 1))
+                                            : BorderSide.none,
+                                      ),
+                                    ),
+                                    children: [
+                                      InkWell(
+                                          onTap:()async{
+                                            final result = await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => Summery_page(properties: _pagedData[i])));
+
+                                          },
+                                          child: _buildDataCell(_pagedData[i].rentalAddress!)),
+                                      _buildDataCell(_pagedData[i].propertyTypeData!.propertyType!),
+                                      _buildDataCell(_pagedData[i].propertyTypeData!.propertySubType!),
+                                     // _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
+                                      _buildDataCell('${_pagedData[i].rentalOwnerData?.rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerData?.rentalOwnerLastName ?? ''}'),
+                                      _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerCompanyName!),
+                                      _buildDataCell(_pagedData[i].rentalCity!),
+                                      _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPrimaryEmail!),
+                                      _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerPhoneNumber!),
+                                      _buildActionsCell(_pagedData[i]),
+                                    ],
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                         if(_tableData.isEmpty)
                           Text("No Search Records Found"),
-                        SizedBox(height: 10),
+                        SizedBox(height: 25),
                         _buildPaginationControls(),
                       ],
                     ),
@@ -660,26 +1426,29 @@ class _PropertiesTableState extends State<PropertiesTable> {
     );
   }
   Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(Rentals d)? getField) {
-    return TableCell(
-      child: InkWell(
-        onTap: getField != null
-            ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
-              if ( getField != null)
-                Icon(
-                  _sortColumnIndex == columnIndex
-                      ? (_sortAscending ? Icons.arrow_drop_up_outlined : Icons.arrow_drop_down_outlined)
-                      : Icons.arrow_drop_down_outlined, // Default icon for unsorted columns
+    return Container(
+      height: 70,
+      child: TableCell(
+        child: InkWell(
+          onTap: getField != null
+              ? () {
+            _sort(getField, columnIndex, !_sortAscending);
+          }
+          : null,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Text(text,  style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22)),
+                if ( getField != null)
+                  Icon(
+                    _sortColumnIndex == columnIndex
+                        ? (_sortAscending ? Icons.arrow_drop_up_outlined : Icons.arrow_drop_down_outlined)
+                        : Icons.arrow_drop_down_outlined, // Default icon for unsorted columns
 
-                ),
-            ],
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -687,46 +1456,60 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   Widget _buildDataCell(String text) {
-    return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(text),
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 50,
+        child: TableCell(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(text,style: TextStyle(fontSize: 18)),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildActionsCell(Rentals data) {
-    return TableCell(
-      child: Row(
-        children: [
-          InkWell(
-            onTap: (){
-              handleEdit(data);
-            },
-            child: Container(
-              margin: EdgeInsets.only(top: 8,left: 8),
-              child: FaIcon(
-                FontAwesomeIcons.edit,
-                size: 20,
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 50,
+        child: TableCell(
+          child: Row(
+            children: [
+              SizedBox(width: 20,),
+              InkWell(
+                onTap: (){
+                  handleEdit(data);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 8,left: 8),
+                  child: FaIcon(
+                    FontAwesomeIcons.edit,
+                    size: 30,
+                  ),
+
+                ),
+              ),
+              SizedBox(width: 8,),
+              InkWell(
+                onTap: (){
+                  handleDelete(data);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 8,left: 8),
+                  child: FaIcon(
+                    FontAwesomeIcons.trashCan,
+                    size: 30,
+                  ),
+
+                ),
               ),
 
-            ),
+            ],
           ),
-          SizedBox(width: 6,),
-          InkWell(
-            onTap: (){
-              handleDelete(data);
-            },
-            child: Container(
-              margin: EdgeInsets.only(top: 8,left: 8),
-              child: FaIcon(
-                FontAwesomeIcons.trashCan,
-                size: 20,
-              ),
-
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -744,7 +1527,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
           elevation: 2,
           color: Colors.white,
           child: Container(
-            height: 40,
+           // height: 40,
+            height: 55,
             padding: EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
@@ -764,8 +1548,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(Icons.arrow_drop_down),
-                style: TextStyle(color: Colors.black),
+                icon: Icon(Icons.arrow_drop_down,size: 40,),
+                style: TextStyle(color: Colors.black,fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
@@ -774,6 +1558,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
+            size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color: _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
           ),
@@ -785,9 +1570,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
             });
           },
         ),
-        Text('Page ${_currentPage + 1} of $numorpages'),
+        Text('Page ${_currentPage + 1} of $numorpages',style: TextStyle(fontSize: 18),),
         IconButton(
+
           icon: FaIcon(
+            size: 30,
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length ? Colors.grey : Color.fromRGBO(21, 43, 83, 1), // Change color based on availability
 
@@ -800,6 +1587,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             });
           },
         ),
+
       ],
     );
   }
@@ -808,109 +1596,4 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
 void main() => runApp(MaterialApp(home: PropertiesTable()));
 
-class PropertyDataSource extends DataTableSource {
-  final List<Rentals> data;
-  // TenantData? tenants;
-  // final List<propertytype> data2;
 
-  final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
-  final Function(Rentals) onEdit;
-  final Function(Rentals) onDelete;
- final Function(Rentals) onTap;
-
-  PropertyDataSource(this.data, {required this.onEdit, required this.onDelete, required this.onTap});
-
-  @override
-  DataRow getRow(int index) {
-    final properties = data[index];
-    // final propety = data2[index];
-    // final tenants = data[index];
-
-    return DataRow.byIndex(
-      index: index,
-      cells: [
-        DataCell(
-            Text(properties.rentalAddress ?? '',
-            ),
-          onTap:  (){
-            onTap(properties);
-            }
-          ),
-        DataCell(Text(properties.propertyTypeData?.propertyType ?? "")),
-        DataCell(Text(properties.propertyTypeData?.propertySubType ?? "")),
-        DataCell(Text(properties.rentalOwnerData?.rentalOwnerFirstName ?? "")),
-        DataCell(
-            Text(properties.rentalOwnerData?.rentalOwnerCompanyName ?? "")),
-        DataCell(Text(properties.rentalCity ?? "")),
-        DataCell(
-            Text(properties.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "")),
-        DataCell(
-            Text(properties.rentalOwnerData?.rentalOwnerPhoneNumber ?? "")),
-        DataCell(Text(_formatDate(properties.createdAt))),
-        DataCell(Text(_formatDate(properties.updatedAt))),
-        DataCell(Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () {
-                onEdit(properties);
-              },
-              child: Container(
-                //  color: Colors.redAccent,
-                padding: EdgeInsets.zero,
-                child: FaIcon(
-                  FontAwesomeIcons.edit,
-                  size: 20,
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 4,
-            ),
-            InkWell(
-              onTap: () {
-                onDelete(properties);
-              },
-              child: Container(
-                //    color: Colors.redAccent,
-                padding: EdgeInsets.zero,
-                child: FaIcon(
-                  FontAwesomeIcons.trashCan,
-                  size: 20,
-                ),
-              ),
-            ),
-          ],
-        )),
-      ],
-    );
-  }
-
-  String _formatDate(String? dateStr) {
-    if (dateStr == null || dateStr.isEmpty) {
-      return '';
-    }
-    DateTime dateTime = DateTime.parse(dateStr);
-    return dateFormat.format(dateTime);
-  }
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get rowCount => data.length;
-
-  @override
-  int get selectedRowCount => 0;
-  void sort<T>(Comparable<T> getField(Rentals d), bool ascending) {
-    data.sort((a, b) {
-      final aValue = getField(a);
-      final bValue = getField(b);
-      return ascending
-          ? Comparable.compare(aValue, bValue)
-          : Comparable.compare(bValue, aValue);
-    });
-    notifyListeners();
-  }
-}

@@ -51,13 +51,13 @@ class RentalOwners_table extends StatefulWidget {
 }
 
 class _RentalOwners_tableState extends State<RentalOwners_table> {
-  late Future<List<RentalOwner>> futureRentalOwners;
+  late Future<List<RentalOwner>> futureStaffMembers;
   int currentPage = 0;
   int itemsPerPage = 10; // Adjust the number of items per page as needed
   @override
   void initState() {
     super.initState();
-    futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
+    futureStaffMembers = RentalOwnerService().fetchRentalOwners("");
     isExpanded = false;
     fetchRentalOwneradded();
   }
@@ -128,7 +128,7 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
             var data =RentalOwnerService().DeleteRentalOwners(rentalownerId: id);
             // Add your delete logic heri
             setState(() {
-              futureRentalOwners =  RentalOwnerService().fetchRentalOwners("");
+              futureStaffMembers =  RentalOwnerService().fetchRentalOwners("");
 
             });
             Navigator.pop(context);
@@ -221,7 +221,7 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
              var data = PropertiesRepository().DeleteProperties(id: id);
 
             setState(() {
-              futureRentalOwners = PropertiesRepository().fetchProperties();
+              futureStaffMembers = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
             });
             Navigator.pop(context);
@@ -312,7 +312,7 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
                                 builder: (context) => Add_rentalowners()));
                         if (result == true) {
                           setState(() {
-                            futureRentalOwners =  RentalOwnerService().fetchRentalOwners("");
+                            futureStaffMembers =  RentalOwnerService().fetchRentalOwners("");
 
                           });
                         }
@@ -459,7 +459,7 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: FutureBuilder<List<RentalOwner>>(
-                  future: futureRentalOwners,
+                  future: futureStaffMembers,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());

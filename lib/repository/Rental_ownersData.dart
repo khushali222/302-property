@@ -19,7 +19,7 @@ class RentalOwnerService {
     adminId = prefs.getString("adminId");
     final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'));
     print(adminId);
-    //print(response.body);
+    print(response.body);
   //  print('$baseUrl/rental-owners/$adminId');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
