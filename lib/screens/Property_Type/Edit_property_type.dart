@@ -13,7 +13,7 @@ import '../../widgets/drawer_tiles.dart';
 
 class Edit_property_type extends StatefulWidget {
   propertytype property;
-   Edit_property_type({super.key,required this.property});
+  Edit_property_type({super.key, required this.property});
 
   @override
   State<Edit_property_type> createState() => _Edit_property_typeState();
@@ -33,6 +33,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
     subtype.text = widget.property.propertysubType!;
     isChecked = widget.property.isMultiunit!;
   }
+
   bool isLoading = false;
   String? selectedValue;
   bool isChecked = false;
@@ -56,29 +57,56 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                 child: Image.asset("assets/images/logo.png"),
               ),
               SizedBox(height: 40),
-              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
-              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.white,), "Add Property Type",true),
-              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.circle_grid_3x3,
+                    color: Colors.black,
+                  ),
+                  "Dashboard",
+                  false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.house,
+                    color: Colors.white,
+                  ),
+                  "Add Property Type",
+                  true),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.person_add,
+                    color: Colors.black,
+                  ),
+                  "Add Staff Member",
+                  false),
               buildDropdownListTile(
                   context,
                   FaIcon(
                     FontAwesomeIcons.key,
                     size: 20,
                     color: Colors.black,
-                  ), "Rental", [
-                "Properties",
-                "RentalOwner",
-                "Tenants",
-              ]
-              ),
-              buildDropdownListTile(context,FaIcon(
-                FontAwesomeIcons.thumbsUp,
-                size: 20,
-                color: Colors.black,
-              ), "Leasing",
+                  ),
+                  "Rental",
+                  [
+                    "Properties",
+                    "RentalOwner",
+                    "Tenants",
+                  ]),
+              buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.thumbsUp,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Leasing",
                   ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(context,
-                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+              buildDropdownListTile(
+                  context,
+                  Image.asset("assets/icons/maintence.png",
+                      height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
             ],
@@ -201,17 +229,17 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               items: items
                                   .map(
                                       (String item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ))
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
                                   .toList(),
                               value: selectedValue,
                               onChanged: (value) {
@@ -223,7 +251,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 height: 50,
                                 width: 160,
                                 padding:
-                                const EdgeInsets.only(left: 14, right: 14),
+                                    const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
@@ -245,7 +273,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   radius: const Radius.circular(40),
                                   thickness: MaterialStateProperty.all(6),
                                   thumbVisibility:
-                                  MaterialStateProperty.all(true),
+                                      MaterialStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -359,7 +387,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   : Colors.white,
                               checkColor: Colors.white,
                               value:
-                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                  isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
                               onChanged: (value) {
                                 setState(() {
                                   isChecked = value ??
@@ -374,7 +402,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             "Multi unit",
                             style: TextStyle(
                               fontSize:
-                              MediaQuery.of(context).size.width * 0.03,
+                                  MediaQuery.of(context).size.width * 0.03,
                               color: Colors.grey,
                             ),
                           ),
@@ -391,7 +419,8 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               width: MediaQuery.of(context).size.width * 0.05),
                           GestureDetector(
                             onTap: () async {
-                              if (selectedValue == null || subtype.text.isEmpty) {
+                              if (selectedValue == null ||
+                                  subtype.text.isEmpty) {
                                 setState(() {
                                   iserror = true;
                                 });
@@ -401,20 +430,21 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   iserror = false;
                                 });
                                 SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                                    await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 PropertyTypeRepository()
                                     .EditPropertyType(
-                                  adminId: id!,
-                                  propertyType: selectedValue,
-                                  propertySubType: subtype.text,
-                                  isMultiUnit: isChecked,
-                                  id: widget.property.propertyId
-                                ).then((value) {
+                                        adminId: id!,
+                                        propertyType: selectedValue,
+                                        propertySubType: subtype.text,
+                                        isMultiUnit: isChecked,
+                                        id: widget.property.propertyId)
+                                    .then((value) {
                                   setState(() {
                                     isLoading = false;
                                   });
-                                  Navigator.of(context).pop(true);
+
+                                  Navigator.pop(context, true);
                                 }).catchError((e) {
                                   setState(() {
                                     isLoading = false;
@@ -442,16 +472,16 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
+                                          color: Colors.white,
+                                          size: 25.0,
+                                        )
                                       : Text(
-                                    "Edit Property Type",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12),
-                                  ),
+                                          "Edit Property Type",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12),
+                                        ),
                                 ),
                               ),
                             ),
@@ -460,7 +490,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             width: 15,
                           ),
                           InkWell(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                             },
                             child: Material(
@@ -477,7 +507,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                       SizedBox(
                         height: 10,
                       ),
-                      if(iserror)
+                      if (iserror)
                         Text(
                           "Please fill in all fields correctly.",
                           style: TextStyle(color: Colors.redAccent),

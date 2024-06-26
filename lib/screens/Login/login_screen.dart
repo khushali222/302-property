@@ -156,26 +156,27 @@ class _Login_ScreenState extends State<Login_Screen> {
                               decoration: InputDecoration(
                                 enabledBorder: emailerror
                                     ? OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: Colors
-                                          .red), // Set border color here
-                                )
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Colors
+                                                .red), // Set border color here
+                                      )
                                     : InputBorder.none,
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.all(10),
                                 prefixIcon: Container(
-                                    height: 20,
-                                    width: 20,
-                                    padding: EdgeInsets.all(13),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.envelope,
-                                      size: 20,
-                                      color: Colors.grey[600],
-                                    ),
+                                  height: 20,
+                                  width: 20,
+                                  padding: EdgeInsets.all(13),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.envelope,
+                                    size: 20,
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                                 hintText: "Business Email",
-                                hintStyle: TextStyle(color:Colors.grey[600],fontSize: 15 ),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[600], fontSize: 15),
                               ),
                             ),
                           ),
@@ -275,7 +276,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                         children: [
                           Positioned.fill(
                             child: TextField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.text,
                               onChanged: (value) {
                                 setState(() {
                                   passworderror = false;
@@ -287,15 +288,14 @@ class _Login_ScreenState extends State<Login_Screen> {
                               decoration: InputDecoration(
                                 enabledBorder: passworderror
                                     ? OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: Colors
-                                          .red), // Set border color here
-                                )
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Colors
+                                                .red), // Set border color here
+                                      )
                                     : InputBorder.none,
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.all(10),
-
                                 prefixIcon: Container(
                                   height: 20,
                                   width: 20,
@@ -308,22 +308,21 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   ),
                                 ),
                                 hintText: "Password",
-                                hintStyle: TextStyle(color:Colors.grey[600],fontSize: 15 ),
-                                suffixIcon:
-                                InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    visiable_password = !visiable_password;
-                                                  });
-                                                },
-                                                child: Icon(
-                                                  visiable_password
-                                                      ? Icons.remove_red_eye_outlined
-                                                      : Icons.visibility_off_outlined,
-                                                  color: Colors.grey[600],
-                                                ),
-                                              ),
-
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[600], fontSize: 15),
+                                suffixIcon: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      visiable_password = !visiable_password;
+                                    });
+                                  },
+                                  child: Icon(
+                                    visiable_password
+                                        ? Icons.remove_red_eye_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -468,8 +467,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                       fontWeight: FontWeight.bold,
                                       fontSize:
                                           MediaQuery.of(context).size.width *
-                                              0.045
-                                  ),
+                                              0.045),
                                 ),
                                 SizedBox(
                                   height:

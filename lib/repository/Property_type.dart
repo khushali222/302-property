@@ -34,7 +34,6 @@ class PropertyTypeRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');
@@ -44,7 +43,8 @@ class PropertyTypeRepository {
   Future<List<propertytype>> fetchPropertyTypes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('${Api_url}/api/propertytype/property_type/$id'));
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/propertytype/property_type/$id'));
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => propertytype.fromJson(data)).toList();
@@ -53,13 +53,12 @@ class PropertyTypeRepository {
     }
   }
 
-  Future<Map<String, dynamic>> EditPropertyType({
-    required String? adminId,
-    required String? propertyType,
-    required String? propertySubType,
-    required bool isMultiUnit,
-    required String? id
-  }) async {
+  Future<Map<String, dynamic>> EditPropertyType(
+      {required String? adminId,
+      required String? propertyType,
+      required String? propertySubType,
+      required bool isMultiUnit,
+      required String? id}) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
       'property_type': propertyType,
@@ -81,16 +80,13 @@ class PropertyTypeRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');
     }
   }
-  Future<Map<String, dynamic>> DeletePropertyType({
-    required String? id
-  }) async {
 
+  Future<Map<String, dynamic>> DeletePropertyType({required String? id}) async {
     print('$apiUrl/$id');
 
     final http.Response response = await http.delete(
@@ -104,7 +100,6 @@ class PropertyTypeRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');

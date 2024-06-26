@@ -5,7 +5,6 @@ import 'package:three_zero_two_property/provider/add_property.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
-
 // void main() {
 //   runApp(
 //     MultiProvider(providers: [ ChangeNotifierProvider(
@@ -49,9 +48,6 @@ void main() {
     ),
   );
 }
-
-
-
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});

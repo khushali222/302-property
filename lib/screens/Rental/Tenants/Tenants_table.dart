@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
+import 'package:three_zero_two_property/screens/Rental/Tenants/Tenant_summary.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../constant/constant.dart';
@@ -106,7 +108,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white))
                         : Text("Tenants\nName",
-                        textAlign: TextAlign.center,
+                            textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
@@ -203,7 +205,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Created\nAt", textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
+                    Text("Created\nAt",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
@@ -282,12 +286,13 @@ class _Tenants_tableState extends State<Tenants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            // var data = PropertyTypeRepository().DeletePropertyType(id: id);
-            // // Add your delete logic here
-            // setState(() {
-            //   futurePropertyTypes =
-            //       PropertyTypeRepository().fetchPropertyTypes();
-            // });
+            print(id);
+            var data = TenantsRepository().DeleteTenants(tenantid: id);
+            // Add your delete logic here
+            setState(() {
+              futureTenants = TenantsRepository().fetchTenants();
+            });
+
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -596,8 +601,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => AddTenant()));
+                          MaterialPageRoute(builder: (context) => AddTenant()));
                       if (result == true) {
                         setState(() {
                           futureTenants = TenantsRepository().fetchTenants();
@@ -762,18 +766,17 @@ class _Tenants_tableState extends State<Tenants_table> {
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((rentals) =>
-                            rentals.tenantFirstName!
-                                .toLowerCase()
-                                .contains(searchvalue!.toLowerCase())||
+                                rentals.tenantFirstName!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()) ||
                                 rentals.tenantLastName!
                                     .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase())
-                        )
+                                    .contains(searchvalue!.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
                             .where((rentals) =>
-                        rentals.tenantFirstName== searchvalue)
+                                rentals.tenantFirstName == searchvalue)
                             .toList();
                       }
                       sortData(data);
@@ -855,13 +858,27 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
-                                                  child: Text(
-                                                    '${tenants.tenantFirstName} ${tenants.tenantLastName}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Tenant_summary(
+                                                                      tenantId:
+                                                                          tenants
+                                                                              .tenantId!)));
+                                                      print(
+                                                          'tenantFirstName ,${tenants.id!}');
+                                                    },
+                                                    child: Text(
+                                                      '${tenants.tenantFirstName} ${tenants.tenantLastName}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -872,13 +889,27 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 .width *
                                                             .08),
                                                 Expanded(
-                                                  child: Text(
-                                                    '${tenants.tenantPhoneNumber}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Tenant_summary(
+                                                                      tenantId:
+                                                                          tenants
+                                                                              .tenantId!)));
+                                                      print(
+                                                          'tenantPhoneNumber');
+                                                    },
+                                                    child: Text(
+                                                      '${tenants.tenantPhoneNumber}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -889,15 +920,28 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 .width *
                                                             .08),
                                                 Expanded(
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${tenants.createdAt}'),
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Tenant_summary(
+                                                                      tenantId:
+                                                                          tenants
+                                                                              .tenantId!)));
+                                                      print('createdAt');
+                                                    },
+                                                    child: Text(
+                                                      // '${widget.data.createdAt}',
+                                                      formatDate(
+                                                          '${tenants.createdAt}'),
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -982,7 +1026,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text:  '${tenants.rentalAddress}',
+                                                                    text:
+                                                                        '${tenants.rentalAddress}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1227,8 +1272,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                     } else if (searchvalue.isNotEmpty) {
                       filteredData = snapshot.data!
                           .where((rentals) =>
-                      rentals.tenantFirstName!.toLowerCase().contains(searchvalue.toLowerCase()) ||
-                          rentals.tenantLastName!.toLowerCase().contains(searchvalue.toLowerCase()))
+                              rentals.tenantFirstName!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()) ||
+                              rentals.tenantLastName!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()))
                           .toList();
                     }
                     _tableData = filteredData!;
@@ -1245,7 +1294,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 20,right: 20),
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
                                       child: Container(
                                         // width: MediaQuery.of(context).size.width *
                                         //     .91,
@@ -1268,8 +1318,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 _buildHeader(
                                                     'Tenant Name',
                                                     0,
-                                                        (tenants) => '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}'.trim()
-                                                ),
+                                                    (tenants) =>
+                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}'
+                                                            .trim()),
                                                 _buildHeader(
                                                     'Property',
                                                     1,
@@ -1290,19 +1341,21 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                     4,
                                                     (tenants) =>
                                                         tenants.createdAt!),
-                                                _buildHeader('Actions', 5, null),
+                                                _buildHeader(
+                                                    'Actions', 5, null),
                                               ],
                                             ),
                                             TableRow(
                                               decoration: BoxDecoration(
                                                 border: Border.symmetric(
-                                                    horizontal: BorderSide.none),
+                                                    horizontal:
+                                                        BorderSide.none),
                                               ),
                                               children: List.generate(
                                                   6,
                                                   (index) => TableCell(
-                                                      child:
-                                                          Container(height: 20))),
+                                                      child: Container(
+                                                          height: 20))),
                                             ),
                                             for (var i = 0;
                                                 i < _pagedData.length;
@@ -1320,10 +1373,15 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         color: Color.fromRGBO(
                                                             21, 43, 81, 1)),
                                                     bottom: i ==
-                                                            _pagedData.length - 1
+                                                            _pagedData.length -
+                                                                1
                                                         ? BorderSide(
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1))
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    81,
+                                                                    1))
                                                         : BorderSide.none,
                                                   ),
                                                 ),
@@ -1331,8 +1389,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   // _buildDataCell(_pagedData[i]
                                                   //     .tenantFirstName!),
                                                   _buildDataCell(
-                                                      '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'.trim()
-                                                  ),
+                                                      '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
+                                                          .trim()),
                                                   _buildDataCell(_pagedData[i]
                                                       .rentalAddress!),
                                                   _buildDataCell(_pagedData[i]
@@ -1340,8 +1398,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   _buildDataCell(_pagedData[i]
                                                       .tenantAlternativeEmail!),
                                                   _buildDataCell(
-                                                    formatDate(
-                                                        _pagedData[i].createdAt!),
+                                                    formatDate(_pagedData[i]
+                                                        .createdAt!),
                                                   ),
                                                   _buildActionsCell(
                                                       _pagedData[i]),
