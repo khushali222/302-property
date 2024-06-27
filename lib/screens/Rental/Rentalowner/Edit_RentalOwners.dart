@@ -83,7 +83,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
 
     name.text = widget.rentalOwner.rentalOwnername!;
     comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
-   // comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
+    // comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
     primaryemail.text = widget.rentalOwner.rentalOwnerPrimaryEmail!;
     alternativeemail.text = widget.rentalOwner.rentalOwnerAlternateEmail!;
     phonenum.text = widget.rentalOwner.rentalOwnerPhoneNumber!;
@@ -121,7 +121,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
 
- // bool birthdateerror = false;
+  // bool birthdateerror = false;
   bool startdatederror = false;
   bool enddatederror = false;
 
@@ -177,9 +177,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor:
-                Color.fromRGBO(21, 43, 83, 1), // Header background color
+            const Color.fromRGBO(21, 43, 83, 1), // Header background color
             // accentColor: Colors.white, // Button text color
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
@@ -211,9 +211,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor:
-                Color.fromRGBO(21, 43, 83, 1), // Header background color
+            const Color.fromRGBO(21, 43, 83, 1), // Header background color
             // accentColor: Colors.white, // Button text color
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
@@ -247,15 +247,15 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Image.asset("assets/images/logo.png"),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.circle_grid_3x3,
                     color: Colors.black,
                   ),
@@ -263,7 +263,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   false),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.house,
                     color: Colors.black,
                   ),
@@ -271,7 +271,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   false),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.person_add,
                     color: Colors.black,
                   ),
@@ -279,7 +279,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   false),
               buildDropdownListTile(
                   context,
-                  FaIcon(
+                  const FaIcon(
                     FontAwesomeIcons.key,
                     size: 20,
                     color: Colors.black,
@@ -289,7 +289,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   selectedSubtopic: "Properties"),
               buildDropdownListTile(
                   context,
-                  FaIcon(
+                  const FaIcon(
                     FontAwesomeIcons.thumbsUp,
                     size: 20,
                     color: Colors.black,
@@ -317,22 +317,22 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
-                padding: EdgeInsets.only(top: 8, left: 10),
+                padding: const EdgeInsets.only(top: 8, left: 10),
                 width: MediaQuery.of(context).size.width * .91,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: const Color.fromRGBO(21, 43, 81, 1),
                   boxShadow: [
-                    BoxShadow(
+                    const BoxShadow(
                       color: Colors.grey,
                       offset: Offset(0.0, 1.0), //(x,y)
                       blurRadius: 6.0,
                     ),
                   ],
                 ),
-                child: Text(
+                child: const Text(
                   "Add Rental Owners",
                   style: TextStyle(
                       color: Colors.white,
@@ -352,7 +352,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border:
+                  Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -361,45 +362,45 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Personal information",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: const Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                MediaQuery.of(context).size.width * .045),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //first name
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Name",
                             style: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -409,7 +410,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -423,27 +424,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: name,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter name",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: nameerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(11),
+                                          contentPadding:
+                                          const EdgeInsets.all(11),
                                         ),
                                       ),
                                     ),
@@ -452,53 +454,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       nameerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  namemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            namemessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //company name
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Company Name",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -508,7 +510,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -522,27 +524,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: comname,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter company name",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: comnameerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -551,28 +554,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       comnameerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  comnamemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            comnamemessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //birth date
@@ -684,7 +687,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       //         ],
                       //       )
                       //     : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                     ],
@@ -693,7 +696,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           //merchent id
@@ -706,7 +709,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border:
+                  Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -715,39 +719,39 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Merchant Id",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: const Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                MediaQuery.of(context).size.width * .045),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Processor Id",
                             style: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Padding(
@@ -758,42 +762,45 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               children: _controllers.entries.map((entry) {
                                 return Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                                   child: Row(
                                     children: [
                                       Expanded(
                                         child: Material(
                                           elevation: 3,
                                           borderRadius:
-                                              BorderRadius.circular(5),
+                                          BorderRadius.circular(5),
                                           child: Container(
                                             height: 50,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                               color: Colors.white,
                                               border: Border.all(
-                                                  color: Color(0xFF8A95A8)),
+                                                  color:
+                                                  const Color(0xFF8A95A8)),
                                             ),
                                             child: Stack(
                                               children: [
                                                 Positioned.fill(
                                                   child: TextField(
                                                     controller: entry.value,
-                                                    cursorColor: Color.fromRGBO(
+                                                    cursorColor:
+                                                    const Color.fromRGBO(
                                                         21, 43, 81, 1),
-                                                    decoration: InputDecoration(
+                                                    decoration:
+                                                    const InputDecoration(
                                                       border: InputBorder.none,
                                                       contentPadding:
-                                                          EdgeInsets.only(
-                                                              top: 12.5,
-                                                              bottom: 12.5,
-                                                              left: 15),
+                                                      EdgeInsets.only(
+                                                          top: 12.5,
+                                                          bottom: 12.5,
+                                                          left: 15),
                                                       hintText:
-                                                          "Enter processor",
+                                                      "Enter processor",
                                                       hintStyle: TextStyle(
                                                         color:
-                                                            Color(0xFF8A95A8),
+                                                        Color(0xFF8A95A8),
                                                         fontSize: 13,
                                                       ),
                                                     ),
@@ -806,8 +813,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               .02),
                                       InkWell(
                                         onTap: () {
@@ -815,11 +822,11 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         child: Container(
                                           padding: EdgeInsets.zero,
-                                          child: FaIcon(
+                                          child: const FaIcon(
                                             FontAwesomeIcons.trashCan,
                                             size: 20,
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                            Color.fromRGBO(21, 43, 81, 1),
                                           ),
                                         ),
                                       ),
@@ -828,7 +835,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 );
                               }).toList(),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -846,17 +853,18 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           .3,
                                       decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        BorderRadius.circular(5.0),
+                                        color:
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         boxShadow: [
-                                          BoxShadow(
+                                          const BoxShadow(
                                             color: Colors.grey,
                                             offset: Offset(0.0, 1.0), //(x,y)
                                             blurRadius: 6.0,
                                           ),
                                         ],
                                       ),
-                                      child: Center(
+                                      child: const Center(
                                         child: Text(
                                           "Add another",
                                           style: TextStyle(
@@ -879,7 +887,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           //management agreement
@@ -892,7 +900,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border:
+                  Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -901,45 +910,45 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Management Agreement ",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: const Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                MediaQuery.of(context).size.width * .045),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //start date
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Start Date",
                             style: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -949,7 +958,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -964,29 +973,31 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: startdateController,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "mm/dd/yyyy",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: startdatederror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(3),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                           suffixIcon: IconButton(
-                                            icon: Icon(Icons.calendar_today),
+                                            icon: const Icon(
+                                                Icons.calendar_today),
                                             onPressed: () {
                                               _startDate(context);
                                               setState(() {
@@ -1009,53 +1020,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       startdatederror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  startdatemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            startdatemessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //enddate
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 3,
                           ),
                           Text(
                             "End Date",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1065,7 +1076,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1080,29 +1091,31 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: enddateController,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "mm/dd/yyyy",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: enddatederror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(3),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                           suffixIcon: IconButton(
-                                            icon: Icon(Icons.calendar_today),
+                                            icon: const Icon(
+                                                Icons.calendar_today),
                                             onPressed: () => _endDate(context),
                                           ),
                                         ),
@@ -1120,26 +1133,26 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       enddatederror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  enddatemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            enddatemessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
                     ],
                   ),
@@ -1147,7 +1160,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           //contact information
@@ -1160,7 +1173,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border:
+                  Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -1169,45 +1183,45 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Contact information",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: const Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                MediaQuery.of(context).size.width * .045),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //primary email
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Primary E-mail",
                             style: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1217,7 +1231,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1231,27 +1245,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: primaryemail,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter primary e-mail",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: primaryemailerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1260,53 +1275,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       primaryemailerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  primaryemailmessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            primaryemailmessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //alternative email
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 3,
                           ),
                           Text(
                             "Alternative E-mail",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1316,7 +1331,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1330,27 +1345,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: alternativeemail,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter alternative e-mail ",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: alternativeerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1359,53 +1375,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       alternativeerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  alternativemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            alternativemessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //phonenumber
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Phone Number",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1415,7 +1431,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1429,27 +1445,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: phonenum,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: phonenumerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1458,53 +1475,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       phonenumerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  phonenummessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            phonenummessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //homenumber
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Home Number",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1514,7 +1531,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1528,27 +1545,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: homenum,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter home number",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: homenumerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1557,53 +1575,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       homenumerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  homenummessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            homenummessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //office number
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Office Number",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1613,7 +1631,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1627,27 +1645,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: officenum,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter office number",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: officenumerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1656,53 +1675,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       officenumerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  officenummessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            officenummessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //street address
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Street Address",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1712,7 +1731,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1726,27 +1745,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: street2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter street address",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: street2error
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1755,53 +1775,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       street2error
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  street2message,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            street2message,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //enter city
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "City",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1811,7 +1831,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1825,27 +1845,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: city2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter city",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: city2error
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1854,53 +1875,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       city2error
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  city2message,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            city2message,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //emter state
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "State",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -1910,7 +1931,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -1924,27 +1945,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: state2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter state",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: state2error
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -1953,53 +1975,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       state2error
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  state2message,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            state2message,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //enter country
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Country",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -2009,7 +2031,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -2023,27 +2045,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: county2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter country",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: county2error
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -2052,53 +2075,53 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       county2error
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  county2message,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            county2message,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //postal code
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Postal Code",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -2108,7 +2131,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -2122,27 +2145,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: code2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter postal code",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: code2error
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -2151,26 +2175,26 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       code2error
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  code2message,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            code2message,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
                     ],
                   ),
@@ -2178,7 +2202,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           //tax payer information
@@ -2191,7 +2215,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border:
+                  Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -2200,44 +2225,44 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Tax Payer Information ",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: const Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                MediaQuery.of(context).size.width * .045),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Tax Identify Type",
                             style: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -2247,7 +2272,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -2261,27 +2286,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: taxtype,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter tax identify type",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: taxtypeerror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -2290,52 +2316,52 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       taxtypeerror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  taxtypemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            taxtypemessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 3,
                           ),
                           Text(
                             "Tax PayerId",
                             style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
+                              // color: Colors.grey,
+                                color: const Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                           Expanded(
                             child: Material(
                               elevation: 4,
@@ -2345,7 +2371,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   border: Border.all(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                 ),
                                 child: Stack(
@@ -2359,27 +2385,28 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: taxid,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                        const Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter SSN or EIN",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 .037,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: taxiderror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: const BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding:
+                                          const EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),
@@ -2388,26 +2415,26 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         ],
                       ),
                       taxiderror
                           ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  taxidmessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
+                        children: [
+                          const Spacer(),
+                          Text(
+                            taxidmessage,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize:
+                                MediaQuery.of(context).size.width *
+                                    .035),
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                        ],
+                      )
                           : Container(),
                     ],
                   ),
@@ -2415,7 +2442,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Row(
@@ -2604,46 +2631,58 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
                   SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                    String? adminId = prefs.getString("adminId");
-                    if (adminId != null) {
-                      try {
-                        await RentalOwnerService().Edit_Rentalowners(
-                          adminId: adminId,
-                          rentalownerId: widget.rentalOwner.rentalownerId,
-                          rentalOwnerName: name.text,
-                          rentalOwnerPrimaryEmail: primaryemail.text,
-                          rentalOwnerAlternateEmail: alternativeemail.text,
-                          rentalOwnerPhoneNumber: phonenum.text,
-                          rentalOwnerHomeNumber: homenum.text,
-                          rentalOwnerBusinessNumber: officenum.text,
-                          startDate:startdateController.text ,
-                          endDate: enddateController.text,
-                          texpayerId: taxid.text,
-                          textIdentityType: taxtype.text,
-                          city: city2.text,
-                          state: state2.text,
-                          streetAddress: street2.text,
-                          country: county2.text,
-                          postalCode: code2.text,
-                        );
-                        setState(() {
-                          widget.rentalOwner.rentalOwnername = name.text;
-                          widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
-                          widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
-                          isLoading = false;
-                        });
-                        Navigator.of(
-                            context).pop(true);
-                        reload_Screen();
-                      } catch (e) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                        // Handle error
-                      }
+                  await SharedPreferences.getInstance();
+                  String? adminId = prefs.getString("adminId");
+                  if (adminId != null &&
+                      name.text.isNotEmpty &&
+                      comname.text.isNotEmpty &&
+                      startdateController.text.isNotEmpty &&
+                      enddateController.text.isNotEmpty &&
+                      primaryemail.text.isNotEmpty &&
+                      alternativeemail.text.isNotEmpty &&
+                      phonenum.text.isNotEmpty &&
+                      homenum.text.isNotEmpty &&
+                      officenum.text.isNotEmpty &&
+                      street2.text.isNotEmpty &&
+                      city2.text.isNotEmpty &&
+                      state2.text.isNotEmpty &&
+                      county2.text.isNotEmpty &&
+                      code2.text.isNotEmpty &&
+                      taxtype.text.isNotEmpty &&
+                      taxid.text.isNotEmpty) {
+                    try {
+                      await RentalOwnerService().Edit_Rentalowners(
+                        adminId: adminId,
+                        rentalownerId: widget.rentalOwner.rentalownerId,
+                        rentalOwnerName: name.text,
+                        rentalOwnerPrimaryEmail: primaryemail.text,
+                        rentalOwnerAlternateEmail: alternativeemail.text,
+                        rentalOwnerPhoneNumber: phonenum.text,
+                        rentalOwnerHomeNumber: homenum.text,
+                        rentalOwnerBusinessNumber: officenum.text,
+                        startDate: startdateController.text,
+                        endDate: enddateController.text,
+                        texpayerId: taxid.text,
+                        textIdentityType: taxtype.text,
+                        city: city2.text,
+                        state: state2.text,
+                        streetAddress: street2.text,
+                        country: county2.text,
+                        postalCode: code2.text,
+                      );
+                      setState(() {
+                        isLoading = false;
+                      });
+                      Navigator.of(context).pop(true);
+                      reload_Screen();
+                    } catch (e) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      // Handle error
                     }
-                    },
+                  }
+                },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
@@ -2651,9 +2690,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     width: MediaQuery.of(context).size.width * .36,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: const Color.fromRGBO(21, 43, 81, 1),
                       boxShadow: [
-                        BoxShadow(
+                        const BoxShadow(
                           color: Colors.grey,
                           offset: Offset(0.0, 1.0), //(x,y)
                           blurRadius: 6.0,
@@ -2661,8 +2700,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       ],
                     ),
                     child: Center(
-                      child:
-                      Text(
+                      child: Text(
                         "Edit Rental Owner",
                         style: TextStyle(
                             color: Colors.white,
@@ -2673,18 +2711,18 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               InkWell(
-                  onTap: (){
-                    Navigator.pop(context);
-                  },
-                  child: Text("Cancel"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel"),
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
         ],
@@ -2695,5 +2733,4 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   reload_Screen() {
     setState(() {});
   }
-
 }

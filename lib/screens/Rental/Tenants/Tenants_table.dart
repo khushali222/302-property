@@ -266,7 +266,7 @@ class _Tenants_tableState extends State<Tenants_table> {
             builder:
                 (context) =>
                 EditTenants(
-                  tenants: tenants,
+                  tenants: tenants, tenantId:  tenants.tenantId!,
                 )));
     if(check == true){
       setState(() {
@@ -1209,7 +1209,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                         builder:
                                                                             (context) =>
                                                                                 EditTenants(
-                                                                              tenants: tenants,
+                                                                              tenants: tenants, tenantId:  tenants.tenantId!,
                                                                             )));
                                                                if(check == true){
                                                                  setState(() {

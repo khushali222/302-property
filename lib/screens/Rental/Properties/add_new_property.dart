@@ -384,7 +384,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   List<List<Widget>> propertyGroups = [];
-//  List<List<TextEditingController>> propertyGroupControllers = [];
+ //  List<List<TextEditingController>> propertyGroupControllers = [];
   List<File?> propertyGroupImages = [];
   List<String?> propertyGroupImagenames = [];
   File? _image;
@@ -9897,13 +9897,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               }
                             }
 
-
                             RentalRequest rentalrequest = RentalRequest(
                                 rentalOwner: owners,
                                 rental: rentals,
                                 units: units);
-                            Rental_PropertiesRepository()
-                                .createRental(rentalrequest);
+                           await  Rental_PropertiesRepository()
+                                .createRental(rentalrequest).then((value) {
+                             setState(() {
+                               loading = false;
+                             });
+                              Navigator.of(context).pop(true);
+
+                            });
 
                             // await  Rental_PropertiesRepository().addProperties(
                             //   adminId: adminId!,
@@ -9916,10 +9921,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             //   staffmember_id: widget.staff!.staffmemberId,
                             //   processor_id: proid.text,
                             // );
-                            setState(() {
-                              loading = false;
-                            });
-                            // Navigator.of(context).pop(true);
+
+
                             //  } catch (e) {
                             //   print(e);
                           }

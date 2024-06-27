@@ -531,6 +531,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           final result = await Navigator.of(context).push(
                               MaterialPageRoute(
                                   builder: (context) => Add_new_property()));
+                          print(result);
                           if (result == true) {
                             setState(() {
                               futureRentalOwners =
@@ -816,8 +817,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       data = snapshot.data!
                           .where((properties) =>
                       properties.propertyTypeData?.propertyType == selectedValue
-                      )
-                          .toList();
+                      ).toList();
                     }
                     sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();
@@ -825,7 +825,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         .skip(currentPage * itemsPerPage)
                         .take(itemsPerPage)
                         .toList();
-
                     return SingleChildScrollView(
                       child: Column(
                         children: [

@@ -33,11 +33,11 @@ class PropertiesRepository {
     print(properties.rentalId);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString("token");
-
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
+
     final body = jsonEncode({
       "rentalOwner": {
         "admin_id": properties.adminId,
@@ -66,6 +66,7 @@ class PropertiesRepository {
         "staffmember_id": properties.staffMemberId,
       },
     });
+    print(body);
     final response = await http.put(url, headers: headers, body: body);
     print(response.body);
     if (response.statusCode == 200) {

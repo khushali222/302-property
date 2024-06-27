@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
-
+import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
+
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -16,22 +18,23 @@ import '../../../repository/tenants.dart';
 
 class EditTenants extends StatefulWidget {
   Tenant tenants;
-  EditTenants({super.key, required this.tenants});
+
+  final String tenantId;
+  EditTenants({
+    required this.tenantId,
+    required this.tenants,
+  });
   @override
   State<EditTenants> createState() => _EditTenantsState();
 }
 
 class _EditTenantsState extends State<EditTenants> {
   final TextEditingController firstName = TextEditingController();
-
   final TextEditingController lastName = TextEditingController();
-
   final TextEditingController phoneNumber = TextEditingController();
   bool obsecure = true;
   final TextEditingController workNumber = TextEditingController();
-
   final TextEditingController email = TextEditingController();
-
   final TextEditingController alterEmail = TextEditingController();
 
   final TextEditingController passWord = TextEditingController();
@@ -89,38 +92,45 @@ class _EditTenantsState extends State<EditTenants> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    firstName.text = widget.tenants.tenantFirstName!;
-    lastName.text = widget.tenants.tenantLastName!;
-    phoneNumber.text = widget.tenants.tenantPhoneNumber!;
-    workNumber.text = widget.tenants.tenantAlternativeNumber!;
-    email.text = widget.tenants.tenantEmail!;
-    alterEmail.text = widget.tenants.tenantAlternativeEmail!;
-    passWord.text = widget.tenants.tenantPassword!;
-    dob.text = widget.tenants.tenantBirthDate!;
-    taxPayerId.text = widget.tenants.taxPayerId!;
-    comments.text = widget.tenants.comments!;
-    contactName.text = widget.tenants.emergencyContact?.name ??"";
-    relationToTenant.text = widget.tenants.emergencyContact!.relation ??"";
-    emergencyPhoneNumber.text = widget.tenants.emergencyContact!.phoneNumber ??"" ;
-    emergencyEmail.text = widget.tenants.emergencyContact!.email ??"" ;
-    _dateController.text = widget.tenants.tenantBirthDate!;
-    fetchCompany();
     super.initState();
+    fetchAndSetTenantDetails(widget.tenantId);
   }
 
+  Future<void> fetchAndSetTenantDetails(String tenantId) async {
+    print('tenant is ;$tenantId');
+    Tenant tenant = await fetchTenantDetails(tenantId);
+    setState(() {
+      firstName.text = tenant.tenantFirstName!;
+      lastName.text = tenant.tenantLastName!;
+      phoneNumber.text = tenant.tenantPhoneNumber!;
+      workNumber.text = tenant.tenantAlternativeNumber!;
+      email.text = tenant.tenantEmail!;
+      alterEmail.text = tenant.tenantAlternativeEmail!;
+      passWord.text = tenant.tenantPassword!;
+      _dateController.text = tenant.tenantBirthDate!;
 
-  bool isLoading = false;
-  String? errorMessage;
-  bool formValid = false;
+      taxPayerId.text = tenant.taxPayerId!;
+      comments.text = tenant.comments!;
+      fetchCompany();
+      if (tenant.emergencyContact != null) {
+        contactName.text = tenant.emergencyContact!.name!;
+        relationToTenant.text = tenant.emergencyContact!.relation!;
+        emergencyEmail.text = tenant.emergencyContact!.email!;
+        emergencyPhoneNumber.text = tenant.emergencyContact!.phoneNumber!;
+      }
+    });
+  }
+
   String companyName = '';
+  String errorMessage = '';
   Future<void> fetchCompany() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
 
     if (adminId != null) {
       try {
-        String fetchedCompanyName = await TenantsRepository().fetchCompanyName(adminId);
+        String fetchedCompanyName =
+        await TenantsRepository().fetchCompanyName(adminId);
         setState(() {
           companyName = fetchedCompanyName;
         });
@@ -130,7 +140,47 @@ class _EditTenantsState extends State<EditTenants> {
       }
     }
   }
+  bool isValidEmail(String email) {
+    String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(email);
+  }
 
+  Future<Tenant> fetchTenantDetails(String tenantId) async {
+    print('Tenant id is: $tenantId');
+    final url = Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId');
+    print('Fetching tenant details from $url');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        var data = jsonResponse["data"];
+        print('Response data: $data');
+
+        if (data is List && data.isNotEmpty) {
+          return Tenant.fromJson(data.first);
+        } else if (data is Map<String, dynamic>) {
+          return Tenant.fromJson(data);
+        } else {
+          print('Unexpected data format: $data');
+          throw Exception('Unexpected data format');
+        }
+      } else if (response.statusCode == 404) {
+        print('Tenant not found. Status code: 404');
+        throw Exception('Tenant not found');
+      } else {
+        print(
+            'Failed to load tenant details. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        throw Exception('Failed to load tenant details');
+      }
+    } catch (error) {
+      print('Exception occurred: $error');
+      throw Exception('Failed to load tenant details: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -357,7 +407,10 @@ class _EditTenantsState extends State<EditTenants> {
                               controller: email,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'please enter email';
+                                  return 'Please enter an email';
+                                } else if (!isValidEmail(value)) {
+                                  print('!isValidEmail(value) invalid');
+                                  return 'Please enter a valid email';
                                 }
                                 return null;
                               },
@@ -377,6 +430,15 @@ class _EditTenantsState extends State<EditTenants> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: 'Enter alternative email',
                               controller: alterEmail,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter an email';
+                                } else if (!isValidEmail(value)) {
+                                  print('!isValidEmail(value) invalid');
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
                             ),
                             SizedBox(
                               height: 10,
@@ -660,6 +722,15 @@ class _EditTenantsState extends State<EditTenants> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: 'Enter email',
                               controller: emergencyEmail,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter an email';
+                                } else if (!isValidEmail(value)) {
+                                  print('!isValidEmail(value) invalid');
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
                             ),
                             SizedBox(
                               height: 10,
@@ -707,14 +778,19 @@ class _EditTenantsState extends State<EditTenants> {
                               if (_formkey.currentState!.validate()) {
                                 setState(() {
                                   formValid = false;
-                                  isLoading = true;
-                                  errorMessage = null;
                                 });
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                String? adminId = prefs.getString("adminId");
+
+                                setState(() {
+                                  isLoading = true;
+                                });
+
+                                SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                                String adminId = prefs.getString("adminId")!;
                                 if (adminId != null) {
                                   try {
                                     await TenantsRepository().editTenant(
+
                                       tenantId: widget.tenants.tenantId ?? "",
                                       adminId: adminId,
                                       tenantFirstName: firstName.text,
@@ -728,21 +804,29 @@ class _EditTenantsState extends State<EditTenants> {
                                       taxPayerId: taxPayerId.text,
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,
-                                      emergencyContactRelation: relationToTenant.text,
-                                      emergencyContactEmail: emergencyEmail.text,
-                                      emergencyContactPhoneNumber: emergencyPhoneNumber.text,
+                                      emergencyContactRelation:
+                                      relationToTenant.text,
+                                      emergencyContactEmail:
+                                      emergencyEmail.text,
+                                      emergencyContactPhoneNumber:
+                                      emergencyPhoneNumber.text,
                                       companyName: companyName,
                                     );
-                                    Fluttertoast.showToast(msg: "Tenant updated successfully");
+                                    Fluttertoast.showToast(
+                                        msg: "Tenant updated successfully");
                                     setState(() {
                                       isLoading = false;
-                                      errorMessage = null;
+                                      errorMessage = '';
                                       widget.tenants.tenantFirstName = firstName.text;
                                       widget.tenants.tenantLastName = lastName.text;
+                                      widget.tenants.tenantPhoneNumber = phoneNumber.text;
+                                      widget.tenants.tenantAlternativeEmail = alterEmail.text;
+
                                     });
                                     Navigator.of(context).pop(true);
                                   } catch (e) {
-                                    Fluttertoast.showToast(msg: "Failed to update tenant");
+                                    Fluttertoast.showToast(
+                                        msg: "Failed to update tenant");
                                     setState(() {
                                       isLoading = false;
                                       errorMessage = e.toString();
@@ -751,7 +835,6 @@ class _EditTenantsState extends State<EditTenants> {
                                     // Handle error
 
                                     print(e.toString());
-
                                   }
                                 } else {
                                   setState(() {
@@ -759,10 +842,50 @@ class _EditTenantsState extends State<EditTenants> {
                                     errorMessage = "Admin ID not found";
                                   });
                                 }
-                              } else {
+
                                 setState(() {
-                                  errorMessage = 'Form is invalid';
+                                  isLoading = false;
                                 });
+
+                                // if (success) {
+                                //   print('Form is valid');
+                                // } else {
+                                //   print('Form is invalid');
+                                // }
+
+                                // SharedPreferences prefs =
+                                //     await SharedPreferences.getInstance();
+                                // String adminId = prefs.getString("adminId")!;
+                                // EmergencyContact emergencyContact =
+                                //     EmergencyContact(
+                                //   name: contactName.text,
+                                //   relation: relationToTenant.text,
+                                //   email: emergencyEmail.text,
+                                //   phoneNumber: emergencyPhoneNumber.text,
+                                // );
+
+                                // Tenant tenant = Tenant(
+                                //   adminId: adminId,
+                                //   tenantFirstName: firstName.text,
+                                //   tenantLastName: lastName.text,
+                                //   tenantPhoneNumber: phoneNumber.text,
+                                //   tenantAlternativeNumber: workNumber.text,
+                                //   tenantEmail: email.text,
+                                //   tenantAlternativeEmail: alterEmail.text,
+                                //   tenantPassword: passWord.text,
+                                //   tenantBirthDate: _dateController.text,
+                                //   taxPayerId: taxPayerId.text,
+                                //   comments: comments.text,
+                                //   emergencyContact: emergencyContact,
+                                // );
+
+                                // bool success = await TenantsRepository()
+                                //     .EditTenant(tenant, widget.tenantId);
+
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              } else {
                                 print('Form is invalid');
                               }
                             },
@@ -774,7 +897,7 @@ class _EditTenantsState extends State<EditTenants> {
                               ),
                             )
                                 : Text(
-                               'Edit Tenant',
+                              'Edit Tenant',
                               style: TextStyle(color: Color(0xFFf7f8f9)),
                             ),
                           ),
@@ -793,15 +916,11 @@ class _EditTenantsState extends State<EditTenants> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                         BorderRadius.circular(8.0))),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
+                                onPressed: () {},
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(color: Color(0xFF748097)),
-                                )
-                            )
-                        ),
+                                )))
                       ],
                     ),
                   ),
@@ -814,6 +933,73 @@ class _EditTenantsState extends State<EditTenants> {
     );
   }
 
+  bool isLoading = false;
+  bool formValid = true;
+
+  Future<void> EditTenant() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.getString("adminId")!;
+    if (adminId != null) {
+      try {
+        await TenantsRepository().editTenant(
+          tenantId: widget.tenants.tenantId ?? "",
+          adminId: adminId,
+          tenantFirstName: firstName.text,
+          tenantLastName: lastName.text,
+          tenantPhoneNumber: phoneNumber.text,
+          tenantAlternativeNumber: workNumber.text,
+          tenantEmail: email.text,
+          tenantAlternativeEmail: alterEmail.text,
+          tenantPassword: passWord.text,
+          tenantBirthDate: _dateController.text,
+          taxPayerId: taxPayerId.text,
+          comments: comments.text,
+          emergencyContactName: contactName.text,
+          emergencyContactRelation: relationToTenant.text,
+          emergencyContactEmail: emergencyEmail.text,
+          emergencyContactPhoneNumber: emergencyPhoneNumber.text,
+          companyName: companyName,
+        );
+        Fluttertoast.showToast(msg: "Tenant updated successfully");
+        setState(() {
+          isLoading = false;
+          errorMessage = '';
+          // widget.tenants.tenantFirstName = firstName.text;
+          // widget.tenants.tenantLastName = lastName.text;
+        });
+        Navigator.of(context).pop(true);
+      } catch (e) {
+        Fluttertoast.showToast(msg: "Failed to update tenant");
+        setState(() {
+          isLoading = false;
+          errorMessage = e.toString();
+        });
+
+        // Handle error
+
+        print(e.toString());
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+        errorMessage = "Admin ID not found";
+      });
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+
+    // if (success) {
+    //   print('Form is valid');
+    // } else {
+    //   print('Form is invalid');
+    // }
+  }
 }
 
 class CustomTextField extends StatefulWidget {

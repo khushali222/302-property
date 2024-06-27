@@ -212,6 +212,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
 
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -592,7 +594,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     Positioned.fill(
                                       child: TextField(
                                         onChanged: (value) {
-
                                           setState(() {
                                             birthdateerror = false;
                                             // _selectDate(context);
@@ -623,7 +624,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           contentPadding: EdgeInsets.all(12),
                                           suffixIcon: IconButton(
                                             icon: Icon(Icons.calendar_today),
-                                            onPressed: () => _startDate(context),
+                                            onPressed: () => _birthDate(context),
                                           ),
                                         ),
                                         readOnly: true,
