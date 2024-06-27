@@ -9738,6 +9738,15 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             String? id = prefs.getString("adminId");
                           PropertiesRepository().updateRental(widget.properties).then((value) {
                             setState(() {
+                              widget.properties.rentalAddress = address.text;
+                              widget.properties.propertyTypeData?.propertyType = selectedpropertytype;
+                              widget.properties.propertyTypeData?.propertySubType = selectedpropertytype;
+                              widget.properties.rentalOwnerData?.rentalOwnerFirstName = firstname.text;
+                              widget.properties.rentalOwnerData?.rentalOwnerLastName= lastname.text;
+                              widget.properties.rentalOwnerData?.rentalOwnerCompanyName = comname.text;
+                              widget.properties.rentalOwnerData?.city = city.text;
+                              widget.properties.rentalOwnerData?.rentalOwnerPrimaryEmail = primaryemail.text;
+                              widget.properties.rentalOwnerData?.rentalOwnerPhoneNumber = phonenum.text;
                               isLoading = false;
                             });
                             Navigator.of(context).pop(true);

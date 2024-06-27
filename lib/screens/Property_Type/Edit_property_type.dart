@@ -412,6 +412,11 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   id: widget.property.propertyId
                                 ).then((value) {
                                   setState(() {
+                                    widget.property.propertyType = selectedValue;
+                                    widget.property.propertysubType = subtype.text;
+                                    widget.property.adminId = id;
+                                    widget.property.isMultiunit = isChecked;
+                                    widget.property.propertyId = widget.property.propertyId;
                                     isLoading = false;
                                   });
                                   Navigator.of(context).pop(true);

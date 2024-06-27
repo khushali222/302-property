@@ -60,7 +60,7 @@ void navigateToOption(BuildContext context, String option,) {
    "Tenants": (context) => Tenants_table(),
     "Vendor":(context)=>Vendor_table(),
     "Work Order":(context)=>Workorder_table(),
-    "Rent Roll":(context)=>RentalOwners_table(),
+   // "Rent Roll":(context)=>RentalOwners_table(),
     "Applicants":(context)=>Applicants_table(),
   };
   Navigator.push(

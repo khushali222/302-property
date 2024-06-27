@@ -30,8 +30,8 @@ import 'Add_RentalOwners.dart';
 import 'package:http/http.dart'as http;
 
 class Rentalowner_table extends StatefulWidget {
-  RentalOwner? rentalownersummery;
-  Rentalowner_table({super.key,this.rentalownersummery});
+  // RentalOwner? rentalownersummery;
+  // Rentalowner_table({super.key,this.rentalownersummery});
 
   @override
   State<Rentalowner_table> createState() => _Rentalowner_tableState();
@@ -39,7 +39,7 @@ class Rentalowner_table extends StatefulWidget {
 
 class _Rentalowner_tableState extends State<Rentalowner_table> {
 
-  late Future<List<RentalOwner>> futureStaffMembers;
+  late Future<List<RentalOwnerData>> futureRentalOwners;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -65,11 +65,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   bool ascending2 = false;
   bool ascending3 = false;
 
-  void sortData(List<RentalOwner> data) {
+  void sortData(List<RentalOwnerData> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.rentalOwnerName!.compareTo(b.rentalOwnerName!)
-          : b.rentalOwnerName!.compareTo(a.rentalOwnerName!));
+          ? a.rentalOwnername!.compareTo(b.rentalOwnername!)
+          : b.rentalOwnername!.compareTo(a.rentalOwnername!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
           ? a.rentalOwnerPhoneNumber!.compareTo(b.rentalOwnerPhoneNumber!)
@@ -257,18 +257,18 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   @override
   void initState() {
     super.initState();
-    futureStaffMembers = RentalOwnerService().fetchRentalOwners("");
+    futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
 
     fetchRentalOwneradded();
   }
-  List<RentalOwner> _tableData = [];
+  List<RentalOwnerData> _tableData = [];
   int totalrecords = 0;
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<RentalOwner> get _pagedData {
+  List<RentalOwnerData> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex, endIndex > _tableData.length ? _tableData.length : endIndex);
@@ -281,7 +281,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(RentalOwner d) getField, int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(RentalOwnerData d) getField, int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -302,13 +302,22 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   }
 
 
-  void handleEdit(RentalOwner rentalOwner) async {
+  void handleEdit(RentalOwnerData rentalOwner) async {
     // Handle edit action
     print('Edit ${rentalOwner.rentalownerId}');
-    final result = await Navigator.push(
+    var check = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => Edit_rentalowners(rentalOwner: rentalOwner,)));
+    if(check == true){
+      setState(() {
+
+      });
+    }
+    // final result = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_rentalowners(rentalOwner: rentalOwner,)));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -340,9 +349,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await StaffMemberRepository().DeleteStaffMember(id: id);
+            await RentalOwnerService().DeleteRentalOwners(rentalownerId: id);
             setState(() {
-              futureStaffMembers = RentalOwnerService().fetchRentalOwners("");
+              futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
             });
             Navigator.pop(context);
           },
@@ -353,10 +362,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   }
 
 
-  void handleDelete(RentalOwnerData staff) {
-    // _showDeleteAlert(context, staff.staffmemberId!);
-    // // Handle delete action
-    // print('Delete ${staff.staffmemberId}');
+  void handleDelete(RentalOwnerData rental) {
+    _showDeleteAlert(context, rental.rentalownerId!);
+    // Handle delete action
+    print('Delete ${rental.rentalownerId}');
   }
   final _scrollController = ScrollController();
   void handleTap(RentalOwnerSummey rentalownersummery ) async {
@@ -518,7 +527,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                 builder: (context) => Add_rentalowners()));
                         if (result == true) {
                           setState(() {
-                            futureStaffMembers =  RentalOwnerService().fetchRentalOwners("");
+                            futureRentalOwners =  RentalOwnerService().fetchRentalOwners("");
                             //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                           });
                         }
@@ -595,7 +604,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 22),
                   Material(
@@ -604,7 +613,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500) ?
                       40 :50,
-                      width: 140,
+                      width: MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .52 :  MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(2),
@@ -662,8 +671,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             if(MediaQuery.of(context).size.width < 500)
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: FutureBuilder<List<RentalOwner>>(
-                future: futureStaffMembers,
+              child: FutureBuilder<List<RentalOwnerData>>(
+                future: futureRentalOwners,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: SpinKitFadingCircle(
@@ -683,7 +692,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     } else if (searchValue!.isNotEmpty) {
                       data = snapshot.data!
                           .where((rentals) =>
-                          rentals.rentalOwnerName!
+                          rentals.rentalOwnername!
                               .toLowerCase()
                               .contains(searchValue!.toLowerCase())
                       )
@@ -691,7 +700,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     } else {
                       data = snapshot.data!
                           .where((rentals) =>
-                      rentals.rentalOwnerName== searchValue)
+                      rentals.rentalOwnername== searchValue
+                      )
                           .toList();
                     }
                     sortData(data);
@@ -713,7 +723,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                               children: currentPageData.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
-                                RentalOwner rentals = entry.value;
+                                RentalOwnerData rentals = entry.value;
                                 //return CustomExpansionTile(data: Propertytype, index: index);
                                 return Container(
                                   decoration: BoxDecoration(
@@ -770,7 +780,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                             children: <Widget>[
                                               Expanded(
                                                 child: Text(
-                                                  '${rentals.rentalOwnerName}',
+                                                  '${rentals.rentalOwnername}',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -806,8 +816,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                       SizedBox(width: 10,),
 
                                                       InkWell(
-                                                        onTap:(){
-                                                          Navigator.push(
+                                                        onTap:()async{
+
+                                                          var check = await Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
                                                                   builder:
@@ -815,6 +826,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                       Edit_rentalowners(
                                                                         rentalOwner: rentals,
                                                                       )));
+                                                          if(check == true){
+                                                            setState(() {
+
+                                                            });
+                                                          }
                                                         },
                                                         child: Container(
                                                           child: FaIcon(
@@ -1029,8 +1045,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               ),
             ),
             if(MediaQuery.of(context).size.width > 500)
-            FutureBuilder<List<RentalOwner>>(
-              future: futureStaffMembers,
+            FutureBuilder<List<RentalOwnerData>>(
+              future: futureRentalOwners,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: SpinKitFadingCircle(
@@ -1042,7 +1058,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No data available'));
                 } else {
-                  List<RentalOwner>? filteredData = [];
+                  List<RentalOwnerData>? filteredData = [];
                   _tableData = snapshot.data!;
                   if (selectedRole == null && searchValue == "") {
                     filteredData = snapshot.data;
@@ -1051,10 +1067,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   } else if (searchValue.isNotEmpty) {
                     filteredData = snapshot.data!
                         .where((staff) =>
-                    staff.rentalOwnerName!.toLowerCase().contains(searchValue.toLowerCase()) ||
-                        staff.rentalOwnerName!.toLowerCase().contains(searchValue.toLowerCase()))
+                    staff.rentalOwnername!.toLowerCase().contains(searchValue.toLowerCase()) ||
+                        staff.rentalOwnername!.toLowerCase().contains(searchValue.toLowerCase()))
                         .toList();
                   }
+
                   _tableData = filteredData!;
                   totalrecords = _tableData.length;
                   return  Padding(
@@ -1074,9 +1091,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     //_buildHeader('FirstName', 0, (staff) => staff.rentalOwnerFirstName!),
                                    //  _buildHeader('LastName', 1, (staff) => staff.rentalOwnerLastName!),
                                    // _buildHeader('Name', 0, (staff) => '${staff.rentalOwnerFirstName ?? ''} ${staff.rentalOwnerLastName ?? ''}'),
-                                    _buildHeader('Name', 0, (staff) => staff.rentalOwnerName!),
-                                    _buildHeader('Phone', 1, (staff) => staff.rentalOwnerPhoneNumber!),
-                                    _buildHeader('Email', 2, (staff) => staff.rentalOwnerPrimaryEmail!),
+                                    _buildHeader('Name', 0, (rental) => rental.rentalOwnername!),
+                                    _buildHeader('Phone', 1, (rental) => rental.rentalOwnerPhoneNumber!),
+                                    _buildHeader('Email', 2, (rental) => rental.rentalOwnerPrimaryEmail!),
                                     _buildHeader('Actions',3, null),
                                   ],
                                 ),
@@ -1107,7 +1124,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 MaterialPageRoute(
                                                     builder: (context) => Rentalowners_summery(rentalOwnersid:_pagedData[i].rentalownerId!,)));
                                             },
-                                          child: _buildDataCell(_pagedData[i].rentalOwnerName??"")),
+                                          child: _buildDataCell(_pagedData[i].rentalOwnername??"")),
                                       // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
                                       _buildDataCell(_pagedData[i].rentalOwnerPhoneNumber!),
                                       _buildDataCell(_pagedData[i].rentalOwnerPrimaryEmail!),
@@ -1133,7 +1150,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       ),
     );
   }
-  Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(RentalOwner d)? getField) {
+  Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(RentalOwnerData d)? getField) {
     return Container(
       height: 70,
       child: TableCell(
@@ -1178,7 +1195,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     );
   }
 
-  Widget _buildActionsCell(RentalOwner data) {
+  Widget _buildActionsCell(RentalOwnerData data) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
@@ -1202,7 +1219,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               SizedBox(width: 6,),
               InkWell(
                 onTap: (){
-
+                  handleDelete(data);
                 },
                 child: Container(
                   margin: EdgeInsets.only(top: 8,left: 8),
@@ -1293,6 +1310,4 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       ],
     );
   }
-
-
 }

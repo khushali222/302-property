@@ -14,38 +14,79 @@ import '../model/rentalowners_summery.dart';
 class RentalOwnerService {
  // final String baseUrl = 'http://192.168.1.26:4000/api/rentals';
 
-  Future<List<RentalOwner>> fetchRentalOwners(String? adminId) async {
+  Future<List<RentalOwnerData>> fetchRentalOwners(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     adminId = prefs.getString("adminId");
     final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'));
+    print('$Api_url/api/rentals/rental-owners/$adminId');
     print(adminId);
     print(response.body);
   //  print('$baseUrl/rental-owners/$adminId');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => RentalOwner.fromJson(data)).toList();
+      return jsonResponse.map((data) => RentalOwnerData.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load rental owners');
     }
   }
-  Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
-    final response = await http.post(
-      Uri.parse("$Api_url/api/rental_owner/rental_owner"),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(rentalOwner.toJson()),
-    );
+  // Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
+  //   final response = await http.post(
+  //     Uri.parse("$Api_url/api/rental_owner/rental_owner"),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: jsonEncode(rentalOwner.toJson()),
+  //   );
+  //
+  //   print(response.body);
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     // Success
+  //     print('Rental owner added successfully');
+  //     return true;
+  //   } else {
+  //     // Failure
+  //     return false;
+  //     throw Exception('Failed to add rental owner');
+  //   }
+  // }
 
-    print(response.body);
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Success
-      print('Rental owner added successfully');
-      return true;
-    } else {
-      // Failure
+  Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
+    final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
+    print(url);
+    print(jsonEncode(rentalOwner.toJson()));
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(rentalOwner.toJson()),
+      );
+
+      var responseData = jsonDecode(response.body);
+      print(responseData);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          print('Response successfully: ${responseData['data']}');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Successfully added rentalowners');
+
+          return true;
+        } else {
+          print('Failed to add rentalowners: ${responseData}');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to add rentalowners');
+          return false;
+        }
+      } else {
+        print('Failed to add tenant: ${responseData}');
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to add rentalowners');
+        return false;
+      }
+    } catch (error) {
+      print('Exception occurred: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
       return false;
-      throw Exception('Failed to add rental owner');
     }
   }
 
@@ -181,7 +222,7 @@ class RentalOwnerService {
     }
   }
 
-  Future<List<RentalOwner>> fetchRentalOwnerssummery(String rentalOwnerId) async {
+  Future<List<RentalOwnerData>> fetchRentalOwnerssummery(String rentalOwnerId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
    // adminId = prefs.getString("adminId");
    //  rentalOwnerId = "1718715476950"
@@ -194,7 +235,7 @@ class RentalOwnerService {
    // print(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)["data"];
-      return jsonResponse.map((data) => RentalOwner.fromJson(data)).toList();
+      return jsonResponse.map((data) => RentalOwnerData.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load rental owners');
     }

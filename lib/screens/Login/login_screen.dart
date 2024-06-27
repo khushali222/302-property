@@ -374,7 +374,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                         fontSize: MediaQuery.of(context).size.width * 0.03,
                         color: Colors.black),
                   ),
-                  Spacer(),
+                  // Spacer(),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(

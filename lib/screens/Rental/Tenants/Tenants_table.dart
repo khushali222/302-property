@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../constant/constant.dart';
 import '../../../model/tenants.dart';
 import '../../../widgets/drawer_tiles.dart';
+import 'package:http/http.dart'as http;
+
+import 'Tenant_summary.dart';
+import 'edit_tenants.dart';
 
 class Tenants_table extends StatefulWidget {
   @override
@@ -238,19 +245,34 @@ class _Tenants_tableState extends State<Tenants_table> {
   @override
   void initState() {
     super.initState();
-
     futureTenants = TenantsRepository().fetchTenants();
+    fetchtenantsadded();
+    fetchCompany();
   }
 
   void handleEdit(Tenant tenants) async {
-    // Handle edit action
-    // print('Edit ${tenants.tenantId}');
+    //Handle edit action
+    print('Edit ${tenants.tenantId}');
+    //
     // final result = await Navigator.push(
     //     context,
     //     MaterialPageRoute(
-    //         builder: (context) => Edit_property_type(
-    //           property: tenantId,
+    //         builder: (context) => EditTenants(
+    //            tenants: tenants,
     //         )));
+    var check = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder:
+                (context) =>
+                EditTenants(
+                  tenants: tenants,
+                )));
+    if(check == true){
+      setState(() {
+
+      });
+    }
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -258,12 +280,13 @@ class _Tenants_tableState extends State<Tenants_table> {
     }*/
   }
 
-  void _showAlert(BuildContext context, String id) {
+
+  void _showDeleteAlert(BuildContext context, String id) {
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this property!",
+      desc: "Once deleted, you will not be able to recover this Tenants!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -282,16 +305,15 @@ class _Tenants_tableState extends State<Tenants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            // var data = PropertyTypeRepository().DeletePropertyType(id: id);
-            // // Add your delete logic here
-            // setState(() {
-            //   futurePropertyTypes =
-            //       PropertyTypeRepository().fetchPropertyTypes();
-            // });
+            await TenantsRepository().deleteTenant( tenantId: id, companyName: companyName, tenantEmail: '');
+            setState(() {
+              futureTenants = TenantsRepository().fetchTenants();
+
+            });
             Navigator.pop(context);
           },
           color: Colors.red,
-        )
+        ),
       ],
     ).show();
   }
@@ -331,10 +353,14 @@ class _Tenants_tableState extends State<Tenants_table> {
   }
 
   void handleDelete(Tenant tenants) {
-    _showAlert(context, tenants.tenantId!);
+    _showDeleteAlert(context, tenants.tenantId!);
+
     // Handle delete action
     print('Delete ${tenants.tenantId}');
   }
+  // void handleDelete(BuildContext context, TenantsRepository repository, Tenant tenant) {
+  //   _showDeleteAlert(context, repository, tenant.tenantId!, tenant.companyName, tenant.tenantEmail);
+  // }
 
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Tenant d)? getField) {
@@ -508,7 +534,89 @@ class _Tenants_tableState extends State<Tenants_table> {
     );
   }
 
+  int rentalCount = 0;
+  int propertyCountLimit = 0;
+  Future<void> fetchtenantsadded() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    final response =
+    await http.get(Uri.parse('${Api_url}/api/tenant/limitation/$id'));
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201 ) {
+      print(rentalCount);
+      print(propertyCountLimit);
+      setState(() {
+        rentalCount = jsonData['rentalCount'];
+        print(rentalCount);
+        propertyCountLimit = jsonData['propertyCountLimit'];
+        print(propertyCountLimit);
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  void _showAlertforLimit(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Plan Limitation",
+      desc: "The limit for adding tenants according to the plan has been reached.",
+      style: AlertStyle(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+          descStyle: TextStyle(fontSize: 14)
+        //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Color.fromRGBO(21, 43, 83, 1),
+        ),
+        /* DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+             var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )*/
+      ],
+    ).show();
+  }
+
   final _scrollController = ScrollController();
+
+  String companyName = '';
+  Future<void> fetchCompany() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+
+    if (adminId != null) {
+      try {
+        String fetchedCompanyName = await TenantsRepository().fetchCompanyName(adminId);
+        setState(() {
+          companyName = fetchedCompanyName;
+        });
+      } catch (e) {
+        print('Failed to fetch company name: $e');
+        // Handle error state, e.g., show error message to user
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -595,16 +703,22 @@ class _Tenants_tableState extends State<Tenants_table> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => AddTenant()));
-                      if (result == true) {
-                        setState(() {
-                          futureTenants = TenantsRepository().fetchTenants();
-                          // futurePropertyTypes =
-                          //     PropertyTypeRepository().fetchPropertyTypes();
-                        });
+                      if(rentalCount < propertyCountLimit  )
+                      {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => AddTenant()));
+                        if (result == true) {
+                          setState(() {
+                            futureTenants = TenantsRepository().fetchTenants();
+                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                          });
+                        }
                       }
+                      else{
+                        _showAlertforLimit(context);
+                      }
+
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
@@ -695,7 +809,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                     child: Container(
                       // height: 40,
                       height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                      width: 140,
+                      width:MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .52 :  MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(2),
@@ -732,6 +846,33 @@ class _Tenants_tableState extends State<Tenants_table> {
                       ),
                     ),
                   ),
+                  Spacer(),
+                  Row(
+                    children: [
+                      Text(
+                        'Added : ${rentalCount.toString()}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF8A95A8),
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                      Text(
+                        'Total: ${propertyCountLimit.toString()}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF8A95A8),
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
+                      ),
+                    ],
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 10),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 25),
                 ],
               ),
             ),
@@ -855,13 +996,27 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
-                                                  child: Text(
-                                                    '${tenants.tenantFirstName} ${tenants.tenantLastName}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Tenant_summary(
+                                                                      tenantId:
+                                                                      tenants
+                                                                          .tenantId!)));
+                                                      print(
+                                                          'tenantFirstName ,${tenants.id!}');
+                                                    },
+                                                    child: Text(
+                                                      '${tenants.tenantFirstName} ${tenants.tenantLastName}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1046,17 +1201,21 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                         83,
                                                                         1),
                                                               ),
-                                                              onPressed: () {
+                                                              onPressed: ()async {
                                                                 // handleEdit(Propertytype);
-                                                                // Navigator.push(
-                                                                //     context,
-                                                                //     MaterialPageRoute(
-                                                                //         builder:
-                                                                //             (context) =>
-                                                                //             Edit_property_type(
-                                                                //               property:
-                                                                //               Propertytype,
-                                                                //             )));
+                                                               var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                EditTenants(
+                                                                              tenants: tenants,
+                                                                            )));
+                                                               if(check == true){
+                                                                 setState(() {
+
+                                                                 });
+                                                               }
                                                               },
                                                             ),
                                                             IconButton(
@@ -1073,7 +1232,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                               ),
                                                               onPressed: () {
                                                                 //handleDelete(Propertytype);
-                                                                _showAlert(
+                                                                _showDeleteAlert(
                                                                     context,
                                                                     tenants
                                                                         .tenantId!);

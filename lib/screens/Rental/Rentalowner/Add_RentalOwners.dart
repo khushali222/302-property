@@ -2621,7 +2621,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     var adminId = prefs.getString("adminId");
                     final RentalOwnerData rentalOwner = RentalOwnerData(
                       adminId:adminId ,
-                      rentalOwnerFirstName: name.text,
+                      rentalOwnername: name.text,
                       rentalOwnerLastName: lastname.text,
                       rentalOwnerCompanyName: comname.text,
                       birthDate: birthdateController.text,

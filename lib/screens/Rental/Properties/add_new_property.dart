@@ -133,7 +133,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
   Future<List<propertytype>>? futureProperties;
   String? selectedProperty;
-  Future<List<RentalOwner>>? futureRentalOwner;
+  Future<List<RentalOwners>>? futureRentalOwner;
 
   Map<String, List<propertytype>> groupPropertiesByType(
       List<propertytype> properties) {

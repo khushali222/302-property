@@ -25,7 +25,6 @@ class ProfileRepository {
   }
   Future<profile> Edit_profile(Map<String,dynamic> data) async {
     final String apiUrl = "${Api_url}/api/admin/admin_edit/";
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(jsonEncode(data));
     String? id = prefs.getString("adminId");

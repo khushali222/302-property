@@ -4,7 +4,6 @@ class RentalOwnerData {
   String? adminId;
   String? rentalOwnerFirstName;
   String? rentalOwnerLastName;
-
   String? rentalOwnername;
   String? rentalOwnerCompanyName;
   String? rentalOwnerPrimaryEmail;

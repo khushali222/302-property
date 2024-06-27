@@ -286,10 +286,19 @@ class _PropertiesTableState extends State<PropertiesTable> {
   void handleEdit(Rentals properties) async {
     // Handle edit action
     print('Edit ${properties.staffMemberId}');
-    final result = await Navigator.push(
+    var check = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => Edit_properties(properties: properties,)));
+    if(check == true){
+      setState(() {
+
+      });
+    }
+    // final result = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_properties(properties: properties,)));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -337,15 +346,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
           ),
           onPressed: () async {
             print(id);
-            var data = PropertiesRepository().DeleteProperties(id: id).then((value) {
+            var data = PropertiesRepository().DeleteProperties(id: id);
               setState(() {
                 futureRentalOwners = PropertiesRepository().fetchProperties();
                 //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
               });
-            });
-
-
-            Navigator.pop(context);
+              Navigator.pop(context);
           },
           color: Colors.red,
         )
@@ -412,7 +418,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   void handleDelete(Rentals properties) {
     print(properties.propertyId);
     // _showAlert(context,property.propertyId!);
-    _showAlert(context, properties.rentalId!);
+    _showAlert(context, properties.propertyId!);
 
     // Handle delete action
     print('Delete ${properties.propertyId}');
@@ -622,7 +628,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     child: Container(
                       // height: 40,
                       height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                      width: 100,
+                      width: MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .52 :  MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(2),
@@ -659,7 +665,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 5),
+                  SizedBox(width: 15),
                   DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
@@ -706,7 +712,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         buttonStyleData: ButtonStyleData(
                           // height: 40,
                           height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: 110,
+                          width: MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .33 :  MediaQuery.of(context).size.width * .4,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(2),
@@ -739,35 +745,41 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Row(
-                    children: [
-                      Text(
-                        'Added : ${rentalCount.toString()}',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8A95A8),
-                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total: ${propertyCountLimit.toString()}',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8A95A8),
-                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
-                      ),
-                    ],
-                  ),
-                  if(MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
-                  if(MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+
                 ],
               ),
+            ),
+              SizedBox(height: 15,),
+            Row(
+              children: [
+                Spacer(),
+                Row(
+                  children: [
+                    Text(
+                      'Added : ${rentalCount.toString()}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8A95A8),
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                    Text(
+                      'Total: ${propertyCountLimit.toString()}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8A95A8),
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
+                    ),
+                  ],
+                ),
+                if(MediaQuery.of(context).size.width < 500)
+                  SizedBox(width: 22),
+                if(MediaQuery.of(context).size.width > 500)
+                  SizedBox(width: 22),
+              ],
             ),
             if(MediaQuery.of(context).size.width > 500)
             SizedBox(height: 25),
@@ -794,23 +806,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       data = snapshot.data!;
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
-                          .where((rentals) =>
-                      rentals.rentalAddress!
-                          .toLowerCase()
-                          .contains(searchvalue!.toLowerCase()) ||
-                          rentals.propertyTypeData!.propertyType!
-                              .toLowerCase()
-                              .contains(searchvalue!.toLowerCase())
-                          ||
-                          rentals.propertyTypeData!.propertySubType!
-                              .toLowerCase()
-                              .contains(searchvalue!.toLowerCase())
-
-                      ).toList();
+                          .where((properties) =>
+                      properties.rentalAddress
+                      !.toLowerCase()
+                          .contains(searchvalue.toLowerCase())
+                      )
+                          .toList();
                     } else {
                       data = snapshot.data!
-                          .where((rentals) =>
-                      rentals.rentalAddress== selectedValue)
+                          .where((properties) =>
+                      properties.propertyTypeData?.propertyType == selectedValue
+                      )
                           .toList();
                     }
                     sortData(data);
@@ -819,6 +825,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         .skip(currentPage * itemsPerPage)
                         .take(itemsPerPage)
                         .toList();
+
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -1164,9 +1171,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               color: Color.fromRGBO(
                                                                   21, 43, 83, 1),
                                                             ),
-                                                            onPressed: () {
+                                                            onPressed: () async{
                                                               // handleEdit(Propertytype);
-                                                              Navigator.push(
+
+                                                              var check = await Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
                                                                       builder:
@@ -1174,6 +1182,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                           Edit_properties(
                                                                             properties: rentals,
                                                                           )));
+                                                              if(check == true){
+                                                                setState(() {
+
+                                                                });
+                                                              }
                                                             },
                                                           ),
                                                           IconButton(
@@ -1189,7 +1202,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               _showAlert(
                                                                   context,
                                                                   rentals
-                                                                      .rentalId!);
+                                                                      .propertyId!);
                                                             },
                                                           ),
                                                         ],

@@ -106,7 +106,7 @@ class RentalOwner {
   String? state;
   String? country;
   String? postalCode;
-  List<Processor>? processorList;
+  List<ProcessorList>? processorList;
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
@@ -145,7 +145,7 @@ class RentalOwner {
 
   factory RentalOwner.fromJson(Map<String, dynamic> json) {
     var processorListFromJson = json['processor_list'] as List;
-    List<Processor> processorList = processorListFromJson.map((processorJson) => Processor.fromJson(processorJson)).toList();
+    List<ProcessorList> processorList = processorListFromJson.map((processorJson) => ProcessorList.fromJson(processorJson)).toList();
     return RentalOwner(
       propertyId: json['property_id'],
       sId: json['_id'],
@@ -214,14 +214,14 @@ class RentalOwner {
   }
 }
 
-class Processor {
+class ProcessorList {
   String? processorId;
   String? sId;
 
-  Processor({this.processorId, this.sId});
+  ProcessorList({this.processorId, this.sId});
 
-  factory Processor.fromJson(Map<String, dynamic> json) {
-    return Processor(
+  factory ProcessorList.fromJson(Map<String, dynamic> json) {
+    return ProcessorList(
       processorId: json['processor_id'],
       sId: json['_id'],
     );
@@ -235,5 +235,6 @@ class Processor {
   }
 
 }
+
 
 

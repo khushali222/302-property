@@ -209,7 +209,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
     // Handle delete action
     print('Delete ${properties.propertyId}');
   }
-
   final _scrollController = ScrollController();
   int rentalCount = 0;
   int propertyCountLimit = 0;

@@ -623,8 +623,15 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                       Sid: widget.staff!.staffmemberId
                                   );
                                   setState(() {
+                                    widget.staff?.staffmemberName = name.text;
+                                    widget.staff?.staffmemberDesignation = designation.text;
+                                    widget.staff?.staffmemberPhoneNumber = phonenumber.text;
+                                    widget.staff?.staffmemberEmail = email.text;
+                                    widget.staff?.staffmemberId = widget.staff!.staffmemberId;
+                                    widget.staff?.adminId =  adminId;
                                     isLoading = false;
                                   });
+                                  Navigator.of(context).pop(true);
                                 } catch (e) {
                                   setState(() {
                                     isLoading = false;

@@ -1,3 +1,4 @@
+/*
 import 'dart:convert';
 
 import 'package:device_preview/device_preview.dart';
@@ -93,11 +94,13 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
               rentalOwner: rentals,
           ),
         ));
-    /* if (result == true) {
+    */
+/* if (result == true) {
       setState(() {
         futureStaffmemberss = StaffmembersRepository().fetchStaffmemberss();
       });
-    }*/
+    }*//*
+
   }
 
   void _showAlert(BuildContext context, String id) {
@@ -212,7 +215,8 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
           onPressed: () => Navigator.pop(context),
           color: Color.fromRGBO(21, 43, 83, 1),
         ),
-        /* DialogButton(
+        */
+/* DialogButton(
           child: Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
@@ -227,7 +231,8 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
             Navigator.pop(context);
           },
           color: Colors.red,
-        )*/
+        )*//*
+
       ],
     ).show();
   }
@@ -1001,4 +1006,4 @@ class _RentalOwners_tableState extends State<RentalOwners_table> {
       ),
     );
   }
-}
+}*/

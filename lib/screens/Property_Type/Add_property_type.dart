@@ -409,13 +409,18 @@ class _Add_propertyState extends State<Add_property> {
                           SizedBox(
                             width: 15,
                           ),
-                          Material(
-                            elevation: 2,
-                            child: Container(
-                                width: 100,
-                                height: 30,
-                                color: Colors.white,
-                                child: Center(child: Text("Cancel"))),
+                          InkWell(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Material(
+                              elevation: 2,
+                              child: Container(
+                                  width: 100,
+                                  height: 30,
+                                  color: Colors.white,
+                                  child: Center(child: Text("Cancel"))),
+                            ),
                           ),
                         ],
                       ),

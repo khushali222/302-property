@@ -442,6 +442,7 @@ class _StaffTableState extends State<StaffTable> {
       ],
     ).show();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -579,7 +580,7 @@ class _StaffTableState extends State<StaffTable> {
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 22),
                   Material(
@@ -588,7 +589,7 @@ class _StaffTableState extends State<StaffTable> {
                     child: Container(
                       // height: 40,
                       height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                      width: 140,
+                      width: MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .45 :  MediaQuery.of(context).size.width * .4,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(2),
@@ -925,9 +926,10 @@ class _StaffTableState extends State<StaffTable> {
                                                                 color: Color.fromRGBO(
                                                                     21, 43, 83, 1),
                                                               ),
-                                                              onPressed: () {
+                                                              onPressed: () async{
                                                                 // handleEdit(Propertytype);
-                                                                Navigator.push(
+
+                                                                var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder:
@@ -936,6 +938,11 @@ class _StaffTableState extends State<StaffTable> {
                                                                               staff:
                                                                               staffmembers,
                                                                             )));
+                                                                if(check == true){
+                                                                  setState(() {
+
+                                                                  });
+                                                                }
                                                               },
                                                             ),
                                                             IconButton(
@@ -948,10 +955,9 @@ class _StaffTableState extends State<StaffTable> {
                                                               ),
                                                               onPressed: () {
                                                                 //handleDelete(Propertytype);
-                                                                // _showAlert(
-                                                                //     context,
-                                                                //     staffmembers
-                                                                //         .staffmemberId!);
+                                                                _showDeleteAlert(context, staffmembers
+                                                                    .staffmemberId!);
+
                                                               },
                                                             ),
                                                           ],

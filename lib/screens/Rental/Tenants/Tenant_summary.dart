@@ -2,24 +2,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/repository/tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
-import '../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';
-import '../../../model/rentalowners_summery.dart';
+
+import '../../../model/tenants.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
-import 'Edit_RentalOwners.dart';
 
-class Rentalowners_summery extends StatefulWidget {
-  String rentalOwnersid;
-  Rentalowners_summery({super.key, required this.rentalOwnersid});
+class Tenant_summary extends StatefulWidget {
+  String tenantId;
+  Tenant_summary({super.key, required this.tenantId});
   @override
-  State<Rentalowners_summery> createState() => _Rentalowners_summeryState();
+  State<Tenant_summary> createState() => _Tenant_summaryState();
 }
 
-class _Rentalowners_summeryState extends State<Rentalowners_summery> {
+class _Tenant_summaryState extends State<Tenant_summary> {
+  final TenantsRepository repo = TenantsRepository();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,15 +35,15 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Image.asset("assets/images/logo.png"),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.circle_grid_3x3,
                     color: Colors.black,
                   ),
@@ -48,7 +51,7 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                   false),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.house,
                     color: Colors.black,
                   ),
@@ -56,7 +59,7 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                   false),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.person_add,
                     color: Colors.black,
                   ),
@@ -64,7 +67,7 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                   false),
               buildDropdownListTile(
                   context,
-                  FaIcon(
+                  const FaIcon(
                     FontAwesomeIcons.key,
                     size: 20,
                     color: Colors.black,
@@ -74,7 +77,7 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                   selectedSubtopic: "Properties"),
               buildDropdownListTile(
                   context,
-                  FaIcon(
+                  const FaIcon(
                     FontAwesomeIcons.thumbsUp,
                     size: 20,
                     color: Colors.black,
@@ -94,12 +97,11 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
         ),
       ),
       body: Center(
-        child: FutureBuilder<List<RentalOwnerData>>(
-          future: RentalOwnerService()
-              .fetchRentalOwnerssummery(widget.rentalOwnersid),
+        child: FutureBuilder<List<Tenant>>(
+          future: TenantsRepository().fetchTenantsummery(widget.tenantId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: Center(
                     child: SpinKitFadingCircle(
                   color: Colors.black,
@@ -109,51 +111,52 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              List<RentalOwnerData> rentalownersummery = snapshot.data ?? [];
-              print(snapshot.data!.length);
+              List<Tenant> tenantsummery = snapshot.data ?? [];
+              print("tenant${tenantsummery}");
+              print("Leangth of the tenant${snapshot.data!.length}");
               //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
               return ListView(
                 scrollDirection: Axis.vertical,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 30,
                       ),
                       Column(
                         children: [
                           Text(
-                            '${rentalownersummery.first.rentalOwnername}',
+                            '${tenantsummery.first.tenantFirstName }',
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            'RentalOwner',
+                          const Text(
+                            'Tenant',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF8A95A8)),
                           ),
                         ],
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Row(
                         children: [
                           SizedBox(
                               width: MediaQuery.of(context).size.width * 0.065),
                           GestureDetector(
                             onTap: () async {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Edit_rentalowners(
-                                          rentalOwner:
-                                              rentalownersummery.first)));
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => Edit_rentalowners(
+                              //             rentalOwner:
+                              //                 rentalownersummery.first)));
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
@@ -163,9 +166,9 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                                 width: MediaQuery.of(context).size.width * .15,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: const Color.fromRGBO(21, 43, 81, 1),
                                   boxShadow: [
-                                    BoxShadow(
+                                    const BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
                                       blurRadius: 6.0,
@@ -186,7 +189,7 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           GestureDetector(
@@ -201,9 +204,9 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                                 width: MediaQuery.of(context).size.width * .15,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: const Color.fromRGBO(21, 43, 81, 1),
                                   boxShadow: [
-                                    BoxShadow(
+                                    const BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
                                       blurRadius: 6.0,
@@ -226,7 +229,7 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 30,
                       ),
                     ],
@@ -237,21 +240,21 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                       borderRadius: BorderRadius.circular(5.0),
                       child: Container(
                         height: 50.0,
-                        padding: EdgeInsets.only(top: 8, left: 10),
+                        padding: const EdgeInsets.only(top: 8, left: 10),
                         width: MediaQuery.of(context).size.width * .91,
                         margin: const EdgeInsets.only(bottom: 6.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: const Color.fromRGBO(21, 43, 81, 1),
                           boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Colors.grey,
                               offset: Offset(0.0, 1.0), //(x,y)
                               blurRadius: 6.0,
                             ),
                           ],
                         ),
-                        child: Text(
+                        child: const Text(
                           "Summery",
                           style: TextStyle(
                               color: Colors.white,
@@ -260,6 +263,166 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                         ),
                       ),
                     ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25, right: 25),
+                    child: Material(
+                      elevation: 6,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: const Color.fromRGBO(21, 43, 81, 1)),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, right: 25, top: 20, bottom: 30),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Contact Information",
+                                    style: TextStyle(
+                                        color:
+                                            const Color.fromRGBO(21, 43, 81, 1),
+                                        fontWeight: FontWeight.bold,
+                                        // fontSize: 18
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .045),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              //phonenumber
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Name",
+                                    style: TextStyle(
+                                        // color: Colors.grey,
+                                        color: const Color(0xFF8A95A8),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .036),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.tenantFirstName}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              //homenumber
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Phone Number",
+                                    style: TextStyle(
+                                        // color: Colors.grey,
+                                        color: const Color(0xFF8A95A8),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .036),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.tenantPhoneNumber}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              //office number
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Email",
+                                    style: TextStyle(
+                                        // color: Colors.grey,
+                                        color: const Color(0xFF8A95A8),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .036),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.tenantEmail}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              //primary email
+
+                              const SizedBox(
+                                height: 12,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                   //Personal information
                   Padding(
@@ -271,8 +434,8 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                          border: Border.all(
+                              color: const Color.fromRGBO(21, 43, 81, 1)),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(
@@ -281,13 +444,14 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                             children: [
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                   Text(
                                     "Personal Information",
                                     style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color:
+                                            const Color.fromRGBO(21, 43, 81, 1),
                                         fontWeight: FontWeight.bold,
                                         // fontSize: 18
                                         fontSize:
@@ -296,19 +460,19 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               //first name
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                   Text(
-                                    "Name",
+                                    "Birth Date",
                                     style: TextStyle(
-                                        color: Color(0xFF8A95A8),
+                                        color: const Color(0xFF8A95A8),
                                         fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
@@ -316,33 +480,38 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Row(
                                 children: [
-                                  SizedBox(width: 2),
+                                  const SizedBox(width: 2),
                                   // Text(
                                   //   '${rentalownersummery.isNotEmpty && rentalownersummery.first.rentalOwnerName != null ? rentalownersummery.first.rentalOwnerName : 'N/A'}',
                                   // ),
-                                   Text('${rentalownersummery.first.rentalOwnername}',style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
-                                  SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.tenantBirthDate}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 12,
                               ),
                               //company name
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                   Text(
-                                    "Company Name",
+                                    "TaxPayer Id",
                                     style: TextStyle(
                                         // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
+                                        color: const Color(0xFF8A95A8),
                                         fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
@@ -350,31 +519,35 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Row(
                                 children: [
-                                  SizedBox(width: 2),
-
-                                  Text('${rentalownersummery.first.rentalOwnerCompanyName}',style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
-                                  SizedBox(width: 2),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.taxPayerId}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 12,
                               ),
                               //street address
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                   Text(
-                                    "Street Address",
+                                    "Comments",
                                     style: TextStyle(
                                         // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
+                                        color: const Color(0xFF8A95A8),
                                         fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
@@ -382,35 +555,88 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Row(
                                 children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.streetAddress}',
-                                    style: TextStyle(
+                                  const SizedBox(width: 2),
+                                  Flexible(
+                                    child: Text(
+                                      '${tenantsummery.first.comments}',
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: blueColor),
+                                        color: blueColor,
+                                      ),
+                                      overflow: TextOverflow.visible,
+                                      softWrap: true,
+                                    ),
                                   ),
-                                  SizedBox(width: 2),
+                                  const SizedBox(width: 2),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 12,
                               ),
                               //enter city
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+//Emergency Contact
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25, right: 25),
+                    child: Material(
+                      elevation: 6,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: const Color.fromRGBO(21, 43, 81, 1)),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, right: 25, top: 20, bottom: 30),
+                          child: Column(
+                            children: [
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                   Text(
-                                    "City",
+                                    "Emergency Contact",
                                     style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
+                                        color:
+                                            const Color.fromRGBO(21, 43, 81, 1),
+                                        fontWeight: FontWeight.bold,
+                                        // fontSize: 18
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .045),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              //first name
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Contact Name",
+                                    style: TextStyle(
+                                        color: const Color(0xFF8A95A8),
                                         fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
@@ -418,140 +644,143 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Row(
                                 children: [
-                                  SizedBox(width: 2),
+                                  const SizedBox(width: 2),
+                                  // Text(
+                                  //   '${rentalownersummery.isNotEmpty && rentalownersummery.first.rentalOwnerName != null ? rentalownersummery.first.rentalOwnerName : 'N/A'}',
+                                  // ),
                                   Text(
-                                    '${rentalownersummery.first.city}',
+                                    '${tenantsummery.first.emergencyContact!.name}',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: blueColor),
                                   ),
-                                  SizedBox(width: 2),
+                                  const SizedBox(width: 2),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              //company name
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Relation With Tenants",
+                                    style: TextStyle(
+                                        // color: Colors.grey,
+                                        color: const Color(0xFF8A95A8),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .036),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.emergencyContact!.relation}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              //street address
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Emergency Email",
+                                    style: TextStyle(
+                                        // color: Colors.grey,
+                                        color: const Color(0xFF8A95A8),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .036),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.emergencyContact!.email}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Emergency Phone",
+                                    style: TextStyle(
+                                        // color: Colors.grey,
+                                        color: const Color(0xFF8A95A8),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .036),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${tenantsummery.first.emergencyContact!.phoneNumber}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(width: 2),
                                 ],
                               ),
 
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //emter state
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "State",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.state}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //enter country
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Country",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.country}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //postal code
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Zip Code",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.postalCode}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
+                              //enter city
                             ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  //contact information
+//Emergency Contact
                   Padding(
                     padding: const EdgeInsets.only(left: 25, right: 25),
                     child: Material(
@@ -561,23 +790,24 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                          border: Border.all(
+                              color: const Color.fromRGBO(21, 43, 81, 1)),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              left: 25, right: 25, top: 20, bottom: 30),
+                              left: 10, right: 10, top: 15, bottom: 15),
                           child: Column(
                             children: [
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 2,
                                   ),
                                   Text(
-                                    "Contact Information",
+                                    "Lease Details",
                                     style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color:
+                                            const Color.fromRGBO(21, 43, 81, 1),
                                         fontWeight: FontWeight.bold,
                                         // fontSize: 18
                                         fontSize:
@@ -589,184 +819,150 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                               SizedBox(
                                 height: 10,
                               ),
-                              //phonenumber
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Phone Number",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.rentalOwnerPhoneNumber}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //homenumber
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Home Number",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.rentalOwnerHomeNumber}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //office number
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Business Number",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.rentalOwnerBusinessNumber}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //primary email
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "E-mail",
-                                    style: TextStyle(
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.rentalOwnerPrimaryEmail}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //alternative email
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    "Alternative E-mail",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.rentalOwnerAlternateEmail}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Table(
+                                  defaultColumnWidth: IntrinsicColumnWidth(),
+                                  border: TableBorder.all(color: Colors.black),
+                                  children: [
+                                    TableRow(
+                                      decoration: BoxDecoration(),
+                                      children: [
+                                        TableCell(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Status',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('Start - End',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                )),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('Property',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                )),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('Type',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                )),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('Rent',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                )),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide.none),
+                                      ),
+                                      children: [
+                                        TableCell(
+                                          child: Container(
+                                            height: 40,
+                                            child: Center(
+                                              child: Text(
+                                                'asdjfakds',
+                                                style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            height: 40,
+                                            child: Center(
+                                                child: Text(
+                                              'asdfjhk',
+                                              style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                              ),
+                                            )),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            height: 40,
+                                            child: Center(
+                                                child: Text(
+                                              'adsfjhaksd',
+                                              style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                              ),
+                                            )),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            height: 40,
+                                            child: Center(
+                                                child: Text(
+                                              'skdfjha',
+                                              style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                              ),
+                                            )),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            height: 40,
+                                            child: Center(
+                                                child: Text(
+                                              'adsfkjha',
+                                              style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                              ),
+                                            )),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -774,235 +970,8 @@ class _Rentalowners_summeryState extends State<Rentalowners_summery> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  //management agreement
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25, right: 25),
-                    child: Material(
-                      elevation: 6,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25, right: 25, top: 20, bottom: 30),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Management Agreement ",
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
-                                        fontWeight: FontWeight.bold,
-                                        // fontSize: 18
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .045),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //start date
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Start Date",
-                                    style: TextStyle(
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.startDate}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              //enddate
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    "End Date",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.endDate}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  //tax payer information
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25, right: 25),
-                    child: Material(
-                      elevation: 6,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25, right: 25, top: 20, bottom: 30),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "1099-NEC Tax Filling Information ",
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
-                                        fontWeight: FontWeight.bold,
-                                        // fontSize: 18
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .045),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Tax Identify Type",
-                                    style: TextStyle(
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.textIdentityType}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    "Tax PayerId",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Color(0xFF8A95A8),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                .036),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '${rentalownersummery.first.texpayerId}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  ),
-                                  SizedBox(width: 2),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
+
+                  const SizedBox(
                     height: 20,
                   ),
                 ],

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -12,12 +14,14 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import '../../../model/tenants.dart';
 import '../../../repository/tenants.dart';
 
-class AddTenant extends StatefulWidget {
+class EditTenants extends StatefulWidget {
+  Tenant tenants;
+  EditTenants({super.key, required this.tenants});
   @override
-  State<AddTenant> createState() => _AddTenantState();
+  State<EditTenants> createState() => _EditTenantsState();
 }
 
-class _AddTenantState extends State<AddTenant> {
+class _EditTenantsState extends State<EditTenants> {
   final TextEditingController firstName = TextEditingController();
 
   final TextEditingController lastName = TextEditingController();
@@ -82,6 +86,51 @@ class _AddTenantState extends State<AddTenant> {
       });
     }
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    firstName.text = widget.tenants.tenantFirstName!;
+    lastName.text = widget.tenants.tenantLastName!;
+    phoneNumber.text = widget.tenants.tenantPhoneNumber!;
+    workNumber.text = widget.tenants.tenantAlternativeNumber!;
+    email.text = widget.tenants.tenantEmail!;
+    alterEmail.text = widget.tenants.tenantAlternativeEmail!;
+    passWord.text = widget.tenants.tenantPassword!;
+    dob.text = widget.tenants.tenantBirthDate!;
+    taxPayerId.text = widget.tenants.taxPayerId!;
+    comments.text = widget.tenants.comments!;
+    contactName.text = widget.tenants.emergencyContact?.name ??"";
+    relationToTenant.text = widget.tenants.emergencyContact!.relation ??"";
+    emergencyPhoneNumber.text = widget.tenants.emergencyContact!.phoneNumber ??"" ;
+    emergencyEmail.text = widget.tenants.emergencyContact!.email ??"" ;
+    _dateController.text = widget.tenants.tenantBirthDate!;
+    fetchCompany();
+    super.initState();
+  }
+
+
+  bool isLoading = false;
+  String? errorMessage;
+  bool formValid = false;
+  String companyName = '';
+  Future<void> fetchCompany() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+
+    if (adminId != null) {
+      try {
+        String fetchedCompanyName = await TenantsRepository().fetchCompanyName(adminId);
+        setState(() {
+          companyName = fetchedCompanyName;
+        });
+      } catch (e) {
+        print('Failed to fetch company name: $e');
+        // Handle error state, e.g., show error message to user
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +250,7 @@ class _AddTenantState extends State<AddTenant> {
                     padding: const EdgeInsets.all(12.0),
                     child: Container(
                       width: double.infinity,
-                     // height: !form_valid ? 860 : 830,
+                      // height: !form_valid ? 860 : 830,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
@@ -407,7 +456,7 @@ class _AddTenantState extends State<AddTenant> {
                     padding: const EdgeInsets.all(12.0),
                     child: Container(
                       width: double.infinity,
-                     // height: 410,
+                      // height: 410,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
@@ -548,7 +597,7 @@ class _AddTenantState extends State<AddTenant> {
                     padding: const EdgeInsets.all(12.0),
                     child: Container(
                       width: double.infinity,
-                     // height: form_valid ? 520 : 430,
+                      // height: form_valid ? 520 : 430,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
@@ -654,13 +703,66 @@ class _AddTenantState extends State<AddTenant> {
                               setState(() {
                                 formValid = true;
                               });
+
                               if (_formkey.currentState!.validate()) {
                                 setState(() {
                                   formValid = false;
+                                  isLoading = true;
+                                  errorMessage = null;
                                 });
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                String? adminId = prefs.getString("adminId");
+                                if (adminId != null) {
+                                  try {
+                                    await TenantsRepository().editTenant(
+                                      tenantId: widget.tenants.tenantId ?? "",
+                                      adminId: adminId,
+                                      tenantFirstName: firstName.text,
+                                      tenantLastName: lastName.text,
+                                      tenantPhoneNumber: phoneNumber.text,
+                                      tenantAlternativeNumber: workNumber.text,
+                                      tenantEmail: email.text,
+                                      tenantAlternativeEmail: alterEmail.text,
+                                      tenantPassword: passWord.text,
+                                      tenantBirthDate: _dateController.text,
+                                      taxPayerId: taxPayerId.text,
+                                      comments: comments.text,
+                                      emergencyContactName: contactName.text,
+                                      emergencyContactRelation: relationToTenant.text,
+                                      emergencyContactEmail: emergencyEmail.text,
+                                      emergencyContactPhoneNumber: emergencyPhoneNumber.text,
+                                      companyName: companyName,
+                                    );
+                                    Fluttertoast.showToast(msg: "Tenant updated successfully");
+                                    setState(() {
+                                      isLoading = false;
+                                      errorMessage = null;
+                                      widget.tenants.tenantFirstName = firstName.text;
+                                      widget.tenants.tenantLastName = lastName.text;
+                                    });
+                                    Navigator.of(context).pop(true);
+                                  } catch (e) {
+                                    Fluttertoast.showToast(msg: "Failed to update tenant");
+                                    setState(() {
+                                      isLoading = false;
+                                      errorMessage = e.toString();
+                                    });
 
-                                await addTenant();
+                                    // Handle error
+
+                                    print(e.toString());
+
+                                  }
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                    errorMessage = "Admin ID not found";
+                                  });
+                                }
                               } else {
+                                setState(() {
+                                  errorMessage = 'Form is invalid';
+                                });
                                 print('Form is invalid');
                               }
                             },
@@ -672,7 +774,7 @@ class _AddTenantState extends State<AddTenant> {
                               ),
                             )
                                 : Text(
-                              'Add Tenant',
+                               'Edit Tenant',
                               style: TextStyle(color: Color(0xFFf7f8f9)),
                             ),
                           ),
@@ -697,7 +799,9 @@ class _AddTenantState extends State<AddTenant> {
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(color: Color(0xFF748097)),
-                                )))
+                                )
+                            )
+                        ),
                       ],
                     ),
                   ),
@@ -710,53 +814,6 @@ class _AddTenantState extends State<AddTenant> {
     );
   }
 
-  bool isLoading = false;
-  bool formValid = true;
-
-  Future<void> addTenant() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString("adminId")!;
-    EmergencyContact emergencyContact = EmergencyContact(
-      name: contactName.text,
-      relation: relationToTenant.text,
-      email: emergencyEmail.text,
-      phoneNumber: emergencyPhoneNumber.text,
-    );
-
-    Tenant tenant = Tenant(
-      adminId: adminId,
-      tenantFirstName: firstName.text,
-      tenantLastName: lastName.text,
-      tenantPhoneNumber: phoneNumber.text,
-      tenantAlternativeNumber: workNumber.text,
-      tenantEmail: email.text,
-      tenantAlternativeEmail: alterEmail.text,
-      tenantPassword: passWord.text,
-      tenantBirthDate: _dateController.text,
-      taxPayerId: taxPayerId.text,
-      comments: comments.text,
-      emergencyContact: emergencyContact,
-    );
-
-    bool success = await TenantsRepository().addTenant(tenant);
-
-    setState(() {
-
-      isLoading = false;
-    });
-
-    if (success) {
-      print('Form is valid');
-      Fluttertoast.showToast(msg: "Tenant added successfully");
-      Navigator.of(context).pop(true);
-    } else {
-      print('Form is invalid');
-    }
-  }
 }
 
 class CustomTextField extends StatefulWidget {

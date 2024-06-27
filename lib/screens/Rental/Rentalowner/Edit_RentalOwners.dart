@@ -13,7 +13,7 @@ import '../../../repository/Staffmember.dart';
 import '../../../widgets/drawer_tiles.dart';
 
 class Edit_rentalowners extends StatefulWidget {
-  RentalOwner rentalOwner;
+  RentalOwnerData rentalOwner;
   Edit_rentalowners({super.key, required this.rentalOwner});
 
   @override
@@ -81,7 +81,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     // Initialize with one text field
     _controllers[0] = TextEditingController();
 
-    name.text = widget.rentalOwner.rentalOwnerName!;
+    name.text = widget.rentalOwner.rentalOwnername!;
     comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
    // comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
     primaryemail.text = widget.rentalOwner.rentalOwnerPrimaryEmail!;
@@ -96,7 +96,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     code2.text = widget.rentalOwner.postalCode!;
     //proid.text = widget.rentalOwner.processorLists.toString();
     taxtype.text = widget.rentalOwner.textIdentityType!;
-    taxid.text = widget.rentalOwner.taxpayerId!;
+    taxid.text = widget.rentalOwner.texpayerId!;
     //birthdateController.text = widget.rentalOwner.b;
     startdateController.text = widget.rentalOwner.startDate!;
     enddateController.text = widget.rentalOwner.endDate!;
@@ -2628,6 +2628,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           postalCode: code2.text,
                         );
                         setState(() {
+                          widget.rentalOwner.rentalOwnername = name.text;
+                          widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
+                          widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
                           isLoading = false;
                         });
                         Navigator.of(

@@ -244,12 +244,23 @@ class _PropertyTableState extends State<PropertyTable> {
   void handleEdit(propertytype property) async {
     // Handle edit action
     print('Edit ${property.sId}');
-    final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Edit_property_type(
-                  property: property,
-                )));
+    var check = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Edit_property_type(
+                    property: property,
+                  )));
+    if(check == true){
+      setState(() {
+
+      });
+    }
+    // final result = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_property_type(
+    //               property: property,
+    //             )));
     /* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -389,7 +400,6 @@ class _PropertyTableState extends State<PropertyTable> {
         child: TableCell(
           child: Row(
             children: [
-
               SizedBox(width: 20,),
               InkWell(
                 onTap: (){
@@ -671,7 +681,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Container(
                       // height: 40,
                       height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                      width: 140,
+                      width: MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .52 :  MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(2),
@@ -708,7 +718,7 @@ class _PropertyTableState extends State<PropertyTable> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 15),
                   DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
@@ -754,7 +764,8 @@ class _PropertyTableState extends State<PropertyTable> {
                         },
                         buttonStyleData: ButtonStyleData(
                           height: MediaQuery.of(context).size.width < 500 ? 40 :50,
-                          width: 160,
+                          // width: 180,
+                          width: MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .35 :  MediaQuery.of(context).size.width * .4,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(2),
@@ -1103,9 +1114,10 @@ class _PropertyTableState extends State<PropertyTable> {
                                                               color: Color.fromRGBO(
                                                                   21, 43, 83, 1),
                                                             ),
-                                                            onPressed: () {
+                                                            onPressed: () async{
                                                               // handleEdit(Propertytype);
-                                                              Navigator.push(
+
+                                                              var check = await  Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
                                                                       builder:
@@ -1114,6 +1126,11 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                             property:
                                                                             Propertytype,
                                                                           )));
+                                                              if(check == true){
+                                                                setState(() {
+
+                                                                });
+                                                              }
                                                             },
                                                           ),
                                                           IconButton(
