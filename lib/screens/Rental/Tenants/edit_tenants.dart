@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/tenants.dart';
 import '../../../repository/tenants.dart';
@@ -71,7 +72,7 @@ class _EditTenantsState extends State<EditTenants> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                Color.fromRGBO(21, 43, 83, 1), // button text color
+                    Color.fromRGBO(21, 43, 83, 1), // button text color
               ),
             ),
           ),
@@ -100,15 +101,15 @@ class _EditTenantsState extends State<EditTenants> {
     dob.text = widget.tenants.tenantBirthDate!;
     taxPayerId.text = widget.tenants.taxPayerId!;
     comments.text = widget.tenants.comments!;
-    contactName.text = widget.tenants.emergencyContact?.name ??"";
-    relationToTenant.text = widget.tenants.emergencyContact!.relation ??"";
-    emergencyPhoneNumber.text = widget.tenants.emergencyContact!.phoneNumber ??"" ;
-    emergencyEmail.text = widget.tenants.emergencyContact!.email ??"" ;
+    contactName.text = widget.tenants.emergencyContact?.name ?? "";
+    relationToTenant.text = widget.tenants.emergencyContact!.relation ?? "";
+    emergencyPhoneNumber.text =
+        widget.tenants.emergencyContact!.phoneNumber ?? "";
+    emergencyEmail.text = widget.tenants.emergencyContact!.email ?? "";
     _dateController.text = widget.tenants.tenantBirthDate!;
     fetchCompany();
     super.initState();
   }
-
 
   bool isLoading = false;
   String? errorMessage;
@@ -120,7 +121,8 @@ class _EditTenantsState extends State<EditTenants> {
 
     if (adminId != null) {
       try {
-        String fetchedCompanyName = await TenantsRepository().fetchCompanyName(adminId);
+        String fetchedCompanyName =
+            await TenantsRepository().fetchCompanyName(adminId);
         setState(() {
           companyName = fetchedCompanyName;
         });
@@ -130,7 +132,6 @@ class _EditTenantsState extends State<EditTenants> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -215,36 +216,9 @@ class _EditTenantsState extends State<EditTenants> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Container(
-                        height: 50.0,
-                        padding: EdgeInsets.only(top: 8, left: 10),
-                        width: MediaQuery.of(context).size.width * .91,
-                        margin: const EdgeInsets.only(bottom: 6.0),
-                        //Same as `blurRadius` i guess
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: Color.fromRGBO(21, 43, 81, 1),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 6.0,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          "Add Tenant",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                      ),
-                    ),
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .91,
+                    title: 'Edit Tenant',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -407,7 +381,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 ),
                                 SizedBox(
                                     width:
-                                    10), // Add some space between the widgets
+                                        10), // Add some space between the widgets
                                 InkWell(
                                   onTap: () {
                                     setState(() {
@@ -495,13 +469,13 @@ class _EditTenantsState extends State<EditTenants> {
                                       offset: Offset(1.2,
                                           1.2), // Shadow offset to the bottom right
                                       blurRadius:
-                                      3.0, // How much to blur the shadow
+                                          3.0, // How much to blur the shadow
                                       spreadRadius:
-                                      1.0, // How much the shadow should spread
+                                          1.0, // How much the shadow should spread
                                     ),
                                   ],
                                   border:
-                                  Border.all(width: 0, color: Colors.white),
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                 style: TextStyle(
@@ -566,13 +540,13 @@ class _EditTenantsState extends State<EditTenants> {
                                       offset: Offset(1.2,
                                           1.2), // Shadow offset to the bottom right
                                       blurRadius:
-                                      3.0, // How much to blur the shadow
+                                          3.0, // How much to blur the shadow
                                       spreadRadius:
-                                      1.0, // How much the shadow should spread
+                                          1.0, // How much the shadow should spread
                                     ),
                                   ],
                                   border:
-                                  Border.all(width: 0, color: Colors.white),
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                   keyboardType: TextInputType.text,
@@ -710,7 +684,8 @@ class _EditTenantsState extends State<EditTenants> {
                                   isLoading = true;
                                   errorMessage = null;
                                 });
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
                                 String? adminId = prefs.getString("adminId");
                                 if (adminId != null) {
                                   try {
@@ -728,21 +703,28 @@ class _EditTenantsState extends State<EditTenants> {
                                       taxPayerId: taxPayerId.text,
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,
-                                      emergencyContactRelation: relationToTenant.text,
-                                      emergencyContactEmail: emergencyEmail.text,
-                                      emergencyContactPhoneNumber: emergencyPhoneNumber.text,
+                                      emergencyContactRelation:
+                                          relationToTenant.text,
+                                      emergencyContactEmail:
+                                          emergencyEmail.text,
+                                      emergencyContactPhoneNumber:
+                                          emergencyPhoneNumber.text,
                                       companyName: companyName,
                                     );
-                                    Fluttertoast.showToast(msg: "Tenant updated successfully");
+                                    Fluttertoast.showToast(
+                                        msg: "Tenant updated successfully");
                                     setState(() {
                                       isLoading = false;
                                       errorMessage = null;
-                                      widget.tenants.tenantFirstName = firstName.text;
-                                      widget.tenants.tenantLastName = lastName.text;
+                                      widget.tenants.tenantFirstName =
+                                          firstName.text;
+                                      widget.tenants.tenantLastName =
+                                          lastName.text;
                                     });
                                     Navigator.of(context).pop(true);
                                   } catch (e) {
-                                    Fluttertoast.showToast(msg: "Failed to update tenant");
+                                    Fluttertoast.showToast(
+                                        msg: "Failed to update tenant");
                                     setState(() {
                                       isLoading = false;
                                       errorMessage = e.toString();
@@ -751,7 +733,6 @@ class _EditTenantsState extends State<EditTenants> {
                                     // Handle error
 
                                     print(e.toString());
-
                                   }
                                 } else {
                                   setState(() {
@@ -768,15 +749,15 @@ class _EditTenantsState extends State<EditTenants> {
                             },
                             child: isLoading
                                 ? Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 55.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
                                 : Text(
-                               'Edit Tenant',
-                              style: TextStyle(color: Color(0xFFf7f8f9)),
-                            ),
+                                    'Edit Tenant',
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  ),
                           ),
                         ),
                         SizedBox(
@@ -792,16 +773,14 @@ class _EditTenantsState extends State<EditTenants> {
                                     backgroundColor: Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(color: Color(0xFF748097)),
-                                )
-                            )
-                        ),
+                                ))),
                       ],
                     ),
                   ),
@@ -813,7 +792,6 @@ class _EditTenantsState extends State<EditTenants> {
       ),
     );
   }
-
 }
 
 class CustomTextField extends StatefulWidget {
@@ -850,7 +828,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   @override
   void dispose() {
@@ -908,7 +886,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     decoration: InputDecoration(
                       suffixIcon: widget.suffixIcon,
                       hintStyle:
-                      TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                          TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                       border: InputBorder.none,
                       hintText: widget.hintText,
                     ),

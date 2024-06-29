@@ -827,7 +827,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: EdgeInsets.only(top: 8, left: 10),
+                    padding: EdgeInsets.only(top: 14, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: Color.fromRGBO(21, 43, 81, 1),
@@ -844,7 +844,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 22,
+                        fontSize: 18,
                       ),
                     ),
                   ),

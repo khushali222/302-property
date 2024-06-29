@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/AddLease.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
 import '../screens/Leasing/Applicants/Applicants_table.dart';
 import '../screens/Leasing/RentalRoll/RentalRoll_table.dart';
@@ -22,7 +24,12 @@ import '../screens/test_table/properties_table.dart';
 import '../screens/test_table/rentalowners_table.dart';
 import '../screens/test_table/staff_table.dart';
 
-Widget buildListTile(BuildContext context, Widget leadingIcon, String title, bool active,) {
+Widget buildListTile(
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  bool active,
+) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
@@ -32,14 +39,17 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ListTile(
       onTap: () {
-        if(title =="Dashboard"){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
-        }else if(title =="Add Property Type"){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => PropertyTable()));
-        }else if(title == "Add Staff Member"){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> StaffTable()));
+        if (title == "Dashboard") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Dashboard()));
+        } else if (title == "Add Property Type") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PropertyTable()));
+        } else if (title == "Add Staff Member") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => StaffTable()));
         }
-        },
+      },
       leading: leadingIcon,
       title: Text(
         title,
@@ -51,17 +61,20 @@ Widget buildListTile(BuildContext context, Widget leadingIcon, String title, boo
   );
 }
 
-void navigateToOption(BuildContext context, String option,) {
- int index = 0;
- Map<String, WidgetBuilder> routes = {
+void navigateToOption(
+  BuildContext context,
+  String option,
+) {
+  int index = 0;
+  Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
     "RentalOwner": (context) => Rentalowner_table(),
     //"Tenants": (context) => Tenants_table(),
-   "Tenants": (context) => Tenants_table(),
-    "Vendor":(context)=>Vendor_table(),
-    "Work Order":(context)=>Workorder_table(),
-   // "Rent Roll":(context)=>RentalOwners_table(),
-    "Applicants":(context)=>Applicants_table(),
+    "Tenants": (context) => Tenants_table(),
+    "Vendor": (context) => Vendor_table(),
+    "Work Order": (context) => Workorder_table(),
+    "Rent Roll": (context) => addLease(),
+    "Applicants": (context) => Applicants_table(),
   };
   Navigator.push(
     context,
@@ -69,7 +82,9 @@ void navigateToOption(BuildContext context, String option,) {
   );
 }
 
-Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String title, List<String> subTopics ,{String? selectedSubtopic,bool? initvalue }) {
+Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
+    String title, List<String> subTopics,
+    {String? selectedSubtopic, bool? initvalue}) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     padding: EdgeInsets.symmetric(horizontal: 16),
@@ -78,21 +93,25 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String ti
     //   borderRadius: BorderRadius.circular(10),
     // ),
     child: ExpansionTile(
-     // initiallyExpanded: initvalue!,
+      // initiallyExpanded: initvalue!,
       leading: leadingIcon,
       title: Text(title),
-      children: subTopics.map((subTopic,) {
+      children: subTopics.map((
+        subTopic,
+      ) {
         bool active = selectedSubtopic == subTopic;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
-              color: active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+              color:
+                  active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
-             // tileColor: selectedSubtopic == subTopic ? Colors.red :Colors.transparent ,
-              title: Text(subTopic,
+              // tileColor: selectedSubtopic == subTopic ? Colors.red :Colors.transparent ,
+              title: Text(
+                subTopic,
                 style: TextStyle(
                   color: active ? Colors.white : Colors.black,
                 ),
@@ -100,7 +119,6 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String ti
               onTap: () {
                 Navigator.pop(context);
                 navigateToOption(context, subTopic);
-
               },
             ),
           ),
@@ -109,5 +127,3 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon, String ti
     ),
   );
 }
-
-

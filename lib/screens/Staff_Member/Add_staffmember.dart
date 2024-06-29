@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/Staffmember.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -114,7 +115,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
-                padding: EdgeInsets.only(top: 8, left: 10),
+                padding: EdgeInsets.only(top: 14, left: 10),
                 width: MediaQuery.of(context).size.width * .91,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
@@ -130,11 +131,11 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                   ],
                 ),
                 child: Text(
-                  "Add Staff Members",
+                  "Add Rental Owners",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 22),
+                      fontSize: 18),
                 ),
               ),
             ),
@@ -511,7 +512,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                             emailerror = false;
                                           });
                                         },
-                                        keyboardType: TextInputType.emailAddress,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
                                         controller: email,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
@@ -610,7 +612,6 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                             passworderror = false;
                                           });
                                         },
-
                                         controller: password,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
@@ -670,8 +671,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       Row(
                         children: [
                           SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 0.02),
+                              width: MediaQuery.of(context).size.width * 0.02),
                           GestureDetector(
                             onTap: () async {
                               if (name.text.isEmpty) {
@@ -687,7 +687,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               if (designation.text.isEmpty) {
                                 setState(() {
                                   designationerror = true;
-                                  designationmessage = "designation is required";
+                                  designationmessage =
+                                      "designation is required";
                                 });
                               } else {
                                 setState(() {
@@ -740,7 +741,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 });
                               }
                               SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
+                                  await SharedPreferences.getInstance();
                               String? adminId = prefs.getString("adminId");
                               if (adminId != null) {
                                 try {
@@ -781,24 +782,23 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                     ),
                                   ],
                                 ),
-                                child:
-                                Center(
+                                child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
+                                          color: Colors.white,
+                                          size: 25.0,
+                                        )
                                       : Text(
-                                    "Add Staff Member",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            .034),
-                                  ),
+                                          "Add Staff Member",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .034),
+                                        ),
                                 ),
-
                               ),
                             ),
                           ),
@@ -806,7 +806,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             width: 15,
                           ),
                           GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.pop(context);
                               },
                               child: Text("Cancel")),

@@ -10,7 +10,7 @@ import '../../widgets/drawer_tiles.dart';
 
 class Edit_staff_member extends StatefulWidget {
   Staffmembers? staff;
-   Edit_staff_member({super.key,this.staff});
+  Edit_staff_member({super.key, this.staff});
 
   @override
   State<Edit_staff_member> createState() => _Edit_staff_memberState();
@@ -41,7 +41,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     designation.text = widget.staff!.staffmemberDesignation!;
     phonenumber.text = widget.staff!.staffmemberPhoneNumber!.toString();
     email.text = widget.staff!.staffmemberEmail.toString();
-   // password.text = widget.staff!.staffmemberPassword.toString();
+    // password.text = widget.staff!.staffmemberPassword.toString();
   }
 
   bool isLoading = false;
@@ -123,7 +123,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
-                padding: EdgeInsets.only(top: 8, left: 10),
+                padding: EdgeInsets.only(top: 14, left: 10),
                 width: MediaQuery.of(context).size.width * .91,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
@@ -143,12 +143,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 22),
+                      fontSize: 18),
                 ),
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(left: 25, right: 25),
             child: Material(
@@ -176,7 +175,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 color: Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-    MediaQuery.of(context).size.width * .05),
+                                    MediaQuery.of(context).size.width * .05),
                           ),
                         ],
                       ),
@@ -194,7 +193,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -227,25 +226,24 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         controller: name,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                            Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
-                                          hintText:
-                                          "Enter a staff member name",
+                                          hintText: "Enter a staff member name",
                                           hintStyle: TextStyle(
-                                            fontSize:MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                          .037,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .037,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: nameerror
                                               ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                  borderSide: BorderSide(
+                                                    color: Colors.red,
+                                                  ),
+                                                )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(12),
@@ -262,16 +260,21 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       nameerror
                           ? Row(
-                        children: [
-                           Spacer(),
-                          Text(
-                            namemessage,
-                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
-                                .035),
-                          ),
-                          SizedBox(width: 2,),
-                        ],
-                      )
+                              children: [
+                                Spacer(),
+                                Text(
+                                  namemessage,
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035),
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                              ],
+                            )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -284,10 +287,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                           Text(
                             "Designation",
                             style: TextStyle(
-                              // color: Colors.grey,
+                                // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width * .036),
+                                fontSize:
+                                    MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -320,24 +324,24 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         controller: designation,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                            Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter Designation",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
+                                                    .size
+                                                    .width *
                                                 .037,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: designationerror
                                               ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                  borderSide: BorderSide(
+                                                    color: Colors.red,
+                                                  ),
+                                                )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(12),
@@ -354,16 +358,21 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       designationerror
                           ? Row(
-                        children: [
-                           Spacer(),
-                          Text(
-                            designationmessage,
-                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
-                                .035),
-                          ),
-                          SizedBox(width: 2,),
-                        ],
-                      )
+                              children: [
+                                Spacer(),
+                                Text(
+                                  designationmessage,
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035),
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                              ],
+                            )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -376,10 +385,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                           Text(
                             "Phone Number",
                             style: TextStyle(
-                              // color: Colors.grey,
+                                // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width * .036),
+                                fontSize:
+                                    MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -412,25 +422,24 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         controller: phonenumber,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                            Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
-                                          hintText:
-                                          "Enter Phone Number",
+                                          hintText: "Enter Phone Number",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
+                                                    .size
+                                                    .width *
                                                 .037,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: phonenumbererror
                                               ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                  borderSide: BorderSide(
+                                                    color: Colors.red,
+                                                  ),
+                                                )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(12),
@@ -447,16 +456,21 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       phonenumbererror
                           ? Row(
-                        children: [
-                         Spacer(),
-                          Text(
-                            phonenumbermessage,
-                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
-                                .035),
-                          ),
-                          SizedBox(width: 2,),
-                        ],
-                      )
+                              children: [
+                                Spacer(),
+                                Text(
+                                  phonenumbermessage,
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035),
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                              ],
+                            )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -469,10 +483,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                           Text(
                             "Email",
                             style: TextStyle(
-                              // color: Colors.grey,
+                                // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width * .036),
+                                fontSize:
+                                    MediaQuery.of(context).size.width * .036),
                           ),
                         ],
                       ),
@@ -505,24 +520,24 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         controller: email,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                            Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter Email",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
+                                                    .size
+                                                    .width *
                                                 .037,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: emailerror
                                               ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(2),
-                                            borderSide: BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                          )
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                  borderSide: BorderSide(
+                                                    color: Colors.red,
+                                                  ),
+                                                )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(12),
@@ -539,16 +554,21 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       ),
                       emailerror
                           ? Row(
-                        children: [
-                         Spacer(),
-                          Text(
-                            emailmessage,
-                            style: TextStyle(color: Colors.red,fontSize: MediaQuery.of(context).size.width *
-                                .035),
-                          ),
-                          SizedBox(width: 2,),
-                        ],
-                      )
+                              children: [
+                                Spacer(),
+                                Text(
+                                  emailmessage,
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035),
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                              ],
+                            )
                           : Container(),
                       SizedBox(
                         height: 10,
@@ -556,8 +576,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Row(
                         children: [
                           SizedBox(
-                              width:
-                              MediaQuery.of(context).size.width * 0.01),
+                              width: MediaQuery.of(context).size.width * 0.01),
                           GestureDetector(
                             onTap: () async {
                               if (name.text.isEmpty) {
@@ -573,7 +592,8 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                               if (designation.text.isEmpty) {
                                 setState(() {
                                   designationerror = true;
-                                  designationmessage = "designation is required";
+                                  designationmessage =
+                                      "designation is required";
                                 });
                               } else {
                                 setState(() {
@@ -603,32 +623,36 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                               if (!nameerror &&
                                   !designationerror &&
                                   !phonenumbererror &&
-                                  !emailerror
-                                  ) {
+                                  !emailerror) {
                                 setState(() {
                                   isLoading = true;
                                 });
                               }
                               SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
+                                  await SharedPreferences.getInstance();
                               String? adminId = prefs.getString("adminId");
                               if (adminId != null) {
                                 try {
-                                  await StaffMemberRepository().Edit_staff_member(
-                                      adminId: adminId,
-                                      staffmemberName: name.text,
-                                      staffmemberDesignation: designation.text,
-                                      staffmemberPhoneNumber: phonenumber.text,
-                                      staffmemberEmail: email.text,
-                                      Sid: widget.staff!.staffmemberId
-                                  );
+                                  await StaffMemberRepository()
+                                      .Edit_staff_member(
+                                          adminId: adminId,
+                                          staffmemberName: name.text,
+                                          staffmemberDesignation:
+                                              designation.text,
+                                          staffmemberPhoneNumber:
+                                              phonenumber.text,
+                                          staffmemberEmail: email.text,
+                                          Sid: widget.staff!.staffmemberId);
                                   setState(() {
                                     widget.staff?.staffmemberName = name.text;
-                                    widget.staff?.staffmemberDesignation = designation.text;
-                                    widget.staff?.staffmemberPhoneNumber = phonenumber.text;
+                                    widget.staff?.staffmemberDesignation =
+                                        designation.text;
+                                    widget.staff?.staffmemberPhoneNumber =
+                                        phonenumber.text;
                                     widget.staff?.staffmemberEmail = email.text;
-                                    widget.staff?.staffmemberId = widget.staff!.staffmemberId;
-                                    widget.staff?.adminId =  adminId;
+                                    widget.staff?.staffmemberId =
+                                        widget.staff!.staffmemberId;
+                                    widget.staff?.adminId = adminId;
                                     isLoading = false;
                                   });
                                   Navigator.of(context).pop(true);
@@ -644,8 +668,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height: 40.0,
-                                width:
-                                MediaQuery.of(context).size.width * .36,
+                                width: MediaQuery.of(context).size.width * .36,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -657,24 +680,23 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     ),
                                   ],
                                 ),
-                                child:
-                                Center(
+                                child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
+                                          color: Colors.white,
+                                          size: 25.0,
+                                        )
                                       : Text(
-                                    "Edit staff Member",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            .034),
-                                  ),
+                                          "Edit staff Member",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .034),
+                                        ),
                                 ),
-
                               ),
                             ),
                           ),
@@ -682,7 +704,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                             width: 15,
                           ),
                           GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.pop(context);
                               },
                               child: Text("Cancel")),

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/tenants.dart';
 import '../../../repository/tenants.dart';
@@ -67,7 +68,7 @@ class _AddTenantState extends State<AddTenant> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                Color.fromRGBO(21, 43, 83, 1), // button text color
+                    Color.fromRGBO(21, 43, 83, 1), // button text color
               ),
             ),
           ),
@@ -166,42 +167,46 @@ class _AddTenantState extends State<AddTenant> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Container(
-                        height: 50.0,
-                        padding: EdgeInsets.only(top: 8, left: 10),
-                        width: MediaQuery.of(context).size.width * .91,
-                        margin: const EdgeInsets.only(bottom: 6.0),
-                        //Same as `blurRadius` i guess
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: Color.fromRGBO(21, 43, 81, 1),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 6.0,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          "Add Tenant",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                      ),
-                    ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(25.0),
+                  //   child: ClipRRect(
+                  //     borderRadius: BorderRadius.circular(5.0),
+                  //     child: Container(
+                  //       height: 50.0,
+                  //       padding: EdgeInsets.only(top: 8, left: 10),
+                  //       width: MediaQuery.of(context).size.width * .91,
+                  //       margin: const EdgeInsets.only(bottom: 6.0),
+                  //       //Same as `blurRadius` i guess
+                  //       decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(5.0),
+                  //         color: Color.fromRGBO(21, 43, 81, 1),
+                  //         boxShadow: [
+                  //           BoxShadow(
+                  //             color: Colors.grey,
+                  //             offset: Offset(0.0, 1.0), //(x,y)
+                  //             blurRadius: 6.0,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //       child: Text(
+                  //         "Add Tenant",
+                  //         style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontWeight: FontWeight.bold,
+                  //             fontSize: 22),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .91,
+                    title: 'Add Tenant',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Container(
                       width: double.infinity,
-                     // height: !form_valid ? 860 : 830,
+                      // height: !form_valid ? 860 : 830,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
@@ -358,7 +363,7 @@ class _AddTenantState extends State<AddTenant> {
                                 ),
                                 SizedBox(
                                     width:
-                                    10), // Add some space between the widgets
+                                        10), // Add some space between the widgets
                                 InkWell(
                                   onTap: () {
                                     setState(() {
@@ -407,7 +412,7 @@ class _AddTenantState extends State<AddTenant> {
                     padding: const EdgeInsets.all(12.0),
                     child: Container(
                       width: double.infinity,
-                     // height: 410,
+                      // height: 410,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
@@ -446,13 +451,13 @@ class _AddTenantState extends State<AddTenant> {
                                       offset: Offset(1.2,
                                           1.2), // Shadow offset to the bottom right
                                       blurRadius:
-                                      3.0, // How much to blur the shadow
+                                          3.0, // How much to blur the shadow
                                       spreadRadius:
-                                      1.0, // How much the shadow should spread
+                                          1.0, // How much the shadow should spread
                                     ),
                                   ],
                                   border:
-                                  Border.all(width: 0, color: Colors.white),
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                 style: TextStyle(
@@ -517,13 +522,13 @@ class _AddTenantState extends State<AddTenant> {
                                       offset: Offset(1.2,
                                           1.2), // Shadow offset to the bottom right
                                       blurRadius:
-                                      3.0, // How much to blur the shadow
+                                          3.0, // How much to blur the shadow
                                       spreadRadius:
-                                      1.0, // How much the shadow should spread
+                                          1.0, // How much the shadow should spread
                                     ),
                                   ],
                                   border:
-                                  Border.all(width: 0, color: Colors.white),
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                   keyboardType: TextInputType.text,
@@ -548,7 +553,7 @@ class _AddTenantState extends State<AddTenant> {
                     padding: const EdgeInsets.all(12.0),
                     child: Container(
                       width: double.infinity,
-                     // height: form_valid ? 520 : 430,
+                      // height: form_valid ? 520 : 430,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
@@ -666,15 +671,15 @@ class _AddTenantState extends State<AddTenant> {
                             },
                             child: isLoading
                                 ? Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 55.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
                                 : Text(
-                              'Add Tenant',
-                              style: TextStyle(color: Color(0xFFf7f8f9)),
-                            ),
+                                    'Add Tenant',
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  ),
                           ),
                         ),
                         SizedBox(
@@ -690,7 +695,7 @@ class _AddTenantState extends State<AddTenant> {
                                     backgroundColor: Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
@@ -745,7 +750,6 @@ class _AddTenantState extends State<AddTenant> {
     bool success = await TenantsRepository().addTenant(tenant);
 
     setState(() {
-
       isLoading = false;
     });
 
@@ -793,7 +797,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   @override
   void dispose() {
@@ -851,7 +855,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     decoration: InputDecoration(
                       suffixIcon: widget.suffixIcon,
                       hintStyle:
-                      TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                          TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                       border: InputBorder.none,
                       hintText: widget.hintText,
                     ),

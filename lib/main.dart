@@ -20,8 +20,8 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 //     ),
 //     // DevicePreview(
 //     //   enabled: true,
-//     //   tools: [
-//     //     ...DevicePreview.defaultTools,
+//   tools: [/
+// //     ...DevicePreview.defaultTools,
 //     //   ],
 //     //   builder: (context) => MyApp(),
 //     // ),
@@ -50,9 +50,6 @@ void main() {
   );
 }
 
-
-
-
 class MyApp extends StatelessWidget {
   MyApp({super.key});
   // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -64,7 +61,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         iconTheme: IconThemeData(color: Colors.black),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        useMaterial3: false,
       ),
       home: SplashScreen(),
     );
