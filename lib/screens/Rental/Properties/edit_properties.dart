@@ -9733,10 +9733,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             setState(() {
                               hasError = false;
                             });
+
                             SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                             String? id = prefs.getString("adminId");
-                          PropertiesRepository().updateRental(widget.properties).then((value) {
+                            PropertiesRepository().updateRental(widget.properties).then((value)
+                          {
                             // setState(() {
                             //   widget.properties.rentalAddress = address.text;
                             //   widget.properties.propertyTypeData?.propertyType = selectedpropertytype;

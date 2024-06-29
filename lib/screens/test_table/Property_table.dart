@@ -1,4 +1,4 @@
-import 'package:device_preview/device_preview.dart';
+//import 'package:device_preview/device_preview.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,17 +22,17 @@ class DataRow {
   DataRow(this.field1, this.field2, this.field3, {this.isExpanded = false});
 }
 
-void main() {
-  runApp(
-    DevicePreview(
-      enabled: true,
-      tools: [
-        ...DevicePreview.defaultTools,
-      ],
-      builder: (context) => ExpandTable(),
-    ),
-  );
-}
+// void main() {
+//   runApp(
+//     DevicePreview(
+//       enabled: true,
+//       tools: [
+//         ...DevicePreview.defaultTools,
+//       ],
+//       builder: (context) => ExpandTable(),
+//     ),
+//   );
+// }
 
 class ExpandTable extends StatefulWidget {
   // final propertytype data;

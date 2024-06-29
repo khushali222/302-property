@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:device_preview/device_preview.dart';
+//import 'package:device_preview/device_preview.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +26,7 @@ import '../Staff_Member/Edit_staff_member.dart';
 import 'package:http/http.dart'as http;
 
 
+/*
 void main() {
   runApp(
     DevicePreview(
@@ -37,6 +38,7 @@ void main() {
     ),
   );
 }
+*/
 
 class Properties_table extends StatefulWidget {
   // final propertytype data;

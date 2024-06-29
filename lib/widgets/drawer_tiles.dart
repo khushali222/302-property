@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/Leasing/Applicants/Applicants_table.dart';
 import '../screens/Leasing/RentalRoll/RentalRoll_table.dart';
+import '../screens/Leasing/RentalRoll/add_RentRoll.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
@@ -60,7 +61,7 @@ void navigateToOption(BuildContext context, String option,) {
    "Tenants": (context) => Tenants_table(),
     "Vendor":(context)=>Vendor_table(),
     "Work Order":(context)=>Workorder_table(),
-   // "Rent Roll":(context)=>RentalOwners_table(),
+    "Rent Roll":(context)=>addLease(),
     "Applicants":(context)=>Applicants_table(),
   };
   Navigator.push(

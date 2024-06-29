@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -828,11 +829,12 @@ class CustomTextFieldState extends State<CustomTextField> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.0),
+                    //border: Border.all(color: blueColor),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
                         offset: Offset(4, 4),
-                        blurRadius: 8,
+                        blurRadius: 3,
                       ),
                     ],
                   ),

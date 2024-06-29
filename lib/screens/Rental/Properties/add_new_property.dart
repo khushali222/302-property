@@ -168,7 +168,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
     } else {
       // Handle error
     }
-
     setState(() {
       isLoading = false;
     });
@@ -1625,7 +1624,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         child: TextField(
                                           style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: 12,
+                                            fontSize: 11,
                                           ),
                                           onChanged: (value) {
                                             setState(() {
@@ -1647,7 +1646,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   )
                                                 : InputBorder.none,
                                             border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(11),
+                                            contentPadding: EdgeInsets.all(14),
                                             // prefixIcon: Container(
                                             //   height: 20,
                                             //   width: 20,
@@ -1697,6 +1696,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           SizedBox(
                             height: 10,
                           ),
+                          // Column(
+                          //   children: [
+                          //     Text(
+                          //       "City",
+                          //       style: TextStyle(
+                          //           color: Color(0xFF8A95A8),
+                          //           fontWeight: FontWeight.bold,
+                          //           fontSize: 12),
+                          //     ),
+                          //     SizedBox(
+                          //         height: 5,
+                          //     ),
+                          //   ],
+                          // ),
                           Row(
                             children: [
                               SizedBox(
@@ -2795,7 +2808,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           .setOwnerDetails(
                                                                               Ownersdetails!);
                                                                       //  Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
-
                                                                       Fluttertoast
                                                                           .showToast(
                                                                         msg:

@@ -26,7 +26,67 @@ class PropertiesRepository {
       throw Exception('Failed to load data');
     }
   }
+  Future<Map<String, dynamic>> editTenant({
+    required String tenantId,
+    required String adminId,
+    required String tenantFirstName,
+    required String tenantLastName,
+    required String tenantPhoneNumber,
+    required String tenantAlternativeNumber,
+    required String tenantEmail,
+    required String tenantAlternativeEmail,
+    required String tenantPassword,
+    required String tenantBirthDate,
+    required String taxPayerId,
+    required String comments,
+    required String emergencyContactName,
+    required String emergencyContactRelation,
+    required String emergencyContactEmail,
+    required String emergencyContactPhoneNumber,
+    required String companyName,
+  }) async {
+    final Map<String, dynamic> data = {
+      'admin_id': adminId,
+      'tenant_id': tenantId,
+      'tenant_firstName': tenantFirstName,
+      'tenant_lastName': tenantLastName,
+      'tenant_phoneNumber': tenantPhoneNumber,
+      'tenant_alternativeNumber': tenantAlternativeNumber,
+      'tenant_email': tenantEmail,
+      'tenant_alternativeEmail': tenantAlternativeEmail,
+      'tenant_password': tenantPassword,
+      'tenant_birthDate': tenantBirthDate,
+      'taxPayer_id': taxPayerId,
+      'comments': comments,
+      'emergency_contact': {
+        'name': emergencyContactName,
+        'relation': emergencyContactRelation,
+        'email': emergencyContactEmail,
+        'phoneNumber': emergencyContactPhoneNumber,
+      }
+    };
 
+    print('$apiUrl/$tenantId');
+
+    final http.Response response = await http.put(
+      Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    print(responseData);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add property type');
+    }
+  }
   Future<void> updateRental(Rentals properties) async {
 
     final url = Uri.parse('${Api_url}/api/rentals/rentals/${properties.rentalId}');
@@ -37,7 +97,6 @@ class PropertiesRepository {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-
     final body = jsonEncode({
       "rentalOwner": {
         "admin_id": properties.adminId,

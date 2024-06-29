@@ -1,7 +1,8 @@
-import 'package:device_preview/device_preview.dart';
+//import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/add_property.dart';
+import 'package:three_zero_two_property/provider/lease_provider.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
@@ -30,7 +31,7 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 
 void main() {
   runApp(
-    DevicePreview(
+   /* DevicePreview(
       enabled: true,
       tools: [
         ...DevicePreview.defaultTools,
@@ -46,6 +47,23 @@ void main() {
         ],
         child: MyApp(),
       ),
+    ),*/
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => OwnerDetailsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Tenants_counts(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SelectedTenantsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SelectedCosignersProvider(),
+        ),
+      ],
+      child: MyApp(),
     ),
   );
 }
@@ -64,7 +82,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         iconTheme: IconThemeData(color: Colors.black),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        useMaterial3: false,
       ),
       home: SplashScreen(),
     );
