@@ -72,17 +72,17 @@ class _BarchartState extends State<Barchart> {
                   ),
                   items: items
                       .map((String item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ))
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ))
                       .toList(),
                   value: selectedValue,
                   onChanged: (String? value) {
@@ -152,7 +152,7 @@ class _BarchartState extends State<Barchart> {
                 primaryYAxis: NumericAxis(
                   isVisible: false, // Hide Y-axis labels
                   majorGridLines:
-                  MajorGridLines(width: 0), // Remove Y-axis gridlines
+                      MajorGridLines(width: 0), // Remove Y-axis gridlines
                   axisLine: AxisLine(width: 0), // Hide Y-axis line
                 ),
                 plotAreaBorderWidth: 0, // Remove border around plot area

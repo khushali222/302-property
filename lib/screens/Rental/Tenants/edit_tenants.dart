@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/tenants.dart';
 import '../../../repository/tenants.dart';
@@ -74,7 +75,7 @@ class _EditTenantsState extends State<EditTenants> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                Color.fromRGBO(21, 43, 83, 1), // button text color
+                    Color.fromRGBO(21, 43, 83, 1), // button text color
               ),
             ),
           ),
@@ -89,40 +90,39 @@ class _EditTenantsState extends State<EditTenants> {
       });
     }
   }
-
+  bool isValidEmail(String email) {
+    String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(email);
+  }
   @override
   void initState() {
+    // TODO: implement initState
+    firstName.text = widget.tenants.tenantFirstName!;
+    lastName.text = widget.tenants.tenantLastName!;
+    phoneNumber.text = widget.tenants.tenantPhoneNumber!;
+    workNumber.text = widget.tenants.tenantAlternativeNumber!;
+    email.text = widget.tenants.tenantEmail!;
+    alterEmail.text = widget.tenants.tenantAlternativeEmail!;
+    passWord.text = widget.tenants.tenantPassword!;
+    dob.text = widget.tenants.tenantBirthDate!;
+    taxPayerId.text = widget.tenants.taxPayerId!;
+    comments.text = widget.tenants.comments!;
+    contactName.text = widget.tenants.emergencyContact?.name ?? "";
+    relationToTenant.text = widget.tenants.emergencyContact!.relation ?? "";
+    emergencyPhoneNumber.text =
+        widget.tenants.emergencyContact!.phoneNumber ?? "";
+    emergencyEmail.text = widget.tenants.emergencyContact!.email ?? "";
+    _dateController.text = widget.tenants.tenantBirthDate!;
+    fetchCompany();
     super.initState();
-    fetchAndSetTenantDetails(widget.tenantId);
   }
 
-  Future<void> fetchAndSetTenantDetails(String tenantId) async {
-    print('tenant is ;$tenantId');
-    Tenant tenant = await fetchTenantDetails(tenantId);
-    setState(() {
-      firstName.text = tenant.tenantFirstName!;
-      lastName.text = tenant.tenantLastName!;
-      phoneNumber.text = tenant.tenantPhoneNumber!;
-      workNumber.text = tenant.tenantAlternativeNumber!;
-      email.text = tenant.tenantEmail!;
-      alterEmail.text = tenant.tenantAlternativeEmail!;
-      passWord.text = tenant.tenantPassword!;
-      _dateController.text = tenant.tenantBirthDate!;
-
-      taxPayerId.text = tenant.taxPayerId!;
-      comments.text = tenant.comments!;
-      fetchCompany();
-      if (tenant.emergencyContact != null) {
-        contactName.text = tenant.emergencyContact!.name!;
-        relationToTenant.text = tenant.emergencyContact!.relation!;
-        emergencyEmail.text = tenant.emergencyContact!.email!;
-        emergencyPhoneNumber.text = tenant.emergencyContact!.phoneNumber!;
-      }
-    });
-  }
-
+  bool isLoading = false;
+  String? errorMessage;
+  bool formValid = false;
   String companyName = '';
-  String errorMessage = '';
+ // String errorMessage = '';
   Future<void> fetchCompany() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -130,7 +130,7 @@ class _EditTenantsState extends State<EditTenants> {
     if (adminId != null) {
       try {
         String fetchedCompanyName =
-        await TenantsRepository().fetchCompanyName(adminId);
+            await TenantsRepository().fetchCompanyName(adminId);
         setState(() {
           companyName = fetchedCompanyName;
         });
@@ -138,47 +138,6 @@ class _EditTenantsState extends State<EditTenants> {
         print('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
-    }
-  }
-  bool isValidEmail(String email) {
-    String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
-    RegExp regex = RegExp(pattern);
-    return regex.hasMatch(email);
-  }
-
-  Future<Tenant> fetchTenantDetails(String tenantId) async {
-    print('Tenant id is: $tenantId');
-    final url = Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId');
-    print('Fetching tenant details from $url');
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonResponse = json.decode(response.body);
-        var data = jsonResponse["data"];
-        print('Response data: $data');
-
-        if (data is List && data.isNotEmpty) {
-          return Tenant.fromJson(data.first);
-        } else if (data is Map<String, dynamic>) {
-          return Tenant.fromJson(data);
-        } else {
-          print('Unexpected data format: $data');
-          throw Exception('Unexpected data format');
-        }
-      } else if (response.statusCode == 404) {
-        print('Tenant not found. Status code: 404');
-        throw Exception('Tenant not found');
-      } else {
-        print(
-            'Failed to load tenant details. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        throw Exception('Failed to load tenant details');
-      }
-    } catch (error) {
-      print('Exception occurred: $error');
-      throw Exception('Failed to load tenant details: $error');
     }
   }
 
@@ -265,36 +224,9 @@ class _EditTenantsState extends State<EditTenants> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Container(
-                        height: 50.0,
-                        padding: EdgeInsets.only(top: 8, left: 10),
-                        width: MediaQuery.of(context).size.width * .91,
-                        margin: const EdgeInsets.only(bottom: 6.0),
-                        //Same as `blurRadius` i guess
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: Color.fromRGBO(21, 43, 81, 1),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 6.0,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          "Add Tenant",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                      ),
-                    ),
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .91,
+                    title: 'Edit Tenant',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -469,7 +401,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 ),
                                 SizedBox(
                                     width:
-                                    10), // Add some space between the widgets
+                                        10), // Add some space between the widgets
                                 InkWell(
                                   onTap: () {
                                     setState(() {
@@ -557,13 +489,13 @@ class _EditTenantsState extends State<EditTenants> {
                                       offset: Offset(1.2,
                                           1.2), // Shadow offset to the bottom right
                                       blurRadius:
-                                      3.0, // How much to blur the shadow
+                                          3.0, // How much to blur the shadow
                                       spreadRadius:
-                                      1.0, // How much the shadow should spread
+                                          1.0, // How much the shadow should spread
                                     ),
                                   ],
                                   border:
-                                  Border.all(width: 0, color: Colors.white),
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                 style: TextStyle(
@@ -628,13 +560,13 @@ class _EditTenantsState extends State<EditTenants> {
                                       offset: Offset(1.2,
                                           1.2), // Shadow offset to the bottom right
                                       blurRadius:
-                                      3.0, // How much to blur the shadow
+                                          3.0, // How much to blur the shadow
                                       spreadRadius:
-                                      1.0, // How much the shadow should spread
+                                          1.0, // How much the shadow should spread
                                     ),
                                   ],
                                   border:
-                                  Border.all(width: 0, color: Colors.white),
+                                      Border.all(width: 0, color: Colors.white),
                                   borderRadius: BorderRadius.circular(6.0)),
                               child: TextFormField(
                                   keyboardType: TextInputType.text,
@@ -782,11 +714,11 @@ class _EditTenantsState extends State<EditTenants> {
 
                                 setState(() {
                                   isLoading = true;
+                                  errorMessage = null;
                                 });
-
                                 SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                                String adminId = prefs.getString("adminId")!;
+                                    await SharedPreferences.getInstance();
+                                String? adminId = prefs.getString("adminId");
                                 if (adminId != null) {
                                   try {
                                     await TenantsRepository().editTenant(
@@ -805,23 +737,22 @@ class _EditTenantsState extends State<EditTenants> {
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,
                                       emergencyContactRelation:
-                                      relationToTenant.text,
+                                          relationToTenant.text,
                                       emergencyContactEmail:
-                                      emergencyEmail.text,
+                                          emergencyEmail.text,
                                       emergencyContactPhoneNumber:
-                                      emergencyPhoneNumber.text,
+                                          emergencyPhoneNumber.text,
                                       companyName: companyName,
                                     );
                                     Fluttertoast.showToast(
                                         msg: "Tenant updated successfully");
                                     setState(() {
                                       isLoading = false;
-                                      errorMessage = '';
-                                      widget.tenants.tenantFirstName = firstName.text;
-                                      widget.tenants.tenantLastName = lastName.text;
-                                      widget.tenants.tenantPhoneNumber = phoneNumber.text;
-                                      widget.tenants.tenantAlternativeEmail = alterEmail.text;
-
+                                      errorMessage = null;
+                                      widget.tenants.tenantFirstName =
+                                          firstName.text;
+                                      widget.tenants.tenantLastName =
+                                          lastName.text;
                                     });
                                     Navigator.of(context).pop(true);
                                   } catch (e) {
@@ -891,15 +822,15 @@ class _EditTenantsState extends State<EditTenants> {
                             },
                             child: isLoading
                                 ? Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 55.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
                                 : Text(
-                              'Edit Tenant',
-                              style: TextStyle(color: Color(0xFFf7f8f9)),
-                            ),
+                                    'Edit Tenant',
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  ),
                           ),
                         ),
                         SizedBox(
@@ -915,12 +846,14 @@ class _EditTenantsState extends State<EditTenants> {
                                     backgroundColor: Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(8.0))),
-                                onPressed: () {},
+                                            BorderRadius.circular(8.0))),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(color: Color(0xFF748097)),
-                                )))
+                                ))),
                       ],
                     ),
                   ),
@@ -931,74 +864,6 @@ class _EditTenantsState extends State<EditTenants> {
         ),
       ),
     );
-  }
-
-  bool isLoading = false;
-  bool formValid = true;
-
-  Future<void> EditTenant() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString("adminId")!;
-    if (adminId != null) {
-      try {
-        await TenantsRepository().editTenant(
-          tenantId: widget.tenants.tenantId ?? "",
-          adminId: adminId,
-          tenantFirstName: firstName.text,
-          tenantLastName: lastName.text,
-          tenantPhoneNumber: phoneNumber.text,
-          tenantAlternativeNumber: workNumber.text,
-          tenantEmail: email.text,
-          tenantAlternativeEmail: alterEmail.text,
-          tenantPassword: passWord.text,
-          tenantBirthDate: _dateController.text,
-          taxPayerId: taxPayerId.text,
-          comments: comments.text,
-          emergencyContactName: contactName.text,
-          emergencyContactRelation: relationToTenant.text,
-          emergencyContactEmail: emergencyEmail.text,
-          emergencyContactPhoneNumber: emergencyPhoneNumber.text,
-          companyName: companyName,
-        );
-        Fluttertoast.showToast(msg: "Tenant updated successfully");
-        setState(() {
-          isLoading = false;
-          errorMessage = '';
-          // widget.tenants.tenantFirstName = firstName.text;
-          // widget.tenants.tenantLastName = lastName.text;
-        });
-        Navigator.of(context).pop(true);
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Failed to update tenant");
-        setState(() {
-          isLoading = false;
-          errorMessage = e.toString();
-        });
-
-        // Handle error
-
-        print(e.toString());
-      }
-    } else {
-      setState(() {
-        isLoading = false;
-        errorMessage = "Admin ID not found";
-      });
-    }
-
-    setState(() {
-      isLoading = false;
-    });
-
-    // if (success) {
-    //   print('Form is valid');
-    // } else {
-    //   print('Form is invalid');
-    // }
   }
 }
 
@@ -1036,7 +901,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   @override
   void dispose() {
@@ -1094,7 +959,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     decoration: InputDecoration(
                       suffixIcon: widget.suffixIcon,
                       hintStyle:
-                      TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                          TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                       border: InputBorder.none,
                       hintText: widget.hintText,
                     ),

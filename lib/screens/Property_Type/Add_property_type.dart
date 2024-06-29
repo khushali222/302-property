@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -46,25 +47,49 @@ class _Add_propertyState extends State<Add_property> {
                 child: Image.asset("assets/images/logo.png"),
               ),
               SizedBox(height: 40),
-              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
-              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.white,), "Add Property Type",true),
-              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.black,), "Add Staff Member",false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.circle_grid_3x3,
+                    color: Colors.black,
+                  ),
+                  "Dashboard",
+                  false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.house,
+                    color: Colors.white,
+                  ),
+                  "Add Property Type",
+                  true),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.person_add,
+                    color: Colors.black,
+                  ),
+                  "Add Staff Member",
+                  false),
               buildDropdownListTile(
                   context,
                   FaIcon(
                     FontAwesomeIcons.key,
                     size: 20,
                     color: Colors.black,
-                  ), "Rental", [
+                  ),
+                  "Rental",
+                  [
                     "Properties",
                     "RentalOwner",
                     "Tenants",
-                  ]
-              ),
-              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(context,
-                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+                  ]),
+              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
+                  "Leasing", ["Rent Roll", "Applicants"]),
+              buildDropdownListTile(
+                  context,
+                  Image.asset("assets/icons/maintence.png",
+                      height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
             ],
@@ -74,36 +99,9 @@ class _Add_propertyState extends State<Add_property> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5.0),
-                child: Container(
-                  height: 50.0,
-                  padding: EdgeInsets.only(top: 8, left: 10),
-                  width: MediaQuery.of(context).size.width * .91,
-                  margin: const EdgeInsets.only(
-                      bottom: 6.0), //Same as `blurRadius` i guess
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Color.fromRGBO(21, 43, 81, 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, 1.0), //(x,y)
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    "Add Property Type",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22),
-                  ),
-                ),
-              ),
+            titleBar(
+              width: MediaQuery.of(context).size.width * .86,
+              title: 'Add Property Type',
             ),
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
@@ -119,8 +117,7 @@ class _Add_propertyState extends State<Add_property> {
                       border: Border.all(
                         color: Color.fromRGBO(21, 43, 81, 1),
                       )),
-                  child:
-                  Column(
+                  child: Column(
                     children: [
                       SizedBox(
                         height: 20,
@@ -288,7 +285,6 @@ class _Add_propertyState extends State<Add_property> {
                           ),
                         ],
                       ),
-
                       SizedBox(
                         height: 20,
                       ),
@@ -341,7 +337,8 @@ class _Add_propertyState extends State<Add_property> {
                               width: MediaQuery.of(context).size.width * 0.05),
                           GestureDetector(
                             onTap: () async {
-                              if (selectedValue == null || subtype.text.isEmpty) {
+                              if (selectedValue == null ||
+                                  subtype.text.isEmpty) {
                                 setState(() {
                                   iserror = true;
                                 });
@@ -359,11 +356,12 @@ class _Add_propertyState extends State<Add_property> {
                                   propertyType: selectedValue,
                                   propertySubType: subtype.text,
                                   isMultiUnit: isChecked,
-                                ).then((value) {
+                                )
+                                    .then((value) {
                                   setState(() {
                                     isLoading = false;
                                   });
-                                  Navigator.pop(context,true);
+                                  Navigator.pop(context, true);
                                 }).catchError((e) {
                                   setState(() {
                                     isLoading = false;
@@ -388,8 +386,7 @@ class _Add_propertyState extends State<Add_property> {
                                     ),
                                   ],
                                 ),
-                                child:
-                                Center(
+                                child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
                                           color: Colors.white,
@@ -410,7 +407,7 @@ class _Add_propertyState extends State<Add_property> {
                             width: 15,
                           ),
                           InkWell(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                             },
                             child: Material(
@@ -427,11 +424,11 @@ class _Add_propertyState extends State<Add_property> {
                       SizedBox(
                         height: 10,
                       ),
-                      if(iserror)
-                      Text(
-                        "Please fill in all fields correctly.",
-                        style: TextStyle(color: Colors.redAccent),
-                      )
+                      if (iserror)
+                        Text(
+                          "Please fill in all fields correctly.",
+                          style: TextStyle(color: Colors.redAccent),
+                        )
                     ],
                   ),
                 ),

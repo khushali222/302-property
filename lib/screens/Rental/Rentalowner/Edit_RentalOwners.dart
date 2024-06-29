@@ -317,7 +317,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
-                padding: const EdgeInsets.only(top: 8, left: 10),
+                padding: EdgeInsets.only(top: 14, left: 10),
                 width: MediaQuery.of(context).size.width * .91,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
@@ -332,12 +332,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     ),
                   ],
                 ),
-                child: const Text(
-                  "Add Rental Owners",
+                child: Text(
+                  "Edit Rental Owners",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 22),
+                      fontSize: 18),
                 ),
               ),
             ),

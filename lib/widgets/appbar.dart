@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,17 +11,17 @@ import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
 class widget_302 {
-  static App_Bar(
-      {var suffixIcon,
-        var leading,
-        var fontweight,
-        List<Widget>? actions,
-        var arrowNearText,
-        required BuildContext context,
-
-      }) {
+  static App_Bar({
+    var suffixIcon,
+    var leading,
+    var fontweight,
+    List<Widget>? actions,
+    var arrowNearText,
+    required BuildContext context,
+  }) {
     return AppBar(
-      elevation: 5,
+      iconTheme: IconThemeData(color: Colors.black),
+      elevation: 0,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
 
@@ -57,36 +55,36 @@ class widget_302 {
       // ),
       actions: [
         InkWell(
-          onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Plan_screen()));
+          onTap: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => Plan_screen()));
           },
-          child: Material(
-            elevation: 3,
-            borderRadius: BorderRadius.circular(5),
-            child: Container(
-              width: 50,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(21, 43, 81, 1),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Center(
-                  child: Text(
-                    "Buy",
-                    style: TextStyle(color: Colors.white),
-                  )),
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 12),
+            width: 50,
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(21, 43, 81, 1),
+              borderRadius: BorderRadius.circular(5),
             ),
+            child: Center(
+                child: Text(
+              "Buy",
+              style: TextStyle(color: Colors.white),
+            )),
           ),
         ),
         SizedBox(
           width: 10,
         ),
-       Icon(Icons.notifications_outlined,color:Color.fromRGBO(21, 43, 81, 1) ,),
-      //   FaIcon(
-      //     FontAwesomeIcons.bell,
-      //     size: 20,
-      //     color: Color.fromRGBO(21, 43, 81, 1),
-      //   ),
+        Icon(
+          Icons.notifications_outlined,
+          color: Color.fromRGBO(21, 43, 81, 1),
+        ),
+        //   FaIcon(
+        //     FontAwesomeIcons.bell,
+        //     size: 20,
+        //     color: Color.fromRGBO(21, 43, 81, 1),
+        //   ),
         SizedBox(
           width: 10,
         ),
@@ -94,93 +92,105 @@ class widget_302 {
           future: _getNameFromSharedPreferences(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(6),
-                child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
-                      borderRadius: BorderRadius.circular(6),
+              return Container(
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  width: 30,
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(21, 43, 81, 1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: PopupMenuButton(
+                    color: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    position: PopupMenuPosition.under,
+                    child: Center(
+                      child: Text(
+                        snapshot.data!,
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                    child:  PopupMenuButton(
-                      color: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      position: PopupMenuPosition.under,
-                      child:  Center(
+                    // offset: Offset(0.0, appBarHeight),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(8.0),
+                        bottomRight: Radius.circular(8.0),
+                        topLeft: Radius.circular(8.0),
+                        topRight: Radius.circular(8.0),
+                      ),
+                    ),
+                    itemBuilder: (ctx) => [
+                      PopupMenuItem(
                         child: Text(
-                          snapshot.data!,
-                          style: TextStyle(color: Colors.white),
+                          "WELCOME",
                         ),
                       ),
-                      // offset: Offset(0.0, appBarHeight),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(8.0),
-                          bottomRight: Radius.circular(8.0),
-                          topLeft: Radius.circular(8.0),
-                          topRight: Radius.circular(8.0),
-                        ),
-                      ),
-                      itemBuilder: (ctx) => [
-                        PopupMenuItem(child: Text("WELCOME",),
-                        ),
-                        PopupMenuItem(child: Row(
+                      PopupMenuItem(
+                        child: Row(
                           children: [
                             Icon(Icons.person),
-                           //  FaIcon(
-                           //    FontAwesomeIcons.user,
-                           //    size: 20,
-                           //    color: Colors.black,
-                           //  ),
-                            SizedBox(width: 10,),
+                            //  FaIcon(
+                            //    FontAwesomeIcons.user,
+                            //    size: 20,
+                            //    color: Colors.black,
+                            //  ),
+                            SizedBox(
+                              width: 10,
+                            ),
                             Text("My Profile"),
                           ],
                         ),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Profile_screen()));
-                          },
-                        ),
-                        PopupMenuItem(child:
-                        Row(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => Profile_screen()));
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Row(
                           children: [
                             FaIcon(
                               FontAwesomeIcons.cog,
                               size: 20,
                               color: Colors.black,
                             ),
-                            SizedBox(width: 10,),
+                            SizedBox(
+                              width: 10,
+                            ),
                             Text("Settings"),
                           ],
                         ),
-                          onTap: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>TabBarExample()));
-                          },
-                        ),
-
-                        PopupMenuItem(child: Row(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => TabBarExample()));
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Row(
                           children: [
                             Icon(Icons.directions_run_rounded),
-                           //  FaIcon(
-                           //    FontAwesomeIcons,
-                           //    size: 20,
-                           //    color: Colors.black,
-                           //  ),
-                            SizedBox(width: 10,),
+                            //  FaIcon(
+                            //    FontAwesomeIcons,
+                            //    size: 20,
+                            //    color: Colors.black,
+                            //  ),
+                            SizedBox(
+                              width: 10,
+                            ),
                             Text("Logout"),
                           ],
                         ),
-                          onTap: ()async{
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
-                            prefs.clear();
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Login_Screen()), (route) => false);
-                          },
-                        ),
-                      ],
-                    )
-                ),
-              );
+                        onTap: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.clear();
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Login_Screen()),
+                              (route) => false);
+                        },
+                      ),
+                    ],
+                  ));
             } else {
               // Display a loading indicator or placeholder
               return Container();
@@ -193,6 +203,7 @@ class widget_302 {
       ],
     );
   }
+
   static Future<String> _getNameFromSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? firstName = prefs.getString("first_name");

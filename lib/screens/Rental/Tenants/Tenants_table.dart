@@ -9,10 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 import '../../../model/tenants.dart';
 import '../../../widgets/drawer_tiles.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 import 'Tenant_summary.dart';
 import 'edit_tenants.dart';
@@ -75,15 +76,15 @@ class _Tenants_tableState extends State<Tenants_table> {
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
-        leading: Container(
-          child: Icon(
-            Icons.expand_less,
-            color: Colors.transparent,
-          ),
-        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            Container(
+              child: Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
             Expanded(
               child: InkWell(
                 onTap: () {
@@ -113,7 +114,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white))
                         : Text("Tenants\nName",
-                        textAlign: TextAlign.center,
+                            textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
@@ -210,7 +211,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Created\nAt", textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
+                    Text("Created\nAt",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
@@ -263,15 +266,11 @@ class _Tenants_tableState extends State<Tenants_table> {
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder:
-                (context) =>
-                EditTenants(
-                  tenants: tenants, tenantId:  tenants.tenantId!,
+            builder: (context) => EditTenants(
+                  tenants: tenants, tenantId: '',
                 )));
-    if(check == true){
-      setState(() {
-
-      });
+    if (check == true) {
+      setState(() {});
     }
     /* if (result == true) {
       setState(() {
@@ -279,7 +278,6 @@ class _Tenants_tableState extends State<Tenants_table> {
       });
     }*/
   }
-
 
   void _showDeleteAlert(BuildContext context, String id) {
     Alert(
@@ -305,10 +303,10 @@ class _Tenants_tableState extends State<Tenants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await TenantsRepository().deleteTenant( tenantId: id, companyName: companyName, tenantEmail: '');
+            await TenantsRepository().deleteTenant(
+                tenantId: id, companyName: companyName, tenantEmail: '');
             setState(() {
               futureTenants = TenantsRepository().fetchTenants();
-
             });
             Navigator.pop(context);
           },
@@ -541,10 +539,10 @@ class _Tenants_tableState extends State<Tenants_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     final response =
-    await http.get(Uri.parse('${Api_url}/api/tenant/limitation/$id'));
+        await http.get(Uri.parse('${Api_url}/api/tenant/limitation/$id'));
     final jsonData = json.decode(response.body);
     print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201 ) {
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       print(rentalCount);
       print(propertyCountLimit);
       setState(() {
@@ -563,12 +561,13 @@ class _Tenants_tableState extends State<Tenants_table> {
       context: context,
       type: AlertType.warning,
       title: "Plan Limitation",
-      desc: "The limit for adding tenants according to the plan has been reached.",
+      desc:
+          "The limit for adding tenants according to the plan has been reached.",
       style: AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
-        //  overlayColor: Colors.black.withOpacity(.8)
-      ),
+          //  overlayColor: Colors.black.withOpacity(.8)
+          ),
       buttons: [
         DialogButton(
           child: Text(
@@ -607,7 +606,8 @@ class _Tenants_tableState extends State<Tenants_table> {
 
     if (adminId != null) {
       try {
-        String fetchedCompanyName = await TenantsRepository().fetchCompanyName(adminId);
+        String fetchedCompanyName =
+            await TenantsRepository().fetchCompanyName(adminId);
         setState(() {
           companyName = fetchedCompanyName;
         });
@@ -617,6 +617,7 @@ class _Tenants_tableState extends State<Tenants_table> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -703,8 +704,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      if(rentalCount < propertyCountLimit  )
-                      {
+                      if (rentalCount < propertyCountLimit) {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => AddTenant()));
@@ -714,11 +714,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                             //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                           });
                         }
-                      }
-                      else{
+                      } else {
                         _showAlertforLimit(context);
                       }
-
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
@@ -758,40 +756,44 @@ class _Tenants_tableState extends State<Tenants_table> {
             ),
             SizedBox(height: 10),
             //propertytype
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5.0),
-                child: Container(
-                  height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-                  padding: EdgeInsets.only(top: 8, left: 10),
-                  width: MediaQuery.of(context).size.width * .91,
-                  margin: const EdgeInsets.only(
-                      bottom: 6.0), //Same as `blurRadius` i guess
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Color.fromRGBO(21, 43, 81, 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, 1.0), //(x,y)
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    "Tenants",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      // fontSize:22,
-                      fontSize: MediaQuery.of(context).size.width < 500
-                          ? 22
-                          : MediaQuery.of(context).size.width * 0.035,
-                    ),
-                  ),
-                ),
-              ),
+            // Padding(
+            //   padding: const EdgeInsets.all(5.0),
+            //   child: ClipRRect(
+            //     borderRadius: BorderRadius.circular(5.0),
+            //     child: Container(
+            //       height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
+            //       padding: EdgeInsets.only(top: 8, left: 10),
+            //       width: MediaQuery.of(context).size.width * .91,
+            //       margin: const EdgeInsets.only(
+            //           bottom: 6.0), //Same as `blurRadius` i guess
+            //       decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(5.0),
+            //         color: Color.fromRGBO(21, 43, 81, 1),
+            //         boxShadow: [
+            //           BoxShadow(
+            //             color: Colors.grey,
+            //             offset: Offset(0.0, 1.0), //(x,y)
+            //             blurRadius: 6.0,
+            //           ),
+            //         ],
+            //       ),
+            //       child: Text(
+            //         "Tenants",
+            //         style: TextStyle(
+            //           color: Colors.white,
+            //           fontWeight: FontWeight.bold,
+            //           // fontSize:22,
+            //           fontSize: MediaQuery.of(context).size.width < 500
+            //               ? 22
+            //               : MediaQuery.of(context).size.width * 0.035,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            titleBar(
+              width: MediaQuery.of(context).size.width * .91,
+              title: 'Tenants',
             ),
             SizedBox(height: 10),
             //search
@@ -809,7 +811,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                     child: Container(
                       // height: 40,
                       height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                      width:MediaQuery.of(context).size.width < 500  ? MediaQuery.of(context).size.width * .52 :  MediaQuery.of(context).size.width * .49,
+                      width: MediaQuery.of(context).size.width < 500
+                          ? MediaQuery.of(context).size.width * .52
+                          : MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(2),
@@ -854,7 +858,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
-                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
                       ),
                       SizedBox(
                         width: 5,
@@ -865,7 +871,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
-                          fontSize:  MediaQuery.of(context).size.width < 500 ? 13 : 21,),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
                       ),
                     ],
                   ),
@@ -903,18 +911,17 @@ class _Tenants_tableState extends State<Tenants_table> {
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((rentals) =>
-                            rentals.tenantFirstName!
-                                .toLowerCase()
-                                .contains(searchvalue!.toLowerCase())||
+                                rentals.tenantFirstName!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()) ||
                                 rentals.tenantLastName!
                                     .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase())
-                        )
+                                    .contains(searchvalue!.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
                             .where((rentals) =>
-                        rentals.tenantFirstName== searchvalue)
+                                rentals.tenantFirstName == searchvalue)
                             .toList();
                       }
                       sortData(data);
@@ -949,44 +956,6 @@ class _Tenants_tableState extends State<Tenants_table> {
                                       children: <Widget>[
                                         ListTile(
                                           contentPadding: EdgeInsets.zero,
-                                          leading: InkWell(
-                                            onTap: () {
-                                              // setState(() {
-                                              //    isExpanded = !isExpanded;
-                                              // //  expandedIndex = !expandedIndex;
-                                              //
-                                              // });
-                                              // setState(() {
-                                              //   if (isExpanded) {
-                                              //     expandedIndex = null;
-                                              //     isExpanded = !isExpanded;
-                                              //   } else {
-                                              //     expandedIndex = index;
-                                              //   }
-                                              // });
-                                              setState(() {
-                                                if (expandedIndex == index) {
-                                                  expandedIndex = null;
-                                                } else {
-                                                  expandedIndex = index;
-                                                }
-                                              });
-                                            },
-                                            child: Container(
-                                              margin: EdgeInsets.only(left: 5),
-                                              padding: !isExpanded
-                                                  ? EdgeInsets.only(bottom: 10)
-                                                  : EdgeInsets.only(top: 10),
-                                              child: FaIcon(
-                                                isExpanded
-                                                    ? FontAwesomeIcons.sortUp
-                                                    : FontAwesomeIcons.sortDown,
-                                                size: 20,
-                                                color: Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                              ),
-                                            ),
-                                          ),
                                           title: Padding(
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
@@ -995,6 +964,50 @@ class _Tenants_tableState extends State<Tenants_table> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    // setState(() {
+                                                    //    isExpanded = !isExpanded;
+                                                    // //  expandedIndex = !expandedIndex;
+                                                    //
+                                                    // });
+                                                    // setState(() {
+                                                    //   if (isExpanded) {
+                                                    //     expandedIndex = null;
+                                                    //     isExpanded = !isExpanded;
+                                                    //   } else {
+                                                    //     expandedIndex = index;
+                                                    //   }
+                                                    // });
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex = null;
+                                                      } else {
+                                                        expandedIndex = index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5),
+                                                    padding: !isExpanded
+                                                        ? EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : EdgeInsets.only(
+                                                            top: 10),
+                                                    child: FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                              .sortUp
+                                                          : FontAwesomeIcons
+                                                              .sortDown,
+                                                      size: 20,
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                    ),
+                                                  ),
+                                                ),
                                                 Expanded(
                                                   child: InkWell(
                                                     onTap: () {
@@ -1004,18 +1017,23 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                               builder: (context) =>
                                                                   Tenant_summary(
                                                                       tenantId:
-                                                                      tenants
-                                                                          .tenantId!)));
+                                                                          tenants
+                                                                              .tenantId!)));
                                                       print(
                                                           'tenantFirstName ,${tenants.id!}');
                                                     },
-                                                    child: Text(
-                                                      '${tenants.tenantFirstName} ${tenants.tenantLastName}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Text(
+                                                        '${tenants.tenantFirstName} ${tenants.tenantLastName}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -1137,7 +1155,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text:  '${tenants.rentalAddress}',
+                                                                    text:
+                                                                        '${tenants.rentalAddress}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1201,21 +1220,20 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                         83,
                                                                         1),
                                                               ),
-                                                              onPressed: ()async {
+                                                              onPressed:
+                                                                  () async {
                                                                 // handleEdit(Propertytype);
-                                                               var check = await Navigator.push(
+                                                                var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                EditTenants(
-                                                                              tenants: tenants, tenantId:  tenants.tenantId!,
+                                                                        builder: (context) => EditTenants(
+                                                                              tenants: tenants, tenantId: '',
                                                                             )));
-                                                               if(check == true){
-                                                                 setState(() {
-
-                                                                 });
-                                                               }
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(
+                                                                      () {});
+                                                                }
                                                               },
                                                             ),
                                                             IconButton(
@@ -1386,8 +1404,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                     } else if (searchvalue.isNotEmpty) {
                       filteredData = snapshot.data!
                           .where((rentals) =>
-                      rentals.tenantFirstName!.toLowerCase().contains(searchvalue.toLowerCase()) ||
-                          rentals.tenantLastName!.toLowerCase().contains(searchvalue.toLowerCase()))
+                              rentals.tenantFirstName!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()) ||
+                              rentals.tenantLastName!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()))
                           .toList();
                     }
                     _tableData = filteredData!;
@@ -1404,7 +1426,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 20,right: 20),
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
                                       child: Container(
                                         // width: MediaQuery.of(context).size.width *
                                         //     .91,
@@ -1427,8 +1450,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 _buildHeader(
                                                     'Tenant Name',
                                                     0,
-                                                        (tenants) => '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}'.trim()
-                                                ),
+                                                    (tenants) =>
+                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}'
+                                                            .trim()),
                                                 _buildHeader(
                                                     'Property',
                                                     1,
@@ -1449,19 +1473,21 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                     4,
                                                     (tenants) =>
                                                         tenants.createdAt!),
-                                                _buildHeader('Actions', 5, null),
+                                                _buildHeader(
+                                                    'Actions', 5, null),
                                               ],
                                             ),
                                             TableRow(
                                               decoration: BoxDecoration(
                                                 border: Border.symmetric(
-                                                    horizontal: BorderSide.none),
+                                                    horizontal:
+                                                        BorderSide.none),
                                               ),
                                               children: List.generate(
                                                   6,
                                                   (index) => TableCell(
-                                                      child:
-                                                          Container(height: 20))),
+                                                      child: Container(
+                                                          height: 20))),
                                             ),
                                             for (var i = 0;
                                                 i < _pagedData.length;
@@ -1479,10 +1505,15 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         color: Color.fromRGBO(
                                                             21, 43, 81, 1)),
                                                     bottom: i ==
-                                                            _pagedData.length - 1
+                                                            _pagedData.length -
+                                                                1
                                                         ? BorderSide(
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1))
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    81,
+                                                                    1))
                                                         : BorderSide.none,
                                                   ),
                                                 ),
@@ -1490,8 +1521,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   // _buildDataCell(_pagedData[i]
                                                   //     .tenantFirstName!),
                                                   _buildDataCell(
-                                                      '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'.trim()
-                                                  ),
+                                                      '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
+                                                          .trim()),
                                                   _buildDataCell(_pagedData[i]
                                                       .rentalAddress!),
                                                   _buildDataCell(_pagedData[i]
@@ -1499,8 +1530,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   _buildDataCell(_pagedData[i]
                                                       .tenantAlternativeEmail!),
                                                   _buildDataCell(
-                                                    formatDate(
-                                                        _pagedData[i].createdAt!),
+                                                    formatDate(_pagedData[i]
+                                                        .createdAt!),
                                                   ),
                                                   _buildActionsCell(
                                                       _pagedData[i]),

@@ -755,7 +755,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: EdgeInsets.only(top: 8, left: 10),
+                    padding: EdgeInsets.only(top: 14, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: Color.fromRGBO(21, 43, 81, 1),
@@ -772,7 +772,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 22,
+                        fontSize: 18,
                       ),
                     ),
                   ),

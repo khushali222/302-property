@@ -21,8 +21,8 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 //     ),
 //     // DevicePreview(
 //     //   enabled: true,
-//     //   tools: [
-//     //     ...DevicePreview.defaultTools,
+//   tools: [/
+// //     ...DevicePreview.defaultTools,
 //     //   ],
 //     //   builder: (context) => MyApp(),
 //     // ),
@@ -67,9 +67,6 @@ void main() {
     ),
   );
 }
-
-
-
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
