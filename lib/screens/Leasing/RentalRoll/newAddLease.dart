@@ -13,7 +13,10 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
+
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/model/properties.dart';
+import 'package:three_zero_two_property/repository/properties.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/SummeryPageLease.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/summery_pageNew.dart';
 
@@ -31,19 +34,143 @@ class addLease extends StatefulWidget {
 
 class _addLeaseState extends State<addLease>
     with SingleTickerProviderStateMixin {
+  late Future<List<Rentals>> futureRentalOwners;
+
+  @override
+  void initState() {
+    super.initState();
+    futureRentalOwners = PropertiesRepository().fetchProperties();
+    _loadProperties();
+
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+//first container variable
+
+  bool _isLoading = true;
+  List<Map<String, String>> properties = [];
+  List<String> units = [];
+  String? _selectedProperty;
+  String? _selectedUnit;
+  String? _selectedLeaseType;
+  final TextEditingController _startDate = TextEditingController();
+  final TextEditingController _endDate = TextEditingController();
+
+  //second container variables
+  String? _selectedRent;
+  final TextEditingController rentAmount = TextEditingController();
+  final TextEditingController rentNextDueDate = TextEditingController();
+  final TextEditingController rentMemo = TextEditingController();
+
+  //changes variables
+
+  Future<void> _loadProperties() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response =
+          await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+      print('${Api_url}/api/rentals/rentals/$id');
+
+      if (response.statusCode == 200) {
+        List jsonResponse = json.decode(response.body)['data'];
+        List<Map<String, String>> addresses = jsonResponse.map((data) {
+          return {
+            'rental_id': data['rental_id'].toString(),
+            'rental_adress': data['rental_adress'].toString(),
+          };
+        }).toList();
+
+        setState(() {
+          properties = addresses;
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch properties: $e')),
+      );
+    }
+  }
+
+  Future<void> _loadUnits(String rentalId) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response =
+          await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'));
+      print('$Api_url/api/unit/rental_unit/$rentalId');
+
+      if (response.statusCode == 200) {
+        List jsonResponse = json.decode(response.body)['data'];
+        List<String> unitAddresses =
+            jsonResponse.map((data) => data['rental_unit'].toString()).toList();
+
+        setState(() {
+          units = unitAddresses;
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load units');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch units: $e')),
+      );
+    }
+  }
+
+  List<String> accounts = [];
+
+  Future<void> fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.getString('adminId').toString();
+    final response =
+        await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    print(response.body);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        accounts = (data['data'] as List)
+            .where((item) => item['charge_type'] == "One Time Charge")
+            .map((item) => item['account'] as String)
+            .toList();
+        _isLoading = false;
+        print(accounts.length);
+      });
+    } else {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to fetch data')),
+      );
+    }
+  }
+
   bool InValid = false;
 
   bool isEnjoyNowSelected = true;
   bool isTenantSelected = true;
-  String? _selectedProperty;
-  String? _selectedLeaseType;
+
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<FormState> _addRecurringFormKey = GlobalKey<FormState>();
 
   final TextEditingController Amount = TextEditingController();
-  final TextEditingController rentAmount = TextEditingController();
-  final TextEditingController rentNextDueDate = TextEditingController();
-  final TextEditingController rentMemo = TextEditingController();
+
   final TextEditingController securityDepositeAmount = TextEditingController();
   final TextEditingController recurringContentAmount = TextEditingController();
   final TextEditingController recurringContentMemo = TextEditingController();
@@ -52,49 +179,49 @@ class _addLeaseState extends State<addLease>
   final TextEditingController signatureController = TextEditingController();
   GlobalKey<SfSignaturePadState> _signaturePadKey = GlobalKey();
 
-  String? _selectedRent;
-  final TextEditingController _startDate = TextEditingController();
-  final TextEditingController _endDate = TextEditingController();
-
   bool _selectedResidentsEmail = false; // Initialize the boolean variable
 
-  final List<String> items = [
-    'Item1',
-    'Item2',
-    'Item3',
+  final List<String> leaseTypeitems = [
+    'Fixed',
+    'Fixed w/rollover',
+    'At-will(month to month)',
+  ];
+  final List<String> rentCycleitems = [
+    'Daily',
+    'Weekly',
+    'Every two weeks',
+    'Monthly',
+    'Every two months',
+    'Quarterly',
+    'Yearly',
   ];
   String? selectedValue;
-  List<File> _pdfFiles = [];
+  // List<File> _pdfFiles = [];
 
-  Future<void> _pickPdfFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-      allowMultiple: true,
-    );
+  // Future<void> _pickPdfFiles() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['pdf'],
+  //     allowMultiple: true,
+  //   );
 
-    if (result != null) {
-      List<File> files = result.paths
-          .where((path) => path != null)
-          .map((path) => File(path!))
-          .toList();
+  //   if (result != null) {
+  //     List<File> files = result.paths
+  //         .where((path) => path != null)
+  //         .map((path) => File(path!))
+  //         .toList();
 
-      if (files.length > 10) {
-        files = files.sublist(0, 10);
-      }
+  //     if (files.length > 10) {
+  //       files = files.sublist(0, 10);
+  //     }
 
-      setState(() {
-        _pdfFiles = files;
-      });
-    }
-  }
+  //     setState(() {
+  //       _pdfFiles = files;
+  //     });
+  //   }
+  // }
 
   late TabController _tabController;
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
 
   @override
   void dispose() {
@@ -259,6 +386,71 @@ class _addLeaseState extends State<addLease>
     }
   }
 
+  List<File> _pdfFiles = [];
+
+  List<String> _uploadedFileNames = [];
+
+  Future<void> _pickPdfFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+      allowMultiple: true,
+    );
+
+    if (result != null) {
+      List<File> files = result.paths
+          .where((path) => path != null)
+          .map((path) => File(path!))
+          .toList();
+
+      if (files.length > 10) {
+        Fluttertoast.showToast(msg: 'You can only select up to 10 files.');
+        return; // Exit the method if more than 10 files are selected
+      }
+
+      setState(() {
+        _pdfFiles = files;
+      });
+
+      for (var file in _pdfFiles) {
+        await _uploadPdf(file);
+      }
+    }
+  }
+
+  Future<void> _uploadPdf(File pdfFile) async {
+    try {
+      String? fileName = await uploadPdf(pdfFile);
+      setState(() {
+        if (fileName != null) {
+          _uploadedFileNames.add(fileName);
+        }
+      });
+    } catch (e) {
+      print('PDF upload failed: $e');
+    }
+  }
+
+  Future<String?> uploadPdf(File pdfFile) async {
+    print(pdfFile.path);
+    final String uploadUrl = '${Api_url}/api/images/upload';
+
+    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      Fluttertoast.showToast(msg: 'PDF added successfully');
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -400,24 +592,225 @@ class _addLeaseState extends State<addLease>
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
                           const SizedBox(
-                            height: 8,
+                            height: 4,
                           ),
-                          CustomDropdown(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a property';
-                              }
-                              return null;
-                            },
-                            labelText: 'Select Property',
-                            items: items,
-                            selectedValue: _selectedProperty,
-                            onChanged: (String? value) {
-                              setState(() {
-                                _selectedProperty = value;
-                              });
-                            },
-                          ),
+                          _isLoading
+                              ? const Center(
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.black,
+                                    size: 50.0,
+                                  ),
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DropdownButtonHideUnderline(
+                                      child: DropdownButtonFormField2<String>(
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none),
+                                        isExpanded: true,
+                                        hint: const Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                'Select Property',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFFb0b6c3),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        items: properties.map((property) {
+                                          return DropdownMenuItem<String>(
+                                            value: property['rental_id'],
+                                            child: Text(
+                                              property['rental_adress']!,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black87,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: _selectedProperty,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedUnit = null;
+                                            _selectedProperty = value;
+                                            _loadUnits(
+                                                value!); // Fetch units for the selected property
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          width: 160,
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 2,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(
+                                            Icons.arrow_drop_down,
+                                          ),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
+                                          ),
+                                        ),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 40,
+                                          padding: EdgeInsets.only(
+                                              left: 14, right: 14),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please select an option';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    units.isNotEmpty
+                                        ? const Text('Unit',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey))
+                                        : Container(),
+                                    const SizedBox(
+                                      height: 0,
+                                    ),
+                                    units.isNotEmpty
+                                        ? DropdownButtonHideUnderline(
+                                            child: DropdownButtonFormField2<
+                                                String>(
+                                              decoration: InputDecoration(
+                                                  border: InputBorder.none),
+                                              isExpanded: true,
+                                              hint: const Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Select Unit',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              items: units.map((unit) {
+                                                return DropdownMenuItem<String>(
+                                                  value: unit,
+                                                  child: Text(
+                                                    unit,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: _selectedUnit,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedUnit = value;
+                                                });
+                                              },
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 45,
+                                                width: 160,
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                elevation: 2,
+                                              ),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon: Icon(
+                                                  Icons.arrow_drop_down,
+                                                ),
+                                                iconSize: 24,
+                                                iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
+                                                iconDisabledColor: Colors.grey,
+                                              ),
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(6),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                              ),
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please select an option';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
                           const SizedBox(
                             height: 8,
                           ),
@@ -437,7 +830,7 @@ class _addLeaseState extends State<addLease>
                               return null;
                             },
                             labelText: 'Select Lease',
-                            items: items,
+                            items: leaseTypeitems,
                             selectedValue: _selectedLeaseType,
                             onChanged: (String? value) {
                               setState(() {
@@ -975,7 +1368,7 @@ class _addLeaseState extends State<addLease>
                               return null;
                             },
                             labelText: 'Select Rent',
-                            items: items,
+                            items: rentCycleitems,
                             selectedValue: _selectedRent,
                             onChanged: (String? value) {
                               setState(() {
@@ -1617,6 +2010,56 @@ class _addLeaseState extends State<addLease>
                           const SizedBox(
                             height: 20,
                           ),
+                          // Container(
+                          // height: 50,
+                          // width: 95,
+                          // decoration: BoxDecoration(
+                          //   borderRadius: BorderRadius.circular(8.0),
+                          // ),
+                          //   child: ElevatedButton(
+                          // style: ElevatedButton.styleFrom(
+                          //   backgroundColor: const Color(0xFF152b51),
+                          //   shape: RoundedRectangleBorder(
+                          //     borderRadius: BorderRadius.circular(8.0),
+                          //   ),
+                          // ),
+                          //     onPressed: () async {
+                          //       await _pickPdfFiles();
+                          //     },
+                          //     child: const Text(
+                          //       'Upload',
+                          //       style: TextStyle(color: Color(0xFFf7f8f9)),
+                          //     ),
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 10),
+                          // Flexible(
+                          //   fit: FlexFit.loose,
+                          //   child: ListView.builder(
+                          //     shrinkWrap: true,
+                          //     itemCount: _pdfFiles.length,
+                          //     itemBuilder: (context, index) {
+                          //       return ListTile(
+                          //         title: Text(
+                          //             _pdfFiles[index].path.split('/').last,
+                          //             style: const TextStyle(
+                          //                 fontSize: 16,
+                          //                 fontWeight: FontWeight.w500,
+                          //                 color: Color(0xFF748097))),
+                          //         trailing: IconButton(
+                          //             onPressed: () {
+                          //               setState(() {
+                          //                 _pdfFiles.removeAt(index);
+                          //               });
+                          //             },
+                          //             icon: const FaIcon(
+                          //               FontAwesomeIcons.remove,
+                          //               color: Color(0xFF748097),
+                          //             )),
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
                           Container(
                             height: 50,
                             width: 95,
@@ -1630,25 +2073,21 @@ class _addLeaseState extends State<addLease>
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              onPressed: () async {
-                                await _pickPdfFiles();
-                              },
-                              child: const Text(
-                                'Upload',
-                                style: TextStyle(color: Color(0xFFf7f8f9)),
-                              ),
+                              onPressed: _pickPdfFiles,
+                              child: Text('Upload'),
                             ),
                           ),
+
+                          SizedBox(height: 20),
                           const SizedBox(height: 10),
                           Flexible(
                             fit: FlexFit.loose,
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: _pdfFiles.length,
+                              itemCount: _uploadedFileNames.length,
                               itemBuilder: (context, index) {
                                 return ListTile(
-                                  title: Text(
-                                      _pdfFiles[index].path.split('/').last,
+                                  title: Text(_uploadedFileNames[index],
                                       style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
@@ -1656,7 +2095,7 @@ class _addLeaseState extends State<addLease>
                                   trailing: IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          _pdfFiles.removeAt(index);
+                                          _uploadedFileNames.removeAt(index);
                                         });
                                       },
                                       icon: const FaIcon(
@@ -1667,6 +2106,12 @@ class _addLeaseState extends State<addLease>
                               },
                             ),
                           ),
+                          // _uploadedFileNames.isNotEmpty
+                          //     ? Text('Uploaded PDFs:')
+                          //     : Container(),
+                          // ..._uploadedFileNames
+                          //     .map((fileName) => Text(fileName))
+                          //     .toList(),
                           const SizedBox(height: 5),
                         ],
                       ),
