@@ -353,30 +353,25 @@ class _PropertyTableState extends State<PropertyTable> {
 
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(propertytype d)? getField) {
-    return Container(
-      height: 70,
-      // color: Colors.blue,
-      child: TableCell(
-        child: InkWell(
-          onTap: getField != null
-              ? () {
-                  _sort(getField, columnIndex, !_sortAscending);
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Row(
-              children: [
-                SizedBox(width: 10),
-                Text(text,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                if (_sortColumnIndex == columnIndex)
-                  Icon(_sortAscending
-                      ? Icons.arrow_drop_down_outlined
-                      : Icons.arrow_drop_up_outlined),
-              ],
-            ),
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+                _sort(getField, columnIndex, !_sortAscending);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: Row(
+            children: [
+              SizedBox(width: 10),
+              Text(text,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
           ),
         ),
       ),
@@ -384,17 +379,10 @@ class _PropertyTableState extends State<PropertyTable> {
   }
 
   Widget _buildDataCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        // color: Colors.blue,
-        child: TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-          ),
-        ),
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
       ),
     );
   }
@@ -1371,103 +1359,102 @@ class _PropertyTableState extends State<PropertyTable> {
                       child: Column(
                         children: [
                           Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5),
-                              child: Column(
-                                children: [
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .91,
-                                      child: Table(
-                                        defaultColumnWidth:
-                                            IntrinsicColumnWidth(),
-                                        children: [
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 5),
+                            child: Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .91,
+                                    child: Table(
+                                      defaultColumnWidth:
+                                          IntrinsicColumnWidth(),
+                                      children: [
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(),
+                                          ),
+                                          children: [
+                                            _buildHeader(
+                                                'Main Type',
+                                                0,
+                                                (property) =>
+                                                    property.propertyType!),
+                                            _buildHeader(
+                                                'Subtype',
+                                                1,
+                                                (property) =>
+                                                    property.propertysubType!),
+                                            _buildHeader('Created At', 2, null),
+                                            _buildHeader('Updated At', 3, null),
+                                            _buildHeader('Actions', 4, null),
+                                          ],
+                                        ),
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border.symmetric(
+                                                horizontal: BorderSide.none),
+                                          ),
+                                          children: List.generate(
+                                            5,
+                                            (index) => TableCell(
+                                                child: Container(height: 20)),
+                                          ),
+                                        ),
+                                        for (var i = 0;
+                                            i < _pagedData.length;
+                                            i++)
                                           TableRow(
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  // color: blueColor
-                                                  ),
+                                              border: Border(
+                                                left: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                right: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                top: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                bottom: i ==
+                                                        _pagedData.length - 1
+                                                    ? BorderSide(
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 81, 1))
+                                                    : BorderSide.none,
+                                              ),
                                             ),
                                             children: [
-                                              _buildHeader(
-                                                  'Main Type',
-                                                  0,
-                                                  (property) =>
-                                                      property.propertyType!),
-                                              _buildHeader(
-                                                  'Subtype',
-                                                  1,
-                                                  (property) => property
-                                                      .propertysubType!),
-                                              _buildHeader(
-                                                  'Created At', 2, null),
-                                              _buildHeader(
-                                                  'Updated At', 3, null),
-                                              _buildHeader('Actions', 4, null),
+                                              TableCell(
+                                                  child: _buildDataCell(
+                                                      _pagedData[i]
+                                                          .propertyType!)),
+                                              TableCell(
+                                                  child: _buildDataCell(
+                                                      _pagedData[i]
+                                                          .propertysubType!)),
+                                              TableCell(
+                                                  child: _buildDataCell(
+                                                      formatDate(_pagedData[i]
+                                                          .createdAt!))),
+                                              TableCell(
+                                                  child: _buildDataCell(
+                                                      formatDate(_pagedData[i]
+                                                          .updatedAt!))),
+                                              TableCell(
+                                                  child: _buildActionsCell(
+                                                      _pagedData[i])),
                                             ],
                                           ),
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border.symmetric(
-                                                  horizontal: BorderSide.none),
-                                            ),
-                                            children: List.generate(
-                                                5,
-                                                (index) => TableCell(
-                                                    child:
-                                                        Container(height: 20))),
-                                          ),
-                                          for (var i = 0;
-                                              i < _pagedData.length;
-                                              i++)
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  left: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
-                                                  right: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
-                                                  top: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
-                                                  bottom: i ==
-                                                          _pagedData.length - 1
-                                                      ? BorderSide(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1))
-                                                      : BorderSide.none,
-                                                ),
-                                              ),
-                                              children: [
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertyType!),
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertysubType!),
-                                                _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].createdAt!),
-                                                ),
-                                                _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].updatedAt!),
-                                                ),
-                                                _buildActionsCell(
-                                                    _pagedData[i]),
-                                              ],
-                                            ),
-                                        ],
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(height: 25),
-                                  _buildPaginationControls(),
-                                ],
-                              ),
+                                ),
+                                SizedBox(height: 25),
+                                _buildPaginationControls(),
+                              ],
                             ),
                           ),
                           SizedBox(height: 25),
