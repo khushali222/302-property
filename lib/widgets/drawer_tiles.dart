@@ -73,7 +73,7 @@ void navigateToOption(
     "Tenants": (context) => Tenants_table(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
-    "Rent Roll": (context) => addLease(),
+    "Rent Roll": (context) => addLease3(),
     "Applicants": (context) => Applicants_table(),
   };
   Navigator.push(

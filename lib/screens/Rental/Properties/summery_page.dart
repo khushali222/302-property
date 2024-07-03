@@ -770,16 +770,17 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Tenants(BuildContext context) {
-    return
-      FutureBuilder<List<TenantData>>(
+    return FutureBuilder<List<TenantData>>(
       future: Properies_summery_Repo()
           .fetchPropertiessummery(widget.properties.rentalId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: Center(child: SpinKitFadingCircle(
-            color: Colors.black,
-            size: 40.0,
-          )),
+          return Center(
+            child: Center(
+                child: SpinKitFadingCircle(
+              color: Colors.black,
+              size: 40.0,
+            )),
           );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -1554,7 +1555,7 @@ class _Summery_pageState extends State<Summery_page>
                             width: 65,
                           ),
                           Text(
-                           // '${tenants[index].updatedAt}',
+                            // '${tenants[index].updatedAt}',
                             '${tenants[index].updatedAt}',
                             style: TextStyle(
                                 fontSize: 12,
@@ -1633,7 +1634,8 @@ class _Summery_pageState extends State<Summery_page>
         child: Column(
           children: [
             SizedBox(height: 20),
-            if (!showdetails && widget.properties.propertyTypeData!.isMultiunit! == false)
+            if (!showdetails &&
+                widget.properties.propertyTypeData!.isMultiunit! == false)
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: FutureBuilder<List<unit_properties>>(
@@ -1641,11 +1643,11 @@ class _Summery_pageState extends State<Summery_page>
                       .fetchunit(widget.properties.rentalId!),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return
-                        Center(child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 40.0,
-                        ));
+                      return Center(
+                          child: SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 40.0,
+                      ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1659,8 +1661,8 @@ class _Summery_pageState extends State<Summery_page>
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
-                                color: Color.fromRGBO(21, 43, 83, 1),
-                              )),
+                            color: Color.fromRGBO(21, 43, 83, 1),
+                          )),
                           child: DataTable(
                             // headingRowColor: MaterialStateColor.resolveWith(
                             //         (states) => Color.fromRGBO(21, 43, 83, 1)),
@@ -1696,7 +1698,7 @@ class _Summery_pageState extends State<Summery_page>
                                     Text(
                                       ' ${tenentCount}',
                                       style:
-                                      TextStyle(color: Color(0xFF8A95A8)),
+                                          TextStyle(color: Color(0xFF8A95A8)),
                                     ),
                                     onTap: () {
                                       setState(() {
@@ -1728,25 +1730,26 @@ class _Summery_pageState extends State<Summery_page>
                                       onPressed: () {
                                         sqft3.text = unitData.rentalsqft!;
                                         if (widget.properties.propertyTypeData!
-                                            .isMultiunit! == false &&
+                                                    .isMultiunit! ==
+                                                false &&
                                             widget.properties.propertyTypeData!
-                                                .propertyType ==
+                                                    .propertyType ==
                                                 'Residential')
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               bool isChecked =
-                                              false; // Moved isChecked inside the StatefulBuilder
+                                                  false; // Moved isChecked inside the StatefulBuilder
                                               return StatefulBuilder(
                                                 builder: (BuildContext context,
                                                     StateSetter setState) {
                                                   return AlertDialog(
                                                     backgroundColor:
-                                                    Colors.white,
+                                                        Colors.white,
                                                     surfaceTintColor:
-                                                    Colors.white,
+                                                        Colors.white,
                                                     content:
-                                                    SingleChildScrollView(
+                                                        SingleChildScrollView(
                                                       child: Column(
                                                         children: [
                                                           Row(
@@ -1754,16 +1757,16 @@ class _Summery_pageState extends State<Summery_page>
                                                               Text(
                                                                 "Add Unit Details",
                                                                 style:
-                                                                TextStyle(
+                                                                    TextStyle(
                                                                   color: Color
                                                                       .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      81,
-                                                                      1),
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1),
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                               Spacer(),
@@ -1795,8 +1798,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                     color: Color(
                                                                         0xFF8A95A8),
                                                                     fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                             ],
                                                           ),
@@ -1805,67 +1808,67 @@ class _Summery_pageState extends State<Summery_page>
                                                           ),
                                                           Padding(
                                                             padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical:
-                                                                1),
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        1),
                                                             child: Material(
                                                               elevation: 3,
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  3),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3),
                                                               child:
-                                                              TextFormField(
+                                                                  TextFormField(
                                                                 controller:
-                                                                sqft3,
+                                                                    sqft3,
                                                                 cursorColor:
-                                                                Colors
-                                                                    .black,
+                                                                    Colors
+                                                                        .black,
                                                                 decoration:
-                                                                InputDecoration(
+                                                                    InputDecoration(
                                                                   //  hintText: label,
                                                                   // labelText: label,
                                                                   // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                   filled: true,
                                                                   fillColor:
-                                                                  Colors
-                                                                      .white,
+                                                                      Colors
+                                                                          .white,
                                                                   border:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide
-                                                                        .none,
+                                                                        BorderSide
+                                                                            .none,
                                                                   ),
                                                                   enabledBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide(
-                                                                        color:
-                                                                        Color(0xFF8A95A8)),
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Color(0xFF8A95A8)),
                                                                   ),
                                                                   focusedBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide: BorderSide(
                                                                         color: Color(
                                                                             0xFF8A95A8),
                                                                         width:
-                                                                        2),
+                                                                            2),
                                                                   ),
                                                                   contentPadding: EdgeInsets.symmetric(
                                                                       vertical:
-                                                                      10.0,
+                                                                          10.0,
                                                                       horizontal:
-                                                                      10.0),
+                                                                          10.0),
                                                                 ),
                                                               ),
                                                             ),
@@ -1884,74 +1887,74 @@ class _Summery_pageState extends State<Summery_page>
                                                                     color: Color(
                                                                         0xFF8A95A8),
                                                                     fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                             ],
                                                           ),
                                                           Padding(
                                                             padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical:
-                                                                1),
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        1),
                                                             child: Material(
                                                               elevation: 3,
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  3),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3),
                                                               child:
-                                                              TextFormField(
+                                                                  TextFormField(
                                                                 controller:
-                                                                bath3,
+                                                                    bath3,
                                                                 cursorColor:
-                                                                Colors
-                                                                    .black,
+                                                                    Colors
+                                                                        .black,
                                                                 decoration:
-                                                                InputDecoration(
+                                                                    InputDecoration(
                                                                   //  hintText: label,
                                                                   // labelText: label,
                                                                   // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                   filled: true,
                                                                   fillColor:
-                                                                  Colors
-                                                                      .white,
+                                                                      Colors
+                                                                          .white,
                                                                   border:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide
-                                                                        .none,
+                                                                        BorderSide
+                                                                            .none,
                                                                   ),
                                                                   enabledBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide(
-                                                                        color:
-                                                                        Color(0xFF8A95A8)),
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Color(0xFF8A95A8)),
                                                                   ),
                                                                   focusedBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide: BorderSide(
                                                                         color: Color(
                                                                             0xFF8A95A8),
                                                                         width:
-                                                                        2),
+                                                                            2),
                                                                   ),
                                                                   contentPadding: EdgeInsets.symmetric(
                                                                       vertical:
-                                                                      10.0,
+                                                                          10.0,
                                                                       horizontal:
-                                                                      10.0),
+                                                                          10.0),
                                                                 ),
                                                               ),
                                                             ),
@@ -1967,74 +1970,74 @@ class _Summery_pageState extends State<Summery_page>
                                                                     color: Color(
                                                                         0xFF8A95A8),
                                                                     fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                             ],
                                                           ),
                                                           Padding(
                                                             padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical:
-                                                                1),
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        1),
                                                             child: Material(
                                                               elevation: 3,
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  3),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3),
                                                               child:
-                                                              TextFormField(
+                                                                  TextFormField(
                                                                 controller:
-                                                                bed3,
+                                                                    bed3,
                                                                 cursorColor:
-                                                                Colors
-                                                                    .black,
+                                                                    Colors
+                                                                        .black,
                                                                 decoration:
-                                                                InputDecoration(
+                                                                    InputDecoration(
                                                                   //  hintText: label,
                                                                   // labelText: label,
                                                                   // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                   filled: true,
                                                                   fillColor:
-                                                                  Colors
-                                                                      .white,
+                                                                      Colors
+                                                                          .white,
                                                                   border:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide
-                                                                        .none,
+                                                                        BorderSide
+                                                                            .none,
                                                                   ),
                                                                   enabledBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide(
-                                                                        color:
-                                                                        Color(0xFF8A95A8)),
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Color(0xFF8A95A8)),
                                                                   ),
                                                                   focusedBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide: BorderSide(
                                                                         color: Color(
                                                                             0xFF8A95A8),
                                                                         width:
-                                                                        2),
+                                                                            2),
                                                                   ),
                                                                   contentPadding: EdgeInsets.symmetric(
                                                                       vertical:
-                                                                      10.0,
+                                                                          10.0,
                                                                       horizontal:
-                                                                      10.0),
+                                                                          10.0),
                                                                 ),
                                                               ),
                                                             ),
@@ -2060,9 +2063,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                   _pickImage()
                                                                       .then(
                                                                           (_) {
-                                                                        setState(
-                                                                                () {}); // Rebuild the widget after selecting the image
-                                                                      });
+                                                                    setState(
+                                                                        () {}); // Rebuild the widget after selecting the image
+                                                                  });
                                                                 },
                                                                 child: Text(
                                                                   '+ Add',
@@ -2078,20 +2081,20 @@ class _Summery_pageState extends State<Summery_page>
                                                           ),
                                                           _image != null
                                                               ? Column(
-                                                            children: [
-                                                              Image.file(
-                                                                _image!,
-                                                                height:
-                                                                80,
-                                                                width: 80,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                              Text(
-                                                                  _uploadedFileName ??
-                                                                      ""),
-                                                            ],
-                                                          )
+                                                                  children: [
+                                                                    Image.file(
+                                                                      _image!,
+                                                                      height:
+                                                                          80,
+                                                                      width: 80,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                    Text(
+                                                                        _uploadedFileName ??
+                                                                            ""),
+                                                                  ],
+                                                                )
                                                               : Text(''),
                                                           SizedBox(height: 8.0),
                                                           Row(
@@ -2102,106 +2105,104 @@ class _Summery_pageState extends State<Summery_page>
                                                               GestureDetector(
                                                                 onTap:
                                                                     () async {
-                                                                  if (
-                                                                  sqft3.text
-                                                                      .isEmpty
-                                                                  ) {
+                                                                  if (sqft3.text
+                                                                      .isEmpty) {
                                                                     setState(
-                                                                            () {
-                                                                          iserror =
+                                                                        () {
+                                                                      iserror =
                                                                           true;
-                                                                        });
+                                                                    });
                                                                   } else {
                                                                     setState(
-                                                                            () {
-                                                                          isLoading =
+                                                                        () {
+                                                                      isLoading =
                                                                           true;
-                                                                          iserror =
+                                                                      iserror =
                                                                           false;
-                                                                        });
+                                                                    });
                                                                     SharedPreferences
-                                                                    prefs =
-                                                                    await SharedPreferences
-                                                                        .getInstance();
+                                                                        prefs =
+                                                                        await SharedPreferences
+                                                                            .getInstance();
 
                                                                     String? id =
-                                                                    prefs.getString(
-                                                                        "adminId");
+                                                                        prefs.getString(
+                                                                            "adminId");
                                                                     Properies_summery_Repo()
                                                                         .Editunit(
-                                                                        rentalsqft: sqft3
-                                                                            .text,
-                                                                        rentalunitadress: street3
-                                                                            .text,
-                                                                        rentalbath: bath3
-                                                                            .text,
-                                                                        rentalbed: bed3
-                                                                            .text,
-                                                                        unitId: unitData
-                                                                            .unitId,
-                                                                        adminId:
-                                                                        id,
-                                                                        rentalId: unitData
-                                                                            .rentalId)
+                                                                            rentalsqft: sqft3
+                                                                                .text,
+                                                                            rentalunitadress: street3
+                                                                                .text,
+                                                                            rentalbath: bath3
+                                                                                .text,
+                                                                            rentalbed: bed3
+                                                                                .text,
+                                                                            unitId: unitData
+                                                                                .unitId,
+                                                                            adminId:
+                                                                                id,
+                                                                            rentalId: unitData
+                                                                                .rentalId)
                                                                         .then(
                                                                             (value) {
-                                                                          setState(
-                                                                                  () {
-                                                                                isLoading =
-                                                                                false;
-                                                                              });
-                                                                          Navigator.of(
+                                                                      setState(
+                                                                          () {
+                                                                        isLoading =
+                                                                            false;
+                                                                      });
+                                                                      Navigator.of(
                                                                               context)
-                                                                              .pop(
+                                                                          .pop(
                                                                               true);
-                                                                          reload_Screen();
-                                                                        }).catchError(
+                                                                      reload_Screen();
+                                                                    }).catchError(
                                                                             (e) {
-                                                                          setState(
-                                                                                  () {
-                                                                                isLoading =
-                                                                                false;
-                                                                              });
-                                                                        });
+                                                                      setState(
+                                                                          () {
+                                                                        isLoading =
+                                                                            false;
+                                                                      });
+                                                                    });
                                                                   }
                                                                 },
                                                                 child: Material(
                                                                   elevation: 3,
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .all(
+                                                                      BorderRadius
+                                                                          .all(
                                                                     Radius
                                                                         .circular(
-                                                                        5),
+                                                                            5),
                                                                   ),
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 30,
                                                                     width: 80,
                                                                     decoration:
-                                                                    BoxDecoration(
+                                                                        BoxDecoration(
                                                                       color: Color
                                                                           .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
+                                                                              21,
+                                                                              43,
+                                                                              81,
+                                                                              1),
                                                                       borderRadius:
-                                                                      BorderRadius
-                                                                          .all(
+                                                                          BorderRadius
+                                                                              .all(
                                                                         Radius.circular(
                                                                             5),
                                                                       ),
                                                                     ),
                                                                     child: Center(
                                                                         child: Text(
-                                                                          "Save",
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight
-                                                                                  .w500,
-                                                                              color:
+                                                                      "Save",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color:
                                                                               Colors.white),
-                                                                        )),
+                                                                    )),
                                                                   ),
                                                                 ),
                                                               ),
@@ -2215,39 +2216,39 @@ class _Summery_pageState extends State<Summery_page>
                                                                 child: Material(
                                                                   elevation: 3,
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .all(
+                                                                      BorderRadius
+                                                                          .all(
                                                                     Radius
                                                                         .circular(
-                                                                        5),
+                                                                            5),
                                                                   ),
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 30,
                                                                     width: 80,
                                                                     decoration:
-                                                                    BoxDecoration(
+                                                                        BoxDecoration(
                                                                       color: Colors
                                                                           .white,
                                                                       borderRadius:
-                                                                      BorderRadius
-                                                                          .all(
+                                                                          BorderRadius
+                                                                              .all(
                                                                         Radius.circular(
                                                                             5),
                                                                       ),
                                                                     ),
                                                                     child: Center(
                                                                         child: Text(
-                                                                          "Cancel",
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight
-                                                                                  .w500,
-                                                                              color: Color.fromRGBO(
-                                                                                  21,
-                                                                                  43,
-                                                                                  81,
-                                                                                  1)),
-                                                                        )),
+                                                                      "Cancel",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color: Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              81,
+                                                                              1)),
+                                                                    )),
                                                                   ),
                                                                 ),
                                                               ),
@@ -2270,25 +2271,26 @@ class _Summery_pageState extends State<Summery_page>
                                             },
                                           );
                                         if (widget.properties.propertyTypeData!
-                                            .isMultiunit! == false &&
+                                                    .isMultiunit! ==
+                                                false &&
                                             widget.properties.propertyTypeData!
-                                                .propertyType ==
+                                                    .propertyType ==
                                                 'Commercial')
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               bool isChecked =
-                                              false; // Moved isChecked inside the StatefulBuilder
+                                                  false; // Moved isChecked inside the StatefulBuilder
                                               return StatefulBuilder(
                                                 builder: (BuildContext context,
                                                     StateSetter setState) {
                                                   return AlertDialog(
                                                     backgroundColor:
-                                                    Colors.white,
+                                                        Colors.white,
                                                     surfaceTintColor:
-                                                    Colors.white,
+                                                        Colors.white,
                                                     content:
-                                                    SingleChildScrollView(
+                                                        SingleChildScrollView(
                                                       child: Column(
                                                         children: [
                                                           Row(
@@ -2296,16 +2298,16 @@ class _Summery_pageState extends State<Summery_page>
                                                               Text(
                                                                 "Add Unit Details",
                                                                 style:
-                                                                TextStyle(
+                                                                    TextStyle(
                                                                   color: Color
                                                                       .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      81,
-                                                                      1),
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1),
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                               Spacer(),
@@ -2337,74 +2339,74 @@ class _Summery_pageState extends State<Summery_page>
                                                                     color: Color(
                                                                         0xFF8A95A8),
                                                                     fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                             ],
                                                           ),
                                                           Padding(
                                                             padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical:
-                                                                1),
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        1),
                                                             child: Material(
                                                               elevation: 3,
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  3),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          3),
                                                               child:
-                                                              TextFormField(
+                                                                  TextFormField(
                                                                 controller:
-                                                                sqft3,
+                                                                    sqft3,
                                                                 cursorColor:
-                                                                Colors
-                                                                    .black,
+                                                                    Colors
+                                                                        .black,
                                                                 decoration:
-                                                                InputDecoration(
+                                                                    InputDecoration(
                                                                   //  hintText: label,
                                                                   // labelText: label,
                                                                   // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                   filled: true,
                                                                   fillColor:
-                                                                  Colors
-                                                                      .white,
+                                                                      Colors
+                                                                          .white,
                                                                   border:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide
-                                                                        .none,
+                                                                        BorderSide
+                                                                            .none,
                                                                   ),
                                                                   enabledBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide:
-                                                                    BorderSide(
-                                                                        color:
-                                                                        Color(0xFF8A95A8)),
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Color(0xFF8A95A8)),
                                                                   ),
                                                                   focusedBorder:
-                                                                  OutlineInputBorder(
+                                                                      OutlineInputBorder(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     borderSide: BorderSide(
                                                                         color: Color(
                                                                             0xFF8A95A8),
                                                                         width:
-                                                                        2),
+                                                                            2),
                                                                   ),
                                                                   contentPadding: EdgeInsets.symmetric(
                                                                       vertical:
-                                                                      10.0,
+                                                                          10.0,
                                                                       horizontal:
-                                                                      10.0),
+                                                                          10.0),
                                                                 ),
                                                               ),
                                                             ),
@@ -2430,9 +2432,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                   _pickImage()
                                                                       .then(
                                                                           (_) {
-                                                                        setState(
-                                                                                () {}); // Rebuild the widget after selecting the image
-                                                                      });
+                                                                    setState(
+                                                                        () {}); // Rebuild the widget after selecting the image
+                                                                  });
                                                                 },
                                                                 child: Text(
                                                                   '+ Add',
@@ -2446,20 +2448,20 @@ class _Summery_pageState extends State<Summery_page>
                                                           SizedBox(height: 8.0),
                                                           _image != null
                                                               ? Column(
-                                                            children: [
-                                                              Image.file(
-                                                                _image!,
-                                                                height:
-                                                                80,
-                                                                width: 80,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                              Text(
-                                                                  _uploadedFileName ??
-                                                                      ""),
-                                                            ],
-                                                          )
+                                                                  children: [
+                                                                    Image.file(
+                                                                      _image!,
+                                                                      height:
+                                                                          80,
+                                                                      width: 80,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                    Text(
+                                                                        _uploadedFileName ??
+                                                                            ""),
+                                                                  ],
+                                                                )
                                                               : Text(''),
                                                           SizedBox(height: 8.0),
                                                           Row(
@@ -2470,94 +2472,95 @@ class _Summery_pageState extends State<Summery_page>
                                                               GestureDetector(
                                                                 onTap:
                                                                     () async {
-                                                                  if (
-                                                                  sqft3.text
+                                                                  if (sqft3.text
                                                                       .isEmpty) {
                                                                     setState(
-                                                                            () {
-                                                                          iserror =
+                                                                        () {
+                                                                      iserror =
                                                                           true;
-                                                                        });
+                                                                    });
                                                                   } else {
                                                                     setState(
-                                                                            () {
-                                                                          isLoading =
+                                                                        () {
+                                                                      isLoading =
                                                                           true;
-                                                                          iserror =
+                                                                      iserror =
                                                                           false;
-                                                                        });
+                                                                    });
                                                                     SharedPreferences
-                                                                    prefs =
-                                                                    await SharedPreferences
-                                                                        .getInstance();
+                                                                        prefs =
+                                                                        await SharedPreferences
+                                                                            .getInstance();
                                                                     String? id =
-                                                                    prefs.getString(
-                                                                        "adminId");
+                                                                        prefs.getString(
+                                                                            "adminId");
                                                                     Properies_summery_Repo()
                                                                         .Editunit(
                                                                       rentalsqft:
-                                                                      sqft3
-                                                                          .text,
+                                                                          sqft3
+                                                                              .text,
                                                                       unitId: unitData
                                                                           .unitId!,
                                                                     )
                                                                         .then(
                                                                             (value) {
+                                                                      setState(
+                                                                          () {
+                                                                        isLoading =
+                                                                            false;
+                                                                      });
 
-                                                                              setState(
-                                                                                  () {
-                                                                                isLoading =
-                                                                                false;
-                                                                              });
-
-                                                                          Navigator.of(context).pop(true);
-
-                                                                        }).catchError(
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                              true);
+                                                                    }).catchError(
                                                                             (e) {
-                                                                          setState(() {
-                                                                                isLoading =
-                                                                                false;
-                                                                              });
-                                                                        });
+                                                                      setState(
+                                                                          () {
+                                                                        isLoading =
+                                                                            false;
+                                                                      });
+                                                                    });
                                                                   }
                                                                 },
                                                                 child: Material(
                                                                   elevation: 3,
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .all(
+                                                                      BorderRadius
+                                                                          .all(
                                                                     Radius
                                                                         .circular(
-                                                                        5),
+                                                                            5),
                                                                   ),
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 30,
                                                                     width: 80,
                                                                     decoration:
-                                                                    BoxDecoration(
+                                                                        BoxDecoration(
                                                                       color: Color
                                                                           .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
+                                                                              21,
+                                                                              43,
+                                                                              81,
+                                                                              1),
                                                                       borderRadius:
-                                                                      BorderRadius
-                                                                          .all(
+                                                                          BorderRadius
+                                                                              .all(
                                                                         Radius.circular(
                                                                             5),
                                                                       ),
                                                                     ),
                                                                     child: Center(
                                                                         child: Text(
-                                                                          "Save",
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight
-                                                                                  .w500,
-                                                                              color:
+                                                                      "Save",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color:
                                                                               Colors.white),
-                                                                        )),
+                                                                    )),
                                                                   ),
                                                                 ),
                                                               ),
@@ -2571,39 +2574,39 @@ class _Summery_pageState extends State<Summery_page>
                                                                 child: Material(
                                                                   elevation: 3,
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .all(
+                                                                      BorderRadius
+                                                                          .all(
                                                                     Radius
                                                                         .circular(
-                                                                        5),
+                                                                            5),
                                                                   ),
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 30,
                                                                     width: 80,
                                                                     decoration:
-                                                                    BoxDecoration(
+                                                                        BoxDecoration(
                                                                       color: Colors
                                                                           .white,
                                                                       borderRadius:
-                                                                      BorderRadius
-                                                                          .all(
+                                                                          BorderRadius
+                                                                              .all(
                                                                         Radius.circular(
                                                                             5),
                                                                       ),
                                                                     ),
                                                                     child: Center(
                                                                         child: Text(
-                                                                          "Cancel",
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight
-                                                                                  .w500,
-                                                                              color: Color.fromRGBO(
-                                                                                  21,
-                                                                                  43,
-                                                                                  81,
-                                                                                  1)),
-                                                                        )),
+                                                                      "Cancel",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color: Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              81,
+                                                                              1)),
+                                                                    )),
                                                                   ),
                                                                 ),
                                                               ),
@@ -3585,7 +3588,8 @@ class _Summery_pageState extends State<Summery_page>
                 ],
               ),
             SizedBox(height: 20),
-            if (!showdetails && widget.properties.propertyTypeData!.isMultiunit! == true)
+            if (!showdetails &&
+                widget.properties.propertyTypeData!.isMultiunit! == true)
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: FutureBuilder<List<unit_properties>>(
@@ -3593,7 +3597,8 @@ class _Summery_pageState extends State<Summery_page>
                       .fetchunit(widget.properties.rentalId!),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return  Center(child: SpinKitFadingCircle(
+                      return Center(
+                          child: SpinKitFadingCircle(
                         color: Colors.black,
                         size: 40.0,
                       ));
@@ -5220,7 +5225,9 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
           ),
-          LeasesTable(unit: unit,),
+          LeasesTable(
+            unit: unit,
+          ),
           // LeasesTable1(context,unit!),
           // LeasesTable(context),
           AppliancesPart(unit: unit),
@@ -5232,7 +5239,4 @@ class _Summery_pageState extends State<Summery_page>
   reload_Screen() {
     setState(() {});
   }
-
 }
-
-

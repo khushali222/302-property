@@ -6,17 +6,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/tenants.dart';
 
 import '../constant/constant.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 class TenantsRepository {
   final String apiUrl = '${Api_url}/api//tenant/tenants';
 
-
-
   Future<List<Tenant>> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'));
+    final response =
+        await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'));
     print(response.body);
     print('${Api_url}/api//tenant/tenants/$id');
     if (response.statusCode == 200) {
@@ -30,7 +29,7 @@ class TenantsRepository {
   Future<bool> addTenant(Tenant tenant) async {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
     print(url);
-      print(jsonEncode(tenant.toJson()));
+    print(jsonEncode(tenant.toJson()));
     try {
       final response = await http.post(
         url,
@@ -225,24 +224,24 @@ class TenantsRepository {
     required String companyName,
   }) async {
     final Map<String, dynamic> data = {
-    'admin_id': adminId,
-    'tenant_id': tenantId,
-    'tenant_firstName': tenantFirstName,
-    'tenant_lastName': tenantLastName,
-    'tenant_phoneNumber': tenantPhoneNumber,
-    'tenant_alternativeNumber': tenantAlternativeNumber,
-    'tenant_email': tenantEmail,
-    'tenant_alternativeEmail': tenantAlternativeEmail,
-    'tenant_password': tenantPassword,
-    'tenant_birthDate': tenantBirthDate,
-    'taxPayer_id': taxPayerId,
-    'comments': comments,
-    'emergency_contact': {
-      'name': emergencyContactName,
-      'relation': emergencyContactRelation,
-      'email': emergencyContactEmail,
-      'phoneNumber': emergencyContactPhoneNumber,
-    }
+      'admin_id': adminId,
+      'tenant_id': tenantId,
+      'tenant_firstName': tenantFirstName,
+      'tenant_lastName': tenantLastName,
+      'tenant_phoneNumber': tenantPhoneNumber,
+      'tenant_alternativeNumber': tenantAlternativeNumber,
+      'tenant_email': tenantEmail,
+      'tenant_alternativeEmail': tenantAlternativeEmail,
+      'tenant_password': tenantPassword,
+      'tenant_birthDate': tenantBirthDate,
+      'taxPayer_id': taxPayerId,
+      'comments': comments,
+      'emergency_contact': {
+        'name': emergencyContactName,
+        'relation': emergencyContactRelation,
+        'email': emergencyContactEmail,
+        'phoneNumber': emergencyContactPhoneNumber,
+      }
     };
 
     print('$apiUrl/$tenantId');
@@ -260,7 +259,6 @@ class TenantsRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');
@@ -288,8 +286,8 @@ class TenantsRepository {
 
       var responseData = json.decode(response.body);
       print(response.body);
-            print(tenantId);
-            print(tenantEmail);
+      print(tenantId);
+      print(tenantEmail);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -319,7 +317,7 @@ class TenantsRepository {
   }
 
   Future<String> fetchCompanyName(String adminId) async {
-    final String apiUrl = 'http://192.168.1.16:4000/api/admin/admin_profile/$adminId';
+    final String apiUrl = '$Api_url/api/admin/admin_profile/$adminId';
 
     try {
       final http.Response response = await http.get(Uri.parse(apiUrl));
@@ -327,13 +325,16 @@ class TenantsRepository {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         // Check if company_name exists in response and is not null
-        if (data.containsKey('data') && data['data'] != null && data['data']['company_name'] != null) {
+        if (data.containsKey('data') &&
+            data['data'] != null &&
+            data['data']['company_name'] != null) {
           return data['data']['company_name'].toString();
         } else {
           throw Exception('Company name not found in response');
         }
       } else {
-        throw Exception('Failed to fetch company name. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch company name. Status code: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Failed to fetch company name: $e');

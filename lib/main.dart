@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/add_property.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/lease_provider.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
@@ -23,8 +24,8 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 //   tools: [/
 // //     ...DevicePreview.defaultTools,
 //     //   ],
-//     //   builder: (context) => MyApp(),
-//     // ),
+// builder: (context) => MyApp(),
+// ),
 //   );
 // }
 
@@ -42,6 +43,12 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (context) => Tenants_counts(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => SelectedTenantsProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => SelectedCosignersProvider(),
           ),
         ],
         child: MyApp(),
@@ -65,5 +72,23 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashScreen(),
     );
+  }
+}
+
+class FormData {
+  final String name;
+  final int age;
+
+  FormData({required this.name, required this.age});
+}
+
+class FormDataProvider with ChangeNotifier {
+  FormData? _formData;
+
+  FormData? get formData => _formData;
+
+  void setFormData(FormData formData) {
+    _formData = formData;
+    notifyListeners();
   }
 }
