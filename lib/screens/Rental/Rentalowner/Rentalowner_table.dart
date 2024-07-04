@@ -1147,9 +1147,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     decoration:
                                         BoxDecoration(border: Border.all()),
                                     children: [
-                                      //_buildHeader('FirstName', 0, (staff) => staff.rentalOwnerFirstName!),
-                                      //  _buildHeader('LastName', 1, (staff) => staff.rentalOwnerLastName!),
-                                      // _buildHeader('Name', 0, (staff) => '${staff.rentalOwnerFirstName ?? ''} ${staff.rentalOwnerLastName ?? ''}'),
+                                      // TableCell(child: Text('yash')),
+                                      // TableCell(child: Text('yash')),
+                                      // TableCell(child: Text('yash')),
+                                      // TableCell(child: Text('yash')),
+
                                       _buildHeader('Name', 0,
                                           (rental) => rental.rentalOwnername!),
                                       _buildHeader(
@@ -1196,29 +1198,23 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                         ),
                                       ),
                                       children: [
-                                        //_buildDataCell(_pagedData[i].rentalOwnerFirstName!),
-                                        InkWell(
-                                            onTap: () async {
-                                              final result =
-                                                  await Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Rentalowners_summery(
-                                                                rentalOwnersid:
-                                                                    _pagedData[
-                                                                            i]
-                                                                        .rentalownerId!,
-                                                              )));
-                                            },
-                                            child: _buildDataCell(
-                                                _pagedData[i].rentalOwnername ??
-                                                    "")),
+                                        _buildDataCell(
+                                            _pagedData[i].rentalOwnername ?? "",
+                                            _pagedData[i].rentalownerId!),
                                         // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-                                        _buildDataCell(_pagedData[i]
-                                            .rentalOwnerPhoneNumber!),
-                                        _buildDataCell(_pagedData[i]
-                                            .rentalOwnerPrimaryEmail!),
+                                        _buildDataCell(
+                                            _pagedData[i]
+                                                .rentalOwnerPhoneNumber!,
+                                            _pagedData[i].rentalownerId!),
+                                        _buildDataCell(
+                                            _pagedData[i]
+                                                .rentalOwnerPrimaryEmail!,
+                                            _pagedData[i].rentalownerId!),
+
+                                        // TableCell(child: Text('yash')),
+                                        // TableCell(child: Text('yash')),
+                                        // TableCell(child: Text('yash')),
+
                                         _buildActionsCell(_pagedData[i]),
                                       ],
                                     ),
@@ -1242,89 +1238,174 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     );
   }
 
+  // Widget _buildHeader<T>(String text, int columnIndex,
+  //     Comparable<T> Function(RentalOwnerData d)? getField) {
+  //   return Container(
+  //     height: 70,
+  //     child: TableCell(
+  //       child: InkWell(
+  //         onTap: getField != null
+  //             ? () {
+  //                 _sort(getField, columnIndex, !_sortAscending);
+  //               }
+  //             : null,
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(8.0),
+  //           child: Row(
+  //             children: [
+  //               Text(text,
+  //                   style:
+  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+  //               if (getField != null)
+  //                 Icon(
+  //                   _sortColumnIndex == columnIndex
+  //                       ? (_sortAscending
+  //                           ? Icons.arrow_drop_up_outlined
+  //                           : Icons.arrow_drop_down_outlined)
+  //                       : Icons
+  //                           .arrow_drop_down_outlined, // Default icon for unsorted columns
+  //                 ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildDataCell(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       child: TableCell(
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(10.0),
+  //           child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildActionsCell(RentalOwnerData data) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       child: TableCell(
+  //         child: Row(
+  //           children: [
+  //             InkWell(
+  //               onTap: () {
+  //                 handleEdit(data);
+  //               },
+  //               child: Container(
+  //                 margin: EdgeInsets.only(top: 8, left: 8),
+  //                 child: FaIcon(
+  //                   FontAwesomeIcons.edit,
+  //                   size: 30,
+  //                 ),
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 6,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 handleDelete(data);
+  //               },
+  //               child: Container(
+  //                 margin: EdgeInsets.only(top: 8, left: 8),
+  //                 child: FaIcon(
+  //                   FontAwesomeIcons.trashCan,
+  //                   size: 30,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(RentalOwnerData d)? getField) {
-    return Container(
-      height: 70,
-      child: TableCell(
-        child: InkWell(
-          onTap: getField != null
-              ? () {
-                  _sort(getField, columnIndex, !_sortAscending);
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Text(text,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                if (getField != null)
-                  Icon(
-                    _sortColumnIndex == columnIndex
-                        ? (_sortAscending
-                            ? Icons.arrow_drop_up_outlined
-                            : Icons.arrow_drop_down_outlined)
-                        : Icons
-                            .arrow_drop_down_outlined, // Default icon for unsorted columns
-                  ),
-              ],
-            ),
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+                _sort(getField, columnIndex, !_sortAscending);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildDataCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        child: TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-          ),
-        ),
+  Widget _buildDataCell(String text, String inkText) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Rentalowners_summery(
+                            rentalOwnersid: inkText,
+                          )));
+            },
+            child: Text(text, style: const TextStyle(fontSize: 18))),
       ),
     );
   }
 
   Widget _buildActionsCell(RentalOwnerData data) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        child: TableCell(
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
           child: Row(
             children: [
+              const SizedBox(
+                width: 20,
+              ),
               InkWell(
                 onTap: () {
                   handleEdit(data);
                 },
-                child: Container(
-                  margin: EdgeInsets.only(top: 8, left: 8),
-                  child: FaIcon(
-                    FontAwesomeIcons.edit,
-                    size: 30,
-                  ),
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
                 ),
               ),
-              SizedBox(
-                width: 6,
+              const SizedBox(
+                width: 15,
               ),
               InkWell(
                 onTap: () {
                   handleDelete(data);
                 },
-                child: Container(
-                  margin: EdgeInsets.only(top: 8, left: 8),
-                  child: FaIcon(
-                    FontAwesomeIcons.trashCan,
-                    size: 30,
-                  ),
+                child: const FaIcon(
+                  FontAwesomeIcons.trashCan,
+                  size: 30,
                 ),
               ),
             ],

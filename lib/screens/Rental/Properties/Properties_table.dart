@@ -1512,40 +1512,41 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         ),
                                       ),
                                       children: [
-                                        InkWell(
-                                            onTap: () async {
-                                              final result =
-                                                  await Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Summery_page(
-                                                                  properties:
-                                                                      _pagedData[
-                                                                          i])));
-                                            },
-                                            child: _buildDataCell(
-                                                _pagedData[i].rentalAddress!)),
-                                        _buildDataCell(_pagedData[i]
-                                            .propertyTypeData!
-                                            .propertyType!),
-                                        _buildDataCell(_pagedData[i]
-                                            .propertyTypeData!
-                                            .propertySubType!),
+                                        _buildDataCell(
+                                            _pagedData[i].rentalAddress!,
+                                            _pagedData[i]),
+                                        _buildDataCell(
+                                            _pagedData[i]
+                                                .propertyTypeData!
+                                                .propertyType!,
+                                            _pagedData[i]),
+                                        _buildDataCell(
+                                            _pagedData[i]
+                                                .propertyTypeData!
+                                                .propertySubType!,
+                                            _pagedData[i]),
                                         // _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
                                         _buildDataCell(
-                                            '${_pagedData[i].rentalOwnerData?.rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerData?.rentalOwnerLastName ?? ''}'),
-                                        _buildDataCell(_pagedData[i]
-                                            .rentalOwnerData!
-                                            .rentalOwnerCompanyName!),
+                                            '${_pagedData[i].rentalOwnerData?.rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerData?.rentalOwnerLastName ?? ''}',
+                                            _pagedData[i]),
                                         _buildDataCell(
-                                            _pagedData[i].rentalCity!),
-                                        _buildDataCell(_pagedData[i]
-                                            .rentalOwnerData!
-                                            .rentalOwnerPrimaryEmail!),
-                                        _buildDataCell(_pagedData[i]
-                                            .rentalOwnerData!
-                                            .rentalOwnerPhoneNumber!),
+                                            _pagedData[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerCompanyName!,
+                                            _pagedData[i]),
+                                        _buildDataCell(
+                                            _pagedData[i].rentalCity!,
+                                            _pagedData[i]),
+                                        _buildDataCell(
+                                            _pagedData[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerPrimaryEmail!,
+                                            _pagedData[i]),
+                                        _buildDataCell(
+                                            _pagedData[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerPhoneNumber!,
+                                            _pagedData[i]),
                                         _buildActionsCell(_pagedData[i]),
                                       ],
                                     ),
@@ -1569,92 +1570,131 @@ class _PropertiesTableState extends State<PropertiesTable> {
     );
   }
 
+  // Widget _buildHeader<T>(String text, int columnIndex,
+  //     Comparable<T> Function(Rentals d)? getField) {
+  //   return Container(
+  //     height: 70,
+  //     child: TableCell(
+  //       child: InkWell(
+  //         onTap: getField != null
+  //             ? () {
+  //                 _sort(getField, columnIndex, !_sortAscending);
+  //               }
+  //             : null,
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(8.0),
+  //           child: Row(
+  //             children: [
+  //               Text(text,
+  //                   style:
+  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+  //               if (getField != null)
+  //                 Icon(
+  //                   _sortColumnIndex == columnIndex
+  //                       ? (_sortAscending
+  //                           ? Icons.arrow_drop_up_outlined
+  //                           : Icons.arrow_drop_down_outlined)
+  //                       : Icons
+  //                           .arrow_drop_down_outlined, // Default icon for unsorted columns
+  //                 ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Rentals d)? getField) {
-    return Container(
-      height: 70,
-      child: TableCell(
-        child: InkWell(
-          onTap: getField != null
-              ? () {
-                  _sort(getField, columnIndex, !_sortAscending);
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Text(text,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                if (getField != null)
-                  Icon(
-                    _sortColumnIndex == columnIndex
-                        ? (_sortAscending
-                            ? Icons.arrow_drop_up_outlined
-                            : Icons.arrow_drop_down_outlined)
-                        : Icons
-                            .arrow_drop_down_outlined, // Default icon for unsorted columns
-                  ),
-              ],
-            ),
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+                _sort(getField, columnIndex, !_sortAscending);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildDataCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        child: TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(text, style: TextStyle(fontSize: 18)),
-          ),
-        ),
+  // Widget _buildDataCell(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       child: TableCell(
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(10.0),
+  //           child: Text(text, style: TextStyle(fontSize: 18)),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  
+  Widget _buildDataCell(String text, Rentals inkText) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Summery_page(properties: inkText)));
+            },
+            child: Text(text, style: const TextStyle(fontSize: 18))),
       ),
     );
   }
 
   Widget _buildActionsCell(Rentals data) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        child: TableCell(
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               InkWell(
                 onTap: () {
                   handleEdit(data);
                 },
-                child: Container(
-                  margin: EdgeInsets.only(top: 8, left: 8),
-                  child: FaIcon(
-                    FontAwesomeIcons.edit,
-                    size: 30,
-                  ),
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
                 ),
               ),
-              SizedBox(
-                width: 8,
+              const SizedBox(
+                width: 15,
               ),
               InkWell(
                 onTap: () {
                   handleDelete(data);
                 },
-                child: Container(
-                  margin: EdgeInsets.only(top: 8, left: 8),
-                  child: FaIcon(
-                    FontAwesomeIcons.trashCan,
-                    size: 30,
-                  ),
+                child: const FaIcon(
+                  FontAwesomeIcons.trashCan,
+                  size: 30,
                 ),
               ),
             ],
@@ -1749,5 +1789,3 @@ class _PropertiesTableState extends State<PropertiesTable> {
     );
   }
 }
-
-void main() => runApp(MaterialApp(home: PropertiesTable()));
