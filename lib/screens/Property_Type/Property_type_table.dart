@@ -670,7 +670,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 60,
+                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
@@ -683,6 +683,9 @@ class _PropertyTableState extends State<PropertyTable> {
                         children: [
                           Positioned.fill(
                             child: TextField(
+                              style:TextStyle(
+                                fontSize:  MediaQuery.of(context).size.width < 500 ? 12 : 14
+                              ),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -699,11 +702,12 @@ class _PropertyTableState extends State<PropertyTable> {
                                 border: InputBorder.none,
                                 hintText: "Search here...",
                                 hintStyle: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ,
                                   // fontWeight: FontWeight.bold,
                                   color: Color(0xFF8A95A8),
                                 ),
-                                // contentPadding:
-                                //     EdgeInsets.symmetric(horizontal: 5),
+                                contentPadding:
+                                   EdgeInsets.only(left: 5,bottom: 13,top: 14)
                               ),
                             ),
                           ),
