@@ -45,6 +45,7 @@ class Tenant {
   int? v;
   String? rentalAddress;
   String? rentalUnit;
+  String? rentshare;
 
   Tenant({
     this.id,
@@ -67,6 +68,7 @@ class Tenant {
     this.v,
     this.rentalAddress,
     this.rentalUnit,
+    this.rentshare
   });
 
   Tenant.fromJson(Map<String, dynamic> json) {

@@ -12,45 +12,37 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
-
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
-import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/repository/properties.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/add_RentRoll.dart';
-
+import 'package:three_zero_two_property/repository/tenants.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
-
-import '../../../model/cosigner.dart';
-import '../../../model/lease.dart';
 import '../../../model/tenants.dart';
-import '../../../provider/lease_provider.dart';
-import '../../../repository/tenants.dart';
+import '../../model/cosigner.dart';
+import '../../model/lease.dart';
+import '../../provider/lease_provider.dart';
 
-class addLease3 extends StatefulWidget {
-
-   addLease3({super.key});
+class addLease4 extends StatefulWidget {
+  const addLease4({super.key});
 
   @override
-  State<addLease3> createState() => _addLease3State();
+  State<addLease4> createState() => _addLease4State();
 }
 
-class _addLease3State extends State<addLease3>
+class _addLease4State extends State<addLease4>
     with SingleTickerProviderStateMixin {
   late Future<List<Rentals>> futureRentalOwners;
 
   @override
   void initState() {
     super.initState();
-     // print(widget.cosigner?.firstName);
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
+
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -78,6 +70,7 @@ class _addLease3State extends State<addLease3>
   final TextEditingController rentMemo = TextEditingController();
 
   //changes variables
+
   Future<void> _loadProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -175,24 +168,6 @@ class _addLease3State extends State<addLease3>
     }
   }
 
-  String companyName = '';
-  Future<void> fetchCompany() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
-
-    if (adminId != null) {
-      try {
-        String fetchedCompanyName =
-        await TenantsRepository().fetchCompanyName(adminId);
-        setState(() {
-          companyName = fetchedCompanyName;
-        });
-      } catch (e) {
-        print('Failed to fetch company name: $e');
-        // Handle error state, e.g., show error message to user
-      }
-    }
-  }
   bool InValid = false;
 
   bool isEnjoyNowSelected = true;
@@ -200,7 +175,6 @@ class _addLease3State extends State<addLease3>
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<FormState> _addRecurringFormKey = GlobalKey<FormState>();
-
 
   final TextEditingController Amount = TextEditingController();
 
@@ -228,6 +202,7 @@ class _addLease3State extends State<addLease3>
       ),
     );
   }
+
   final List<String> leaseTypeitems = [
     'Fixed',
     'Fixed w/rollover',
@@ -306,15 +281,15 @@ class _addLease3State extends State<addLease3>
     }
   }
 
-  Map<String, String> _popupFormOneTimeData = {
-    'property': '',
-    'amount': '',
-    'memo': ''
-  };
+  // Map<String, String> _popupFormOneTimeData = {
+  //   'account': '',
+  //   'amount': '',
+  //   'memo': ''
+  // };
 
   List<Map<String, String>> formDataOneTimeList = [];
 
-  void _showPopupForm(BuildContext context,
+  void _showPopupForm(BuildContext context, String rent,
       {Map<String, String>? initialData, int? index}) async {
     final result = await showDialog<Map<String, String>>(
       context: context,
@@ -338,6 +313,7 @@ class _addLease3State extends State<addLease3>
                 setState(() {
                   if (index != null) {
                     // Update existing item
+
                     formDataOneTimeList[index] = data;
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Updated Sucessfully');
@@ -345,9 +321,11 @@ class _addLease3State extends State<addLease3>
                   } else {
                     // Add new item
                     formDataOneTimeList.add(data);
-                    Fluttertoast.showToast(
-                        msg: 'Recurring Charge Added Sucessfully');
-                    Navigator.pop(context);
+                    print("hello yash :${data}");
+
+                    // Fluttertoast.showToast(
+                    //     msg: 'Recurring Charge Added Sucessfully');
+                    // Navigator.pop(context);
                   }
                 });
               },
@@ -363,6 +341,7 @@ class _addLease3State extends State<addLease3>
           formDataOneTimeList[index] = result;
         } else {
           formDataOneTimeList.add(result);
+          print("hello yash :${result}");
         }
       });
     }
@@ -370,7 +349,69 @@ class _addLease3State extends State<addLease3>
 
   List<Map<String, String>> formDataRecurringList = [];
 
-  void _showRecurringPopupForm(BuildContext context,
+  // void _showRecurringPopupForm(BuildContext context, String Rent,
+  //     {Map<String, String>? initialData, int? index}) async {
+  //   final result = await showDialog<Map<String, String>>(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         backgroundColor: Colors.white,
+  //         contentPadding: EdgeInsets.zero,
+  //         title: const Text(
+  //           'Add Recurring content',
+  //           style: TextStyle(
+  //             fontSize: 14,
+  //             fontWeight: FontWeight.w500,
+  //             color: Color.fromRGBO(21, 43, 83, 1),
+  //           ),
+  //         ),
+  //         content: Padding(
+  //           padding: const EdgeInsets.all(8.0),
+  //           child: RecurringChargePopUp(
+  //             initialData: initialData,
+  //             onSave: (data) {
+  //               setState(() {
+  //                 if (index != null) {
+  //                   data['rent_cycle'] = Rent;
+  //                   // Update existing item
+  //                   formDataRecurringList[index] = data;
+  //                   Fluttertoast.showToast(
+  //                       msg: 'Recurring Charge Updated Sucessfully');
+  //                   Navigator.pop(context);
+  //                 } else {
+  //                   // Add new item
+
+  //                   formDataRecurringList.add(data);
+  //                   print("hello yash :${data}");
+
+  //                   Fluttertoast.showToast(
+  //                       msg: 'Recurring Charge Added Sucessfully');
+  //                   Navigator.pop(context);
+  //                 }
+  //               });
+  //             },
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+
+  //   if (result != null) {
+  //     setState(() {
+  //       if (index != null) {
+  //         formDataRecurringList[index] = result;
+  //         Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
+  //         Navigator.pop(context);
+  //       } else {
+  //         formDataRecurringList.add(result);
+  //         print("hello yash :${result}");
+  //         Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
+  //         Navigator.pop(context);
+  //       }
+  //     });
+  //   }
+  // }
+  void _showRecurringPopupForm(BuildContext context, String Rent,
       {Map<String, String>? initialData, int? index}) async {
     final result = await showDialog<Map<String, String>>(
       context: context,
@@ -392,6 +433,7 @@ class _addLease3State extends State<addLease3>
               initialData: initialData,
               onSave: (data) {
                 setState(() {
+                  data['rent_cycle'] = Rent; // Add Rent value to the data map
                   if (index != null) {
                     // Update existing item
                     formDataRecurringList[index] = data;
@@ -400,9 +442,8 @@ class _addLease3State extends State<addLease3>
                     Navigator.pop(context);
                   } else {
                     // Add new item
-
                     formDataRecurringList.add(data);
-
+                    print("hello yash :${data}");
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
@@ -417,15 +458,14 @@ class _addLease3State extends State<addLease3>
 
     if (result != null) {
       setState(() {
+        result['rent_cycle'] = Rent; // Add Rent value to the result map
         if (index != null) {
           formDataRecurringList[index] = result;
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
-          Navigator.pop(context);
         } else {
           formDataRecurringList.add(result);
-
+          print("hello yash :${result}");
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
-          Navigator.pop(context);
         }
       });
     }
@@ -496,10 +536,33 @@ class _addLease3State extends State<addLease3>
     }
   }
 
+  String companyName = '';
+  Future<void> fetchCompany() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+
+    if (adminId != null) {
+      try {
+        String fetchedCompanyName =
+        await TenantsRepository().fetchCompanyName(adminId);
+        setState(() {
+          companyName = fetchedCompanyName;
+        });
+      } catch (e) {
+        print('Failed to fetch company name: $e');
+        // Handle error state, e.g., show error message to user
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var selectedTenantsProvider =
+    Provider.of<SelectedTenantsProvider>(context, listen: false);
     final cosigners = Provider.of<SelectedCosignersProvider>(context).cosigners;
-    Map<int, Map<String, String>> cosignersMap = cosigners.asMap().map((index, cosigner) {
+
+    Map<int, Map<String, String>> cosignersMap =
+    cosigners.asMap().map((index, cosigner) {
       return MapEntry(index, {
         'c_id': cosigner.c_id ?? '',
         'firstName': cosigner.firstName,
@@ -515,25 +578,48 @@ class _addLease3State extends State<addLease3>
       });
     });
 
-    final tenants = Provider.of<SelectedTenantsProvider>(context).selectedTenants;
-    Map<int, Map<String, String>> tenantsMap = tenants.asMap().map((index, tenant) {
+    Map<String, String>? firstCosigner =
+    cosignersMap.isNotEmpty ? cosignersMap[0] : {};
+
+    final tenants =
+        Provider.of<SelectedTenantsProvider>(context).selectedTenants;
+
+    Map<int, Map<String, String>> tenantsMap =
+    tenants.asMap().map((index, tenant) {
       return MapEntry(index, {
-        'tenantId': tenant.tenantId ??"",
-        'firstName': tenant.tenantFirstName ??"",
-        'lastName': tenant.tenantLastName ??"",
-        'phoneNumber': tenant.tenantPhoneNumber ??"",
-        'workNumber': tenant.tenantAlternativeNumber??"",
-        'email': tenant.tenantEmail??"",
-        'alterEmail': tenant.tenantAlternativeEmail??"",
-        'streetAddress': tenant.rentalAddress??"",
-        'city': '', // Add city if available
-        'country': '', // Add country if available
-        'postalCode': '', // Add postal code if available
+        'id': tenant.id ?? '',
+        'tenantFirstName': tenant.tenantFirstName ?? '',
+        'tenantLastName': tenant.tenantLastName ?? '',
+        'tenantPhoneNumber': tenant.tenantPhoneNumber ?? '',
+        'tenantAlternativeNumber': tenant.tenantAlternativeNumber ?? '',
+        'tenantEmail': tenant.tenantEmail ?? '',
+        'tenantAlternativeEmail': tenant.tenantAlternativeEmail ?? '',
+        'rentalAddress': tenant.rentalAddress ?? '',
+        'rentalUnit': tenant.rentalUnit ?? '',
       });
     });
 
-    var selectedTenantsProvider =
-    Provider.of<SelectedTenantsProvider>(context, listen: false);
+    List<String> ids = tenantsMap.values.map((e) => e['id']!).toList();
+    List<String> tenantFirstNames =
+    tenantsMap.values.map((e) => e['tenantFirstName']!).toList();
+    List<String> tenantLastNames =
+    tenantsMap.values.map((e) => e['tenantLastName']!).toList();
+    List<String> tenantPhoneNumbers =
+    tenantsMap.values.map((e) => e['tenantPhoneNumber']!).toList();
+    List<String> tenantAlternativeNumbers =
+    tenantsMap.values.map((e) => e['tenantAlternativeNumber']!).toList();
+    List<String> tenantEmails =
+    tenantsMap.values.map((e) => e['tenantEmail']!).toList();
+    List<String> tenantAlternativeEmails =
+    tenantsMap.values.map((e) => e['tenantAlternativeEmail']!).toList();
+    List<String> rentalAddresses =
+    tenantsMap.values.map((e) => e['rentalAddress']!).toList();
+    List<String> rentalUnits =
+    tenantsMap.values.map((e) => e['rentalUnit']!).toList();
+
+    String cosignersText = cosigners.map((cosigner) {
+      return 'Name: ${cosigner.firstName} ${cosigner.lastName}, Phone: ${cosigner.phoneNumber}';
+    }).join('\n');
     // var selectedCosignerProvider =
     // Provider.of<SelectedCosignersProvider>(context, listen: false);
     return Scaffold(
@@ -616,17 +702,16 @@ class _addLease3State extends State<addLease3>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ElevatedButton(
-                  //     onPressed: () {
-                  //       // Navigator.push(
-                  //       //     context,
-                  //       //     MaterialPageRoute(
-                  //       //         builder: (context) => SummeryPageLease(
-                  //       //           rentalOwnersid: '1715146591684',
-                  //       //         )));
-                  //     },
-                  //     child: Text('Summary')),
-                  SizedBox(height: 10,),
+                  ElevatedButton(
+                      onPressed: () {
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SummeryPageLease(
+                        //           rentalOwnersid: '1715146591684',
+                        //         )));
+                      },
+                      child: Text('Summary')),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: ClipRRect(
@@ -658,7 +743,6 @@ class _addLease3State extends State<addLease3>
                       ),
                     ),
                   ),
-                  SizedBox(height: 10,),
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -1324,7 +1408,7 @@ class _addLease3State extends State<addLease3>
                                                           ),
                                                           isTenantSelected
                                                               ? const AddTenant()
-                                                              :  AddCosigner(),
+                                                              : AddCosigner(),
                                                         ],
                                                       ),
                                                     ),
@@ -1462,8 +1546,7 @@ class _addLease3State extends State<addLease3>
                                                   style:
                                                   TextStyle(fontSize: 13))),
                                         ],
-                                        rows:
-                                        Provider.of<
+                                        rows: Provider.of<
                                             SelectedTenantsProvider>(
                                             context)
                                             .selectedTenants
@@ -1489,15 +1572,20 @@ class _addLease3State extends State<addLease3>
                                                       ),
                                                       child: Center(
                                                         child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
                                                           child: TextField(
                                                             style: TextStyle(
                                                                 fontSize: 8),
-                                                            keyboardType:TextInputType.number,
+                                                            keyboardType:
+                                                            TextInputType
+                                                                .number,
                                                             decoration:
                                                             InputDecoration(
                                                               hintText: "0",
-                                                              border: InputBorder
+                                                              border:
+                                                              InputBorder
                                                                   .none,
                                                             ),
                                                           ),
@@ -1528,6 +1616,39 @@ class _addLease3State extends State<addLease3>
                                 ),
                               ),
                             ),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:
+                              List.generate(tenantsMap.length, (index) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('ID: ${ids[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text(
+                                        'First Name: ${tenantFirstNames[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text('Last Name: ${tenantLastNames[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text(
+                                        'Phone Number: ${tenantPhoneNumbers[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text(
+                                        'Alternative Number: ${tenantAlternativeNumbers[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text('Email: ${tenantEmails[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text(
+                                        'Alternative Email: ${tenantAlternativeEmails[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text(
+                                        'Rental Address: ${rentalAddresses[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text('Rental Unit: ${rentalUnits[index]}',
+                                        style: TextStyle(fontSize: 12)),
+                                  ],
+                                );
+                              })),
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
@@ -1555,99 +1676,6 @@ class _addLease3State extends State<addLease3>
                           if (Provider.of<SelectedCosignersProvider>(context)
                               .cosigners
                               .isNotEmpty)
-                          // Padding(
-                          //   padding: const EdgeInsets.only(left: 13),
-                          //   child: SingleChildScrollView(
-                          //     scrollDirection: Axis.horizontal,
-                          //     child: Column(
-                          //       crossAxisAlignment: CrossAxisAlignment.start,
-                          //       children: [
-                          //         Container(
-                          //           decoration: BoxDecoration(
-                          //               border: Border.all(color: blueColor)),
-                          //           child: DataTable(
-                          //             columnSpacing: 25,
-                          //             headingRowHeight: 30,
-                          //             dataRowHeight: 30,
-                          //             headingRowColor: MaterialStateColor
-                          //                 .resolveWith((states) =>
-                          //                     Color.fromRGBO(21, 43, 83, 1)),
-                          //             headingTextStyle: TextStyle(
-                          //                 color: Colors.white,
-                          //                 fontWeight: FontWeight.bold),
-                          //             columns: [
-                          //               DataColumn(
-                          //                   label: Text('Name',
-                          //                       style:
-                          //                           TextStyle(fontSize: 13))),
-                          //               DataColumn(
-                          //                   label: Text('Phone number',
-                          //                       style:
-                          //                           TextStyle(fontSize: 13))),
-                          //               DataColumn(
-                          //                   label: Text('Action',
-                          //                       style:
-                          //                           TextStyle(fontSize: 13))),
-                          //             ],
-                          //             rows: Provider.of<
-                          //                         SelectedCosignersProvider>(
-                          //                     context)
-                          //                 .cosigners
-                          //                 .map((cosigner) {
-                          //
-                          //               return DataRow(
-                          //                 cells: [
-                          //                   DataCell(
-                          //                     Text(
-                          //                         '${cosigner.firstName} ${cosigner.lastName}',
-                          //                         style: TextStyle(
-                          //                             fontSize: 12)),
-                          //                   ),
-                          //                   DataCell(
-                          //                     Text('${cosigner.phoneNumber}',
-                          //                         style: TextStyle(
-                          //                             fontSize: 12)),
-                          //                   ),
-                          //                   DataCell(
-                          //                     Row(
-                          //                       children: [
-                          //                         InkWell(
-                          //                           onTap: () {
-                          //                             setState(() {
-                          //                               isTenantSelected ==
-                          //                                   true;
-                          //                               tenent_popup( cosigner);
-                          //                             });
-                          //                           },
-                          //                           child: Icon(Icons.edit,
-                          //                               size: 15),
-                          //                         ),
-                          //                         SizedBox(
-                          //                           width: 5,
-                          //                         ),
-                          //                         InkWell(
-                          //                           onTap: () {
-                          //                             Provider.of<SelectedCosignersProvider>(
-                          //                                     context,
-                          //                                     listen: false)
-                          //                                 .removeConsigner(
-                          //                                     cosigner);
-                          //                           },
-                          //                           child: Icon(Icons.delete,
-                          //                               size: 15),
-                          //                         ),
-                          //                       ],
-                          //                     ),
-                          //                   ),
-                          //                 ],
-                          //               );
-                          //             }).toList(),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
                             Padding(
                               padding: const EdgeInsets.only(left: 13),
                               child: SingleChildScrollView(
@@ -1656,39 +1684,54 @@ class _addLease3State extends State<addLease3>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      decoration: BoxDecoration(border: Border.all(color: blueColor)),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: blueColor)),
                                       child: DataTable(
                                         columnSpacing: 25,
                                         headingRowHeight: 30,
                                         dataRowHeight: 30,
-                                        headingRowColor: MaterialStateColor.resolveWith(
-                                                (states) => Color.fromRGBO(21, 43, 83, 1)),
+                                        headingRowColor: MaterialStateColor
+                                            .resolveWith((states) =>
+                                            Color.fromRGBO(21, 43, 83, 1)),
                                         headingTextStyle: TextStyle(
-                                            color: Colors.white, fontWeight: FontWeight.bold),
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
                                         columns: [
-                                          DataColumn(label: Text('Name', style: TextStyle(fontSize: 13))),
                                           DataColumn(
-                                              label: Text('Phone number', style: TextStyle(fontSize: 13))),
-                                          DataColumn(label: Text('Action', style: TextStyle(fontSize: 13))),
+                                              label: Text('Name',
+                                                  style:
+                                                  TextStyle(fontSize: 13))),
+                                          DataColumn(
+                                              label: Text('Phone number',
+                                                  style:
+                                                  TextStyle(fontSize: 13))),
+                                          DataColumn(
+                                              label: Text('Action',
+                                                  style:
+                                                  TextStyle(fontSize: 13))),
                                         ],
-                                        rows:
-                                        Provider.of<SelectedCosignersProvider>(context)
+                                        rows: Provider.of<
+                                            SelectedCosignersProvider>(
+                                            context)
                                             .cosigners
                                             .asMap()
                                             .entries
                                             .map((entry) {
                                           int index = entry.key;
                                           Cosigner cosigner = entry.value;
-                                          print(cosigner.firstName);
                                           print(index);
                                           return DataRow(
                                             cells: [
                                               DataCell(
-                                                Text('${cosigner.firstName} ${cosigner.lastName}',
-                                                    style: TextStyle(fontSize: 12)),
+                                                Text(
+                                                    '${cosigner.firstName} ${cosigner.lastName}',
+                                                    style: TextStyle(
+                                                        fontSize: 12)),
                                               ),
                                               DataCell(
-                                                Text('${cosigner.phoneNumber}', style: TextStyle(fontSize: 12)),
+                                                Text('${cosigner.phoneNumber}',
+                                                    style: TextStyle(
+                                                        fontSize: 12)),
                                               ),
                                               DataCell(
                                                 Row(
@@ -1696,19 +1739,26 @@ class _addLease3State extends State<addLease3>
                                                     InkWell(
                                                       onTap: () {
                                                         setState(() {
-                                                          isTenantSelected == true;
-                                                         // tenent_popup(cosigner,index);
+                                                          isTenantSelected ==
+                                                              true;
+                                                          tenent_popup(
+                                                              cosigner, index);
                                                         });
                                                       },
-                                                      child: Icon(Icons.edit, size: 15),
+                                                      child: Icon(Icons.edit,
+                                                          size: 15),
                                                     ),
                                                     SizedBox(width: 5),
                                                     InkWell(
                                                       onTap: () {
-                                                        Provider.of<SelectedCosignersProvider>(context,
-                                                            listen: false).removeConsigner(cosigner);
+                                                        Provider.of<SelectedCosignersProvider>(
+                                                            context,
+                                                            listen: false)
+                                                            .removeConsigner(
+                                                            cosigner);
                                                       },
-                                                      child: Icon(Icons.delete, size: 15),
+                                                      child: Icon(Icons.delete,
+                                                          size: 15),
                                                     ),
                                                   ],
                                                 ),
@@ -1938,7 +1988,8 @@ class _addLease3State extends State<addLease3>
                             children: [
                               InkWell(
                                 onTap: () {
-                                  _showRecurringPopupForm(context);
+                                  _showRecurringPopupForm(
+                                      context, _selectedRent.toString());
                                 },
                                 child: const Text(
                                   ' + Add Recurring Charge',
@@ -1954,7 +2005,8 @@ class _addLease3State extends State<addLease3>
                               ),
                               InkWell(
                                 onTap: () {
-                                  _showPopupForm(context);
+                                  _showPopupForm(
+                                      context, _selectedRent.toString());
                                 },
                                 child: const Text(
                                   ' + Add One Time Charge',
@@ -1986,6 +2038,7 @@ class _addLease3State extends State<addLease3>
                                 const SizedBox(
                                   height: 5,
                                 ),
+
                               Table(
                                 border: TableBorder.all(
                                   width: 1,
@@ -2044,7 +2097,7 @@ class _addLease3State extends State<addLease3>
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          '${item['property']}',
+                                          '${item['account']}',
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w700,
@@ -2070,6 +2123,7 @@ class _addLease3State extends State<addLease3>
                                             InkWell(
                                               onTap: () {
                                                 _showRecurringPopupForm(context,
+                                                    _selectedRent.toString(),
                                                     initialData: item,
                                                     index: index);
                                               },
@@ -2122,6 +2176,7 @@ class _addLease3State extends State<addLease3>
                                 const SizedBox(
                                   height: 5,
                                 ),
+
                               Table(
                                 border: TableBorder.all(
                                   width: 1,
@@ -2180,7 +2235,7 @@ class _addLease3State extends State<addLease3>
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          '${item['property']}',
+                                          '${item['account']}',
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w700,
@@ -2206,6 +2261,7 @@ class _addLease3State extends State<addLease3>
                                             InkWell(
                                               onTap: () {
                                                 _showPopupForm(context,
+                                                    _selectedRent.toString(),
                                                     initialData: item,
                                                     index: index);
 
@@ -2238,6 +2294,7 @@ class _addLease3State extends State<addLease3>
                                   })
                                 ],
                               ),
+
                               // Displaying list of charges here
                               // ListView.builder(
                               //   shrinkWrap: true,
@@ -2870,236 +2927,81 @@ class _addLease3State extends State<addLease3>
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                         BorderRadius.circular(8.0))),
-                                onPressed: () async {
+                                onPressed: () {
                                   if (_formKey.currentState?.validate() ??
                                       false) {
-                                    List<TenantData> tenants = [];
-                                    Map<String, String>? firstCosigner = cosignersMap.isNotEmpty ? cosignersMap[0] : {};
-                                    List<TenantData> tenantDataList = tenantsMap.entries.map((entry) {
-                                      final tenantMap = entry.value;
-                                      return TenantData(
-                                        adminId: tenantMap['adminId'] ?? '',
-                                        comments: tenantMap['comments'] ?? '',
-                                        createdAt: tenantMap['createdAt'] ?? '',
-                                        emergencyContact: EmergencyContacts(
-                                          name: tenantMap['emergencyContactName'] ?? '',
-                                          relation: tenantMap['emergencyContactRelation'] ?? '',
-                                          email: tenantMap['emergencyContactEmail'] ?? '',
-                                          phoneNumber: tenantMap['emergencyContactPhoneNumber'] ?? '',
-                                        ),
-                                        isDelete: tenantMap['isDelete'] == 'true',
-                                        rentalAddress: tenantMap['rentalAddress'] ?? '',
-                                        rentalUnit: tenantMap['rentalUnit'] ?? '',
-                                        taxPayerId: tenantMap['taxPayerId'] ?? '',
-                                        tenantAlternativeEmail: tenantMap['tenantAlternativeEmail'] ?? '',
-                                        tenantAlternativeNumber: tenantMap['tenantAlternativeNumber'] ?? '',
-                                        tenantBirthDate: tenantMap['tenantBirthDate'] ?? '',
-                                        tenantEmail: tenantMap['tenantEmail'] ?? '',
-                                        tenantFirstName: tenantMap['tenantFirstName'] ?? '',
-                                        tenantId: tenantMap['tenantId'] ?? '',
-                                        tenantLastName: tenantMap['tenantLastName'] ?? '',
-                                        tenantPassword: tenantMap['tenantPassword'] ?? '',
-                                        tenantPhoneNumber: tenantMap['tenantPhoneNumber'] ?? '',
-                                        updatedAt: tenantMap['updatedAt'] ?? '',
-                                        v: int.tryParse(tenantMap['v'] ?? '0') ?? 0,
-                                        id: tenantMap['id'] ?? '',
-                                      );
-                                    }).toList();
-                                    // Assuming tenantDataList is a List<TenantData>
-                                    List<String> tenantIds = tenantDataList.map((tenant) => tenant.tenantId ?? '').toList();
-                                    SharedPreferences prefs = await SharedPreferences.getInstance();
-                                    String? adminId = prefs.getString("adminId");
-                                    Lease lease = Lease(
-                                      chargeData: ChargeData(
-                                        adminId: adminId ??"",
-                                        entry: [
-                                          Entry(
-                                            account: "",
-                                            amount: "20",
-                                            chargeType: "One Time Charge",
-                                            date: "2024-07-26",
-                                            isRepeatable: false,
-                                            memo: "One Time Charge",
-                                          ),
-                                          Entry(
-                                            account: "Last Month's Rent",
-                                            amount: 0,
-                                            chargeType: "Rent",
-                                            date: "2024-07-26",
-                                            isRepeatable: true,
-                                            memo: "Last Month's Rent",
-                                            rentCycle: "Monthly",
-                                            tenantId: "1709201577679",
-                                          ),
-                                          Entry(
-                                            account: "Security Deposite",
-                                            amount: 0,
-                                            chargeType: "Security Deposite",
-                                            date: "2024-07-26",
-                                            isRepeatable: false,
-                                            memo: "Security Deposite",
-                                            tenantId: "1709201577679",
-                                          ),
-                                          Entry(
-                                            account: "",
-                                            amount: rentAmount,
-                                            chargeType: _selectedRent ??"",
-                                            date: rentNextDueDate.text,
-                                            isRepeatable: true,
-                                            memo: rentMemo.text,
-                                            rentCycle: _selectedRent,
-                                            tenantId:tenantIds.first,
-                                          )
-                                        ],
-                                        isLeaseAdded: true,
-                                      ),
-                                      cosignerData: CosignerData(
-                                        cosignerFirstName: firstCosigner?['firstName'] ?? '',
-                                        cosignerLastName: firstCosigner?['lastName'] ?? '',
-                                        cosignerPhoneNumber: firstCosigner?['phoneNumber'] ?? '',
-                                        cosignerEmail: firstCosigner?['email'] ?? '',
-                                        cosignerAlternativeEmail: firstCosigner?['alterEmail'] ?? '',
-                                        cosignerAddress: firstCosigner?['streetAddress'] ?? '',
-                                        cosignerCity: firstCosigner?['city'] ?? '',
-                                        cosignerCountry: firstCosigner?['country'] ?? '',
-                                        cosignerPostalcode: firstCosigner?['postalCode'] ?? '',
-                                      ),
-                                      leaseData: LeaseData(
-                                        adminId: adminId ??"",
-                                        companyName: companyName,
-                                        endDate: _endDate.text,
-                                        entry: [
-                                          Entry(
-                                            account: "Key Replacement Fee",
-                                            amount: "20",
-                                            chargeType: "One Time Charge",
-                                            date: "2024-07-26",
-                                            isRepeatable: false,
-                                            memo: "One Time Charge",
-                                          ),
-                                          Entry(
-                                            account: "Last Month's Rent",
-                                            amount: 0,
-                                            chargeType: "Rent",
-                                            date: "2024-07-26",
-                                            isRepeatable: true,
-                                            memo: "Last Month's Rent",
-                                            rentCycle: "Monthly",
-                                            tenantId: "1709201577679",
-                                          ),
-                                          Entry(
-                                            account: "Security Deposite",
-                                            amount: 0,
-                                            chargeType: "Security Deposite",
-                                            date: "2024-07-26",
-                                            isRepeatable: false,
-                                            memo: "Security Deposite",
-                                            tenantId: "1709201577679",
-                                          ),
-                                          Entry(
-                                            account: "Utility Fee",
-                                            amount: 0,
-                                            chargeType: "Recurring Charge",
-                                            date: "2024-07-26",
-                                            isRepeatable: true,
-                                            memo: "Recurring Charge",
-                                            rentCycle: "Monthly",
-                                            tenantId: "1709201577679",
-                                          ),
-                                        ],
-                                        leaseAmount: 0,
-                                        leaseType: _selectedLeaseType ??"",
-                                        rentalId: "",
-                                        startDate: _startDate.text,
-                                        tenantId: tenantDataList.map((tenant) => tenant.tenantId ?? '').toList(),
-                                        tenantResidentStatus: false,
-                                        unitId:"" ,
-                                        uploadedFile: _uploadedFileNames,
-                                      ),
-                                      tenantData:tenantDataList,
-                                    );
-                                    LeaseRepository().postLease(lease);
-
+                                    // If the form is valid, display a snackbar
                                     print('valid');
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Processing Data')),);
+
+                                    CosignerData cosignerData = CosignerData(
+                                      adminId: '',
+                                      cosignerAlternativeNumber: '',
+                                      cosignerId: '',
+                                      cosignerFirstName:
+                                      firstCosigner?['firstName'] ?? '',
+                                      cosignerLastName:
+                                      firstCosigner?['lastName'] ?? '',
+                                      cosignerPhoneNumber:
+                                      firstCosigner?['phoneNumber'] ?? '',
+                                      cosignerEmail:
+                                      firstCosigner?['email'] ?? '',
+                                      cosignerAlternativeEmail:
+                                      firstCosigner?['alterEmail'] ?? '',
+                                      cosignerAddress:
+                                      firstCosigner?['streetAddress'] ?? '',
+                                      cosignerCity:
+                                      firstCosigner?['city'] ?? '',
+                                      cosignerCountry:
+                                      firstCosigner?['country'] ?? '',
+                                      cosignerPostalcode:
+                                      firstCosigner?['postalCode'] ?? '',
+                                    );
+                                    print(cosignerData.cosignerFirstName);
+
+                                    addLease();
+
+                                    // ScaffoldMessenger.of(context).showSnackBar(
+                                    //   const SnackBar(
+                                    //       content: Text('Processing Data')),
+                                    // );
                                   } else {
-                                    Map<String, String>? firstCosigner = cosignersMap.isNotEmpty ? cosignersMap[0] : {};
-                                    List<TenantData> tenantDataList = tenantsMap.entries.map((entry) {
-                                      final tenantMap = entry.value;
-                                      return TenantData(
-                                        adminId: tenantMap['adminId'] ?? '',
-                                        comments: tenantMap['comments'] ?? '',
-                                        createdAt: tenantMap['createdAt'] ?? '',
-                                        emergencyContact: EmergencyContacts(
-                                          name: tenantMap['emergencyContactName'] ?? '',
-                                          relation: tenantMap['emergencyContactRelation'] ?? '',
-                                          email: tenantMap['emergencyContactEmail'] ?? '',
-                                          phoneNumber: tenantMap['emergencyContactPhoneNumber'] ?? '',
-                                        ),
-                                        isDelete: tenantMap['isDelete'] == 'true',
-                                        rentalAddress: tenantMap['rentalAddress'] ?? '',
-                                        rentalUnit: tenantMap['rentalUnit'] ?? '',
-                                        taxPayerId: tenantMap['taxPayerId'] ?? '',
-                                        tenantAlternativeEmail: tenantMap['tenantAlternativeEmail'] ?? '',
-                                        tenantAlternativeNumber: tenantMap['tenantAlternativeNumber'] ?? '',
-                                        tenantBirthDate: tenantMap['tenantBirthDate'] ?? '',
-                                        tenantEmail: tenantMap['tenantEmail'] ?? '',
-                                        tenantFirstName: tenantMap['tenantFirstName'] ?? '',
-                                        tenantId: tenantMap['tenantId'] ?? '',
-                                        tenantLastName: tenantMap['tenantLastName'] ?? '',
-                                        tenantPassword: tenantMap['tenantPassword'] ?? '',
-                                        tenantPhoneNumber: tenantMap['tenantPhoneNumber'] ?? '',
-                                        updatedAt: tenantMap['updatedAt'] ?? '',
-                                        v: int.tryParse(tenantMap['v'] ?? '0') ?? 0,
-                                        id: tenantMap['id'] ?? '',
-                                      );
-                                    }).toList();
-                                    print('invalid');
-                                    // _handleSubmit();
-                                   print(firstCosigner);
-                                   print(companyName);
-                                   print(_selectedLeaseType??"");
-                                   print(tenantDataList.map((tenant) => tenant.tenantId ?? '').toList());
-                                    print(tenants.first.tenantFirstName);
-                                    print(_endDate.text);
-                                    print(rentAmount);
-                                    //print( _selectedRent ??"");
-                                    print(_selectedRent);
-                                   // print(tenantsMap);
-                                    // List<TenantData> tenantDataList = tenantsMap.entries.map((entry) {
-                                    //   final tenantMap = entry.value;
-                                    //   return TenantData(
-                                    //     adminId: tenantMap['adminId'] ?? '',
-                                    //     comments: tenantMap['comments'] ?? '',
-                                    //     createdAt: tenantMap['createdAt'] ?? '',
-                                    //     emergencyContact: EmergencyContacts(
-                                    //       name: tenantMap['emergencyContactName'] ?? '',
-                                    //       relation: tenantMap['emergencyContactRelation'] ?? '',
-                                    //       email: tenantMap['emergencyContactEmail'] ?? '',
-                                    //       phoneNumber: tenantMap['emergencyContactPhoneNumber'] ?? '',
-                                    //     ),
-                                    //     isDelete: tenantMap['isDelete'] == 'true',
-                                    //     rentalAddress: tenantMap['rentalAddress'] ?? '',
-                                    //     rentalUnit: tenantMap['rentalUnit'] ?? '',
-                                    //     taxPayerId: tenantMap['taxPayerId'] ?? '',
-                                    //     tenantAlternativeEmail: tenantMap['tenantAlternativeEmail'] ?? '',
-                                    //     tenantAlternativeNumber: tenantMap['tenantAlternativeNumber'] ?? '',
-                                    //     tenantBirthDate: tenantMap['tenantBirthDate'] ?? '',
-                                    //     tenantEmail: tenantMap['tenantEmail'] ?? '',
-                                    //     tenantFirstName: tenantMap['tenantFirstName'] ?? '',
-                                    //     tenantId: tenantMap['tenantId'] ?? '',
-                                    //     tenantLastName: tenantMap['tenantLastName'] ?? '',
-                                    //     tenantPassword: tenantMap['tenantPassword'] ?? '',
-                                    //     tenantPhoneNumber: tenantMap['tenantPhoneNumber'] ?? '',
-                                    //     updatedAt: tenantMap['updatedAt'] ?? '',
-                                    //     v: int.tryParse(tenantMap['v'] ?? '0') ?? 0,
-                                    //     id: tenantMap['id'] ?? '',
-                                    //   );
-                                    // }).toList();
-                                   // print(tenantDataList);
-                                    // print('consiger'+widget.cosigner!.firstName);
+                                    // print('invalid');
+                                    addLease();
+                                    CosignerData cosignerData = CosignerData(
+                                      adminId: '',
+                                      cosignerAlternativeNumber: '',
+                                      cosignerId: '',
+                                      cosignerFirstName:
+                                      firstCosigner?['firstName'] ?? '',
+                                      cosignerLastName:
+                                      firstCosigner?['lastName'] ?? '',
+                                      cosignerPhoneNumber:
+                                      firstCosigner?['phoneNumber'] ?? '',
+                                      cosignerEmail:
+                                      firstCosigner?['email'] ?? '',
+                                      cosignerAlternativeEmail:
+                                      firstCosigner?['alterEmail'] ?? '',
+                                      cosignerAddress:
+                                      firstCosigner?['streetAddress'] ?? '',
+                                      cosignerCity:
+                                      firstCosigner?['city'] ?? '',
+                                      cosignerCountry:
+                                      firstCosigner?['country'] ?? '',
+                                      cosignerPostalcode:
+                                      firstCosigner?['postalCode'] ?? '',
+                                    );
+                                    print(cosignerData.cosignerFirstName);
+                                    print(cosignerData.cosignerLastName);
+                                    print(cosignerData.cosignerPhoneNumber);
+                                    print(cosignerData.cosignerEmail);
+                                    print(
+                                        cosignerData.cosignerAlternativeEmail);
+                                    print(cosignerData.cosignerAddress);
+
+                                    print(cosignerData.cosignerCity);
+                                    print(cosignerData.cosignerCountry);
+                                    print(cosignerData.cosignerPostalcode);
+                                     //_handleSubmit();
                                   }
                                 },
                                 child: const Text(
@@ -3136,7 +3038,85 @@ class _addLease3State extends State<addLease3>
       ),
     );
   }
-  tenent_popup(dynamic person,int index) {
+
+  Future<void> addLease() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.getString("adminId")!;
+
+    bool _isLeaseAdded = false;
+
+    // // Printing ChargeData object
+
+    List<Map<String, String>> mergedFormDataList = [
+      ...formDataOneTimeList,
+      ...formDataRecurringList,
+    ];
+
+    // Creating Entry objects from the merged list
+    List<Entry> chargeEntries = mergedFormDataList.map((data) {
+      print(data['account']);
+      return Entry(
+        account: data['account'] ?? '',
+        amount: double.tryParse(data['amount'] ?? '0.0') ?? 0.0,
+        chargeType: data['charge_type'] ?? '',
+        date: data['date'] ?? '',
+        isRepeatable: data['is_repeatable']?.toLowerCase() == 'true',
+        memo: data['memo'] ?? '',
+        rentCycle: data['rent_cycle'], // Assuming this field might be present
+        tenantId: data['tenant_id'], // Assuming this field might be present
+      );
+    }).toList();
+
+    // Creating ChargeData object
+    ChargeData chargeData = ChargeData(
+      adminId: adminId,
+      entry: chargeEntries,
+      isLeaseAdded: _isLeaseAdded,
+    );
+
+    print('ChargeData: ${jsonEncode(chargeData.toJson())}');
+    // EmergencyContact emergencyContact = EmergencyContact(
+    //   name: contactName.text,
+    //   relation: relationToTenant.text,
+    //   email: emergencyEmail.text,
+    //   phoneNumber: emergencyPhoneNumber.text,
+    // );
+
+    // Tenant tenant = Tenant(
+    //   adminId: adminId,
+    //   tenantFirstName: firstName.text,
+    //   tenantLastName: lastName.text,
+    //   tenantPhoneNumber: phoneNumber.text,
+    //   tenantAlternativeNumber: workNumber.text,
+    //   tenantEmail: email.text,
+    //   tenantAlternativeEmail: alterEmail.text,
+    //   tenantPassword: passWord.text,
+    //   tenantBirthDate: _dateController.text,
+    //   taxPayerId: taxPayerId.text,
+    //   comments: comments.text,
+    //   emergencyContact: emergencyContact,
+    // );
+
+    // bool success = await TenantsRepository().addTenant(tenant);
+
+    setState(() {
+      isLoading = false;
+    });
+
+    // if (success) {
+    //   print('Form is valid');
+    //   Fluttertoast.showToast(msg: "Tenant added successfully");
+    //   Navigator.of(context).pop(true);
+    // } else {
+    //   print('Form is invalid');
+    // }
+  }
+
+  tenent_popup(dynamic person, int index) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -3304,7 +3284,10 @@ class _addLease3State extends State<addLease3>
                             ),
                             isTenantSelected
                                 ? const AddTenant()
-                                :  AddCosigner(cosigner: person,index: index,),
+                                : AddCosigner(
+                              cosigner: person,
+                              index: index,
+                            ),
                           ],
                         ),
                       ),
@@ -4018,7 +4001,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         _isInvalid = true;
       });
       final formData = {
-        'property': _selectedProperty ?? '',
+        'account': _selectedProperty ?? '',
         'amount': _amountController.text,
         'memo': _memoController.text,
       };
@@ -4256,6 +4239,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                         ),
                       )),
                       //updated
+
                       DropdownMenuItem<String>(
                         value: 'button_item',
                         child: ElevatedButton(
@@ -4700,7 +4684,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         _isInvalid = true;
       });
       final formData = {
-        'property': _selectedProperty ?? '',
+        'account': _selectedProperty ?? '',
         'amount': _amountController.text,
         'memo': _memoController.text,
       };
@@ -5016,9 +5000,16 @@ class _AddTenantState extends State<AddTenant> {
                       /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
                                 .selectedTenants
                                 .contains(tenant);*/
-                      final matchingTenants =  Provider.of<SelectedTenantsProvider>(context).selectedTenants.where((test) => test.tenantFirstName == tenant.tenantFirstName).toList();
+                      final matchingTenants =
+                      Provider.of<SelectedTenantsProvider>(context)
+                          .selectedTenants
+                          .where((test) =>
+                      test.tenantFirstName ==
+                          tenant.tenantFirstName)
+                          .toList();
                       print(matchingTenants);
-                      final isSelected =  matchingTenants.length > 0 ? true : false;
+                      final isSelected =
+                      matchingTenants.length > 0 ? true : false;
                       return DataRow(
                         cells: [
                           DataCell(
@@ -5040,6 +5031,7 @@ class _AddTenantState extends State<AddTenant> {
                                         .removeTenant(tenant);
                                   }
                                   setState(() {});
+
                                   /* if (value) {
                                       selectedTenantsProvider.addTenant(tenant);
                                     } else {
@@ -5683,7 +5675,6 @@ class _AddTenantState extends State<AddTenant> {
                       tenantBirthDate: _dateController.text,
                       taxPayerId: taxPayerId.text,
                       comments: comments.text,
-                      rentshare: "",
                       emergencyContact: EmergencyContact(
                         name: contactName.text,
                         relation: relationToTenant.text,
@@ -5706,7 +5697,7 @@ class _AddTenantState extends State<AddTenant> {
 class AddCosigner extends StatefulWidget {
   Cosigner? cosigner;
   int? index;
-  AddCosigner({super.key,this.cosigner,this.index});
+  AddCosigner({super.key, this.cosigner, this.index});
 
   @override
   State<AddCosigner> createState() => _AddCosignerState();
@@ -5731,7 +5722,7 @@ class _AddCosignerState extends State<AddCosigner> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(widget.cosigner != null){
+    if (widget.cosigner != null) {
       firstName.text = widget.cosigner!.firstName;
       lastName.text = widget.cosigner!.lastName;
       phoneNumber.text = widget.cosigner!.phoneNumber;
@@ -5742,15 +5733,14 @@ class _AddCosignerState extends State<AddCosigner> {
       city.text = widget.cosigner!.city;
       country.text = widget.cosigner!.country;
       postalCode.text = widget.cosigner!.postalCode;
-      _showalterNumber =  widget.cosigner!.workNumber.isNotEmpty  ? true : false;
-      _showalterEmail =  widget.cosigner!.alterEmail.isNotEmpty  ? true : false;
-
+      _showalterNumber = widget.cosigner!.workNumber.isNotEmpty ? true : false;
+      _showalterEmail = widget.cosigner!.alterEmail.isNotEmpty ? true : false;
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    return
-      Container(
+    return Container(
       child: Column(
         children: [
           const SizedBox(
@@ -6130,12 +6120,13 @@ class _AddCosignerState extends State<AddCosigner> {
                 //             ),
                 //           ],
                 //         ),
+
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      if(widget.cosigner == null){
+                      if (widget.cosigner == null) {
                         final cosigner = Cosigner(
-                          c_id : firstName.text,
+                          c_id: firstName.text,
                           firstName: firstName.text,
                           lastName: lastName.text,
                           phoneNumber: phoneNumber.text,
@@ -6150,8 +6141,7 @@ class _AddCosignerState extends State<AddCosigner> {
                         Provider.of<SelectedCosignersProvider>(context,
                             listen: false)
                             .addCosigner(cosigner);
-                      }
-                      else{
+                      } else {
                         final cosigner = Cosigner(
                           //c_id : firstName.text,
                           firstName: firstName.text,
@@ -6167,13 +6157,7 @@ class _AddCosignerState extends State<AddCosigner> {
                         );
                         Provider.of<SelectedCosignersProvider>(context,
                             listen: false)
-                            .updateCosigner(cosigner,widget.index!);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => addLease3(cosigner: cosigner),
-                        //   ),
-                        // );
+                            .updateCosigner(cosigner, widget.index!);
                       }
                     }
                   },

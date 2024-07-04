@@ -3,8 +3,9 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/AddLease.dart
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
 import '../screens/Leasing/Applicants/Applicants_table.dart';
-import '../screens/Leasing/RentalRoll/RentalRoll_table.dart';
+
 import '../screens/Leasing/RentalRoll/add_RentRoll.dart';
+import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
@@ -21,6 +22,7 @@ import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
 import '../screens/Staff_Member/Staffmemvertable.dart';
 
 import '../screens/test_table/Property_table.dart';
+import '../screens/test_table/add_lease.dart';
 import '../screens/test_table/properties_table.dart';
 import '../screens/test_table/rentalowners_table.dart';
 import '../screens/test_table/staff_table.dart';
@@ -70,11 +72,10 @@ void navigateToOption(
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
     "RentalOwner": (context) => Rentalowner_table(),
-    //"Tenants": (context) => Tenants_table(),
     "Tenants": (context) => Tenants_table(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
-   // "Rent Roll": (context) => addLease(),
+    "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
   };
   Navigator.push(
