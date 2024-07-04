@@ -914,27 +914,32 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Container(
-                                    height:
-                                    MediaQuery.of(context).size.height *
-                                        .05,
-                                    width:
-                                    MediaQuery.of(context).size.width *
-                                        .2,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                      height:
+                                      MediaQuery.of(context).size.height *
+                                          .05,
+                                      width:
+                                      MediaQuery.of(context).size.width *
+                                          .2,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color:
+                                          Color.fromRGBO(21, 43, 81, 1),
+                                        ),
+                                        borderRadius:
+                                        BorderRadius.circular(10),
                                       ),
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ))),
+                                      child: Center(
+                                          child: Text(
+                                            "Cancel",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ))),
+                                ),
                               ],
                             ),
                           ],
@@ -976,7 +981,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 5,
+                                  width: 10,
                                 ),
                                 Text(
                                   "Percentage",
@@ -1070,7 +1075,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 5,
+                                  width: 10,
                                 ),
                                 Text(
                                   "Duration",
@@ -1216,27 +1221,32 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Container(
-                                    height:
-                                    MediaQuery.of(context).size.height *
-                                        .05,
-                                    width:
-                                    MediaQuery.of(context).size.width *
-                                        .2,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                      height:
+                                      MediaQuery.of(context).size.height *
+                                          .05,
+                                      width:
+                                      MediaQuery.of(context).size.width *
+                                          .2,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color:
+                                          Color.fromRGBO(21, 43, 81, 1),
+                                        ),
+                                        borderRadius:
+                                        BorderRadius.circular(10),
                                       ),
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ))),
+                                      child: Center(
+                                          child: Text(
+                                            "Cancel",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ))),
+                                ),
                               ],
                             ),
                           ],

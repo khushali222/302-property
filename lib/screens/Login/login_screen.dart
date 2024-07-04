@@ -90,51 +90,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.099,
                   ),
-                  // Container(
-                  //   height: MediaQuery.of(context).size.height * 0.065,
-                  //   width: MediaQuery.of(context).size.width * 0.8,
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(10),
-                  //     color: Color.fromRGBO(196, 196, 196, .3),
-                  //   ),
-                  //   child: Stack(
-                  //     children: [
-                  //       Positioned.fill(
-                  //         child: Center(
-                  //           child: TextField(
-                  //             keyboardType: TextInputType.emailAddress,
-                  //             onChanged: (value) {
-                  //               setState(() {
-                  //                 emailerror = false;
-                  //               });
-                  //             },
-                  //             controller: email,
-                  //             cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                  //             decoration: InputDecoration(
-                  //               border: InputBorder.none,
-                  //               enabledBorder: emailerror
-                  //                   ? OutlineInputBorder(
-                  //                       borderRadius: BorderRadius.circular(10),
-                  //                       borderSide: BorderSide(
-                  //                           color: Colors
-                  //                               .red), // Set border color here
-                  //                     )
-                  //                   : InputBorder.none,
-                  //               contentPadding: EdgeInsets.all(15),
-                  //               prefixIcon: Padding(
-                  //                 padding: const EdgeInsets.all(17.0),
-                  //                 child: Image.asset(
-                  //                     "assets/icons/email_icon.png"),
-                  //               ),
-                  //               hintText: "Business Email",
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   Expanded(
+                    flex: 1,
                     child: Container(
                       height: 50,
                       decoration: BoxDecoration(
@@ -163,7 +120,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                       )
                                     : InputBorder.none,
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(10),
+                                contentPadding: EdgeInsets.all(14),
                                 prefixIcon: Container(
                                   height: 20,
                                   width: 20,
@@ -208,64 +165,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.099,
                   ),
-                  // Container(
-                  //   height: MediaQuery.of(context).size.height * 0.065,
-                  //   width: MediaQuery.of(context).size.width * 0.8,
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(10),
-                  //     color: Color.fromRGBO(196, 196, 196, .3),
-                  //   ),
-                  //   child: Stack(
-                  //     children: [
-                  //       Positioned.fill(
-                  //         child: Center(
-                  //           child: TextField(
-                  //             onChanged: (value) {
-                  //               setState(() {
-                  //                 passworderror = false;
-                  //               });
-                  //             },
-                  //             controller: password,
-                  //             obscureText: visiable_password,
-                  //             cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                  //             decoration: InputDecoration(
-                  //               enabledBorder: passworderror
-                  //                   ? OutlineInputBorder(
-                  //                 borderRadius: BorderRadius.circular(10),
-                  //                 borderSide: BorderSide(
-                  //                     color: Colors
-                  //                         .red), // Set border color here
-                  //               )
-                  //                   : InputBorder.none,
-                  //               border: InputBorder.none,
-                  //               contentPadding: EdgeInsets.all(15),
-                  //               prefixIcon: Padding(
-                  //                 padding: const EdgeInsets.all(15.0),
-                  //                 child: Image.asset('assets/icons/pasword.png'),
-                  //               ),
-                  //               hintText: "Password",
-                  //               suffixIcon:
-                  //               InkWell(
-                  //                 onTap: () {
-                  //                   setState(() {
-                  //                     visiable_password = !visiable_password;
-                  //                   });
-                  //                 },
-                  //                 child: Icon(
-                  //                   visiable_password
-                  //                       ? Icons.remove_red_eye_outlined
-                  //                       : Icons.visibility_off_outlined,
-                  //                   color: Colors.grey,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   Expanded(
+
                     child: Container(
                       height: 50,
                       decoration: BoxDecoration(
@@ -295,7 +196,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                       )
                                     : InputBorder.none,
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(10),
+                                contentPadding: EdgeInsets.all(14),
                                 prefixIcon: Container(
                                   height: 20,
                                   width: 20,
@@ -373,7 +274,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                         fontSize: MediaQuery.of(context).size.width * 0.03,
                         color: Colors.black),
                   ),
-                  // Spacer(),
+
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -393,7 +294,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                 ],
               ),
-              Spacer(),
+
               // Login button
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.16,

@@ -628,7 +628,7 @@ class _PropertyTableState extends State<PropertyTable> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add New Property",
+                              "Add Property Type",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -649,42 +649,7 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             SizedBox(height: 10),
-            //propertytype
-            // Padding(
-            //   padding: const EdgeInsets.all(5.0),
-            //   child: ClipRRect(
-            //     borderRadius: BorderRadius.circular(5.0),
-            //     child: Container(
-            //       height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-            //       padding: EdgeInsets.only(top: 12, left: 10),
-            //       width: MediaQuery.of(context).size.width * .91,
-            //       margin: const EdgeInsets.only(
-            //           bottom: 6.0), //Same as `blurRadius` i guess
-            //       decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.circular(5.0),
-            //         color: Color.fromRGBO(21, 43, 81, 1),
-            //         boxShadow: [
-            //           BoxShadow(
-            //             color: Colors.grey,
-            //             offset: Offset(0.0, 1.0), //(x,y)
-            //             blurRadius: 6.0,
-            //           ),
-            //         ],
-            //       ),
-            //       child: Text(
-            //         "Property Type",
-            //         style: TextStyle(
-            //           color: Colors.white,
-            //           fontWeight: FontWeight.bold,
-            //           // fontSize:22,
-            //           fontSize: MediaQuery.of(context).size.width < 500
-            //               ? 22
-            //               : MediaQuery.of(context).size.width * 0.035,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+
             titleBar(
               width: MediaQuery.of(context).size.width * .91,
               title: 'Property Type',
@@ -705,7 +670,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 40 : 60,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,

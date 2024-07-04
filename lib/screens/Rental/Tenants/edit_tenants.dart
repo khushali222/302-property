@@ -224,9 +224,15 @@ class _EditTenantsState extends State<EditTenants> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 25,
+                  ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
                     title: 'Edit Tenant',
+                  ),
+                  SizedBox(
+                    height: 15,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),

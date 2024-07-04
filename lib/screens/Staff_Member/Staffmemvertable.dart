@@ -552,7 +552,7 @@ class _StaffTableState extends State<StaffTable> {
                       ),
                       child: Center(
                         child: Text(
-                          "Add New Staff Member",
+                          "Add Staff Member",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

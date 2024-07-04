@@ -145,7 +145,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(14),
                                     enabledBorder: passworderror
                                         ? OutlineInputBorder(
                                             borderRadius:
@@ -231,7 +231,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(10),
+                                    contentPadding: EdgeInsets.all(14),
                                     enabledBorder: confirmpassworderror
                                         ? OutlineInputBorder(
                                             borderRadius:
@@ -283,7 +283,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     ))
                   : Container(),
 
-              Spacer(),
+              // Spacer(),
               // Login button
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,

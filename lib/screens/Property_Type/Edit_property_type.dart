@@ -117,9 +117,15 @@ class _Edit_property_typeState extends State<Edit_property_type> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: 25,
+            ),
             titleBar(
               width: MediaQuery.of(context).size.width * .86,
               title: 'Edit Property Type',
+            ),
+            SizedBox(
+              height: 25,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),

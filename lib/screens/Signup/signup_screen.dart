@@ -95,241 +95,13 @@ class _SignupState extends State<Signup> {
       });
     }
   }
-  // Future<void> loginsubmit() async {
-  //   setState(() {
-  //     loading = true;
-  //   });
-  //   final response = await http.post(
-  //       Uri.parse('${Api_url}/api/admin/login'),
-  //       body: {"email": email.text});
-  //   print(response.statusCode);
-  //   final jsonData = json.decode(response.body);
-  //   if (jsonData["statusCode"] == 200) {
-  //     print(jsonData);
-  //     Navigator.push(
-  //         context, MaterialPageRoute(builder: (context) => Dashboard()));
-  //
-  //     setState(() {
-  //       loading = false;
-  //     });
-  //   } else {
-  //     Fluttertoast.showToast(msg: jsonData["message"]);
-  //     setState(() {
-  //       loading = false;
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return
-        //   SafeArea(
-        //   child: Scaffold(
-        //     body: SingleChildScrollView(
-        //       child: Container(
-        //         height: MediaQuery.of(context).size.height,
-        //         child: Column(
-        //           children: [
-        //             SizedBox(height: 90),
-        //             Image(
-        //               image: AssetImage('assets/images/logo.png'),
-        //               height: 40,
-        //               width: width * .9,
-        //             ),
-        //             SizedBox(height: 20),
-        //             Text(
-        //               "Welcome to 302 Rentals",
-        //               style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 19),
-        //             ),
-        //             SizedBox(height: 10),
-        //             Text(
-        //               "Signup for free trial account",
-        //               style: TextStyle(color: Colors.black),
-        //             ),
-        //             SizedBox(height: 20),
-        //         Row(
-        //                 children: [
-        //                   SizedBox(width: MediaQuery.of(context).size.width *.099,),
-        //                   Container(
-        //                     height: 50,
-        //                     width: MediaQuery.of(context).size.width * 0.8,
-        //                     decoration: BoxDecoration(
-        //                       borderRadius: BorderRadius.circular(10),
-        //                       // color: Colors.blueGrey[50]
-        //                       color: Color.fromRGBO(196, 196, 196, .3),
-        //                     ),
-        //                     child: Stack(
-        //                       children: [
-        //                         Positioned.fill(
-        //                           child: TextField(
-        //                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
-        //                             decoration: InputDecoration(
-        //                               border: InputBorder.none,
-        //                               contentPadding: EdgeInsets.all(10),
-        //                               prefixIcon: Icon(Icons.person_outline_outlined,size: 22,color: Colors.grey,),
-        //                               hintText: "First Name",
-        //                             ),
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                   SizedBox(width: 25,),
-        //                 ],
-        //               ),
-        //               SizedBox(
-        //                 height: 25,
-        //               ),
-        //               //last name
-        //               Row(
-        //                 children: [
-        //                   SizedBox(width: MediaQuery.of(context).size.width *.099,),
-        //                   Container(
-        //                     height: 50,
-        //                     width: MediaQuery.of(context).size.width * 0.8,
-        //                     decoration: BoxDecoration(
-        //                       borderRadius: BorderRadius.circular(10),
-        //                       // color: Colors.blueGrey[50],
-        //                       color: Color.fromRGBO(196, 196, 196, .3),
-        //                     ),
-        //                     child: Stack(
-        //                       children: [
-        //                         Positioned.fill(
-        //                           child: TextField(
-        //                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
-        //                             decoration: InputDecoration(
-        //                               border: InputBorder.none,
-        //                               contentPadding: EdgeInsets.all(10),
-        //                               prefixIcon: Icon(Icons.person_outline_outlined,size: 22,color: Colors.grey,),
-        //                               hintText: "Last Name",
-        //                             ),
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                   SizedBox(width: 25,),
-        //                 ],
-        //               ),
-        //               SizedBox(
-        //                 height: 25,
-        //               ),
-        //               //Buisiness email
-        //               Row(
-        //                 children: [
-        //                   SizedBox(width: MediaQuery.of(context).size.width *.099,),
-        //                   Container(
-        //                     height: 50,
-        //                     width: MediaQuery.of(context).size.width * 0.8,
-        //                     decoration: BoxDecoration(
-        //                       borderRadius: BorderRadius.circular(10),
-        //                       // color: Colors.blueGrey[50]
-        //                       color: Color.fromRGBO(196, 196, 196, .3),
-        //                     ),
-        //                     child: Stack(
-        //                       children: [
-        //                         Positioned.fill(
-        //                           child: TextField(
-        //                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
-        //                             decoration: InputDecoration(
-        //                               border: InputBorder.none,
-        //                               contentPadding: EdgeInsets.all(10),
-        //                               prefixIcon: Icon(Icons.email_outlined,size: 22,color: Colors.grey,),
-        //                               hintText: "Buisiness Email",
-        //                             ),
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                   SizedBox(width: 25,),
-        //                 ],
-        //               ),
-        //               Spacer(),
-        //               //Create your free tiral
-        //               GestureDetector(
-        //                 onTap: (){
-        //                   Navigator.push(context, MaterialPageRoute(builder: (context)=>Signup2()));
-        //                 },
-        //                 child: Container(
-        //                   height: MediaQuery.of(context).size.height * .06,
-        //                   width: MediaQuery.of(context).size.width * 0.8,
-        //                   decoration: BoxDecoration(
-        //                     color: Colors.black,
-        //                     borderRadius: BorderRadius.circular(10),
-        //                   ),
-        //                   child: Center(child: Row(
-        //                     mainAxisAlignment: MainAxisAlignment.center,
-        //                     children: [
-        //                       Text("Create your free tiral ",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-        //                     ],
-        //                   )),
-        //                 ),
-        //               ),
-        //               SizedBox(
-        //                 height: 20,
-        //               ),
-        //             // Step content
-        //
-        //             SizedBox(height: 20),
-        //             Row(
-        //               mainAxisAlignment: MainAxisAlignment.center,
-        //               children: List.generate(
-        //                 steps.length * 2 - 1,
-        //                     (index) {
-        //                   final stepIndex = index ~/ 2;
-        //                   if (index.isOdd) {
-        //                     // Add a vertical divider
-        //                     return Container(
-        //                       width: 80,
-        //                       height: 2,
-        //                       color: currentStep > stepIndex ? Colors.blue : Colors.grey,
-        //                     );
-        //
-        //                   } else {
-        //                     // Add the step circle
-        //                     return GestureDetector(
-        //                       onTap: () {
-        //                         setState(() {
-        //                           currentStep = stepIndex;
-        //                         });
-        //                       },
-        //                       child: Padding(
-        //                         padding: const EdgeInsets.all(8.0),
-        //                         child: Container(
-        //                           width: 30,
-        //                           height: 30,
-        //                           decoration: BoxDecoration(
-        //                             shape: BoxShape.circle,
-        //                             color: _getCircleColor(stepIndex),
-        //                           ),
-        //                           child: Center(
-        //                             child: Text(
-        //                               (stepIndex + 1).toString(),
-        //                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        //                             ),
-        //                           ),
-        //                         ),
-        //                       ),
-        //                     );
-        //                   }
-        //                 },
-        //               ),
-        //             ),
-        //
-        //             SizedBox(height: 20),
-        //             if (currentStep != -1) steps[currentStep].content,
-        //
-        //             SizedBox(height: 90),
-        //           ],
-        //         ),
-        //       ),
-        //     ),
-        //
-        //   ),
-        // );
+
         SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -402,7 +174,7 @@ class _SignupState extends State<Signup> {
                                     )
                                   : InputBorder.none,
                               border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(10),
+                              contentPadding: EdgeInsets.all(14),
                               prefixIcon: Container(
                                   height: 20,
                                   width: 20,
@@ -466,7 +238,7 @@ class _SignupState extends State<Signup> {
                                     )
                                   : InputBorder.none,
                               border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(10),
+                              contentPadding: EdgeInsets.all(14),
                               prefixIcon: Container(
                                   height: 20,
                                   width: 20,
@@ -532,7 +304,7 @@ class _SignupState extends State<Signup> {
                                               .red), // Set border color here
                                     )
                                   : InputBorder.none,
-                              contentPadding: EdgeInsets.all(10),
+                              contentPadding: EdgeInsets.all(14),
                               prefixIcon: Container(
                                   height: 20,
                                   width: 20,
@@ -559,8 +331,6 @@ class _SignupState extends State<Signup> {
                     style: TextStyle(color: Colors.red),
                   ))
                 : Container(),
-
-            Spacer(),
 
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.098,

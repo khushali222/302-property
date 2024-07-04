@@ -131,7 +131,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                   ],
                 ),
                 child: Text(
-                  "Add Rental Owners",
+                  "Add Staff Member",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

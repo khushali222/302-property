@@ -823,6 +823,10 @@ class _Tenants_tableState extends State<Tenants_table> {
                         children: [
                           Positioned.fill(
                             child: TextField(
+                              style:TextStyle(
+                                // fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -842,7 +846,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   // fontWeight: FontWeight.bold,
                                   color: Color(0xFF8A95A8),
                                 ),
-                                contentPadding: EdgeInsets.all(10),
+                                contentPadding: EdgeInsets.all(13),
                               ),
                             ),
                           ),

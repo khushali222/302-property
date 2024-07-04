@@ -91,7 +91,6 @@ class _Profile_screenState extends State<Profile_screen> {
                   profile.phoneNumber?.toString() ?? '';
               _companyNameController.text = profile.companyName ?? '';
               print(snapshot.data!.email);
-
               return
                 SingleChildScrollView(
                 child: Column(
@@ -191,7 +190,6 @@ class _Profile_screenState extends State<Profile_screen> {
                                     borderRadius: BorderRadius.circular(5.0),
                                     child: Container(
                                       height: 50.0,
-
                                       padding:
                                           EdgeInsets.only(top: 8, left: 10),
                                       width: MediaQuery.of(context).size.width,

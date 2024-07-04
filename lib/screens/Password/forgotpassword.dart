@@ -207,7 +207,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 )
                                     : InputBorder.none,
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(10),
+                                contentPadding: EdgeInsets.all(14),
                                 prefixIcon: Container(
                                   height: 20,
                                   width: 20,
@@ -240,7 +240,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   ))
                   : Container(),
 
-              Spacer(),
+              // Spacer(),
               // Login button
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,

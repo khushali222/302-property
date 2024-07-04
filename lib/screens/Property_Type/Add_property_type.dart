@@ -99,9 +99,15 @@ class _Add_propertyState extends State<Add_property> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: 25,
+            ),
             titleBar(
               width: MediaQuery.of(context).size.width * .86,
               title: 'Add Property Type',
+            ),
+            SizedBox(
+              height: 25,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),

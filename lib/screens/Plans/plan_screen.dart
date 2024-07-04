@@ -184,11 +184,10 @@ class _Plan_screenState extends State<Plan_screen> {
                         Text("More than 10 units of property"),
                       ],
                     ),
-                    SizedBox(height: 10,),
-
+                    SizedBox(height: 20,),
                     GestureDetector(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
                       },
                       child: Center(
                         child: Material(
@@ -209,7 +208,7 @@ class _Plan_screenState extends State<Plan_screen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 5,),
+                    SizedBox(height: 10,),
                     Center(child: Text("Term Apply",style: TextStyle(
                       color: Color.fromRGBO(21, 43, 81, 1),
                       fontWeight: FontWeight.bold
@@ -289,7 +288,7 @@ class _Plan_screenState extends State<Plan_screen> {
                     SizedBox(height: 55,),
                     GestureDetector(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>Planform()));
                       },
                       child: Center(
                         child: Material(
@@ -310,7 +309,7 @@ class _Plan_screenState extends State<Plan_screen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 5,),
+                    SizedBox(height: 10,),
                     Center(child: Text("Term Apply",style: TextStyle(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         fontWeight: FontWeight.bold

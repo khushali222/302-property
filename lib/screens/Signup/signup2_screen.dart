@@ -116,7 +116,7 @@ class _Signup2State extends State<Signup2> {
                                         Color.fromRGBO(21, 43, 81, 1),
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: EdgeInsets.all(14),
                                       prefixIcon: Padding(
                                         padding: const EdgeInsets.all(15.0),
                                         child: Image.asset(
@@ -163,7 +163,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(15),
+                                        contentPadding: EdgeInsets.all(14),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
@@ -211,7 +211,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(15),
+                                        contentPadding: EdgeInsets.all(14),
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(18.0),
                                           child: Image.asset(
@@ -399,7 +399,7 @@ class _Signup2State extends State<Signup2> {
                                           Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(15),
                                         enabledBorder: passworderror
                                             ? OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(10),
@@ -468,7 +468,7 @@ class _Signup2State extends State<Signup2> {
                                       Color.fromRGBO(21, 43, 81, 1),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(10),
+                                        contentPadding: EdgeInsets.all(14),
                                         enabledBorder: confirmpassworderror
                                             ? OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(10),

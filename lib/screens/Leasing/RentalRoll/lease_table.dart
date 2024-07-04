@@ -524,7 +524,7 @@ class _Lease_tableState extends State<Lease_table> {
                   ),
                   "Rental",
                   ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "RentalOwner"),
+                  selectedSubtopic: "Rent Roll"),
               buildDropdownListTile(
                   context,
                   FaIcon(
@@ -534,14 +534,14 @@ class _Lease_tableState extends State<Lease_table> {
                   ),
                   "Leasing",
                   ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "RentalOwner"),
+                  selectedSubtopic: "Rent Roll"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"],
-                  selectedSubtopic: "RentalOwner"),
+                  selectedSubtopic: "Rent Roll"),
             ],
           ),
         ),
