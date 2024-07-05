@@ -267,7 +267,8 @@ class _Tenants_tableState extends State<Tenants_table> {
         context,
         MaterialPageRoute(
             builder: (context) => EditTenants(
-                  tenants: tenants, tenantId: '',
+                  tenants: tenants,
+                  tenantId: '',
                 )));
     if (check == true) {
       setState(() {});
@@ -360,32 +361,115 @@ class _Tenants_tableState extends State<Tenants_table> {
   //   _showDeleteAlert(context, repository, tenant.tenantId!, tenant.companyName, tenant.tenantEmail);
   // }
 
+  // Widget _buildHeader<T>(String text, int columnIndex,
+  //     Comparable<T> Function(Tenant d)? getField) {
+  //   return Container(
+  //     height: 70,
+  //     // color: Colors.blue,
+  //     child: TableCell(
+  //       child: InkWell(
+  //         onTap: getField != null
+  //             ? () {
+  //                 _sort(getField, columnIndex, !_sortAscending);
+  //               }
+  //             : null,
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(14.0),
+  //           child: Row(
+  //             children: [
+  //               SizedBox(width: 10),
+  //               Text(text,
+  //                   style:
+  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+  //               if (_sortColumnIndex == columnIndex)
+  //                 Icon(_sortAscending
+  //                     ? Icons.arrow_drop_down_outlined
+  //                     : Icons.arrow_drop_up_outlined),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildDataCell(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       // color: Colors.blue,
+  //       child: TableCell(
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(10.0),
+  //           child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildActionsCell(Tenant data) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       // color: Colors.blue,
+  //       child: TableCell(
+  //         child: Row(
+  //           children: [
+  //             SizedBox(
+  //               width: 20,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 handleEdit(data);
+  //               },
+  //               child: FaIcon(
+  //                 FontAwesomeIcons.edit,
+  //                 size: 30,
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 15,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 handleDelete(data);
+  //               },
+  //               child: FaIcon(
+  //                 FontAwesomeIcons.trashCan,
+  //                 size: 30,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Tenant d)? getField) {
-    return Container(
-      height: 70,
-      // color: Colors.blue,
-      child: TableCell(
-        child: InkWell(
-          onTap: getField != null
-              ? () {
-                  _sort(getField, columnIndex, !_sortAscending);
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Row(
-              children: [
-                SizedBox(width: 10),
-                Text(text,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                if (_sortColumnIndex == columnIndex)
-                  Icon(_sortAscending
-                      ? Icons.arrow_drop_down_outlined
-                      : Icons.arrow_drop_up_outlined),
-              ],
-            ),
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+                _sort(getField, columnIndex, !_sortAscending);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
           ),
         ),
       ),
@@ -393,50 +477,43 @@ class _Tenants_tableState extends State<Tenants_table> {
   }
 
   Widget _buildDataCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        // color: Colors.blue,
-        child: TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-          ),
-        ),
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
     );
   }
 
   Widget _buildActionsCell(Tenant data) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        // color: Colors.blue,
-        child: TableCell(
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               InkWell(
                 onTap: () {
                   handleEdit(data);
                 },
-                child: FaIcon(
+                child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               InkWell(
                 onTap: () {
                   handleDelete(data);
                 },
-                child: FaIcon(
+                child: const FaIcon(
                   FontAwesomeIcons.trashCan,
                   size: 30,
                 ),
@@ -823,10 +900,11 @@ class _Tenants_tableState extends State<Tenants_table> {
                         children: [
                           Positioned.fill(
                             child: TextField(
-                              style:TextStyle(
-                                // fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -843,10 +921,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                                 border: InputBorder.none,
                                 hintText: "Search here...",
                                 hintStyle: TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                contentPadding: EdgeInsets.all(13),
+                                    // fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8A95A8),
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18),
+                                contentPadding: (EdgeInsets.only(
+                                    left: 8, bottom: 13, top: 14)),
                               ),
                             ),
                           ),
@@ -1231,7 +1313,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => EditTenants(
-                                                                              tenants: tenants, tenantId: '',
+                                                                              tenants: tenants,
+                                                                              tenantId: '',
                                                                             )));
                                                                 if (check ==
                                                                     true) {

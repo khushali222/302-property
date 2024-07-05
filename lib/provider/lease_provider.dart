@@ -1,9 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
 import 'package:three_zero_two_property/model/tenants.dart';
-
 import '../model/cosigner.dart';
-import '../screens/Leasing/RentalRoll/add_RentRoll.dart';
 import '../screens/Leasing/RentalRoll/newAddLease.dart';
 
 class SelectedTenantsProvider extends ChangeNotifier {

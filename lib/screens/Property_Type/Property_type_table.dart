@@ -351,83 +351,156 @@ class _PropertyTableState extends State<PropertyTable> {
     print('Delete ${property.sId}');
   }
 
+  // Widget _buildHeader<T>(String text, int columnIndex,
+  //     Comparable<T> Function(propertytype d)? getField) {
+  //   return Container(
+  //     height: 70,
+  //     // color: Colors.blue,
+  //     child: TableCell(
+  //       child: InkWell(
+  //         onTap: getField != null
+  //             ? () {
+  //                 _sort(getField, columnIndex, !_sortAscending);
+  //               }
+  //             : null,
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(14.0),
+  //           child: Row(
+  //             children: [
+  //               SizedBox(width: 10),
+  //               Text(text,
+  //                   style:
+  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+  //               if (_sortColumnIndex == columnIndex)
+  //                 Icon(_sortAscending
+  //                     ? Icons.arrow_drop_down_outlined
+  //                     : Icons.arrow_drop_up_outlined),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(propertytype d)? getField) {
-    return Container(
-      height: 70,
-      // color: Colors.blue,
-      child: TableCell(
-        child: InkWell(
-          onTap: getField != null
-              ? () {
-                  _sort(getField, columnIndex, !_sortAscending);
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Row(
-              children: [
-                SizedBox(width: 10),
-                Text(text,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                if (_sortColumnIndex == columnIndex)
-                  Icon(_sortAscending
-                      ? Icons.arrow_drop_down_outlined
-                      : Icons.arrow_drop_up_outlined),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDataCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        // color: Colors.blue,
-        child: TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionsCell(propertytype data) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        // color: Colors.blue,
-        child: TableCell(
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+                _sort(getField, columnIndex, !_sortAscending);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
           child: Row(
             children: [
-              SizedBox(
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget _buildDataCell(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       // color: Colors.blue,
+  //       child: TableCell(
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(10.0),
+  //           child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
+      ),
+    );
+  }
+
+  // Widget _buildActionsCell(propertytype data) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       // color: Colors.blue,
+  //       child: TableCell(
+  //         child: Row(
+  //           children: [
+  //             SizedBox(
+  //               width: 20,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 handleEdit(data);
+  //               },
+  //               child: FaIcon(
+  //                 FontAwesomeIcons.edit,
+  //                 size: 30,
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 15,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 handleDelete(data);
+  //               },
+  //               child: FaIcon(
+  //                 FontAwesomeIcons.trashCan,
+  //                 size: 30,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _buildActionsCell(propertytype data) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
+          child: Row(
+            children: [
+              const SizedBox(
                 width: 20,
               ),
               InkWell(
                 onTap: () {
                   handleEdit(data);
                 },
-                child: FaIcon(
+                child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               InkWell(
                 onTap: () {
                   handleDelete(data);
                 },
-                child: FaIcon(
+                child: const FaIcon(
                   FontAwesomeIcons.trashCan,
                   size: 30,
                 ),
@@ -822,6 +895,7 @@ class _PropertyTableState extends State<PropertyTable> {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
+
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
@@ -1361,6 +1435,11 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                             ),
                                             children: [
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
                                               _buildHeader(
                                                   'Main Type',
                                                   0,
@@ -1413,6 +1492,19 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 ),
                                               ),
                                               children: [
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // Text(
+                                                //     '${_pagedData[i].propertyType!}'),
+                                                // Text(
+                                                //     '${_pagedData[i].propertysubType!}'),
+                                                // Text(
+                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
+                                                // Text(
+                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
                                                 _buildDataCell(_pagedData[i]
                                                     .propertyType!),
                                                 _buildDataCell(_pagedData[i]

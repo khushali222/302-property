@@ -981,6 +981,85 @@ class _PropertiesTableState extends State<PropertiesTable> {
     );
   }
 
+  // Widget _buildHeader<T>(String text, int columnIndex,
+  //     Comparable<T> Function(Rentals d)? getField) {
+  //   return TableCell(
+  //     child: InkWell(
+  //       onTap: getField != null
+  //           ? () {
+  //               _sort(getField, columnIndex, !_sortAscending);
+  //             }
+  //           : null,
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(8.0),
+  //         child: Row(
+  //           children: [
+  //             Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+  //             if (getField != null)
+  //               Icon(
+  //                 _sortColumnIndex == columnIndex
+  //                     ? (_sortAscending
+  //                         ? Icons.arrow_drop_up_outlined
+  //                         : Icons.arrow_drop_down_outlined)
+  //                     : Icons
+  //                         .arrow_drop_down_outlined, // Default icon for unsorted columns
+  //               ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildDataCell(String text, Rentals data) {
+  //   return TableCell(
+  //     child: InkWell(
+  //       onTap: () {
+  //         handleTap(data);
+  //       },
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(8.0),
+  //         child: Text(text),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildActionsCell(Rentals data) {
+  //   return TableCell(
+  //     child: Row(
+  //       children: [
+  //         InkWell(
+  //           onTap: () {
+  //             handleEdit(data);
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.only(top: 8, left: 8),
+  //             child: FaIcon(
+  //               FontAwesomeIcons.edit,
+  //               size: 20,
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           width: 6,
+  //         ),
+  //         InkWell(
+  //           onTap: () {
+  //             handleDelete(data);
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.only(top: 8, left: 8),
+  //             child: FaIcon(
+  //               FontAwesomeIcons.trashCan,
+  //               size: 20,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Rentals d)? getField) {
     return TableCell(
@@ -991,19 +1070,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
               }
             : null,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(18.0),
           child: Row(
             children: [
-              Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
-              if (getField != null)
-                Icon(
-                  _sortColumnIndex == columnIndex
-                      ? (_sortAscending
-                          ? Icons.arrow_drop_up_outlined
-                          : Icons.arrow_drop_down_outlined)
-                      : Icons
-                          .arrow_drop_down_outlined, // Default icon for unsorted columns
-                ),
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
             ],
           ),
         ),
@@ -1013,50 +1089,53 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   Widget _buildDataCell(String text, Rentals data) {
     return TableCell(
-      child: InkWell(
-        onTap: () {
-          handleTap(data);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(text),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: InkWell(
+            onTap: () {
+              handleTap(data);
+            },
+            child: Text(text, style: const TextStyle(fontSize: 18))),
       ),
     );
   }
 
   Widget _buildActionsCell(Rentals data) {
     return TableCell(
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () {
-              handleEdit(data);
-            },
-            child: Container(
-              margin: EdgeInsets.only(top: 8, left: 8),
-              child: FaIcon(
-                FontAwesomeIcons.edit,
-                size: 20,
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 20,
               ),
-            ),
-          ),
-          SizedBox(
-            width: 6,
-          ),
-          InkWell(
-            onTap: () {
-              handleDelete(data);
-            },
-            child: Container(
-              margin: EdgeInsets.only(top: 8, left: 8),
-              child: FaIcon(
-                FontAwesomeIcons.trashCan,
-                size: 20,
+              InkWell(
+                onTap: () {
+                  handleEdit(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
+                ),
               ),
-            ),
+              const SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  handleDelete(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.trashCan,
+                  size: 30,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1137,8 +1216,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
     );
   }
 }
-
-void main() => runApp(MaterialApp(home: PropertiesTable()));
 
 class PropertyDataSource extends DataTableSource {
   final List<Rentals> data;

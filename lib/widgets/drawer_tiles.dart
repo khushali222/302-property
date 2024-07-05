@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/AddLease.dart';
+
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
 import '../screens/Leasing/Applicants/Applicants_table.dart';
 
-import '../screens/Leasing/RentalRoll/add_RentRoll.dart';
+
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';

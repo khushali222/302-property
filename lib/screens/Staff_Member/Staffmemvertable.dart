@@ -634,6 +634,10 @@ class _StaffTableState extends State<StaffTable> {
                         border: Border.all(color: Color(0xFF8A95A8)),
                       ),
                       child: TextField(
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 12
+                                : 14),
                         onChanged: (value) {
                           setState(() {
                             searchValue = value;
@@ -643,8 +647,9 @@ class _StaffTableState extends State<StaffTable> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Search here...",
-                          hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                          // contentPadding: EdgeInsets.all(10),
+                          hintStyle: TextStyle(color: Color(0xFF8A95A8),fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ),
+                          contentPadding:
+                              (EdgeInsets.only(left: 5, bottom: 13, top: 14)),
                         ),
                       ),
                     ),
@@ -1288,28 +1293,25 @@ class _StaffTableState extends State<StaffTable> {
 
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Staffmembers d)? getField) {
-    return Container(
-      height: 70,
-      child: TableCell(
-        child: InkWell(
-          onTap: getField != null
-              ? () {
-                  _sort(getField, columnIndex, !_sortAscending);
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Text(text,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                if (_sortColumnIndex == columnIndex)
-                  Icon(_sortAscending
-                      ? Icons.arrow_drop_down_outlined
-                      : Icons.arrow_drop_up_outlined),
-              ],
-            ),
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+                _sort(getField, columnIndex, !_sortAscending);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
           ),
         ),
       ),
@@ -1317,48 +1319,43 @@ class _StaffTableState extends State<StaffTable> {
   }
 
   Widget _buildDataCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        child: TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-          ),
-        ),
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
     );
   }
 
   Widget _buildActionsCell(Staffmembers data) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 50,
-        child: TableCell(
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               InkWell(
                 onTap: () {
                   handleEdit(data);
                 },
-                child: FaIcon(
+                child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               InkWell(
                 onTap: () {
                   handleDelete(data);
                 },
-                child: FaIcon(
+                child: const FaIcon(
                   FontAwesomeIcons.trashCan,
                   size: 30,
                 ),
