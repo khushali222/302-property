@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constant/constant.dart';
 import '../model/get_lease.dart';
 import '../model/lease.dart';
 
-class LeaseRepository{
-
+class LeaseRepository {
   // Future<void> postLease(Lease lease) async {
   //
   //   final response = await http.post(
@@ -85,7 +84,8 @@ class LeaseRepository{
   Future<List<Lease1>> fetchLease(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     adminId = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('$Api_url/api/leases/leases/$adminId'));
+    final response =
+        await http.get(Uri.parse('$Api_url/api/leases/leases/$adminId'));
     print('$Api_url/api/leases/leases/$adminId');
     print(adminId);
     print(response.body);
@@ -102,13 +102,11 @@ class LeaseRepository{
   Future<Map<String, dynamic>> deleteLease({
     required String leaseId,
     required String companyName,
-
   }) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/leases/leases/$leaseId')
           .replace(queryParameters: {
         'company_name': companyName,
-
       });
 
       final http.Response response = await http.delete(
@@ -134,7 +132,8 @@ class LeaseRepository{
   }
 
   Future<String> fetchCompanyName(String adminId) async {
-    final String apiUrl = 'http://192.168.1.16:4000/api/admin/admin_profile/$adminId';
+    final String apiUrl =
+        'http://192.168.1.16:4000/api/admin/admin_profile/$adminId';
 
     try {
       final http.Response response = await http.get(Uri.parse(apiUrl));
@@ -142,16 +141,44 @@ class LeaseRepository{
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         // Check if company_name exists in response and is not null
-        if (data.containsKey('data') && data['data'] != null && data['data']['company_name'] != null) {
+        if (data.containsKey('data') &&
+            data['data'] != null &&
+            data['data']['company_name'] != null) {
           return data['data']['company_name'].toString();
         } else {
           throw Exception('Company name not found in response');
         }
       } else {
-        throw Exception('Failed to fetch company name. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch company name. Status code: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Failed to fetch company name: $e');
+    }
+  }
+
+  Future<List<LeaseData>> fetchLeasesSummery(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(id);
+    final response =
+        await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$id'));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => LeaseData.fromJson(data)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchLeaseData(String leaseId) async {
+    // Replace with your actual API call
+    final response =
+        await http.get(Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load lease data');
     }
   }
 }

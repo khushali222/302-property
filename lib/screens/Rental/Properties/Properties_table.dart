@@ -907,13 +907,24 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 10.0),
-                                                    child: Text(
-                                                      '${rentals.rentalAddress}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    Summery_page(
+                                                                        properties:
+                                                                            rentals)));
+                                                      },
+                                                      child: Text(
+                                                        '${rentals.rentalAddress}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -1647,7 +1658,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
   //   );
   // }
 
-  
   Widget _buildDataCell(String text, Rentals inkText) {
     return TableCell(
       child: Padding(

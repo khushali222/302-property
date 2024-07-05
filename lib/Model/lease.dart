@@ -125,18 +125,18 @@ class CosignerData {
   String? cosignerPostalcode;
 
   CosignerData({
-     this.adminId,
-     this.cosignerAddress,
-     this.cosignerAlternativeEmail,
-     this.cosignerAlternativeNumber,
-     this.cosignerCity,
-     this.cosignerCountry,
-     this.cosignerEmail,
-     this.cosignerFirstName,
-     this.cosignerId,
-     this.cosignerLastName,
-     this.cosignerPhoneNumber,
-     this.cosignerPostalcode,
+    this.adminId,
+    this.cosignerAddress,
+    this.cosignerAlternativeEmail,
+    this.cosignerAlternativeNumber,
+    this.cosignerCity,
+    this.cosignerCountry,
+    this.cosignerEmail,
+    this.cosignerFirstName,
+    this.cosignerId,
+    this.cosignerLastName,
+    this.cosignerPhoneNumber,
+    this.cosignerPostalcode,
   });
 
   factory CosignerData.fromJson(Map<String, dynamic> json) {
@@ -175,6 +175,7 @@ class CosignerData {
 }
 
 class LeaseData {
+  String? leaseId;
   String? adminId;
   String? companyName;
   String? endDate;
@@ -189,22 +190,24 @@ class LeaseData {
   List<String>? uploadedFile;
 
   LeaseData({
-      this.adminId,
-     this.companyName,
-     this.endDate,
-     this.entry,
-     this.leaseAmount,
-     this.leaseType,
-     this.rentalId,
-     this.startDate,
-     this.tenantId,
-     this.tenantResidentStatus,
-     this.unitId,
-     this.uploadedFile,
+    this.leaseId,
+    this.adminId,
+    this.companyName,
+    this.endDate,
+    this.entry,
+    this.leaseAmount,
+    this.leaseType,
+    this.rentalId,
+    this.startDate,
+    this.tenantId,
+    this.tenantResidentStatus,
+    this.unitId,
+    this.uploadedFile,
   });
 
   factory LeaseData.fromJson(Map<String, dynamic> json) {
     return LeaseData(
+      leaseId: json['lease_id'],
       adminId: json['admin_id'],
       companyName: json['company_name'],
       endDate: json['end_date'],
@@ -222,6 +225,7 @@ class LeaseData {
 
   Map<String, dynamic> toJson() {
     return {
+      'lease_id': leaseId,
       'admin_id': adminId,
       'company_name': companyName,
       'end_date': endDate,
@@ -261,26 +265,26 @@ class TenantData {
   String? id;
 
   TenantData({
-     this.adminId,
-     this.comments,
-     this.createdAt,
-     this.emergencyContact,
-     this.isDelete,
-     this.rentalAddress,
-     this.rentalUnit,
-     this.taxPayerId,
-     this.tenantAlternativeEmail,
-     this.tenantAlternativeNumber,
-     this.tenantBirthDate,
-     this.tenantEmail,
-     this.tenantFirstName,
-     this.tenantId,
-     this.tenantLastName,
-     this.tenantPassword,
-     this.tenantPhoneNumber,
-     this.updatedAt,
-     this.v,
-     this.id,
+    this.adminId,
+    this.comments,
+    this.createdAt,
+    this.emergencyContact,
+    this.isDelete,
+    this.rentalAddress,
+    this.rentalUnit,
+    this.taxPayerId,
+    this.tenantAlternativeEmail,
+    this.tenantAlternativeNumber,
+    this.tenantBirthDate,
+    this.tenantEmail,
+    this.tenantFirstName,
+    this.tenantId,
+    this.tenantLastName,
+    this.tenantPassword,
+    this.tenantPhoneNumber,
+    this.updatedAt,
+    this.v,
+    this.id,
   });
 
   factory TenantData.fromJson(Map<String, dynamic> json) {
@@ -341,10 +345,10 @@ class EmergencyContacts {
   String? phoneNumber;
 
   EmergencyContacts({
-     this.name,
-     this.relation,
-     this.email,
-     this.phoneNumber,
+    this.name,
+    this.relation,
+    this.email,
+    this.phoneNumber,
   });
 
   factory EmergencyContacts.fromJson(Map<String, dynamic> json) {

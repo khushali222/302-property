@@ -11,6 +11,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/AddLease.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/SummeryPageLease.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -836,13 +837,29 @@ class _Lease_tableState extends State<Lease_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    ' ${lease.rentalAddress}  ${lease.tenantNames}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    SummeryPageLease(
+                                                                        leaseId:
+                                                                            lease.leaseId!)));
+                                                      },
+                                                      child: Text(
+                                                        ' ${lease.rentalAddress}  ${lease.tenantNames}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
