@@ -242,6 +242,81 @@ class LeaseData {
   }
 }
 
+
+// class LeaseData {
+//   String? leaseId;
+//   String? adminId;
+//   String? companyName;
+//   String? endDate;
+//   List<Entry>? entry;
+//   int? leaseAmount;
+//   String? leaseType;
+//   String? rentalId;
+//   String? startDate;
+//   List<String>? tenantId;
+//   bool? tenantResidentStatus;
+//   String? unitId;
+//   List<String>? uploadedFile;
+
+//   LeaseData({
+//     this.leaseId,
+//     this.adminId,
+//     this.companyName,
+//     this.endDate,
+//     this.entry,
+//     this.leaseAmount,
+//     this.leaseType,
+//     this.rentalId,
+//     this.startDate,
+//     this.tenantId,
+//     this.tenantResidentStatus,
+//     this.unitId,
+//     this.uploadedFile,
+//   });
+
+//   factory LeaseData.fromJson(Map<String, dynamic> json) {
+//     List<String>? tenantIds = (json['tenant_id'] as List?)?.cast<String>();
+
+//     return LeaseData(
+//       leaseId: json['lease_id'],
+//       adminId: json['admin_id'],
+//       companyName: json['company_name'],
+//       endDate: json['end_date'],
+//       entry: (json['entry'] as List).map((e) => Entry.fromJson(e)).toList(),
+//       leaseAmount: json['lease_amount'],
+//       leaseType: json['lease_type'],
+//       rentalId: json['rental_id'],
+//       startDate: json['start_date'],
+//       tenantId: tenantIds,
+//       tenantResidentStatus: json['tenant_residentStatus'],
+//       unitId: json['unit_id'],
+//       uploadedFile: (json['uploaded_file'] as List?)?.cast<String>(),
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{
+//       'lease_id': leaseId,
+//       'admin_id': adminId,
+//       'company_name': companyName,
+//       'end_date': endDate,
+//       'lease_amount': leaseAmount,
+//       'lease_type': leaseType,
+//       'rental_id': rentalId,
+//       'start_date': startDate,
+//       'tenant_id': tenantId,
+//       'tenant_residentStatus': tenantResidentStatus,
+//       'unit_id': unitId,
+//       'uploaded_file': uploadedFile,
+//     };
+//     if (entry != null) {
+//       data['entry'] = entry!.map((e) => e.toJson()).toList();
+//     }
+//     return data;
+//   }
+// }
+
+
 class TenantData {
   String? adminId;
   String? comments;

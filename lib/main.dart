@@ -72,6 +72,7 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 //     ),
 //   );
 // }
+
 void main() {
   runApp(
     DevicePreview(

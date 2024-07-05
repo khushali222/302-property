@@ -1,25 +1,23 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
-import '../../Model/propertytype.dart';
-import '../../constant/constant.dart';
-import '../../repository/Property_type.dart';
-import '../../widgets/drawer_tiles.dart';
-import 'Edit_property_type.dart';
-import 'Add_property_type.dart';
 
-class PropertyTable extends StatefulWidget {
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:three_zero_two_property/Model/propertytype.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/repository/Property_type.dart';
+
+import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
+
+class FinancialTable extends StatefulWidget {
+  final String leaseId;
+  FinancialTable({required this.leaseId});
   @override
-  _PropertyTableState createState() => _PropertyTableState();
+  _FinancialTableState createState() => _FinancialTableState();
 }
 
-class _PropertyTableState extends State<PropertyTable> {
+class _FinancialTableState extends State<FinancialTable> {
   int totalrecords = 0;
   late Future<List<propertytype>> futurePropertyTypes;
   int rowsPerPage = 5;
@@ -262,17 +260,6 @@ class _PropertyTableState extends State<PropertyTable> {
     if (check == true) {
       setState(() {});
     }
-    // final result = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => Edit_property_type(
-    //               property: property,
-    //             )));
-    /* if (result == true) {
-      setState(() {
-        futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-      });
-    }*/
   }
 
   void _showAlert(BuildContext context, String id) {
@@ -353,37 +340,6 @@ class _PropertyTableState extends State<PropertyTable> {
     print('Delete ${property.sId}');
   }
 
-  // Widget _buildHeader<T>(String text, int columnIndex,
-  //     Comparable<T> Function(propertytype d)? getField) {
-  //   return Container(
-  //     height: 70,
-  //     // color: Colors.blue,
-  //     child: TableCell(
-  //       child: InkWell(
-  //         onTap: getField != null
-  //             ? () {
-  //                 _sort(getField, columnIndex, !_sortAscending);
-  //               }
-  //             : null,
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(14.0),
-  //           child: Row(
-  //             children: [
-  //               SizedBox(width: 10),
-  //               Text(text,
-  //                   style:
-  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-  //               if (_sortColumnIndex == columnIndex)
-  //                 Icon(_sortAscending
-  //                     ? Icons.arrow_drop_down_outlined
-  //                     : Icons.arrow_drop_up_outlined),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(propertytype d)? getField) {
     return TableCell(
@@ -411,21 +367,6 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 
-  // Widget _buildDataCell(String text) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(5.0),
-  //     child: Container(
-  //       height: 50,
-  //       // color: Colors.blue,
-  //       child: TableCell(
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(10.0),
-  //           child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildDataCell(String text) {
     return TableCell(
       child: Padding(
@@ -435,45 +376,6 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 
-  // Widget _buildActionsCell(propertytype data) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(5.0),
-  //     child: Container(
-  //       height: 50,
-  //       // color: Colors.blue,
-  //       child: TableCell(
-  //         child: Row(
-  //           children: [
-  //             SizedBox(
-  //               width: 20,
-  //             ),
-  //             InkWell(
-  //               onTap: () {
-  //                 handleEdit(data);
-  //               },
-  //               child: FaIcon(
-  //                 FontAwesomeIcons.edit,
-  //                 size: 30,
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               width: 15,
-  //             ),
-  //             InkWell(
-  //               onTap: () {
-  //                 handleDelete(data);
-  //               },
-  //               child: FaIcon(
-  //                 FontAwesomeIcons.trashCan,
-  //                 size: 30,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildActionsCell(propertytype data) {
     return TableCell(
       child: Padding(
@@ -603,310 +505,11 @@ class _PropertyTableState extends State<PropertyTable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
-      backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.white,
-                  ),
-                  "Add Property Type",
-                  true),
-              buildListTile(context, const Icon(CupertinoIcons.person_add),
-                  "Add Staff Member", false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),
-            ],
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(
               height: 20,
-            ),
-            //add propertytype
-            Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const Add_property()));
-                      if (result == true) {
-                        setState(() {
-                          futurePropertyTypes =
-                              PropertyTypeRepository().fetchPropertyTypes();
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
-
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 81, 1),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Add New Property",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.034,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(width: 22),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            //propertytype
-            // Padding(
-            //   padding: const EdgeInsets.all(5.0),
-            //   child: ClipRRect(
-            //     borderRadius: BorderRadius.circular(5.0),
-            //     child: Container(
-            //       height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-            //       padding: EdgeInsets.only(top: 12, left: 10),
-            //       width: MediaQuery.of(context).size.width * .91,
-            //       margin: const EdgeInsets.only(
-            //           bottom: 6.0), //Same as `blurRadius` i guess
-            //       decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.circular(5.0),
-            //         color: Color.fromRGBO(21, 43, 81, 1),
-            //         boxShadow: [
-            //           BoxShadow(
-            //             color: Colors.grey,
-            //             offset: Offset(0.0, 1.0), //(x,y)
-            //             blurRadius: 6.0,
-            //           ),
-            //         ],
-            //       ),
-            //       child: Text(
-            //         "Property Type",
-            //         style: TextStyle(
-            //           color: Colors.white,
-            //           fontWeight: FontWeight.bold,
-            //           // fontSize:22,
-            //           fontSize: MediaQuery.of(context).size.width < 500
-            //               ? 22
-            //               : MediaQuery.of(context).size.width * 0.035,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Property Type',
-            ),
-            const SizedBox(height: 10),
-            //search
-            Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
-              child: Row(
-                children: [
-                  if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 5),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(width: 22),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: const Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                });
-                              },
-                              cursorColor: const Color.fromRGBO(21, 43, 81, 1),
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                // contentPadding:
-                                //     EdgeInsets.symmetric(horizontal: 5),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: items
-                            .map((String item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ))
-                            .toList(),
-                        value: selectedValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = value;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          // width: 180,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
-                              : MediaQuery.of(context).size.width * .4,
-                          padding: const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(
-                              // color: Colors.black26,
-                              color: const Color(0xFF8A95A8),
-                            ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
             if (MediaQuery.of(context).size.width > 500)
               const SizedBox(height: 25),
@@ -990,19 +593,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
                                                     setState(() {
                                                       if (expandedIndex ==
                                                           index) {
@@ -1150,90 +740,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                                           ],
                                                         ),
                                                       ),
-                                                      // SizedBox(width: 5),
-                                                      // Expanded(
-                                                      //   child: Column(
-                                                      //     crossAxisAlignment:
-                                                      //     CrossAxisAlignment.start,
-                                                      //     children: <Widget>[
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header: ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header : ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header : ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //     ],
-                                                      //   ),
-                                                      // ),
                                                       Container(
                                                         width: 40,
                                                         child: Column(
@@ -1364,28 +870,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                               });
                                             },
                                     ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
                                     Text(
                                         'Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
                                     IconButton(
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
@@ -1476,11 +962,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
                                               _buildHeader(
                                                   'Main Type',
                                                   0,
@@ -1533,19 +1014,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 ),
                                               ),
                                               children: [
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // Text(
-                                                //     '${_pagedData[i].propertyType!}'),
-                                                // Text(
-                                                //     '${_pagedData[i].propertysubType!}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
                                                 _buildDataCell(_pagedData[i]
                                                     .propertyType!),
                                                 _buildDataCell(_pagedData[i]
@@ -1585,5 +1053,3 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 }
-
-void main() => runApp(MaterialApp(home: PropertyTable()));

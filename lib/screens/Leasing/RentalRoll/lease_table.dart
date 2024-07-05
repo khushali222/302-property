@@ -11,7 +11,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/AddLease.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/SummeryPageLease.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Summary%20Section/SummeryPageLease.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';

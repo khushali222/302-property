@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/Model/LeaseSummary.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Summary%20Section/LeaseLedgerModel.dart';
 import '../constant/constant.dart';
 import '../model/get_lease.dart';
 import '../model/lease.dart';
@@ -170,15 +172,25 @@ class LeaseRepository {
     }
   }
 
-  static Future<Map<String, dynamic>> fetchLeaseData(String leaseId) async {
-    // Replace with your actual API call
+  static Future<LeaseSummary> fetchLeaseSummary(String leaseId) async {
     final response =
         await http.get(Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'));
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return LeaseSummary.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to load lease data');
+      throw Exception('Failed to load lease summary');
+    }
+  }
+
+  Future<LeaseLedger?> fetchLeaseLedger(String id) async {
+    final response =
+        await http.get(Uri.parse('$Api_url/api/payment/charges_payments/$id'));
+
+    if (response.statusCode == 200) {
+      return LeaseLedger.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load lease ledger');
     }
   }
 }
