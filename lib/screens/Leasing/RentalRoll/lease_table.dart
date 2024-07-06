@@ -10,7 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
-
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/SummeryPageLease.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -312,15 +313,15 @@ class _Lease_tableState extends State<Lease_table> {
   void handleEdit(Lease1 lease) async {
     // Handle edit action
     print('Edit ${lease.leaseId}');
-    // var check = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => Edit_rentalowners(
-    //           rentalOwner: rentalOwner,
-    //         )));
-    // if (check == true) {
-    //   setState(() {});
-    // }
+    var check = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Edit_lease(lease: lease, leaseId: lease.leaseId!,
+
+            )));
+    if (check == true) {
+      setState(() {});
+    }
     //this above is used
     // final result = await Navigator.push(
     //     context,
@@ -717,7 +718,8 @@ class _Lease_tableState extends State<Lease_table> {
             if (MediaQuery.of(context).size.width < 500)
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<Lease1>>(
+                child:
+                FutureBuilder<List<Lease1>>(
                   future: futureLease,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -836,13 +838,29 @@ class _Lease_tableState extends State<Lease_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    ' ${lease.rentalAddress}  ${lease.tenantNames}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    SummeryPageLease(
+                                                                        leaseId:
+                                                                            lease.leaseId!)));
+                                                      },
+                                                      child: Text(
+                                                        ' ${lease.rentalAddress}  ${lease.tenantNames}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1188,18 +1206,18 @@ class _Lease_tableState extends State<Lease_table> {
                                                               ),
                                                               onPressed:
                                                                   () async {
-                                                                // // handleEdit(Propertytype);
-                                                                // var check = await Navigator.push(
-                                                                //     context,
-                                                                //     MaterialPageRoute(
-                                                                //         builder: (context) => EditTenants(
-                                                                //           tenants: tenants, tenantId: '',
-                                                                //         )));
-                                                                // if (check ==
-                                                                //     true) {
-                                                                //   setState(
-                                                                //           () {});
-                                                                // }
+                                                                // handleEdit(Propertytype);
+                                                                var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => Edit_lease(lease: lease, leaseId: lease.leaseId!,
+                                                                         
+                                                                        )));
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(
+                                                                          () {});
+                                                                }
                                                               },
                                                             ),
                                                             IconButton(
@@ -1345,7 +1363,8 @@ class _Lease_tableState extends State<Lease_table> {
                 ),
               ),
             if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<Lease1>>(
+              FutureBuilder<List<Lease1>>
+                (
                 future: futureLease,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

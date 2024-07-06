@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
 import 'package:three_zero_two_property/model/tenants.dart';
 import '../model/cosigner.dart';
@@ -16,10 +17,17 @@ class SelectedTenantsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setTenants(List<Tenant> tenants) {
+    _selectedTenants = tenants;
+    notifyListeners();
+  }
+
   void removeTenant(Tenant tenant) {
     _selectedTenants.remove(tenant);
     notifyListeners();
   }
+
+
 
 }
 
