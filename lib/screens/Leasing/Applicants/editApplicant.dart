@@ -15,14 +15,14 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
-class AddApplicant extends StatefulWidget {
-  const AddApplicant({super.key});
+class EditApplicant extends StatefulWidget {
+  const EditApplicant({super.key});
 
   @override
-  State<AddApplicant> createState() => _AddApplicantState();
+  State<EditApplicant> createState() => _EditApplicantState();
 }
 
-class _AddApplicantState extends State<AddApplicant> {
+class _EditApplicantState extends State<EditApplicant> {
   @override
   void initState() {
     super.initState();

@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -90,11 +89,13 @@ class _EditTenantsState extends State<EditTenants> {
       });
     }
   }
+
   bool isValidEmail(String email) {
     String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
     RegExp regex = RegExp(pattern);
     return regex.hasMatch(email);
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -122,7 +123,7 @@ class _EditTenantsState extends State<EditTenants> {
   String? errorMessage;
   bool formValid = false;
   String companyName = '';
- // String errorMessage = '';
+  // String errorMessage = '';
   Future<void> fetchCompany() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -722,7 +723,6 @@ class _EditTenantsState extends State<EditTenants> {
                                 if (adminId != null) {
                                   try {
                                     await TenantsRepository().editTenant(
-
                                       tenantId: widget.tenants.tenantId ?? "",
                                       adminId: adminId,
                                       tenantFirstName: firstName.text,

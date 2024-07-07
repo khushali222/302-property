@@ -7,6 +7,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
+import 'package:three_zero_two_property/repository/lease.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Summary%20Section/LeaseLedgerModel.dart';
 
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
 
@@ -32,21 +34,21 @@ class _FinancialTableState extends State<FinancialTable> {
     100,
   ]; // Options for items per page
 
-  void sortData(List<propertytype> data) {
-    if (sorting1) {
-      data.sort((a, b) => ascending1
-          ? a.propertyType!.compareTo(b.propertyType!)
-          : b.propertyType!.compareTo(a.propertyType!));
-    } else if (sorting2) {
-      data.sort((a, b) => ascending2
-          ? a.propertysubType!.compareTo(b.propertysubType!)
-          : b.propertysubType!.compareTo(a.propertysubType!));
-    } else if (sorting3) {
-      data.sort((a, b) => ascending3
-          ? a.createdAt!.compareTo(b.createdAt!)
-          : b.createdAt!.compareTo(a.createdAt!));
-    }
-  }
+  // void sortData(List<leaseLedger> data) {
+  //   if (sorting1) {
+  //     data.sort((a, b) => ascending1
+  //         ? a.propertyType!.compareTo(b.propertyType!)
+  //         : b.propertyType!.compareTo(a.propertyType!));
+  //   } else if (sorting2) {
+  //     data.sort((a, b) => ascending2
+  //         ? a.propertysubType!.compareTo(b.propertysubType!)
+  //         : b.propertysubType!.compareTo(a.propertysubType!));
+  //   } else if (sorting3) {
+  //     data.sort((a, b) => ascending3
+  //         ? a.createdAt!.compareTo(b.createdAt!)
+  //         : b.createdAt!.compareTo(a.createdAt!));
+  //   }
+  // }
 
   int? expandedIndex;
   Set<int> expandedIndices = {};
@@ -242,11 +244,18 @@ class _FinancialTableState extends State<FinancialTable> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  late Future<LeaseLedger?> _leaseLedgerFuture;
+
   @override
   void initState() {
     super.initState();
-    futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+  // }
 
   void handleEdit(propertytype property) async {
     // Handle edit action
@@ -515,390 +524,338 @@ class _FinancialTableState extends State<FinancialTable> {
               const SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<propertytype>>(
-                  future: futurePropertyTypes,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
+                  padding: const EdgeInsets.all(10.0),
+                  child: FutureBuilder<LeaseLedger?>(
+                    future: _leaseLedgerFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
                           child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No data available'));
-                    } else {
-                      var data = snapshot.data!;
-                      if (selectedValue == null && searchvalue.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (selectedValue == "All") {
-                        data = snapshot.data!;
-                      } else if (searchvalue.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((property) =>
-                                property.propertyType!
-                                    .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()) ||
-                                property.propertysubType!
-                                    .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()))
-                            .toList();
+                            color: Colors.black,
+                            size: 55.0,
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData) {
+                        return Center(child: Text('No data found'));
                       } else {
-                        data = snapshot.data!
-                            .where((property) =>
-                                property.propertyType == selectedValue)
-                            .toList();
-                      }
-                      sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            _buildHeaders(),
-                            const SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
-                              child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  propertytype Propertytype = entry.value;
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 5),
-                                                    padding: !isExpanded
-                                                        ? const EdgeInsets.only(
-                                                            bottom: 10)
-                                                        : const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 20,
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 83, 1),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    '   ${Propertytype.propertyType}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${Propertytype.propertysubType}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${Propertytype.createdAt}'),
+                        final leaseLedger = snapshot.data!;
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              _buildHeaders(),
+                              const SizedBox(height: 20),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: blueColor),
+                                ),
+                                child: Column(
+                                  children: leaseLedger.data!
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                    int index = entry.key;
+                                    bool isExpanded = expandedIndex == index;
+                                    Data data = entry.value;
 
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 20),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      FaIcon(
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: blueColor),
+                                      ),
+                                      child: Column(
+                                        children: <Widget>[
+                                          ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              left: 5),
+                                                      padding: !isExpanded
+                                                          ? const EdgeInsets
+                                                              .only(bottom: 10)
+                                                          : const EdgeInsets
+                                                              .only(top: 10),
+                                                      child: FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
                                                                 .sortUp
                                                             : FontAwesomeIcons
                                                                 .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                            Colors.transparent,
+                                                        size: 20,
+                                                        color: const Color
+                                                            .fromRGBO(
+                                                            21, 43, 83, 1),
                                                       ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Updated At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${Propertytype.updatedAt}'),
-                                                                    style: const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
-
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_property_type(
-                                                                              property: Propertytype,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
-                                                                      () {});
-                                                                }
-                                                              },
-                                                            ),
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .propertyId!);
-                                                              },
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
+                                                  Expanded(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(
+                                                        ' ${data.entry!.first.account}', // Assuming you want to show the charge type here
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
+                                                  Expanded(
+                                                    child: Text(
+                                                      ' \$${data.totalAmount!.toStringAsFixed(2)}', // Show total amount
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
+                                                  Expanded(
+                                                    child: Text(
+                                                      formatDate(
+                                                          '${data.createdAt}'), // Format and show created date
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
                                                 ],
                                               ),
                                             ),
                                           ),
-                                        //SizedBox(height: 13,),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
+                                          if (isExpanded)
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 20),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  children:
+                                                      data.entry!.map((entry) {
+                                                    return Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 50,
+                                                          color: Colors
+                                                              .transparent,
+                                                        ),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: <Widget>[
+                                                              Text.rich(
+                                                                TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Balance: ',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              blueColor),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          '\$${data.balance!.toDouble()}',
+                                                                      style: const TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              Colors.grey),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Text.rich(
+                                                                TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Account: ',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              blueColor),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text: entry
+                                                                          .account,
+                                                                      style: const TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              Colors.grey),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Text.rich(
+                                                                TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Amount: ',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              blueColor),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          '${entry.amount.toString()}',
+                                                                      style: const TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              Colors.grey),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              // Add more fields here as necessary
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          width: 40,
+                                                          child: Column(
+                                                            children: [
+                                                              IconButton(
+                                                                icon:
+                                                                    const FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 20,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          83,
+                                                                          1),
+                                                                ),
+                                                                onPressed:
+                                                                    () async {
+                                                                  // handleEdit(Propertytype);
+
+                                                                  // var check =
+                                                                  //     await Navigator.push(
+                                                                  //   context,
+                                                                  //   MaterialPageRoute(
+                                                                  //     builder: (context) =>
+                                                                  //         Edit_property_type(
+                                                                  //       property: Propertytype,
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // );
+                                                                  // if (check == true) {
+                                                                  //   setState(() {});
+                                                                  // }
+                                                                },
+                                                              ),
+                                                              IconButton(
+                                                                icon:
+                                                                    const FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
+                                                                  size: 20,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          83,
+                                                                          1),
+                                                                ),
+                                                                onPressed: () {
+                                                                  // handleDelete(Propertytype);
+                                                                  // _showAlert(context, data.id);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                            ),
+                                          // SizedBox(height: 13,),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    const SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : const Color.fromRGBO(
-                                                21, 43, 83, 1),
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
-                                    ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? const Color.fromRGBO(
-                                                21, 43, 83, 1)
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  )),
             if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<List<propertytype>>(
                 future: futurePropertyTypes,

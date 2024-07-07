@@ -1,6 +1,6 @@
 class LeaseLedger {
   List<Data>? data;
-  int? totalBalance;
+  double? totalBalance; // Adjusted to double
   String? message;
 
   LeaseLedger({this.data, this.totalBalance, this.message});
@@ -12,7 +12,8 @@ class LeaseLedger {
         data!.add(Data.fromJson(v));
       });
     }
-    totalBalance = json['totalBalance'];
+    totalBalance =
+        (json['totalBalance'] as num?)?.toDouble(); // Parse as double
     message = json['message'];
   }
 
@@ -33,7 +34,7 @@ class Data {
   String? adminId;
   String? leaseId;
   List<Entry>? entry;
-  int? totalAmount;
+  double? totalAmount; // Adjusted to double
   bool? isLeaseAdded;
   String? type;
   List<dynamic>? uploadedFile;
@@ -42,7 +43,7 @@ class Data {
   bool? isDelete;
   int? iV;
   dynamic tenantData; // tenantData is dynamic to handle any JSON structure
-  int? balance;
+  double? balance; // Adjusted to double
 
   Data({
     this.sId,
@@ -73,7 +74,7 @@ class Data {
         entry!.add(Entry.fromJson(v));
       });
     }
-    totalAmount = json['total_amount'];
+    totalAmount = (json['total_amount'] as num?)?.toDouble(); // Parse as double
     isLeaseAdded = json['is_leaseAdded'];
     type = json['type'];
     uploadedFile = json['uploaded_file'] ?? [];
@@ -82,7 +83,7 @@ class Data {
     isDelete = json['is_delete'];
     iV = json['__v'];
     tenantData = json['tenantData'];
-    balance = json['balance'];
+    balance = (json['balance'] as num?)?.toDouble(); // Parse as double
   }
 
   Map<String, dynamic> toJson() {
@@ -114,7 +115,7 @@ class Entry {
   String? entryId;
   String? memo;
   String? account;
-  int? amount;
+  double? amount; // Adjusted to double
   String? date;
   String? rentCycle;
   bool? isPaid;
@@ -141,7 +142,7 @@ class Entry {
     entryId = json['entry_id'];
     memo = json['memo'];
     account = json['account'];
-    amount = json['amount'];
+    amount = (json['amount'] as num?)?.toDouble(); // Parse as double
     date = json['date'];
     rentCycle = json['rent_cycle'];
     isPaid = json['is_paid'];
