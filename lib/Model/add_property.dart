@@ -39,6 +39,7 @@ class RentalOwners {
 }
 
 class Rental {
+  String? rentalId;
   String? adminId;
   String? propertyId;
   String? address;
@@ -50,6 +51,7 @@ class Rental {
 
   Rental({
      this.adminId,
+    this.rentalId,
      this.propertyId,
      this.address,
      this.city,
@@ -60,6 +62,8 @@ class Rental {
   });
 
   Map<String, dynamic> toJson() => {
+    // rentalId: json['rental_id'] ?? "",
+   ' rental_id':rentalId,
     'admin_id': adminId,
     'property_id': propertyId,
     'rental_adress': address,

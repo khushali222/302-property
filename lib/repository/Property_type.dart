@@ -21,10 +21,14 @@ class PropertyTypeRepository {
       'propertysub_type': propertySubType,
       'is_multiunit': isMultiUnit,
     };
-
-    final http.Response response = await http.post(
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
+        "authorization": "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -43,8 +47,14 @@ class PropertyTypeRepository {
 
   Future<List<propertytype>> fetchPropertyTypes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('${Api_url}/api/propertytype/property_type/$id'));
+    final response = await http.get(Uri.parse('${Api_url}/api/propertytype/property_type/$id'),
+        headers: {
+          "authorization": "CRM $token",
+          "id":"CRM $id",
+        }
+    );
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => propertytype.fromJson(data)).toList();
@@ -67,11 +77,16 @@ class PropertyTypeRepository {
       'is_multiunit': isMultiUnit,
     };
 
-    print('$apiUrl/$id');
+   // print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
 
     final http.Response response = await http.put(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
+        "authorization": "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -91,11 +106,17 @@ class PropertyTypeRepository {
     required String? id
   }) async {
 
-    print('$apiUrl/$id');
+    //print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
 
     final http.Response response = await http.delete(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
+
+          "authorization": "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );

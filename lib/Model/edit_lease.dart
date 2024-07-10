@@ -4,44 +4,147 @@ import 'package:three_zero_two_property/model/tenants.dart';
 import '../repository/unit_data.dart';
 import 'RentalOwnersData.dart';
 
+import 'cosigner.dart';
 import 'lease.dart';
 
 class LeaseDetails {
   final EditLease lease;
   final List<Tenant>? tenant;
-  final RentalOwnerData rental;
-  final unit_lease unitData;
-  final List<ChargeData> rentCharges;
-  final List<ChargeData> securityCharges;
+  final List<Cosigner>? cosigner;
+  final EditRental rental;
+  final unit_lease  unitData;
+  List? one_charge_data;
+  List? rec_charge_data;
+  final List<Entry>? rentCharges;
+  final List<Entry>? securityCharges;
 
   LeaseDetails({
     required this.lease,
     required this.tenant,
     required this.rental,
     required this.unitData,
-    required this.rentCharges,
-    required this.securityCharges,
+      this.one_charge_data,
+    this.rentCharges,
+    this.cosigner,
+    this.rec_charge_data,
+     this.securityCharges,
   });
 
   factory LeaseDetails.fromJson(Map<String, dynamic> json) {
+    print(json['rent_charge_data']);
     return LeaseDetails(
       lease: EditLease.fromJson(json['leases']),
+      cosigner: json['cosigner'] != null
+          ? (json['cosigner'] as List)
+          .map((tenant) => Cosigner.fromJson(tenant))
+          .toList()
+          : null,
       tenant: json['tenant'] != null
           ? (json['tenant'] as List)
           .map((tenant) => Tenant.fromJson(tenant))
           .toList()
           : null,
-      rental: RentalOwnerData.fromJson(json['rental']),
-      unitData: unit_lease.fromJson(json['unit_data']),
-      rentCharges: (json['rent_charge_data'] as List)
-          .map((charge) => ChargeData.fromJson(charge))
-          .toList(),
-      securityCharges: (json['security_charge_data'] as List)
-          .map((charge) => ChargeData.fromJson(charge))
-          .toList(),
+      rental: EditRental.fromJson(json['rental']),
+      unitData: unit_lease .fromJson(json['unit_data']),
+      one_charge_data: json["one_charge_data"],
+        rec_charge_data : json['rec_charge_data'],
+      rentCharges: json['rent_charge_data'] != null
+          ? (json['rent_charge_data'] as List<dynamic>)
+          .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
+          .toList()
+          : [],
+      securityCharges: json['security_charge_data'] != null
+          ? (json['security_charge_data'] as List<dynamic>)
+          .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
+          .toList()
+          : [],
     );
   }
 }
+class EditRental {
+  String? id;
+  String? rentalId;
+  String? adminId;
+  String? rentalOwnerId;
+  String? propertyId;
+  String? rentalAddress;
+  bool? isRentOn;
+  String? rentalCity;
+  String? rentalState;
+  String? rentalCountry;
+  String? rentalPostcode;
+  String? rentalImage;
+  String? staffMemberId;
+  String? createdAt;
+  String? updatedAt;
+  bool? isDelete;
+  int? v;
+
+  EditRental({
+    this.id,
+    this.rentalId,
+    this.adminId,
+    this.rentalOwnerId,
+    this.propertyId,
+    this.rentalAddress,
+    this.isRentOn,
+    this.rentalCity,
+    this.rentalState,
+    this.rentalCountry,
+    this.rentalPostcode,
+    this.rentalImage,
+    this.staffMemberId,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
+    this.v,
+  });
+
+  factory EditRental.fromJson(Map<String, dynamic> json) {
+    return EditRental(
+      id: json['_id'],
+      rentalId: json['rental_id'],
+      adminId: json['admin_id'],
+      rentalOwnerId: json['rentalowner_id'],
+      propertyId: json['property_id'],
+      rentalAddress: json['rental_adress'],
+      isRentOn: json['is_rent_on'],
+      rentalCity: json['rental_city'],
+      rentalState: json['rental_state'],
+      rentalCountry: json['rental_country'],
+      rentalPostcode: json['rental_postcode'],
+      rentalImage: json['rental_image'],
+      staffMemberId: json['staffmember_id'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      isDelete: json['is_delete'],
+      v: json['__v'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'rental_id': rentalId,
+      'admin_id': adminId,
+      'rentalowner_id': rentalOwnerId,
+      'property_id': propertyId,
+      'rental_adress': rentalAddress,
+      'is_rent_on': isRentOn,
+      'rental_city': rentalCity,
+      'rental_state': rentalState,
+      'rental_country': rentalCountry,
+      'rental_postcode': rentalPostcode,
+      'rental_image': rentalImage,
+      'staffmember_id': staffMemberId,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'is_delete': isDelete,
+      '__v': v,
+    };
+  }
+}
+
 
 class EditLease {
   final String id;

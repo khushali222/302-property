@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
 import 'package:three_zero_two_property/model/tenants.dart';
+import '../model/LeaseLedgerModel.dart';
 import '../model/cosigner.dart';
+import '../repository/lease.dart';
 import '../screens/Leasing/RentalRoll/newAddLease.dart';
 
 class SelectedTenantsProvider extends ChangeNotifier {
@@ -27,6 +29,10 @@ class SelectedTenantsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearTenant(){
+    _selectedTenants.clear();
+    notifyListeners();
+  }
 
 
 }
@@ -60,10 +66,42 @@ class SelectedCosignersProvider extends ChangeNotifier {
     //   }
     // }
   }
+  void clearCosigner(){
+    _cosigners.clear();
+    notifyListeners();
+  }
 }
 
 //List<data,List<map<String,dynamic>
 
+
+
+class LeaseLedgerProvider with ChangeNotifier {
+  LeaseLedger? _leaseLedger;
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  LeaseLedger? get leaseLedger => _leaseLedger;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  final LeaseRepository _apiService = LeaseRepository();
+
+  Future<void> fetchLeaseLedger(String id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _leaseLedger = await _apiService.fetchLeaseLedger(id);
+      _errorMessage = null;
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+}
 
 
 

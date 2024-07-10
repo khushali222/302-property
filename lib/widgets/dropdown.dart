@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -38,8 +39,15 @@ class _CountryDropdownState extends State<CountryDropdown> {
   }
 
   Future<void> fetchCountries() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
     final response = await http
-        .get(Uri.parse('https://restcountries.com/v3.1/all?fields=name'));
+        .get(Uri.parse('https://restcountries.com/v3.1/all?fields=name'),headers: {
+      "authorization": "CRM $token",
+      "id":"CRM $id",
+    });
     final List<dynamic> data = jsonDecode(response.body);
     setState(() {
       countries = data

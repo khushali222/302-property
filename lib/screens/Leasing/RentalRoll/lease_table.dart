@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
@@ -23,15 +24,14 @@ import '../../../model/get_lease.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
 import '../../../model/staffmember.dart';
+import '../../../provider/lease_provider.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../repository/Staffmember.dart';
 import '../../../repository/rentalowner.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../Staff_Member/Add_staffmember.dart';
 import '../../Staff_Member/Edit_staff_member.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'newAddLease.dart';
 
 class Lease_table extends StatefulWidget {
@@ -107,6 +107,7 @@ class _Lease_tableState extends State<Lease_table> {
               ),
             ),
             Expanded(
+              // flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -157,6 +158,7 @@ class _Lease_tableState extends State<Lease_table> {
               ),
             ),
             Expanded(
+             // flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -180,7 +182,7 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Lease Start", style: TextStyle(color: Colors.white)),
+                    Text("Lease Start", style: TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -204,6 +206,7 @@ class _Lease_tableState extends State<Lease_table> {
               ),
             ),
             Expanded(
+             // flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -228,7 +231,7 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Lease End", style: TextStyle(color: Colors.white)),
+                    Text("  Lease End", style: TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
@@ -420,8 +423,9 @@ class _Lease_tableState extends State<Lease_table> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
     final response =
-        await http.get(Uri.parse('${Api_url}/api/leases/limitation/$id'));
+        await http.get(Uri.parse('${Api_url}/api/leases/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -562,6 +566,8 @@ class _Lease_tableState extends State<Lease_table> {
                 children: [
                   GestureDetector(
                     onTap: () async {
+                      Provider.of<SelectedTenantsProvider>(context,listen: false).clearTenant();
+                      Provider.of<SelectedCosignersProvider>(context,listen: false).clearCosigner();
                       if (leaseCount < leaseCountLimit) {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -787,30 +793,14 @@ class _Lease_tableState extends State<Lease_table> {
                                           contentPadding: EdgeInsets.zero,
                                           title: Padding(
                                             padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                            child:Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
                                                     setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
+                                                      if (expandedIndex == index) {
                                                         expandedIndex = null;
                                                       } else {
                                                         expandedIndex = index;
@@ -818,96 +808,82 @@ class _Lease_tableState extends State<Lease_table> {
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5),
-                                                    padding: !isExpanded
-                                                        ? EdgeInsets.only(
-                                                            bottom: 10)
-                                                        : EdgeInsets.only(
-                                                            top: 10),
+                                                    margin: EdgeInsets.only(left: 5),
+                                                    padding: !isExpanded ? EdgeInsets.only(bottom: 10) : EdgeInsets.only(top: 10),
                                                     child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
+                                                      isExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: Color.fromRGBO(21, 43, 83, 1),
                                                     ),
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 8.0),
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    SummeryPageLease(
-                                                                        leaseId:
-                                                                            lease.leaseId!)));
-                                                      },
-                                                      child: Text(
-                                                        ' ${lease.rentalAddress}  ${lease.tenantNames}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
+                                                InkWell(
+                                                  onTap: (){
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                SummeryPageLease(
+                                                                    leaseId:
+                                                                    lease.leaseId!)));
+                                                  },
+                                                  child: Expanded(
+                                                   // flex: 4, // Larger size for the first field
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      child: Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text: ' ${lease.rentalAddress} \n',
+                                                              style: TextStyle(
+                                                                color: blueColor,
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 13,
+                                                              ),
+                                                            ),
+                                                            TextSpan(
+                                                              text: lease.tenantNames,
+                                                              style: TextStyle(
+                                                                color: Colors.lightBlue, // Light blue color for tenant names
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 13,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
+                                                SizedBox(width: MediaQuery.of(context).size.width * .08),
                                                 Expanded(
+                                                //  flex: 2, // Smaller size for the second field
                                                   child: Text(
-                                                    formatDate(
-                                                        '${lease.startDate}'),
+                                                    formatDate('${lease.startDate}'),
                                                     style: TextStyle(
                                                       color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontWeight: FontWeight.bold,
                                                       fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
+                                                SizedBox(width: MediaQuery.of(context).size.width * .08),
                                                 Expanded(
+                                                 // flex: 2, // Smaller size for the third field
                                                   child: Text(
-                                                    formatDate(
-                                                        '${lease.endDate}'),
+                                                    formatDate('${lease.endDate}'),
                                                     style: TextStyle(
                                                       color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontWeight: FontWeight.bold,
                                                       fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
+                                                SizedBox(width: MediaQuery.of(context).size.width * .02),
                                               ],
                                             ),
+
                                           ),
                                         ),
                                         if (isExpanded)
@@ -1206,12 +1182,13 @@ class _Lease_tableState extends State<Lease_table> {
                                                               ),
                                                               onPressed:
                                                                   () async {
+                                                                    Provider.of<SelectedCosignersProvider>(context,listen: false).clearCosigner();
+                                                                    Provider.of<SelectedTenantsProvider>(context,listen: false).clearTenant();
                                                                 // handleEdit(Propertytype);
                                                                 var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => Edit_lease(lease: lease, leaseId: lease.leaseId!,
-                                                                         
                                                                         )));
                                                                 if (check ==
                                                                     true) {

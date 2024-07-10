@@ -157,8 +157,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
     final response =
-        await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'));
+        await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
+          "id":"CRM $id",
+          "authorization": "CRM $token",
+        },);
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -1728,6 +1732,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               color: Color(0xFF8A95A8)),
                                         ),
                                         child: TextField(
+                                          controller:city,
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 11,
@@ -1902,6 +1907,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               color: Color(0xFF8A95A8)),
                                         ),
                                         child: TextField(
+                                          controller:country,
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 11,
@@ -8813,154 +8819,154 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               SizedBox(
                                                                 height: 20,
                                                               ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (name.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      nameerror =
-                                                                          true;
-                                                                      namemessage =
-                                                                          "name is required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      nameerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (designation
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      designationerror =
-                                                                          true;
-                                                                      designationmessage =
-                                                                          "designation is required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      designationerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (phonenumber
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      phonenumbererror =
-                                                                          true;
-                                                                      phonenumbermessage =
-                                                                          "number is required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      phonenumbererror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (email.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      emailerror =
-                                                                          true;
-                                                                      emailmessage =
-                                                                          "email is required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      emailerror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (password
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      passworderror =
-                                                                          true;
-                                                                      passwordmessage =
-                                                                          "password is required";
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      passworderror =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                  if (!nameerror &&
-                                                                      !designationerror &&
-                                                                      !phonenumbererror &&
-                                                                      !emailerror &&
-                                                                      !phonenumbererror) {
-                                                                    setState(
-                                                                        () {
-                                                                      loading =
-                                                                          true;
-                                                                    });
-                                                                  }
-                                                                  SharedPreferences
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      width: MediaQuery.of(context).size.width *
+                                                                          0.05),
+                                                                  InkWell(
+                                                                    onTap:
+                                                                        () async {
+                                                                      if (name.text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              nameerror =
+                                                                              true;
+                                                                              namemessage =
+                                                                              "name is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              nameerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (designation
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              designationerror =
+                                                                              true;
+                                                                              designationmessage =
+                                                                              "designation is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              designationerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (phonenumber
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              phonenumbererror =
+                                                                              true;
+                                                                              phonenumbermessage =
+                                                                              "number is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              phonenumbererror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (email.text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              emailerror =
+                                                                              true;
+                                                                              emailmessage =
+                                                                              "email is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              emailerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (password
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              passworderror =
+                                                                              true;
+                                                                              passwordmessage =
+                                                                              "password is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              passworderror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (!nameerror &&
+                                                                          !designationerror &&
+                                                                          !phonenumbererror &&
+                                                                          !emailerror &&
+                                                                          !phonenumbererror) {
+                                                                        setState(
+                                                                                () {
+                                                                              loading =
+                                                                              true;
+                                                                            });
+                                                                      }
+                                                                      SharedPreferences
                                                                       prefs =
                                                                       await SharedPreferences
                                                                           .getInstance();
-                                                                  String?
+                                                                      String?
                                                                       adminId =
                                                                       prefs.getString(
                                                                           "adminId");
-                                                                  if (adminId !=
-                                                                      null) {
-                                                                    try {
-                                                                      await StaffMemberRepository()
-                                                                          .addStaffMember(
-                                                                        adminId:
+                                                                      if (adminId !=
+                                                                          null) {
+                                                                        try {
+                                                                          await StaffMemberRepository()
+                                                                              .addStaffMember(
+                                                                            adminId:
                                                                             adminId,
-                                                                        staffmemberName:
+                                                                            staffmemberName:
                                                                             name.text,
-                                                                        staffmemberDesignation:
+                                                                            staffmemberDesignation:
                                                                             designation.text,
-                                                                        staffmemberPhoneNumber:
+                                                                            staffmemberPhoneNumber:
                                                                             phonenumber.text,
-                                                                        staffmemberEmail:
+                                                                            staffmemberEmail:
                                                                             email.text,
-                                                                        staffmemberPassword:
+                                                                            staffmemberPassword:
                                                                             password.text,
-                                                                      );
-                                                                      setState(
-                                                                          () {
-                                                                        loading =
-                                                                            false;
-                                                                      });
-                                                                      Navigator.of(
+                                                                          );
+                                                                          setState(
+                                                                                  () {
+                                                                                loading =
+                                                                                false;
+                                                                              });
+                                                                          Navigator.of(
                                                                               context)
-                                                                          .pop(
+                                                                              .pop(
                                                                               true);
-                                                                    } catch (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        loading =
-                                                                            false;
-                                                                      });
-                                                                      // Handle error
-                                                                    }
-                                                                  }
-                                                                },
-                                                                child: Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    ClipRRect(
+                                                                        } catch (e) {
+                                                                          setState(
+                                                                                  () {
+                                                                                loading =
+                                                                                false;
+                                                                              });
+                                                                          // Handle error
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    child: ClipRRect(
                                                                       borderRadius:
                                                                           BorderRadius.circular(
                                                                               5.0),
@@ -9000,13 +9006,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: (){
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                    child: Text(
                                                                         "Cancel"),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -9031,14 +9042,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              .027),
+                                                              .025),
                                                 ),
                                               ],
                                             ),
                                           ),
                                         ),
                                       );
-
                                       return Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: Container(
@@ -9706,10 +9716,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             addresserror = false;
                           });
                         }
-                        if (city.text.isEmpty) {
+                        if (city2.text.isEmpty) {
                           setState(() {
-                            cityerror = true;
-                            citymessage = "required";
+                            city2error = true;
+                            city2message = "required";
                           });
                         } else {
                           setState(() {
@@ -9765,13 +9775,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           setState(() {
                             loading = true;
                           });
-
+                          print(selectedpropertytypedata!.propertyId);
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           String? adminId = prefs.getString("adminId");
                           if (adminId != null) {
                             //  try {
-
                             Rental rentals = Rental(
                               adminId: adminId,
                               propertyId: selectedpropertytypedata!.propertyId,
@@ -10190,14 +10199,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
       ' rentalOwner_businessNumber': rentalOwner_businessNumber,
     };
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(jsonEncode(data));
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/rentals/rentals'),
       headers: <String, String>{
+        "authorization": "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
     );
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String? rental_id = prefs.getString("adminId");
     var responseData = json.decode(response.body);
 

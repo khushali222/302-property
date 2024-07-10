@@ -391,8 +391,12 @@ class _StaffTableState extends State<StaffTable> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
     final response =
-        await http.get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'));
+        await http.get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'),headers: {
+          "authorization": "CRM $token",
+          "id":"CRM $id",
+        });
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {

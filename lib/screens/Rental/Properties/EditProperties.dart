@@ -13,7 +13,6 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
 import 'package:three_zero_two_property/repository/Staffmember.dart';
-import 'package:three_zero_two_property/repository/properties.dart';
 import 'package:three_zero_two_property/repository/rental_properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
@@ -24,6 +23,8 @@ import '../../../model/properties.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
 import '../../../repository/Property_type.dart';
+import '../../../repository/properties.dart';
+import '../../../repository/properties_summery.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/rental_widget.dart';
 import 'package:http/http.dart' as http;
@@ -35,15 +36,23 @@ class Edit_properties extends StatefulWidget {
   Staffmembers? staff;
   Rentals properties;
   Rentals? rental;
+  RentalRequest? propties;
+  final String rentalId;
 
-  Edit_properties({super.key, this.property, this.staff,required this.properties , this.rental});
+  Edit_properties(
+      {super.key,
+        this.property,
+        this.staff,
+        required this.properties,
+        this.rental,
+        required this.rentalId});
 
   @override
   State<Edit_properties> createState() => _Edit_propertiesState();
 }
 
 class _Edit_propertiesState extends State<Edit_properties> {
-
+  List<String> months = ['Residential', "Commercial"];
   List<Widget> fields = [];
   int? selectedIndex;
   List<ProcessorGroup> _processorGroups = [];
@@ -137,7 +146,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
   Future<List<propertytype>>? futureProperties;
   String? selectedProperty;
-  Future<List<RentalOwner>>? futureRentalOwner;
+  Future<List<RentalOwners>>? futureRentalOwner;
 
   Map<String, List<propertytype>> groupPropertiesByType(
       List<propertytype> properties) {
@@ -150,17 +159,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
     }
     return groupedProperties;
   }
-  Map<String, List<Staffmembers>> groupstaffmemberByType(
-      List<Staffmembers> member) {
-    Map<String, List<Staffmembers>> groupedmember = {};
-    for (var staff in member) {
-      if (!groupedmember.containsKey(staff.staffmemberName)) {
-        groupedmember[staff.staffmemberName!] = [];
-      }
-      groupedmember[staff.staffmemberName!]!.add(staff);
-    }
-    return groupedmember;
-  }
 
   List<Owner> owners = [];
   List<Owner> filteredOwners = [];
@@ -172,7 +170,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'));
+    String? token = prefs.getString('token');
+    final response =
+    await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
+      "id":"CRM $id",
+      "authorization": "CRM $token",
+    });
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -182,7 +185,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
     } else {
       // Handle error
     }
-
     setState(() {
       isLoading = false;
     });
@@ -210,57 +212,115 @@ class _Edit_propertiesState extends State<Edit_properties> {
     // Add property group based on selected subproperty type
     addPropertyGroup();
     fetchOwners();
-    // selectedValue = widget.properties?.propertyTypeData?.propertyType!;
-    // selectedValue = widget.properties?.propertyTypeData?.propertySubType!;
-    selectedpropertytype = widget.properties.propertyTypeData?.propertyType!;
-    selectedpropertytype = widget.properties.propertyTypeData?.propertySubType!;
-    address.text = widget.properties.rentalAddress!;
-    city.text = widget.properties.rentalCity!;
-    state.text = widget.properties.rentalState!;
-    postalcode.text = widget.properties.rentalPostcode!;
-    country.text = widget.properties.rentalCountry!;
-    selectedProperty = widget.properties.propertyTypeData!.propertySubType;
-    Ownersdetails = RentalOwner(
-      // rentalOwnerFirstName: firstname.text,
-      rentalOwnerLastName: widget.properties.rentalOwnerData!
-          .rentalOwnerLastName,
-      rentalOwnerPhoneNumber: widget.properties.rentalOwnerData!
-          .rentalOwnerPhoneNumber,
-      rentalOwnerFirstName: widget.properties.rentalOwnerData!
-          .rentalOwnerFirstName,
-    );
-    firstname.text = widget.properties.rentalOwnerData!.rentalOwnerFirstName!;
-    lastname.text = widget.properties.rentalOwnerData!.rentalOwnerLastName!;
-    comname.text = widget.properties.rentalOwnerData!.rentalOwnerCompanyName!;
-    primaryemail.text =
-    widget.properties.rentalOwnerData!.rentalOwnerPrimaryEmail!;
-    alternativeemail.text =
-    widget.properties.rentalOwnerData!.rentalOwnerAlternativeEmail!;
-    print(alternativeemail);
-    phonenum.text = widget.properties.rentalOwnerData!.rentalOwnerPhoneNumber!;
-    print(phonenum);
-    homenum.text = widget.properties.rentalOwnerData!.rentalOwnerHomeNumber!;
-    print(homenum);
-    businessnum.text =
-    widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber!;
-    print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
-    street2.text = widget.properties.rentalOwnerData!.Address!;
-    city2.text = widget.properties.rentalOwnerData!.city!;
-    state2.text = widget.properties.rentalOwnerData!.state!;
-    county2.text = widget.properties.rentalOwnerData!.country!;
-    code2.text = widget.properties.rentalOwnerData!.postalCode!;
-     selectedStaffmember = widget.properties.staffMemberData!.staffmemberName!;
 
-   //print( widget.properties.staffMemberData!.staffmemberName!);
-   print(selectedStaff);
-   // selectedStaff = widget.properties.staffMemberData!.staffmemberName;
+    //  selectedpropertytype = widget.properties.propertyTypeData?.propertyType!;
+    //  selectedpropertytype = widget.properties.propertyTypeData?.propertySubType!;
+    //  address.text = widget.properties.rentalAddress!;
+    //  city.text = widget.properties.rentalCity!;
+    //  state.text = widget.properties.rentalState!;
+    //  postalcode.text = widget.properties.rentalPostcode!;
+    //  country.text = widget.properties.rentalCountry!;
+    //  selectedProperty = widget.properties.propertyTypeData!.propertySubType;
+    //  Ownersdetails = RentalOwner(
+    //    // rentalOwnerFirstName: firstname.text,
+    //    rentalOwnerLastName: widget.properties.rentalOwnerData!
+    //        .rentalOwnerLastName,
+    //    rentalOwnerPhoneNumber: widget.properties.rentalOwnerData!
+    //        .rentalOwnerPhoneNumber,
+    //    rentalOwnerFirstName: widget.properties.rentalOwnerData!
+    //        .rentalOwnerFirstName,
+    //  );
+    //  firstname.text = widget.properties.rentalOwnerData!.rentalOwnerFirstName!;
+    // // firstname.text = widget.propties.rentalOwner!.firstName!;
+    //  lastname.text = widget.properties.rentalOwnerData!.rentalOwnerLastName!;
+    //  comname.text = widget.properties.rentalOwnerData!.rentalOwnerCompanyName!;
+    //  primaryemail.text =
+    //  widget.properties.rentalOwnerData!.rentalOwnerPrimaryEmail!;
+    //  alternativeemail.text =
+    //  widget.properties.rentalOwnerData!.rentalOwnerAlternativeEmail!;
+    //  print(alternativeemail);
+    //  phonenum.text = widget.properties.rentalOwnerData!.rentalOwnerPhoneNumber!;
+    //  print(phonenum);
+    //  homenum.text = widget.properties.rentalOwnerData!.rentalOwnerHomeNumber!;
+    //  print(homenum);
+    //  businessnum.text =
+    //  widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber!;
+    //  print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
+    //  street2.text = widget.properties.rentalOwnerData!.Address!;
+    //  city2.text = widget.properties.rentalOwnerData!.city!;
+    //  state2.text = widget.properties.rentalOwnerData!.state!;
+    //  county2.text = widget.properties.rentalOwnerData!.country!;
+    //  code2.text = widget.properties.rentalOwnerData!.postalCode!;
+    //   selectedStaffmember = widget.properties.staffMemberData!.staffmemberName!;
+    //print( widget.properties.staffMemberData!.staffmemberName!);
+    print(selectedStaff);
+    // selectedStaff = widget.properties.staffMemberData!.staffmemberName;
     // proid.text = widget.properties!.rentalOwnerData!.processorList!.map((
     //     processor) => processor.processorId).join(', ');
     // for (Processor processor in selectedOwner!.processorList) {
     //   _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController(text: processor.processorId)));
     // }
     //  futureStaffMembers = widget.properties.staffMemberData!.staffmemberName! as Future<List<Staffmembers>>;
+    print(widget.rentalId);
+    fetchDetails1(widget.rentalId);
+  }
 
+  Future<void> fetchDetails1(String rentalId) async {
+    try {
+      Rentals fetchedDetails =
+      await Properies_summery_Repo().fetchrentalDetails(rentalId);
+      print(fetchedDetails);
+      print(rentalId);
+      print(fetchedDetails.rentalCountry);
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() {
+        print(fetchedDetails.rentalAddress);
+        // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
+        selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
+        selectedpropertytype = fetchedDetails.propertyTypeData?.propertySubType;
+        address.text = fetchedDetails.rentalAddress!;
+        city.text = fetchedDetails.rentalCity!;
+        state.text = fetchedDetails.rentalState!;
+        postalcode.text = fetchedDetails.rentalPostcode!;
+        country.text = fetchedDetails.rentalCountry!;
+        selectedProperty = fetchedDetails.propertyTypeData!.propertySubType;
+        Ownersdetails = RentalOwner(
+          // rentalOwnerFirstName: firstname.text,
+          rentalOwnerLastName:
+          fetchedDetails.rentalOwnerData!.rentalOwnerLastName,
+          rentalOwnerPhoneNumber:
+          fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
+          rentalOwnerFirstName:
+          fetchedDetails.rentalOwnerData!.rentalOwnerFirstName,
+        );
+        firstname.text = fetchedDetails.rentalOwnerData!.rentalOwnerFirstName!;
+        // firstname.text = widget.propties.rentalOwner!.firstName!;
+        lastname.text = fetchedDetails.rentalOwnerData!.rentalOwnerLastName!;
+        comname.text = fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
+        primaryemail.text =
+        fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
+        alternativeemail.text =
+        fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
+        print(alternativeemail);
+        phonenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
+        print(phonenum);
+        homenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
+        print(homenum);
+        businessnum.text =
+        fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
+        print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
+        street2.text = fetchedDetails.rentalOwnerData!.Address!;
+        city2.text = fetchedDetails.rentalOwnerData!.city!;
+        state2.text = fetchedDetails.rentalOwnerData!.state!;
+        county2.text = fetchedDetails.rentalOwnerData!.country!;
+        code2.text = fetchedDetails.rentalOwnerData!.postalCode!;
+        selectedStaffmember = fetchedDetails.staffMemberData!.staffmemberName!;
+
+        // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
+      });
+    } catch (e) {
+      print('Failed to fetch property details: $e');
+    }
   }
 
   @override
@@ -327,7 +387,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
   bool loading = false;
   List<Widget> units = [];
-
 
   void removePropertyGroup(int index) {
     setState(() {
@@ -421,10 +480,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
   //  }
 
   Future<void> getImage(int index) async {
-
     final pickedFile =
     await ImagePicker().pickImage(source: ImageSource.gallery);
-
 
     if (pickedFile != null) {
       // try {
@@ -433,17 +490,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
       print(filename);
       setState(() {
         propertyGroupImagenames[index] = filename!;
-
         //  _uploadedFilename = filename;
       });
       // } catch (e) {
       // print('Error uploading image: $e');
-      //}
+      //}09
     }
-
     setState(() {
       if (pickedFile != null) {
-
         print('Image selected: ${pickedFile.path}');
         print('Before: ${propertyGroupImages.length}');
         propertyGroupImages[index] = File(pickedFile.path);
@@ -455,22 +509,20 @@ class _Edit_propertiesState extends State<Edit_properties> {
   }
 
   List<List<Widget>> propertyGroups = [];
-//  List<List<TextEditingController>> propertyGroupControllers = [];
+  //  List<List<TextEditingController>> propertyGroupControllers = [];
   List<File?> propertyGroupImages = [];
   List<String?> propertyGroupImagenames = [];
   File? _image;
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path!);
-
-
     // API URL
     //   final String uploadUrl = 'http://192.168.1.17:4000/api/images/upload';
     final String uploadUrl = '${Api_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     if (imageFile != null) {
-      request.files.add(
-          await http.MultipartFile.fromPath('files', imageFile!.path));
+      request.files
+          .add(await http.MultipartFile.fromPath('files', imageFile!.path));
     }
     // Create a multipart request
 //    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -501,8 +553,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
-
   }
+
   Widget customTextField(String label, TextEditingController Controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1),
@@ -704,8 +756,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
   void displayPropertyData() {
     // Check if the first element is blank and remove it if it is
     if (propertyGroupControllers.isNotEmpty) {
-      List<TextEditingController> firstControllers = propertyGroupControllers[0];
-      bool isFirstBlank = firstControllers.every((controller) => controller.text.isEmpty);
+      List<TextEditingController> firstControllers =
+      propertyGroupControllers[0];
+      bool isFirstBlank =
+      firstControllers.every((controller) => controller.text.isEmpty);
 
       if (isFirstBlank) {
         propertyGroupControllers.removeAt(0);
@@ -926,17 +980,18 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Center(child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 40.0,
-                                    ));
+                                    return Center(
+                                        child: SpinKitFadingCircle(
+                                          color: Colors.black,
+                                          size: 40.0,
+                                        ));
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
                                     return Text('No properties found');
                                   } else {
-                                    Map<String, List< propertytype>>
+                                    Map<String, List<propertytype>>
                                     groupedProperties =
                                     groupPropertiesByType(snapshot.data!);
                                     return Padding(
@@ -1460,6 +1515,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   //  propertyGroups = [];
                                                   //    addPropertyGroup();
                                                   //    print(addPropertyGroup);
+
                                                   print(snapshot.data!
                                                       .where((element) =>
                                                   element
@@ -1618,68 +1674,128 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               SizedBox(
                                 width: 15,
                               ),
+                              // Expanded(
+                              //   child: Material(
+                              //     elevation: 3,
+                              //     borderRadius: BorderRadius.circular(5),
+                              //     child: Container(
+                              //       height: 35,
+                              //       decoration: BoxDecoration(
+                              //         borderRadius: BorderRadius.circular(5),
+                              //         color: Colors.white,
+                              //         border:
+                              //         Border.all(color: Color(0xFF8A95A8)),
+                              //       ),
+                              //       child: Stack(
+                              //         children: [
+                              //           Positioned.fill(
+                              //             child: TextField(
+                              //               onChanged: (value) {
+                              //                 setState(() {
+                              //                   addresserror = false;
+                              //                 });
+                              //               },
+                              //               controller: address,
+                              //               //  keyboardType: TextInputType.emailAddress,
+                              //               cursorColor:
+                              //               Color.fromRGBO(21, 43, 81, 1),
+                              //               decoration: InputDecoration(
+                              //                 border: InputBorder.none,
+                              //                 enabledBorder: addresserror
+                              //                     ? OutlineInputBorder(
+                              //                   borderRadius:
+                              //                   BorderRadius.circular(
+                              //                       5),
+                              //                   borderSide: BorderSide(
+                              //                       color: Colors
+                              //                           .red), // Set border color here
+                              //                 )
+                              //                     : InputBorder.none,
+                              //                 contentPadding: EdgeInsets.only(
+                              //                     top: 12.5,
+                              //                     bottom: 12.5,
+                              //                     left: 15),
+                              //                 // prefixIcon: Padding(
+                              //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                              //                 //   child: FaIcon(
+                              //                 //     FontAwesomeIcons.envelope,
+                              //                 //     size: 18,
+                              //                 //     color: Color(0xFF8A95A8),
+                              //                 //   ),
+                              //                 // ),
+                              //                 hintText: "Enter address",
+                              //                 hintStyle: TextStyle(
+                              //                   color: Color(0xFF8A95A8),
+                              //                   fontSize: 13,
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               Expanded(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Container(
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                      border:
-                                      Border.all(color: Color(0xFF8A95A8)),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                addresserror = false;
-                                              });
-                                            },
-                                            controller: address,
-                                            //  keyboardType: TextInputType.emailAddress,
-                                            cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              enabledBorder: addresserror
-                                                  ? OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    5),
-                                                borderSide: BorderSide(
-                                                    color: Colors
-                                                        .red), // Set border color here
-                                              )
-                                                  : InputBorder.none,
-                                              contentPadding: EdgeInsets.only(
-                                                  top: 12.5,
-                                                  bottom: 12.5,
-                                                  left: 15),
-                                              // prefixIcon: Padding(
-                                              //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                              //   child: FaIcon(
-                                              //     FontAwesomeIcons.envelope,
-                                              //     size: 18,
-                                              //     color: Color(0xFF8A95A8),
-                                              //   ),
-                                              // ),
-                                              hintText: "Enter address",
-                                              hintStyle: TextStyle(
+                                child: Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5),
+                                    border:
+                                    Border.all(color: Color(0xFF8A95A8)),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: TextField(
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 11,
+                                          ),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              addresserror = false;
+                                            });
+                                          },
+                                          controller: address,
+                                          cursorColor:
+                                          Color.fromRGBO(21, 43, 81, 1),
+                                          decoration: InputDecoration(
+                                            enabledBorder: addresserror
+                                                ? OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  5),
+                                              borderSide: BorderSide(
+                                                  color: Colors
+                                                      .red), // Set border color here
+                                            )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(14),
+                                            // prefixIcon: Container(
+                                            //   height: 20,
+                                            //   width: 20,
+                                            //   padding: EdgeInsets.all(13),
+                                            //   child: FaIcon(
+                                            //     FontAwesomeIcons.envelope,
+                                            //     size: 20,
+                                            //     color: Colors.grey[600],
+                                            //   ),
+                                            // ),
+                                            hintText: "Enter address",
+                                            hintStyle: TextStyle(
                                                 color: Color(0xFF8A95A8),
-                                                fontSize: 13,
-                                              ),
-                                            ),
+                                                fontSize: 13),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
+
                               SizedBox(
                                 width: 15,
                               ),
@@ -1707,430 +1823,352 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           SizedBox(
                             height: 10,
                           ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * .043,
-                              ),
-                              Text(
-                                "City",
-                                style: TextStyle(
-                                    color: Color(0xFF8A95A8),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * .29,
-                              ),
-                              Text(
-                                "State",
-                                style: TextStyle(
-                                    color: Color(0xFF8A95A8),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                              ),
-                            ],
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // First Column
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "City",
+                                        style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(5),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                        ),
+                                        child: TextField(
+                                          controller:city,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 11,
+                                          ),
+                                          onChanged: (value) {
+                                            // Handle onChange
+                                          },
+                                          decoration: InputDecoration(
+                                            enabledBorder: cityerror
+                                                ? OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  5),
+                                              borderSide: BorderSide(
+                                                  color: Colors
+                                                      .red), // Set border color here
+                                            )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(14),
+                                            hintText: "Enter city",
+                                            hintStyle: TextStyle(
+                                              color: Color(0xFF8A95A8),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      cityerror
+                                          ? Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+                                          // SizedBox(
+                                          //   width: 15,
+                                          // ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 5),
+                                            child: Text(
+                                              citymessage,
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .04),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                          : Container(),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                // Second Column
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "State",
+                                        style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(5),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                        ),
+                                        child: TextField(
+                                          controller: state,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 11,
+                                          ),
+                                          onChanged: (value) {
+                                            // Handle onChange
+                                          },
+                                          decoration: InputDecoration(
+                                            enabledBorder: stateerror
+                                                ? OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  5),
+                                              borderSide: BorderSide(
+                                                  color: Colors
+                                                      .red), // Set border color here
+                                            )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(14),
+                                            hintText: "Enter state",
+                                            hintStyle: TextStyle(
+                                              color: Color(0xFF8A95A8),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      stateerror
+                                          ? Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+                                          // SizedBox(
+                                          //   width: 15,
+                                          // ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 5),
+                                            child: Text(
+                                              statemessage,
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .04),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                          : Container(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
-                            height: 9,
+                            height: 10,
                           ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Container(
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                      border:
-                                      Border.all(color: Color(0xFF8A95A8)),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                cityerror = false;
-                                              });
-                                            },
-                                            controller: city,
-                                            //  keyboardType: TextInputType.emailAddress,
-                                            cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              enabledBorder: cityerror
-                                                  ? OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    5),
-                                                borderSide: BorderSide(
-                                                    color: Colors
-                                                        .red), // Set border color here
-                                              )
-                                                  : InputBorder.none,
-                                              contentPadding: EdgeInsets.only(
-                                                  top: 12.5,
-                                                  bottom: 12.5,
-                                                  left: 15),
-                                              // prefixIcon: Padding(
-                                              //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                              //   child: FaIcon(
-                                              //     FontAwesomeIcons.envelope,
-                                              //     size: 18,
-                                              //     color: Color(0xFF8A95A8),
-                                              //   ),
-                                              // ),
-                                              hintText: "Enter city",
-                                              hintStyle: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontSize: 13,
-                                              ),
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // First Column
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Country",
+                                        style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(5),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                        ),
+                                        child: TextField(
+                                          controller:country,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 11,
+                                          ),
+                                          onChanged: (value) {
+                                            // Handle onChange
+                                          },
+                                          decoration: InputDecoration(
+                                            enabledBorder: countryerror
+                                                ? OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  5),
+                                              borderSide: BorderSide(
+                                                  color: Colors
+                                                      .red), // Set border color here
+                                            )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(14),
+                                            hintText: "Enter country",
+                                            hintStyle: TextStyle(
+                                              color: Color(0xFF8A95A8),
+                                              fontSize: 13,
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      countryerror
+                                          ? Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+                                          // SizedBox(
+                                          //   width: 15,
+                                          // ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 5),
+                                            child: Text(
+                                              countrymessage,
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .04),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                          : Container(),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Expanded(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Container(
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                      border:
-                                      Border.all(color: Color(0xFF8A95A8)),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                stateerror = false;
-                                              });
-                                            },
-                                            controller: state,
-                                            //  keyboardType: TextInputType.emailAddress,
-                                            cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              enabledBorder: stateerror
-                                                  ? OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    5),
-                                                borderSide: BorderSide(
-                                                    color: Colors
-                                                        .red), // Set border color here
-                                              )
-                                                  : InputBorder.none,
-                                              contentPadding: EdgeInsets.only(
-                                                  top: 12.5,
-                                                  bottom: 12.5,
-                                                  left: 15),
-                                              // prefixIcon: Padding(
-                                              //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                              //   child: FaIcon(
-                                              //     FontAwesomeIcons.envelope,
-                                              //     size: 18,
-                                              //     color: Color(0xFF8A95A8),
-                                              //   ),
-                                              // ),
-                                              hintText: "Enter state",
-                                              hintStyle: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontSize: 13,
-                                              ),
+                                SizedBox(width: 16),
+                                // Second Column
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Postal Code",
+                                        style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(5),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                        ),
+                                        child: TextField(
+                                          controller: postalcode,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 11,
+                                          ),
+                                          onChanged: (value) {
+                                            // Handle onChange
+                                          },
+                                          decoration: InputDecoration(
+                                            enabledBorder: postalcodeerror
+                                                ? OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  5),
+                                              borderSide: BorderSide(
+                                                  color: Colors
+                                                      .red), // Set border color here
+                                            )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(14),
+                                            hintText: "Enter postal code",
+                                            hintStyle: TextStyle(
+                                              color: Color(0xFF8A95A8),
+                                              fontSize: 13,
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              cityerror
-                                  ? Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    citymessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .04),
-                                  ),
-                                ],
-                              )
-                                  : Container(),
-                              SizedBox(
-                                width: 64,
-                              ),
-                              stateerror
-                                  ? Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    statemessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .04),
-                                  ),
-                                ],
-                              )
-                                  : Container(),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * .043,
-                              ),
-                              Text(
-                                "Country",
-                                style: TextStyle(
-                                    color: Color(0xFF8A95A8),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * .23,
-                              ),
-                              Text(
-                                "Postal Code",
-                                style: TextStyle(
-                                    color: Color(0xFF8A95A8),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 9,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Container(
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                      border:
-                                      Border.all(color: Color(0xFF8A95A8)),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                countryerror = false;
-                                              });
-                                            },
-                                            controller: country,
-                                            //  keyboardType: TextInputType.emailAddress,
-                                            cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              enabledBorder: countryerror
-                                                  ? OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    5),
-                                                borderSide: BorderSide(
-                                                    color: Colors
-                                                        .red), // Set border color here
-                                              )
-                                                  : InputBorder.none,
-                                              contentPadding: EdgeInsets.only(
-                                                  top: 12.5,
-                                                  bottom: 12.5,
-                                                  left: 15),
-                                              // prefixIcon: Padding(
-                                              //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                              //   child: FaIcon(
-                                              //     FontAwesomeIcons.envelope,
-                                              //     size: 18,
-                                              //     color: Color(0xFF8A95A8),
-                                              //   ),
-                                              // ),
-                                              hintText: "Enter country",
-                                              hintStyle: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontSize: 13,
-                                              ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      postalcodeerror
+                                          ? Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+                                          // SizedBox(
+                                          //   width: 15,
+                                          // ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 5),
+                                            child: Text(
+                                              postalcodemessage,
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .04),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      )
+                                          : Container(),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Expanded(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Container(
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.white,
-                                      border:
-                                      Border.all(color: Color(0xFF8A95A8)),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                postalcodeerror = false;
-                                              });
-                                            },
-                                            controller: postalcode,
-                                            //  keyboardType: TextInputType.emailAddress,
-                                            cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              enabledBorder: postalcodeerror
-                                                  ? OutlineInputBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    5),
-                                                borderSide: BorderSide(
-                                                    color: Colors
-                                                        .red), // Set border color here
-                                              )
-                                                  : InputBorder.none,
-                                              contentPadding: EdgeInsets.only(
-                                                  top: 12.5,
-                                                  bottom: 12.5,
-                                                  left: 15),
-                                              // prefixIcon: Padding(
-                                              //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                              //   child: FaIcon(
-                                              //     FontAwesomeIcons.envelope,
-                                              //     size: 18,
-                                              //     color: Color(0xFF8A95A8),
-                                              //   ),
-                                              // ),
-                                              hintText: "Enter postal code",
-                                              hintStyle: TextStyle(
-                                                color: Color(0xFF8A95A8),
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              countryerror
-                                  ? Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    countrymessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .04),
-                                  ),
-                                ],
-                              )
-                                  : Container(),
-                              SizedBox(
-                                width: 64,
-                              ),
-                              postalcodeerror
-                                  ? Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    postalcodemessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .04),
-                                  ),
-                                ],
-                              )
-                                  : Container(),
-                            ],
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 10,
@@ -2307,6 +2345,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                       .fill(
                                                                     child:
                                                                     TextField(
+                                                                      style:  TextStyle(
+                                                                        color:
+                                                                        Colors.black,
+                                                                        fontSize:
+                                                                        9,
+                                                                      ),
                                                                       controller:
                                                                       searchController,
                                                                       //keyboardType: TextInputType.emailAddress,
@@ -2327,11 +2371,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                       decoration:
                                                                       InputDecoration(
                                                                         border: InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                                        contentPadding: EdgeInsets.only(top: 13, bottom: 13, left: 14),
                                                                         hintText: "Search by first and last name",
                                                                         hintStyle: TextStyle(
                                                                           color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
+                                                                          fontSize: 12,
                                                                         ),
                                                                       ),
                                                                     ),
@@ -2356,8 +2400,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                             color: Colors
                                                                 .grey),
                                                       ),
-                                                      child:
-                                                      DataTable(
+                                                      child: DataTable(
                                                         columnSpacing: 10,
                                                         headingRowHeight:
                                                         29,
@@ -2494,7 +2537,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                               comname.text = selectedOwner!.companyName;
                                                                               primaryemail.text = selectedOwner!.primaryEmail;
                                                                               alternativeemail.text = selectedOwner!.alternateEmail;
-                                                                              print(alternativeemail);
                                                                               homenum.text = selectedOwner!.homeNumber ?? '';
                                                                               phonenum.text = selectedOwner!.phoneNumber;
                                                                               businessnum.text = selectedOwner!.businessNumber ?? '';
@@ -2536,67 +2578,130 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           .start,
                                                       children: [
                                                         GestureDetector(
-                                                          onTap: () async {
+                                                          onTap:
+                                                              () async {
                                                             if (!isChecked2) {
-                                                              print(!isChecked2);
-                                                              var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
-                                                                rentalOwner_firstName: firstname.text,
-                                                                rentalOwner_lastName: lastname.text,
-                                                                rentalOwner_companyName: comname.text,
-                                                                rentalOwner_primaryEmail: primaryemail.text,
-                                                                rentalOwner_alternativeEmail: alternativeemail.text,
-                                                                rentalOwner_phoneNumber: phonenum.text,
-                                                                rentalOwner_homeNumber: homenum.text,
-                                                                rentalOwner_businessNumber: businessnum.text,
+                                                              print(
+                                                                  !isChecked2);
+                                                              var response =
+                                                              await Rental_PropertiesRepository()
+                                                                  .checkIfRentalOwnerExists(
+                                                                rentalOwner_firstName:
+                                                                firstname
+                                                                    .text,
+                                                                rentalOwner_lastName:
+                                                                lastname
+                                                                    .text,
+                                                                rentalOwner_companyName:
+                                                                comname
+                                                                    .text,
+                                                                rentalOwner_primaryEmail:
+                                                                primaryemail
+                                                                    .text,
+                                                                rentalOwner_alternativeEmail:
+                                                                alternativeemail
+                                                                    .text,
+                                                                rentalOwner_phoneNumber:
+                                                                phonenum
+                                                                    .text,
+                                                                rentalOwner_homeNumber:
+                                                                homenum
+                                                                    .text,
+                                                                rentalOwner_businessNumber:
+                                                                businessnum
+                                                                    .text,
                                                                 // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
                                                               );
-                                                              if(response == true){
-                                                                print("check true");
+                                                              if (response ==
+                                                                  true) {
+                                                                print(
+                                                                    "check true");
 
-                                                                Ownersdetails = RentalOwner(
-                                                                  // rentalOwnerFirstName: firstname.text,
-                                                                  rentalOwnerLastName: lastname.text,
-                                                                  rentalOwnerPhoneNumber: phonenum.text,
-                                                                  rentalOwnerFirstName: firstname.text,
-                                                                );
-                                                                context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
+                                                                Ownersdetails =
+                                                                    RentalOwner(
+                                                                      // rentalOwnerFirstName: firstname.text,
+                                                                      rentalOwnerLastName:
+                                                                      lastname.text,
+                                                                      rentalOwnerPhoneNumber:
+                                                                      phonenum.text,
+                                                                      rentalOwnerFirstName:
+                                                                      firstname.text,
+                                                                    );
+                                                                context
+                                                                    .read<
+                                                                    OwnerDetailsProvider>()
+                                                                    .setOwnerDetails(
+                                                                    Ownersdetails!);
                                                                 //  Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
-
-                                                                Fluttertoast.showToast(
-                                                                  msg: "Rental Owner Added Successfully!",
-                                                                  toastLength: Toast.LENGTH_SHORT,
-                                                                  gravity: ToastGravity.TOP,
-                                                                  timeInSecForIosWeb: 1,
-                                                                  backgroundColor: Colors.green,
-                                                                  textColor: Colors.white,
-                                                                  fontSize: 16.0,
+                                                                Fluttertoast
+                                                                    .showToast(
+                                                                  msg:
+                                                                  "Rental Owner Added Successfully!",
+                                                                  toastLength:
+                                                                  Toast.LENGTH_SHORT,
+                                                                  gravity:
+                                                                  ToastGravity.TOP,
+                                                                  timeInSecForIosWeb:
+                                                                  1,
+                                                                  backgroundColor:
+                                                                  Colors.green,
+                                                                  textColor:
+                                                                  Colors.white,
+                                                                  fontSize:
+                                                                  16.0,
                                                                 );
-                                                                setState(() {
-                                                                  hasError = false; // Set error state if the response is not true
-                                                                });
-                                                                Navigator.pop(context);
+                                                                setState(
+                                                                        () {
+                                                                      hasError =
+                                                                      false; // Set error state if the response is not true
+                                                                    });
+                                                                Navigator.pop(
+                                                                    context);
                                                                 // SetshowRentalOwnerTable();
-
                                                               }
-
                                                             } else {
-                                                              Fluttertoast.showToast(
-                                                                msg: "Rental Owner Successfully!",
-                                                                toastLength: Toast.LENGTH_SHORT,
-                                                                gravity: ToastGravity.TOP,
-                                                                timeInSecForIosWeb: 1,
-                                                                backgroundColor: Colors.red,
-                                                                textColor: Colors.white,
-                                                                fontSize: 16.0,
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg:
+                                                                "Rental Owner Successfully!",
+                                                                toastLength:
+                                                                Toast
+                                                                    .LENGTH_SHORT,
+                                                                gravity:
+                                                                ToastGravity
+                                                                    .TOP,
+                                                                timeInSecForIosWeb:
+                                                                1,
+                                                                backgroundColor:
+                                                                Colors
+                                                                    .red,
+                                                                textColor:
+                                                                Colors
+                                                                    .white,
+                                                                fontSize:
+                                                                16.0,
                                                               );
-                                                              Ownersdetails = RentalOwner(
-                                                                // rentalOwnerFirstName: firstname.text,
-                                                                rentalOwnerLastName: lastname.text,
-                                                                rentalOwnerPhoneNumber: phonenum.text,
-                                                                rentalOwnerFirstName: firstname.text,
-                                                              );
-                                                              context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
-                                                              Navigator.of(context).pop();
+                                                              Ownersdetails =
+                                                                  RentalOwner(
+                                                                    // rentalOwnerFirstName: firstname.text,
+                                                                    rentalOwnerLastName:
+                                                                    lastname
+                                                                        .text,
+                                                                    rentalOwnerPhoneNumber:
+                                                                    phonenum
+                                                                        .text,
+                                                                    rentalOwnerFirstName:
+                                                                    firstname
+                                                                        .text,
+                                                                  );
+                                                              context
+                                                                  .read<
+                                                                  OwnerDetailsProvider>()
+                                                                  .setOwnerDetails(
+                                                                  Ownersdetails!);
+                                                              Navigator.of(
+                                                                  context)
+                                                                  .pop();
                                                             }
                                                           },
                                                           child:
@@ -2708,8 +2813,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     ),
                                                   ],
                                                 )
-                                                    :
-                                                Column(
+                                                    : Column(
                                                   children: [
                                                     SizedBox(
                                                       height: 25,
@@ -2735,76 +2839,151 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     //firstname
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   firstnameerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   firstname,
+                                                        //               //  keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: firstnameerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter first name",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          firstnameerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      firstname,
-                                                                      //  keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: firstnameerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter first name",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        firstnameerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    firstname,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: firstnameerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      // height: 20,
+                                                                      // width: 20,
+                                                                      //color: Colors.blue,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter first name",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -2828,76 +3007,150 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     //lastname
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   lastnameerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   lastname,
+                                                        //               //  keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: lastnameerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter last name ",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          lastnameerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      lastname,
-                                                                      //  keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: lastnameerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter last name ",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        lastnameerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    lastname,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: lastnameerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      //   height: 20,
+                                                                      //   width: 20,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter last name",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -2939,76 +3192,151 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     ),
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   comnameerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   comname,
+                                                        //               //keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: comnameerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter company name",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
+
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          comnameerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      comname,
-                                                                      //keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: comnameerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter company name",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        comnameerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    comname,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: comnameerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      //   height: 20,
+                                                                      //   width: 20,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter company name",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3050,77 +3378,153 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     ),
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   primaryemailerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   primaryemail,
+                                                        //               keyboardType:
+                                                        //                   TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: primaryemailerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                        //                 prefixIcon: Padding(
+                                                        //                   padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                        //                   child: FaIcon(
+                                                        //                     FontAwesomeIcons.envelope,
+                                                        //                     size: 18,
+                                                        //                     color: Color(0xFF8A95A8),
+                                                        //                   ),
+                                                        //                 ),
+                                                        //                 hintText: "Enter primery email",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          primaryemailerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      primaryemail,
-                                                                      keyboardType:
-                                                                      TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: primaryemailerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
-                                                                        prefixIcon: Padding(
-                                                                          padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
-                                                                          child: FaIcon(
-                                                                            FontAwesomeIcons.envelope,
-                                                                            size: 18,
-                                                                            color: Color(0xFF8A95A8),
-                                                                          ),
-                                                                        ),
-                                                                        hintText: "Enter primery email",
-                                                                        hintStyle: TextStyle(
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        primaryemailerror = false;
+                                                                      });
+                                                                    },
+                                                                    keyboardType:
+                                                                    TextInputType.emailAddress,
+                                                                    controller:
+                                                                    primaryemail,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: primaryemailerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      prefixIcon: Container(
+                                                                        height: 20,
+                                                                        width: 20,
+                                                                        padding: EdgeInsets.all(9),
+                                                                        child: FaIcon(
+                                                                          FontAwesomeIcons.envelope,
+                                                                          size: 20,
                                                                           color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
                                                                         ),
                                                                       ),
+                                                                      hintText:
+                                                                      "Enter  primary email",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3162,77 +3566,153 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     ),
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   alternativeerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   alternativeemail,
+                                                        //               keyboardType:
+                                                        //                   TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: alternativeerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                        //                 prefixIcon: Padding(
+                                                        //                   padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                        //                   child: FaIcon(
+                                                        //                     FontAwesomeIcons.envelope,
+                                                        //                     size: 18,
+                                                        //                     color: Color(0xFF8A95A8),
+                                                        //                   ),
+                                                        //                 ),
+                                                        //                 hintText: "Enter alternative email",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          alternativeerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      alternativeemail,
-                                                                      keyboardType:
-                                                                      TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: alternativeerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
-                                                                        prefixIcon: Padding(
-                                                                          padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
-                                                                          child: FaIcon(
-                                                                            FontAwesomeIcons.envelope,
-                                                                            size: 18,
-                                                                            color: Color(0xFF8A95A8),
-                                                                          ),
-                                                                        ),
-                                                                        hintText: "Enter alternative email",
-                                                                        hintStyle: TextStyle(
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        alternativeerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    alternativeemail,
+                                                                    keyboardType:
+                                                                    TextInputType.emailAddress,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: alternativeerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      prefixIcon: Container(
+                                                                        height: 20,
+                                                                        width: 20,
+                                                                        padding: EdgeInsets.all(9),
+                                                                        child: FaIcon(
+                                                                          FontAwesomeIcons.envelope,
+                                                                          size: 20,
                                                                           color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
                                                                         ),
                                                                       ),
+                                                                      hintText:
+                                                                      "Enter alternative email",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3274,77 +3754,151 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     ),
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   phonenumerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   phonenum,
+                                                        //               keyboardType:
+                                                        //                   TextInputType.phone,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: phonenumerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                        //                 prefixIcon: Padding(
+                                                        //                   padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                        //                   child: FaIcon(
+                                                        //                     FontAwesomeIcons.phone,
+                                                        //                     size: 18,
+                                                        //                     color: Color(0xFF8A95A8),
+                                                        //                   ),
+                                                        //                 ),
+                                                        //                 hintText: "Enter phone number",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          phonenumerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      phonenum,
-                                                                      keyboardType:
-                                                                      TextInputType.phone,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: phonenumerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
-                                                                        prefixIcon: Padding(
-                                                                          padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
-                                                                          child: FaIcon(
-                                                                            FontAwesomeIcons.phone,
-                                                                            size: 18,
-                                                                            color: Color(0xFF8A95A8),
-                                                                          ),
-                                                                        ),
-                                                                        hintText: "Enter phone number",
-                                                                        hintStyle: TextStyle(
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        phonenumerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    phonenum,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: phonenumerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      prefixIcon: Container(
+                                                                        height: 20,
+                                                                        width: 20,
+                                                                        padding: EdgeInsets.all(9),
+                                                                        child: FaIcon(
+                                                                          FontAwesomeIcons.mobile,
+                                                                          size: 20,
                                                                           color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
                                                                         ),
                                                                       ),
+                                                                      hintText:
+                                                                      "Enter phone numbers",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3368,77 +3922,151 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     //homenumber
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   homenumerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   homenum,
+                                                        //               keyboardType:
+                                                        //                   TextInputType.phone,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: homenumerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                        //                 prefixIcon: Padding(
+                                                        //                   padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                        //                   child: FaIcon(
+                                                        //                     FontAwesomeIcons.home,
+                                                        //                     size: 18,
+                                                        //                     color: Color(0xFF8A95A8),
+                                                        //                   ),
+                                                        //                 ),
+                                                        //                 hintText: "Enter home number",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          homenumerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      homenum,
-                                                                      keyboardType:
-                                                                      TextInputType.phone,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: homenumerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
-                                                                        prefixIcon: Padding(
-                                                                          padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
-                                                                          child: FaIcon(
-                                                                            FontAwesomeIcons.home,
-                                                                            size: 18,
-                                                                            color: Color(0xFF8A95A8),
-                                                                          ),
-                                                                        ),
-                                                                        hintText: "Enter home number",
-                                                                        hintStyle: TextStyle(
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        homenumerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    homenum,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: homenumerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      prefixIcon: Container(
+                                                                        height: 20,
+                                                                        width: 20,
+                                                                        padding: EdgeInsets.all(9),
+                                                                        child: FaIcon(
+                                                                          FontAwesomeIcons.house,
+                                                                          size: 16,
                                                                           color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
                                                                         ),
                                                                       ),
+                                                                      hintText:
+                                                                      "Enter home number",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3461,77 +4089,151 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                             0.01),
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   businessnumerror = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   businessnum,
+                                                        //               keyboardType:
+                                                        //                   TextInputType.phone,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: businessnumerror
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
+                                                        //                 prefixIcon: Padding(
+                                                        //                   padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
+                                                        //                   child: FaIcon(
+                                                        //                     FontAwesomeIcons.businessTime,
+                                                        //                     size: 18,
+                                                        //                     color: Color(0xFF8A95A8),
+                                                        //                   ),
+                                                        //                 ),
+                                                        //                 hintText: "Enter business number",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          businessnumerror = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      businessnum,
-                                                                      keyboardType:
-                                                                      TextInputType.phone,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: businessnumerror
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5),
-                                                                        prefixIcon: Padding(
-                                                                          padding: const EdgeInsets.only(left: 15, top: 7, bottom: 8),
-                                                                          child: FaIcon(
-                                                                            FontAwesomeIcons.businessTime,
-                                                                            size: 18,
-                                                                            color: Color(0xFF8A95A8),
-                                                                          ),
-                                                                        ),
-                                                                        hintText: "Enter business number",
-                                                                        hintStyle: TextStyle(
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        businessnumerror = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    businessnum,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: businessnumerror
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      prefixIcon: Container(
+                                                                        height: 20,
+                                                                        width: 20,
+                                                                        padding: EdgeInsets.all(9),
+                                                                        child: FaIcon(
+                                                                          FontAwesomeIcons.briefcase,
+                                                                          size: 18,
                                                                           color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
                                                                         ),
                                                                       ),
+                                                                      hintText:
+                                                                      "Enter business number",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3574,76 +4276,150 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     //Street Address
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   street2error = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   street2,
+                                                        //               //  keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: street2error
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter street address",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          street2error = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      street2,
-                                                                      //  keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: street2error
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter street address",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        street2error = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    street2,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: street2error
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      //   height: 20,
+                                                                      //   width: 20,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter street address",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3667,76 +4443,150 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     //city and state
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   city2error = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   city2,
+                                                        //               //  keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: city2error
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter city here",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          city2error = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      city2,
-                                                                      //  keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: city2error
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter city here",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        city2error = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    city2,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: city2error
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      //   height: 20,
+                                                                      //   width: 20,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter city",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3747,76 +4597,151 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               .width *
                                                               .03,
                                                         ),
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   state2error = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   state2,
+                                                        //               // keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: state2error
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter state",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
+
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          state2error = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      state2,
-                                                                      // keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: state2error
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter state",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        state2error = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    state2,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: state2error
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      //   height: 20,
+                                                                      //   width: 20,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter state",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3864,76 +4789,150 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     // counrty and postal code
                                                     Row(
                                                       children: [
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   county2error = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   county2,
+                                                        //               // keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: county2error
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter country",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          county2error = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      county2,
-                                                                      // keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: county2error
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter country",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        county2error = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    county2,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: county2error
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      //   height: 20,
+                                                                      //   width: 20,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter country",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -3944,76 +4943,150 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               .width *
                                                               .03,
                                                         ),
+                                                        // Expanded(
+                                                        //   child: Material(
+                                                        //     elevation: 3,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 5),
+                                                        //     child:
+                                                        //         Container(
+                                                        //       height: 35,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //                 5),
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //         border: Border.all(
+                                                        //             color:
+                                                        //                 Color(0xFF8A95A8)),
+                                                        //       ),
+                                                        //       child:
+                                                        //           Stack(
+                                                        //         children: [
+                                                        //           Positioned
+                                                        //               .fill(
+                                                        //             child:
+                                                        //                 TextField(
+                                                        //               onChanged:
+                                                        //                   (value) {
+                                                        //                 setState(() {
+                                                        //                   code2error = false;
+                                                        //                 });
+                                                        //               },
+                                                        //               controller:
+                                                        //                   code2,
+                                                        //               //  keyboardType: TextInputType.emailAddress,
+                                                        //               cursorColor: Color.fromRGBO(
+                                                        //                   21,
+                                                        //                   43,
+                                                        //                   81,
+                                                        //                   1),
+                                                        //               decoration:
+                                                        //                   InputDecoration(
+                                                        //                 border: InputBorder.none,
+                                                        //                 enabledBorder: code2error
+                                                        //                     ? OutlineInputBorder(
+                                                        //                         borderRadius: BorderRadius.circular(5),
+                                                        //                         borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                        //                       )
+                                                        //                     : InputBorder.none,
+                                                        //                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
+                                                        //                 // prefixIcon: Padding(
+                                                        //                 //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
+                                                        //                 //   child: FaIcon(
+                                                        //                 //     FontAwesomeIcons.envelope,
+                                                        //                 //     size: 18,
+                                                        //                 //     color: Color(0xFF8A95A8),
+                                                        //                 //   ),
+                                                        //                 // ),
+                                                        //                 hintText: "Enter postal code",
+                                                        //                 hintStyle: TextStyle(
+                                                        //                   color: Color(0xFF8A95A8),
+                                                        //                   fontSize: 13,
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                         Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                5),
-                                                            child:
-                                                            Container(
-                                                              height: 35,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color:
-                                                                    Color(0xFF8A95A8)),
-                                                              ),
-                                                              child:
-                                                              Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                    TextField(
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(() {
-                                                                          code2error = false;
-                                                                        });
-                                                                      },
-                                                                      controller:
-                                                                      code2,
-                                                                      //  keyboardType: TextInputType.emailAddress,
-                                                                      cursorColor: Color.fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        border: InputBorder.none,
-                                                                        enabledBorder: code2error
-                                                                            ? OutlineInputBorder(
-                                                                          borderRadius: BorderRadius.circular(5),
-                                                                          borderSide: BorderSide(color: Colors.red), // Set border color here
-                                                                        )
-                                                                            : InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
-                                                                        // prefixIcon: Padding(
-                                                                        //   padding: const EdgeInsets.only(left: 15,top: 7,bottom: 8),
-                                                                        //   child: FaIcon(
-                                                                        //     FontAwesomeIcons.envelope,
-                                                                        //     size: 18,
-                                                                        //     color: Color(0xFF8A95A8),
-                                                                        //   ),
-                                                                        // ),
-                                                                        hintText: "Enter postal code",
-                                                                        hintStyle: TextStyle(
-                                                                          color: Color(0xFF8A95A8),
-                                                                          fontSize: 13,
-                                                                        ),
-                                                                      ),
+                                                          child:
+                                                          Container(
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .white,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child: Stack(
+                                                              children: [
+                                                                Positioned
+                                                                    .fill(
+                                                                  child:
+                                                                  TextField(
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color:
+                                                                      Colors.black,
+                                                                      fontSize:
+                                                                      11,
+                                                                    ),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(() {
+                                                                        street2error = false;
+                                                                      });
+                                                                    },
+                                                                    controller:
+                                                                    code2,
+                                                                    cursorColor: Color.fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      enabledBorder: code2error
+                                                                          ? OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                        borderSide: BorderSide(color: Colors.red), // Set border color here
+                                                                      )
+                                                                          : InputBorder.none,
+                                                                      border:
+                                                                      InputBorder.none,
+                                                                      contentPadding:
+                                                                      EdgeInsets.all(14),
+                                                                      // prefixIcon: Container(
+                                                                      //   height: 20,
+                                                                      //   width: 20,
+                                                                      //   padding: EdgeInsets.all(9),
+                                                                      //   child: FaIcon(
+                                                                      //     FontAwesomeIcons.envelope,
+                                                                      //     size: 20,
+                                                                      //     color: Color(0xFF8A95A8),
+                                                                      //   ),
+                                                                      // ),
+                                                                      hintText:
+                                                                      "Enter postal code",
+                                                                      hintStyle:
+                                                                      TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
@@ -4608,67 +5681,132 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           //     );
                                                           //   }
                                                           // },
-                                                          onTap: () async {
+                                                          onTap:
+                                                              () async {
                                                             if (!isChecked2) {
-                                                              print(!isChecked2);
-                                                              var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
-                                                                rentalOwner_firstName: firstname.text,
-                                                                rentalOwner_lastName: lastname.text,
-                                                                rentalOwner_companyName: comname.text,
-                                                                rentalOwner_primaryEmail: primaryemail.text,
-                                                                rentalOwner_alternativeEmail: alternativeemail.text,
-                                                                rentalOwner_phoneNumber: phonenum.text,
-                                                                rentalOwner_homeNumber: homenum.text,
-                                                                rentalOwner_businessNumber: businessnum.text,
+                                                              print(
+                                                                  !isChecked2);
+                                                              var response =
+                                                              await Rental_PropertiesRepository()
+                                                                  .checkIfRentalOwnerExists(
+                                                                rentalOwner_firstName:
+                                                                firstname
+                                                                    .text,
+                                                                rentalOwner_lastName:
+                                                                lastname
+                                                                    .text,
+                                                                rentalOwner_companyName:
+                                                                comname
+                                                                    .text,
+                                                                rentalOwner_primaryEmail:
+                                                                primaryemail
+                                                                    .text,
+                                                                rentalOwner_alternativeEmail:
+                                                                alternativeemail
+                                                                    .text,
+                                                                rentalOwner_phoneNumber:
+                                                                phonenum
+                                                                    .text,
+                                                                rentalOwner_homeNumber:
+                                                                homenum
+                                                                    .text,
+                                                                rentalOwner_businessNumber:
+                                                                businessnum
+                                                                    .text,
                                                                 // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
                                                               );
-                                                              if(response == true){
-                                                                print("check true");
+                                                              if (response ==
+                                                                  true) {
+                                                                print(
+                                                                    "check true");
 
-                                                                Ownersdetails = RentalOwner(
-                                                                  // rentalOwnerFirstName: firstname.text,
-                                                                  rentalOwnerLastName: lastname.text,
-                                                                  rentalOwnerPhoneNumber: phonenum.text,
-                                                                  rentalOwnerFirstName: firstname.text,
-                                                                );
+                                                                Ownersdetails =
+                                                                    RentalOwner(
+                                                                      // rentalOwnerFirstName: firstname.text,
+                                                                      rentalOwnerLastName:
+                                                                      lastname.text,
+                                                                      rentalOwnerPhoneNumber:
+                                                                      phonenum.text,
+                                                                      rentalOwnerFirstName:
+                                                                      firstname.text,
+                                                                    );
 
-                                                                context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
+                                                                context
+                                                                    .read<
+                                                                    OwnerDetailsProvider>()
+                                                                    .setOwnerDetails(
+                                                                    Ownersdetails!);
                                                                 //  Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
 
-                                                                Fluttertoast.showToast(
-                                                                  msg: "Rental Owner Added Successfully!",
-                                                                  toastLength: Toast.LENGTH_SHORT,
-                                                                  gravity: ToastGravity.TOP,
-                                                                  timeInSecForIosWeb: 1,
-                                                                  backgroundColor: Colors.green,
-                                                                  textColor: Colors.white,
-                                                                  fontSize: 16.0,
+                                                                Fluttertoast
+                                                                    .showToast(
+                                                                  msg:
+                                                                  "Rental Owner Added Successfully!",
+                                                                  toastLength:
+                                                                  Toast.LENGTH_SHORT,
+                                                                  gravity:
+                                                                  ToastGravity.TOP,
+                                                                  timeInSecForIosWeb:
+                                                                  1,
+                                                                  backgroundColor:
+                                                                  Colors.green,
+                                                                  textColor:
+                                                                  Colors.white,
+                                                                  fontSize:
+                                                                  16.0,
                                                                 );
-                                                                setState(() {
-                                                                  hasError = false; // Set error state if the response is not true
-                                                                });
-                                                                Navigator.pop(context);
+                                                                setState(
+                                                                        () {
+                                                                      hasError =
+                                                                      false; // Set error state if the response is not true
+                                                                    });
+                                                                Navigator.pop(
+                                                                    context);
                                                                 // SetshowRentalOwnerTable();
                                                               }
                                                             } else {
-                                                              Fluttertoast.showToast(
-                                                                msg: "Rental Owner Successfully!",
-                                                                toastLength: Toast.LENGTH_SHORT,
-                                                                gravity: ToastGravity.TOP,
-                                                                timeInSecForIosWeb: 1,
-                                                                backgroundColor: Colors.red,
-                                                                textColor: Colors.white,
-                                                                fontSize: 16.0,
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg:
+                                                                "Rental Owner Successfully!",
+                                                                toastLength:
+                                                                Toast
+                                                                    .LENGTH_SHORT,
+                                                                gravity:
+                                                                ToastGravity
+                                                                    .TOP,
+                                                                timeInSecForIosWeb:
+                                                                1,
+                                                                backgroundColor:
+                                                                Colors
+                                                                    .red,
+                                                                textColor:
+                                                                Colors
+                                                                    .white,
+                                                                fontSize:
+                                                                16.0,
                                                               );
-                                                              Ownersdetails = RentalOwner(
-                                                                // rentalOwnerFirstName: firstname.text,
-                                                                rentalOwnerLastName: lastname.text,
-                                                                rentalOwnerPhoneNumber: phonenum.text,
-                                                                rentalOwnerFirstName: firstname.text,
-                                                              );
+                                                              Ownersdetails =
+                                                                  RentalOwner(
+                                                                    // rentalOwnerFirstName: firstname.text,
+                                                                    rentalOwnerLastName:
+                                                                    lastname
+                                                                        .text,
+                                                                    rentalOwnerPhoneNumber:
+                                                                    phonenum
+                                                                        .text,
+                                                                    rentalOwnerFirstName:
+                                                                    firstname
+                                                                        .text,
+                                                                  );
 
-                                                              context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
-                                                              Navigator.pop(context);
+                                                              context
+                                                                  .read<
+                                                                  OwnerDetailsProvider>()
+                                                                  .setOwnerDetails(
+                                                                  Ownersdetails!);
+                                                              Navigator.pop(
+                                                                  context);
                                                             }
                                                           },
                                                           child:
@@ -4732,7 +5870,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                 0.03),
                                                         GestureDetector(
                                                           onTap: () {
-                                                            Navigator.pop(context);
+                                                            Navigator.pop(
+                                                                context);
                                                           },
                                                           child:
                                                           ClipRRect(
@@ -4811,7 +5950,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             SizedBox(
                               height: 5,
                             ),
-                            if (hasError && Provider.of<OwnerDetailsProvider>(context).OwnerDetails == null )
+                            if (hasError &&
+                                Provider.of<OwnerDetailsProvider>(context)
+                                    .OwnerDetails ==
+                                    null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
@@ -4990,15 +6132,19 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         Text(
                                           "Owners Information",
                                           style: TextStyle(
-                                              fontSize: 13, fontWeight: FontWeight.bold),
+                                              fontSize: 13,
+                                              fontWeight:
+                                              FontWeight.bold),
                                         ),
                                       ],
                                     ),
                                     SizedBox(height: 10),
                                     Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: Colors.grey),
+                                        borderRadius:
+                                        BorderRadius.circular(5),
+                                        border: Border.all(
+                                            color: Colors.grey),
                                       ),
                                       child: DataTable(
                                         columnSpacing: 10,
@@ -5011,7 +6157,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 'FirstName',
                                                 style: TextStyle(
                                                     fontSize: 10,
-                                                    fontWeight: FontWeight.bold),
+                                                    fontWeight:
+                                                    FontWeight.bold),
                                               ),
                                             ),
                                           ),
@@ -5021,7 +6168,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 'LastName',
                                                 style: TextStyle(
                                                     fontSize: 11,
-                                                    fontWeight: FontWeight.bold),
+                                                    fontWeight:
+                                                    FontWeight.bold),
                                               ),
                                             ),
                                           ),
@@ -5031,7 +6179,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 'PhoneNumber',
                                                 style: TextStyle(
                                                     fontSize: 11,
-                                                    fontWeight: FontWeight.bold),
+                                                    fontWeight:
+                                                    FontWeight.bold),
                                               ),
                                             ),
                                           ),
@@ -5041,7 +6190,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 'Action',
                                                 style: TextStyle(
                                                     fontSize: 11,
-                                                    fontWeight: FontWeight.bold),
+                                                    fontWeight:
+                                                    FontWeight.bold),
                                               ),
                                             ),
                                           ),
@@ -5051,22 +6201,31 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                             cells: [
                                               DataCell(
                                                 Text(
-                                                  Ownersdetails!.rentalOwnerFirstName ?? 'N/A',
+                                                  Ownersdetails!
+                                                      .rentalOwnerFirstName ??
+                                                      'N/A',
 
                                                   // Ownersdetails!.rentalOwnerFirstName ?? "",
-                                                  style: TextStyle(fontSize: 10),
+                                                  style: TextStyle(
+                                                      fontSize: 10),
                                                 ),
                                               ),
                                               DataCell(
                                                 Text(
-                                                  Ownersdetails!.rentalOwnerLastName ?? 'N/A',
-                                                  style: TextStyle(fontSize: 10),
+                                                  Ownersdetails!
+                                                      .rentalOwnerLastName ??
+                                                      'N/A',
+                                                  style: TextStyle(
+                                                      fontSize: 10),
                                                 ),
                                               ),
                                               DataCell(
                                                 Text(
-                                                  Ownersdetails!.rentalOwnerPhoneNumber ?? 'N/A',
-                                                  style: TextStyle(fontSize: 10),
+                                                  Ownersdetails!
+                                                      .rentalOwnerPhoneNumber ??
+                                                      'N/A',
+                                                  style: TextStyle(
+                                                      fontSize: 10),
                                                 ),
                                               ),
                                               DataCell(
@@ -5075,48 +6234,52 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     InkWell(
                                                       onTap: () {
                                                         showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext context) {
-                                                            bool isChecked =
+                                                          context:
+                                                          context,
+                                                          builder:
+                                                              (BuildContext
+                                                          context) {
+                                                            bool
+                                                            isChecked =
                                                             false; // Moved isChecked inside the StatefulBuilder
                                                             return StatefulBuilder(
-                                                              builder: (BuildContext context,
-                                                                  StateSetter setState) {
+                                                              builder: (BuildContext
+                                                              context,
+                                                                  StateSetter
+                                                                  setState) {
                                                                 return AlertDialog(
-                                                                  backgroundColor: Colors.white,
-                                                                  surfaceTintColor: Colors.white,
-                                                                  title: Text(
+                                                                  backgroundColor:
+                                                                  Colors.white,
+                                                                  surfaceTintColor:
+                                                                  Colors.white,
+                                                                  title:
+                                                                  Text(
                                                                     "Add Rental Owner",
                                                                     style: TextStyle(
                                                                         fontWeight: FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21, 43, 81, 1),
+                                                                        color: Color.fromRGBO(21, 43, 81, 1),
                                                                         fontSize: 15),
                                                                   ),
-                                                                  content: SingleChildScrollView(
-                                                                    child: Column(
+                                                                  content:
+                                                                  SingleChildScrollView(
+                                                                    child:
+                                                                    Column(
                                                                       children: [
                                                                         Row(
-                                                                          mainAxisAlignment:
-                                                                          MainAxisAlignment.start,
+                                                                          mainAxisAlignment: MainAxisAlignment.start,
                                                                           children: [
                                                                             // SizedBox(width: 5,),
                                                                             SizedBox(
-                                                                              width:
-                                                                              24.0, // Standard width for checkbox
+                                                                              width: 24.0, // Standard width for checkbox
                                                                               height: 24.0,
                                                                               child: Checkbox(
                                                                                 value: isChecked,
                                                                                 onChanged: (value) {
                                                                                   setState(() {
-                                                                                    isChecked =
-                                                                                        value ?? false;
+                                                                                    isChecked = value ?? false;
                                                                                   });
                                                                                 },
-                                                                                activeColor: isChecked
-                                                                                    ? Color.fromRGBO(
-                                                                                    21, 43, 81, 1)
-                                                                                    : Colors.black,
+                                                                                activeColor: isChecked ? Color.fromRGBO(21, 43, 81, 1) : Colors.black,
                                                                               ),
                                                                             ),
                                                                             SizedBox(
@@ -5125,12 +6288,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                             Expanded(
                                                                               child: Text(
                                                                                 "choose an existing rental owner",
-                                                                                style: TextStyle(
-                                                                                    fontWeight:
-                                                                                    FontWeight.bold,
-                                                                                    color: Color(
-                                                                                        0xFF8A95A8),
-                                                                                    fontSize: 12),
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 12),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -5138,43 +6296,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         isChecked
                                                                             ? Column(
                                                                           children: [
-                                                                            SizedBox(
-                                                                                height: 16.0),
+                                                                            SizedBox(height: 16.0),
                                                                             Row(
                                                                               children: [
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
                                                                                         // color: Colors
                                                                                         //     .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              controller:
-                                                                                              searchController,
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              controller: searchController,
                                                                                               //keyboardType: TextInputType.emailAddress,
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   if (value != "") filteredOwners = owners.where((element) => element.firstName.toLowerCase().contains(value.toLowerCase())).toList();
                                                                                                   if (value == "") {
@@ -5182,13 +6325,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                                   }
                                                                                                 });
                                                                                               },
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 contentPadding: EdgeInsets.only(top: 12.5, bottom: 12.5, left: 15),
                                                                                                 hintText: "Search by first and last name",
@@ -5206,201 +6344,154 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            SizedBox(
-                                                                                height: 16.0),
+                                                                            SizedBox(height: 16.0),
                                                                             Container(
-                                                                              decoration:
-                                                                              BoxDecoration(
-                                                                                borderRadius:
-                                                                                BorderRadius
-                                                                                    .circular(
-                                                                                    5),
-                                                                                border: Border.all(
-                                                                                    color: Colors
-                                                                                        .grey),
+                                                                              decoration: BoxDecoration(
+                                                                                borderRadius: BorderRadius.circular(5),
+                                                                                border: Border.all(color: Colors.grey),
                                                                               ),
-                                                                              child:
-                                                                              DataTable(
+                                                                              child: DataTable(
                                                                                 columnSpacing: 10,
-                                                                                headingRowHeight:
-                                                                                29,
+                                                                                headingRowHeight: 29,
                                                                                 dataRowHeight: 30,
                                                                                 // horizontalMargin: 10,
                                                                                 columns: [
                                                                                   DataColumn(
-                                                                                      label:
-                                                                                      Expanded(
+                                                                                      label: Expanded(
                                                                                         child: Text(
                                                                                           'Rentalowner \nName',
-                                                                                          style: TextStyle(
-                                                                                              fontSize:
-                                                                                              10,
-                                                                                              fontWeight:
-                                                                                              FontWeight.bold),
+                                                                                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                                                                                         ),
                                                                                       )),
                                                                                   DataColumn(
-                                                                                      label:
-                                                                                      Expanded(
+                                                                                      label: Expanded(
                                                                                         child: Text(
                                                                                           'Processor \nID',
-                                                                                          style: TextStyle(
-                                                                                              fontSize:
-                                                                                              11,
-                                                                                              fontWeight:
-                                                                                              FontWeight.bold),
+                                                                                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                                                                         ),
                                                                                       )),
                                                                                   DataColumn(
-                                                                                      label:
-                                                                                      Expanded(
+                                                                                      label: Expanded(
                                                                                         child: Text(
                                                                                           'Select \n',
-                                                                                          style: TextStyle(
-                                                                                              fontSize:
-                                                                                              11,
-                                                                                              fontWeight:
-                                                                                              FontWeight.bold),
+                                                                                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                                                                                         ),
                                                                                       )),
                                                                                 ],
-                                                                                rows: List<
-                                                                                    DataRow>.generate(
-                                                                                  filteredOwners
-                                                                                      .length,
-                                                                                      (index) =>
-                                                                                      DataRow(
-                                                                                        cells: [
-                                                                                          DataCell(
-                                                                                            Text(
-                                                                                              '${filteredOwners[index].firstName} '
-                                                                                                  '(${filteredOwners[index].phoneNumber})',
-                                                                                              style: TextStyle(
-                                                                                                  fontSize:
-                                                                                                  10),
-                                                                                            ),
-                                                                                          ),
-                                                                                          DataCell(
-                                                                                            Text(
-                                                                                              filteredOwners[index]
-                                                                                                  .processorList
-                                                                                                  .map((processor) =>
-                                                                                              processor.processorId)
-                                                                                                  .join('\n'), // Join processor IDs with newline
-                                                                                              style: TextStyle(
-                                                                                                  fontSize:
-                                                                                                  10),
-                                                                                            ),
-                                                                                          ),
-                                                                                          // DataCell(
-                                                                                          //   SizedBox(
-                                                                                          //     height:
-                                                                                          //         10,
-                                                                                          //     width:
-                                                                                          //         10,
-                                                                                          //     child:
-                                                                                          //         Checkbox(
-                                                                                          //       value:
-                                                                                          //           selectedIndex == index,
-                                                                                          //       onChanged:
-                                                                                          //           (bool? value) {
-                                                                                          //         setState(() {
-                                                                                          //           if (value != null && value) {
-                                                                                          //             selectedIndex = index;
-                                                                                          //             selectedOwner = filteredOwners[index];
-                                                                                          //             firstname.text = selectedOwner!.firstName;
-                                                                                          //             lastname.text = selectedOwner!.lastName;
-                                                                                          //             comname.text = selectedOwner!.companyName;
-                                                                                          //             primaryemail.text = selectedOwner!.primaryEmail;
-                                                                                          //             alternativeemail.text = selectedOwner!.alternateEmail;
-                                                                                          //             homenum.text = selectedOwner!.homeNumber ?? '';
-                                                                                          //             phonenum.text = selectedOwner!.phoneNumber;
-                                                                                          //             businessnum.text = selectedOwner!.businessNumber ?? '';
-                                                                                          //             street2.text = selectedOwner!.streetAddress;
-                                                                                          //             city2.text = selectedOwner!.city;
-                                                                                          //             state2.text = selectedOwner!.state;
-                                                                                          //             county2.text = selectedOwner!.country;
-                                                                                          //             code2.text = selectedOwner!.postalCode;
-                                                                                          //             proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
-                                                                                          //           } else {
-                                                                                          //             selectedIndex = null;
-                                                                                          //           }
-                                                                                          //           isChecked = false;
-                                                                                          //         });
-                                                                                          //       },
-                                                                                          //       activeColor: Color.fromRGBO(
-                                                                                          //           21,
-                                                                                          //           43,
-                                                                                          //           81,
-                                                                                          //           1),
-                                                                                          //     ),
-                                                                                          //   ),
-                                                                                          // ),
-                                                                                          DataCell(
-                                                                                            SizedBox(
-                                                                                              height:
-                                                                                              10,
-                                                                                              width:
-                                                                                              10,
-                                                                                              child:
-                                                                                              Checkbox(
-                                                                                                value:
-                                                                                                selectedIndex == index,
-                                                                                                onChanged:
-                                                                                                    (bool? value) {
-                                                                                                  setState(() {
-                                                                                                    if (value != null && value) {
-                                                                                                      selectedIndex = index;
-                                                                                                      selectedOwner = filteredOwners[index];
-                                                                                                      firstname.text = selectedOwner!.firstName;
-                                                                                                      lastname.text = selectedOwner!.lastName;
-                                                                                                      comname.text = selectedOwner!.companyName;
-                                                                                                      primaryemail.text = selectedOwner!.primaryEmail;
-                                                                                                      alternativeemail.text = selectedOwner!.alternateEmail;
-                                                                                                      homenum.text = selectedOwner!.homeNumber ?? '';
-                                                                                                      phonenum.text = selectedOwner!.phoneNumber;
-                                                                                                      businessnum.text = selectedOwner!.businessNumber ?? '';
-                                                                                                      street2.text = selectedOwner!.streetAddress;
-                                                                                                      city2.text = selectedOwner!.city;
-                                                                                                      state2.text = selectedOwner!.state;
-                                                                                                      county2.text = selectedOwner!.country;
-                                                                                                      code2.text = selectedOwner!.postalCode;
-                                                                                                      proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
-                                                                                                    } else {
-                                                                                                      selectedIndex = null;
-                                                                                                    }
-                                                                                                    isChecked = false;
-                                                                                                    _processorGroups.clear();
-                                                                                                    for (Processor processor in selectedOwner!.processorList) {
-                                                                                                      _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController(text: processor.processorId)));
-                                                                                                    }
-                                                                                                  });
-                                                                                                },
-                                                                                                activeColor: Color.fromRGBO(
-                                                                                                    21,
-                                                                                                    43,
-                                                                                                    81,
-                                                                                                    1),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ],
+                                                                                rows: List<DataRow>.generate(
+                                                                                  filteredOwners.length,
+                                                                                      (index) => DataRow(
+                                                                                    cells: [
+                                                                                      DataCell(
+                                                                                        Text(
+                                                                                          '${filteredOwners[index].firstName} '
+                                                                                              '(${filteredOwners[index].phoneNumber})',
+                                                                                          style: TextStyle(fontSize: 10),
+                                                                                        ),
                                                                                       ),
+                                                                                      DataCell(
+                                                                                        Text(
+                                                                                          filteredOwners[index].processorList.map((processor) => processor.processorId).join('\n'), // Join processor IDs with newline
+                                                                                          style: TextStyle(fontSize: 10),
+                                                                                        ),
+                                                                                      ),
+                                                                                      // DataCell(
+                                                                                      //   SizedBox(
+                                                                                      //     height:
+                                                                                      //         10,
+                                                                                      //     width:
+                                                                                      //         10,
+                                                                                      //     child:
+                                                                                      //         Checkbox(
+                                                                                      //       value:
+                                                                                      //           selectedIndex == index,
+                                                                                      //       onChanged:
+                                                                                      //           (bool? value) {
+                                                                                      //         setState(() {
+                                                                                      //           if (value != null && value) {
+                                                                                      //             selectedIndex = index;
+                                                                                      //             selectedOwner = filteredOwners[index];
+                                                                                      //             firstname.text = selectedOwner!.firstName;
+                                                                                      //             lastname.text = selectedOwner!.lastName;
+                                                                                      //             comname.text = selectedOwner!.companyName;
+                                                                                      //             primaryemail.text = selectedOwner!.primaryEmail;
+                                                                                      //             alternativeemail.text = selectedOwner!.alternateEmail;
+                                                                                      //             homenum.text = selectedOwner!.homeNumber ?? '';
+                                                                                      //             phonenum.text = selectedOwner!.phoneNumber;
+                                                                                      //             businessnum.text = selectedOwner!.businessNumber ?? '';
+                                                                                      //             street2.text = selectedOwner!.streetAddress;
+                                                                                      //             city2.text = selectedOwner!.city;
+                                                                                      //             state2.text = selectedOwner!.state;
+                                                                                      //             county2.text = selectedOwner!.country;
+                                                                                      //             code2.text = selectedOwner!.postalCode;
+                                                                                      //             proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
+                                                                                      //           } else {
+                                                                                      //             selectedIndex = null;
+                                                                                      //           }
+                                                                                      //           isChecked = false;
+                                                                                      //         });
+                                                                                      //       },
+                                                                                      //       activeColor: Color.fromRGBO(
+                                                                                      //           21,
+                                                                                      //           43,
+                                                                                      //           81,
+                                                                                      //           1),
+                                                                                      //     ),
+                                                                                      //   ),
+                                                                                      // ),
+                                                                                      DataCell(
+                                                                                        SizedBox(
+                                                                                          height: 10,
+                                                                                          width: 10,
+                                                                                          child: Checkbox(
+                                                                                            value: selectedIndex == index,
+                                                                                            onChanged: (bool? value) {
+                                                                                              setState(() {
+                                                                                                if (value != null && value) {
+                                                                                                  selectedIndex = index;
+                                                                                                  selectedOwner = filteredOwners[index];
+                                                                                                  firstname.text = selectedOwner!.firstName;
+                                                                                                  lastname.text = selectedOwner!.lastName;
+                                                                                                  comname.text = selectedOwner!.companyName;
+                                                                                                  primaryemail.text = selectedOwner!.primaryEmail;
+                                                                                                  alternativeemail.text = selectedOwner!.alternateEmail;
+                                                                                                  homenum.text = selectedOwner!.homeNumber ?? '';
+                                                                                                  phonenum.text = selectedOwner!.phoneNumber;
+                                                                                                  businessnum.text = selectedOwner!.businessNumber ?? '';
+                                                                                                  street2.text = selectedOwner!.streetAddress;
+                                                                                                  city2.text = selectedOwner!.city;
+                                                                                                  state2.text = selectedOwner!.state;
+                                                                                                  county2.text = selectedOwner!.country;
+                                                                                                  code2.text = selectedOwner!.postalCode;
+                                                                                                  proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
+                                                                                                } else {
+                                                                                                  selectedIndex = null;
+                                                                                                }
+                                                                                                isChecked = false;
+                                                                                                _processorGroups.clear();
+                                                                                                for (Processor processor in selectedOwner!.processorList) {
+                                                                                                  _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController(text: processor.processorId)));
+                                                                                                }
+                                                                                              });
+                                                                                            },
+                                                                                            activeColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
                                                                                 ),
                                                                               ),
                                                                             ),
-                                                                            SizedBox(
-                                                                                height: 16.0),
+                                                                            SizedBox(height: 16.0),
                                                                             Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment
-                                                                                  .start,
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
                                                                               children: [
                                                                                 GestureDetector(
                                                                                   onTap: () async {
                                                                                     if (!isChecked2) {
                                                                                       print(!isChecked2);
-                                                                                      var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                                      var response = await Rental_PropertiesRepository().checkIfRentalOwnerExists(
                                                                                         rentalOwner_firstName: firstname.text,
                                                                                         rentalOwner_lastName: lastname.text,
                                                                                         rentalOwner_companyName: comname.text,
@@ -5411,7 +6502,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                         rentalOwner_businessNumber: businessnum.text,
                                                                                         // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
                                                                                       );
-                                                                                      if(response == true){
+                                                                                      if (response == true) {
                                                                                         print("check true");
 
                                                                                         Ownersdetails = RentalOwner(
@@ -5437,9 +6528,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                         });
                                                                                         Navigator.pop(context);
                                                                                         // SetshowRentalOwnerTable();
-
                                                                                       }
-
                                                                                     } else {
                                                                                       Fluttertoast.showToast(
                                                                                         msg: "Rental Owner Successfully!",
@@ -5452,42 +6541,23 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                       );
                                                                                     }
                                                                                   },
-                                                                                  child:
-                                                                                  ClipRRect(
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5.0),
-                                                                                    child:
-                                                                                    Container(
-                                                                                      height:
-                                                                                      30.0,
+                                                                                  child: ClipRRect(
+                                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                                    child: Container(
+                                                                                      height: 30.0,
                                                                                       width: 50,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5.0),
-                                                                                        color: Color
-                                                                                            .fromRGBO(
-                                                                                            21,
-                                                                                            43,
-                                                                                            81,
-                                                                                            1),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5.0),
+                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
                                                                                         boxShadow: [
                                                                                           BoxShadow(
-                                                                                            color:
-                                                                                            Colors.grey,
-                                                                                            offset: Offset(
-                                                                                                0.0,
-                                                                                                1.0), //(x,y)
-                                                                                            blurRadius:
-                                                                                            6.0,
+                                                                                            color: Colors.grey,
+                                                                                            offset: Offset(0.0, 1.0), //(x,y)
+                                                                                            blurRadius: 6.0,
                                                                                           ),
                                                                                         ],
                                                                                       ),
-                                                                                      child:
-                                                                                      Center(
+                                                                                      child: Center(
                                                                                         child: isLoading
                                                                                             ? SpinKitFadingCircle(
                                                                                           color: Colors.white,
@@ -5501,49 +6571,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                SizedBox(
-                                                                                    width: MediaQuery.of(
-                                                                                        context)
-                                                                                        .size
-                                                                                        .width *
-                                                                                        0.03),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                                                                                 GestureDetector(
                                                                                   onTap: () {
-                                                                                    Navigator.pop(
-                                                                                        context);
+                                                                                    Navigator.pop(context);
                                                                                   },
-                                                                                  child:
-                                                                                  ClipRRect(
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5.0),
-                                                                                    child:
-                                                                                    Container(
-                                                                                      height:
-                                                                                      30.0,
+                                                                                  child: ClipRRect(
+                                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                                    child: Container(
+                                                                                      height: 30.0,
                                                                                       width: 50,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5.0),
-                                                                                        color: Colors
-                                                                                            .white,
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5.0),
+                                                                                        color: Colors.white,
                                                                                         boxShadow: [
                                                                                           BoxShadow(
-                                                                                            color:
-                                                                                            Colors.grey,
-                                                                                            offset: Offset(
-                                                                                                0.0,
-                                                                                                1.0), //(x,y)
-                                                                                            blurRadius:
-                                                                                            6.0,
+                                                                                            color: Colors.grey,
+                                                                                            offset: Offset(0.0, 1.0), //(x,y)
+                                                                                            blurRadius: 6.0,
                                                                                           ),
                                                                                         ],
                                                                                       ),
-                                                                                      child:
-                                                                                      Center(
+                                                                                      child: Center(
                                                                                         child: isLoading
                                                                                             ? SpinKitFadingCircle(
                                                                                           color: Colors.white,
@@ -5561,8 +6610,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                             ),
                                                                           ],
                                                                         )
-                                                                            :
-                                                                        Column(
+                                                                            : Column(
                                                                           children: [
                                                                             SizedBox(
                                                                               height: 25,
@@ -5571,14 +6619,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                               children: [
                                                                                 Text(
                                                                                   "Name",
-                                                                                  style: TextStyle(
-                                                                                      fontWeight:
-                                                                                      FontWeight
-                                                                                          .bold,
-                                                                                      color: Color(
-                                                                                          0xFF8A95A8),
-                                                                                      fontSize:
-                                                                                      14),
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 14),
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -5591,47 +6632,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   firstnameerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              firstname,
+                                                                                              controller: firstname,
                                                                                               //  keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: firstnameerror
                                                                                                     ? OutlineInputBorder(
@@ -5667,64 +6688,37 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   firstnamemessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.02),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                                                                             //lastname
                                                                             Row(
                                                                               children: [
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   lastnameerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              lastname,
+                                                                                              controller: lastname,
                                                                                               //  keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: lastnameerror
                                                                                                     ? OutlineInputBorder(
@@ -5760,30 +6754,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   lastnamemessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.02),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                                                                             //company name
                                                                             Row(
                                                                               children: [
                                                                                 Text(
                                                                                   "Company Name",
-                                                                                  style: TextStyle(
-                                                                                      fontWeight:
-                                                                                      FontWeight
-                                                                                          .bold,
-                                                                                      color: Color(
-                                                                                          0xFF8A95A8),
-                                                                                      fontSize:
-                                                                                      14),
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 14),
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -5795,47 +6775,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   comnameerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              comname,
+                                                                                              controller: comname,
                                                                                               //keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: comnameerror
                                                                                                     ? OutlineInputBorder(
@@ -5871,30 +6831,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   comnamemessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.02),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                                                                             //primary email
                                                                             Row(
                                                                               children: [
                                                                                 Text(
                                                                                   "Primary Email",
-                                                                                  style: TextStyle(
-                                                                                      fontWeight:
-                                                                                      FontWeight
-                                                                                          .bold,
-                                                                                      color: Color(
-                                                                                          0xFF8A95A8),
-                                                                                      fontSize:
-                                                                                      14),
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 14),
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -5906,48 +6852,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   primaryemailerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              primaryemail,
-                                                                                              keyboardType:
-                                                                                              TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              controller: primaryemail,
+                                                                                              keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: primaryemailerror
                                                                                                     ? OutlineInputBorder(
@@ -5983,30 +6908,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   primaryemailmessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.02),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                                                                             //Alternative Email
                                                                             Row(
                                                                               children: [
                                                                                 Text(
                                                                                   "Alternative Email",
-                                                                                  style: TextStyle(
-                                                                                      fontWeight:
-                                                                                      FontWeight
-                                                                                          .bold,
-                                                                                      color: Color(
-                                                                                          0xFF8A95A8),
-                                                                                      fontSize:
-                                                                                      14),
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 14),
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -6018,48 +6929,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   alternativeerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              alternativeemail,
-                                                                                              keyboardType:
-                                                                                              TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              controller: alternativeemail,
+                                                                                              keyboardType: TextInputType.emailAddress,
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: alternativeerror
                                                                                                     ? OutlineInputBorder(
@@ -6095,30 +6985,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   alternativemessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.02),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                                                                             //Phone Numbers
                                                                             Row(
                                                                               children: [
                                                                                 Text(
                                                                                   "Phone Numbers",
-                                                                                  style: TextStyle(
-                                                                                      fontWeight:
-                                                                                      FontWeight
-                                                                                          .bold,
-                                                                                      color: Color(
-                                                                                          0xFF8A95A8),
-                                                                                      fontSize:
-                                                                                      14),
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 14),
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -6130,48 +7006,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   phonenumerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              phonenum,
-                                                                                              keyboardType:
-                                                                                              TextInputType.phone,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              controller: phonenum,
+                                                                                              keyboardType: TextInputType.phone,
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: phonenumerror
                                                                                                     ? OutlineInputBorder(
@@ -6207,65 +7062,37 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   phonenummessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             //homenumber
                                                                             Row(
                                                                               children: [
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   homenumerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              homenum,
-                                                                                              keyboardType:
-                                                                                              TextInputType.phone,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              controller: homenum,
+                                                                                              keyboardType: TextInputType.phone,
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: homenumerror
                                                                                                     ? OutlineInputBorder(
@@ -6301,64 +7128,36 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   homenummessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             Row(
                                                                               children: [
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   businessnumerror = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              businessnum,
-                                                                                              keyboardType:
-                                                                                              TextInputType.phone,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              controller: businessnum,
+                                                                                              keyboardType: TextInputType.phone,
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: businessnumerror
                                                                                                     ? OutlineInputBorder(
@@ -6394,30 +7193,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   businessnummessage,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.02),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                                                                             //Address information
                                                                             Row(
                                                                               children: [
                                                                                 Text(
                                                                                   "Address Information",
-                                                                                  style: TextStyle(
-                                                                                      fontWeight:
-                                                                                      FontWeight
-                                                                                          .bold,
-                                                                                      color: Color(
-                                                                                          0xFF8A95A8),
-                                                                                      fontSize:
-                                                                                      14),
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 14),
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -6430,47 +7215,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   street2error = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              street2,
+                                                                                              controller: street2,
                                                                                               //  keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: street2error
                                                                                                     ? OutlineInputBorder(
@@ -6506,64 +7271,37 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ? Center(
                                                                                 child: Text(
                                                                                   street2message,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors
-                                                                                          .red),
+                                                                                  style: TextStyle(color: Colors.red),
                                                                                 ))
                                                                                 : Container(),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             //city and state
                                                                             Row(
                                                                               children: [
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   city2error = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              city2,
+                                                                                              controller: city2,
                                                                                               //  keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: city2error
                                                                                                     ? OutlineInputBorder(
@@ -6594,56 +7332,32 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
-                                                                                  width: MediaQuery.of(
-                                                                                      context)
-                                                                                      .size
-                                                                                      .width *
-                                                                                      .03,
+                                                                                  width: MediaQuery.of(context).size.width * .03,
                                                                                 ),
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   state2error = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              state2,
+                                                                                              controller: state2,
                                                                                               // keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: state2error
                                                                                                     ? OutlineInputBorder(
@@ -6675,22 +7389,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             Row(
                                                                               children: [
                                                                                 city2error
                                                                                     ? Center(
-                                                                                    child:
-                                                                                    Text(
+                                                                                    child: Text(
                                                                                       city2message,
-                                                                                      style: TextStyle(
-                                                                                          color:
-                                                                                          Colors.red),
+                                                                                      style: TextStyle(color: Colors.red),
                                                                                     ))
                                                                                     : Container(),
                                                                                 SizedBox(
@@ -6698,69 +7404,41 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ),
                                                                                 state2error
                                                                                     ? Center(
-                                                                                    child:
-                                                                                    Text(
+                                                                                    child: Text(
                                                                                       state2message,
-                                                                                      style: TextStyle(
-                                                                                          color:
-                                                                                          Colors.red),
+                                                                                      style: TextStyle(color: Colors.red),
                                                                                     ))
                                                                                     : Container(),
                                                                               ],
                                                                             ),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             // counrty and postal code
                                                                             Row(
                                                                               children: [
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   county2error = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              county2,
+                                                                                              controller: county2,
                                                                                               // keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: county2error
                                                                                                     ? OutlineInputBorder(
@@ -6791,56 +7469,32 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
-                                                                                  width: MediaQuery.of(
-                                                                                      context)
-                                                                                      .size
-                                                                                      .width *
-                                                                                      .03,
+                                                                                  width: MediaQuery.of(context).size.width * .03,
                                                                                 ),
                                                                                 Expanded(
                                                                                   child: Material(
                                                                                     elevation: 3,
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5),
-                                                                                    child:
-                                                                                    Container(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    child: Container(
                                                                                       height: 35,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5),
-                                                                                        color: Colors
-                                                                                            .white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            Color(0xFF8A95A8)),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                        color: Colors.white,
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
                                                                                       ),
-                                                                                      child:
-                                                                                      Stack(
+                                                                                      child: Stack(
                                                                                         children: [
-                                                                                          Positioned
-                                                                                              .fill(
-                                                                                            child:
-                                                                                            TextField(
-                                                                                              onChanged:
-                                                                                                  (value) {
+                                                                                          Positioned.fill(
+                                                                                            child: TextField(
+                                                                                              onChanged: (value) {
                                                                                                 setState(() {
                                                                                                   code2error = false;
                                                                                                 });
                                                                                               },
-                                                                                              controller:
-                                                                                              code2,
+                                                                                              controller: code2,
                                                                                               //  keyboardType: TextInputType.emailAddress,
-                                                                                              cursorColor: Color.fromRGBO(
-                                                                                                  21,
-                                                                                                  43,
-                                                                                                  81,
-                                                                                                  1),
-                                                                                              decoration:
-                                                                                              InputDecoration(
+                                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                                              decoration: InputDecoration(
                                                                                                 border: InputBorder.none,
                                                                                                 enabledBorder: code2error
                                                                                                     ? OutlineInputBorder(
@@ -6872,22 +7526,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             Row(
                                                                               children: [
                                                                                 county2error
                                                                                     ? Center(
-                                                                                    child:
-                                                                                    Text(
+                                                                                    child: Text(
                                                                                       county2message,
-                                                                                      style: TextStyle(
-                                                                                          color:
-                                                                                          Colors.red),
+                                                                                      style: TextStyle(color: Colors.red),
                                                                                     ))
                                                                                     : Container(),
                                                                                 SizedBox(
@@ -6895,22 +7541,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ),
                                                                                 code2error
                                                                                     ? Center(
-                                                                                    child:
-                                                                                    Text(
+                                                                                    child: Text(
                                                                                       code2message,
-                                                                                      style: TextStyle(
-                                                                                          color:
-                                                                                          Colors.red),
+                                                                                      style: TextStyle(color: Colors.red),
                                                                                     ))
                                                                                     : Container(),
                                                                               ],
                                                                             ),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             //merchant id
                                                                             // Row(
                                                                             //   children: [
@@ -7090,42 +7728,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                             //           ))
                                                                             //         : Container(),
                                                                             //   ],
-                                                                            if (selectedOwner !=
-                                                                                null)
+                                                                            if (selectedOwner != null)
                                                                               Column(
-                                                                                crossAxisAlignment:
-                                                                                CrossAxisAlignment
-                                                                                    .start,
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: [
-                                                                                  if (selectedOwner!
-                                                                                      .processorList
-                                                                                      .isNotEmpty) ...[
+                                                                                  if (selectedOwner!.processorList.isNotEmpty) ...[
                                                                                     Row(
                                                                                       children: [
                                                                                         Text(
                                                                                           "Merchant Id",
-                                                                                          style: TextStyle(
-                                                                                              fontWeight:
-                                                                                              FontWeight.bold,
-                                                                                              color: Color(0xFF8A95A8),
-                                                                                              fontSize: 14),
+                                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF8A95A8), fontSize: 14),
                                                                                         ),
                                                                                       ],
                                                                                     ),
-                                                                                    SizedBox(
-                                                                                        height:
-                                                                                        5),
+                                                                                    SizedBox(height: 5),
                                                                                     Column(
                                                                                       children: [
                                                                                         Column(
-                                                                                            children:
-                                                                                            _processorGroups.map((group) {
+                                                                                            children: _processorGroups.map((group) {
                                                                                               return Padding(
-                                                                                                padding: const EdgeInsets
-                                                                                                    .symmetric(
-                                                                                                    vertical: 8.0),
-                                                                                                child:
-                                                                                                Row(
+                                                                                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                                                                                child: Row(
                                                                                                   children: [
                                                                                                     SizedBox(
                                                                                                       width: 20.0,
@@ -7196,11 +7819,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                             }).toList())
                                                                                       ],
                                                                                     ),
-                                                                                    SizedBox(
-                                                                                        height: MediaQuery.of(context)
-                                                                                            .size
-                                                                                            .height *
-                                                                                            0.01),
+                                                                                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                                     Row(
                                                                                       children: [
                                                                                         // Handle error display here if needed
@@ -7210,66 +7829,33 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ],
                                                                               ),
 
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.01),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                                                             Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment
-                                                                                  .start,
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
                                                                               children: [
                                                                                 GestureDetector(
                                                                                   onTap: () {
                                                                                     setState(() {
-                                                                                      _processorGroups.add(ProcessorGroup(
-                                                                                          isChecked:
-                                                                                          false,
-                                                                                          controller:
-                                                                                          TextEditingController()));
+                                                                                      _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController()));
                                                                                     });
                                                                                   },
-                                                                                  child:
-                                                                                  ClipRRect(
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5.0),
-                                                                                    child:
-                                                                                    Container(
-                                                                                      height:
-                                                                                      30.0,
-                                                                                      width: MediaQuery.of(context)
-                                                                                          .size
-                                                                                          .width *
-                                                                                          .3,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5.0),
-                                                                                        color: Color
-                                                                                            .fromRGBO(
-                                                                                            21,
-                                                                                            43,
-                                                                                            81,
-                                                                                            1),
+                                                                                  child: ClipRRect(
+                                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                                    child: Container(
+                                                                                      height: 30.0,
+                                                                                      width: MediaQuery.of(context).size.width * .3,
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5.0),
+                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
                                                                                         boxShadow: [
                                                                                           BoxShadow(
-                                                                                            color:
-                                                                                            Colors.grey,
-                                                                                            offset: Offset(
-                                                                                                0.0,
-                                                                                                1.0), //(x,y)
-                                                                                            blurRadius:
-                                                                                            6.0,
+                                                                                            color: Colors.grey,
+                                                                                            offset: Offset(0.0, 1.0), //(x,y)
+                                                                                            blurRadius: 6.0,
                                                                                           ),
                                                                                         ],
                                                                                       ),
-                                                                                      child:
-                                                                                      Center(
+                                                                                      child: Center(
                                                                                         child: isLoading
                                                                                             ? SpinKitFadingCircle(
                                                                                           color: Colors.white,
@@ -7285,16 +7871,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            SizedBox(
-                                                                                height: MediaQuery.of(
-                                                                                    context)
-                                                                                    .size
-                                                                                    .height *
-                                                                                    0.05),
+                                                                            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                                                                             Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment
-                                                                                  .start,
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
                                                                               children: [
                                                                                 //                       GestureDetector(
                                                                                 //                         // onTap: () async {
@@ -7464,7 +8043,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   onTap: () async {
                                                                                     if (!isChecked2) {
                                                                                       print(!isChecked2);
-                                                                                      var response =  await Rental_PropertiesRepository().checkIfRentalOwnerExists(
+                                                                                      var response = await Rental_PropertiesRepository().checkIfRentalOwnerExists(
                                                                                         rentalOwner_firstName: firstname.text,
                                                                                         rentalOwner_lastName: lastname.text,
                                                                                         rentalOwner_companyName: comname.text,
@@ -7475,7 +8054,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                         rentalOwner_businessNumber: businessnum.text,
                                                                                         // rentalowner_id: rentalOwnerId != null ? rentalOwnerId!.rentalOwnerId : "", // Providing a default value if rentalOwnerId is null
                                                                                       );
-                                                                                      if(response == true){
+                                                                                      if (response == true) {
                                                                                         print("check true");
 
                                                                                         Ownersdetails = RentalOwner(
@@ -7501,9 +8080,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                         });
                                                                                         Navigator.pop(context);
                                                                                         // SetshowRentalOwnerTable();
-
                                                                                       }
-
                                                                                     } else {
                                                                                       Fluttertoast.showToast(
                                                                                         msg: "Rental Owner Successfully!",
@@ -7516,42 +8093,23 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                       );
                                                                                     }
                                                                                   },
-                                                                                  child:
-                                                                                  ClipRRect(
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5.0),
-                                                                                    child:
-                                                                                    Container(
-                                                                                      height:
-                                                                                      30.0,
+                                                                                  child: ClipRRect(
+                                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                                    child: Container(
+                                                                                      height: 30.0,
                                                                                       width: 50,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5.0),
-                                                                                        color: Color
-                                                                                            .fromRGBO(
-                                                                                            21,
-                                                                                            43,
-                                                                                            81,
-                                                                                            1),
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5.0),
+                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
                                                                                         boxShadow: [
                                                                                           BoxShadow(
-                                                                                            color:
-                                                                                            Colors.grey,
-                                                                                            offset: Offset(
-                                                                                                0.0,
-                                                                                                1.0), // (x,y)
-                                                                                            blurRadius:
-                                                                                            6.0,
+                                                                                            color: Colors.grey,
+                                                                                            offset: Offset(0.0, 1.0), // (x,y)
+                                                                                            blurRadius: 6.0,
                                                                                           ),
                                                                                         ],
                                                                                       ),
-                                                                                      child:
-                                                                                      Center(
+                                                                                      child: Center(
                                                                                         child: isLoading
                                                                                             ? SpinKitFadingCircle(
                                                                                           color: Colors.white,
@@ -7569,48 +8127,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                SizedBox(
-                                                                                    width: MediaQuery.of(
-                                                                                        context)
-                                                                                        .size
-                                                                                        .width *
-                                                                                        0.03),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                                                                                 GestureDetector(
                                                                                   onTap: () {
                                                                                     Navigator.pop(context);
                                                                                   },
-                                                                                  child:
-                                                                                  ClipRRect(
-                                                                                    borderRadius:
-                                                                                    BorderRadius
-                                                                                        .circular(
-                                                                                        5.0),
-                                                                                    child:
-                                                                                    Container(
-                                                                                      height:
-                                                                                      30.0,
+                                                                                  child: ClipRRect(
+                                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                                    child: Container(
+                                                                                      height: 30.0,
                                                                                       width: 50,
-                                                                                      decoration:
-                                                                                      BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5.0),
-                                                                                        color: Colors
-                                                                                            .white,
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(5.0),
+                                                                                        color: Colors.white,
                                                                                         boxShadow: [
                                                                                           BoxShadow(
-                                                                                            color:
-                                                                                            Colors.grey,
-                                                                                            offset: Offset(
-                                                                                                0.0,
-                                                                                                1.0), //(x,y)
-                                                                                            blurRadius:
-                                                                                            6.0,
+                                                                                            color: Colors.grey,
+                                                                                            offset: Offset(0.0, 1.0), //(x,y)
+                                                                                            blurRadius: 6.0,
                                                                                           ),
                                                                                         ],
                                                                                       ),
-                                                                                      child:
-                                                                                      Center(
+                                                                                      child: Center(
                                                                                         child: isLoading
                                                                                             ? SpinKitFadingCircle(
                                                                                           color: Colors.white,
@@ -7638,9 +8176,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                         );
                                                       },
                                                       child: Container(
-                                                        padding: EdgeInsets.zero,
+                                                        padding:
+                                                        EdgeInsets
+                                                            .zero,
                                                         child: FaIcon(
-                                                          FontAwesomeIcons.edit,
+                                                          FontAwesomeIcons
+                                                              .edit,
                                                           size: 13,
                                                         ),
                                                       ),
@@ -7656,16 +8197,22 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                         //     rentalOwnerPhoneNumber: phonenum.text,
                                                         //     rentalOwnerFirstName: firstname.text,
                                                         //   );
+
                                                         print("hello");
                                                         setState(() {
-                                                          RentalOwner? owner  ;
-                                                          Ownersdetails  = owner;
+                                                          RentalOwner?
+                                                          owner;
+                                                          Ownersdetails =
+                                                              owner;
                                                         });
                                                       },
                                                       child: Container(
-                                                        padding: EdgeInsets.zero,
+                                                        padding:
+                                                        EdgeInsets
+                                                            .zero,
                                                         child: FaIcon(
-                                                          FontAwesomeIcons.trashCan,
+                                                          FontAwesomeIcons
+                                                              .trashCan,
                                                           size: 15,
                                                         ),
                                                       ),
@@ -7688,7 +8235,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                   ),
                 ),
                 SizedBox(height: 25),
-                //staff
                 Material(
                   elevation: 6,
                   borderRadius: BorderRadius.circular(10),
@@ -7757,967 +8303,969 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             SizedBox(
                               height: 10,
                             ),
-                            // Row(
-                            //   children: [
-                            //     FutureBuilder<List<Staffmembers>>(
-                            //       future: futureStaffMembers,
-                            //       builder: (context, snapshot) {
-                            //         if (snapshot.connectionState ==
-                            //             ConnectionState.waiting) {
-                            //           return CircularProgressIndicator();
-                            //         } else if (snapshot.hasError) {
-                            //           return Text('Error: ${snapshot.error}');
-                            //         } else if (!snapshot.hasData ||
-                            //             snapshot.data!.isEmpty) {
-                            //           return Text('No staff members found');
-                            //         } else {
-                            //           List<Staffmembers> staffMembers =
-                            //           snapshot.data!;
-                            //           List<DropdownMenuItem<String>>
-                            //           dropdownItems = staffMembers
-                            //               .map<DropdownMenuItem<String>>(
-                            //                   (Staffmembers staffMember) {
-                            //                 return DropdownMenuItem<String>(
-                            //                   value: staffMember.staffmemberName,
-                            //                   onTap:(){
-                            //                     setState(() {
-                            //                       sid = staffMember.staffmemberId;
-                            //                     });
-                            //                   },
-                            //                   child: Text(
-                            //                     staffMember.staffmemberName ?? '',
-                            //                     style: TextStyle(fontSize: 14),
-                            //                   ),
-                            //                 );
-                            //               }).toList();
-                            //
-                            //           // Add the special "Add new property" item
-                            //           dropdownItems.add(
-                            //             DropdownMenuItem<String>(
-                            //               value: 'add_new_property',
-                            //               child: GestureDetector(
-                            //                 onTap: () {
-                            //                   showDialog(
-                            //                     context: context,
-                            //                     builder:
-                            //                         (BuildContext context) {
-                            //                       bool isChecked =
-                            //                       false; // Moved isChecked inside the StatefulBuilder
-                            //                       return StatefulBuilder(
-                            //                         builder: (BuildContext
-                            //                         context,
-                            //                             StateSetter setState) {
-                            //                           return AlertDialog(
-                            //                             backgroundColor:
-                            //                             Colors.white,
-                            //                             surfaceTintColor:
-                            //                             Colors.white,
-                            //                             content:
-                            //                             SingleChildScrollView(
-                            //                               child: Column(
-                            //                                 children: [
-                            //                                   SizedBox(
-                            //                                       height: 15),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width: 15,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         "New Staff Member",
-                            //                                         style: TextStyle(
-                            //                                             color: Color.fromRGBO(
-                            //                                                 21,
-                            //                                                 43,
-                            //                                                 81,
-                            //                                                 1),
-                            //                                             fontWeight:
-                            //                                             FontWeight
-                            //                                                 .bold,
-                            //                                             fontSize:
-                            //                                             18),
-                            //                                       ),
-                            //                                       Spacer(),
-                            //                                       InkWell(
-                            //                                         onTap: () {
-                            //                                           Navigator.pop(
-                            //                                               context);
-                            //                                         },
-                            //                                         child:
-                            //                                         Container(
-                            //                                           //    color: Colors.redAccent,
-                            //                                           padding:
-                            //                                           EdgeInsets
-                            //                                               .zero,
-                            //                                           child:
-                            //                                           FaIcon(
-                            //                                             FontAwesomeIcons
-                            //                                                 .xmark,
-                            //                                             size:
-                            //                                             15,
-                            //                                             color: Color(
-                            //                                                 0xFF8A95A8),
-                            //                                           ),
-                            //                                         ),
-                            //                                       ),
-                            //                                       SizedBox(
-                            //                                         width: 5,
-                            //                                       ),
-                            //                                     ],
-                            //                                   ),
-                            //                                   SizedBox(
-                            //                                     height: 10,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width: 15,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         "Staff member name..*",
-                            //                                         style: TextStyle(
-                            //                                             color: Color(
-                            //                                                 0xFF8A95A8),
-                            //                                             fontWeight:
-                            //                                             FontWeight
-                            //                                                 .bold,
-                            //                                             fontSize:
-                            //                                             13),
-                            //                                       ),
-                            //                                     ],
-                            //                                   ),
-                            //                                   SizedBox(
-                            //                                     height: 5,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           15),
-                            //                                       Material(
-                            //                                         elevation:
-                            //                                         4,
-                            //                                         child:
-                            //                                         Container(
-                            //                                           height:
-                            //                                           50,
-                            //                                           width: MediaQuery.of(context)
-                            //                                               .size
-                            //                                               .width *
-                            //                                               .54,
-                            //                                           decoration:
-                            //                                           BoxDecoration(
-                            //                                             borderRadius:
-                            //                                             BorderRadius.circular(2),
-                            //                                             border:
-                            //                                             Border.all(
-                            //                                               color:
-                            //                                               Color(0xFF8A95A8),
-                            //                                             ),
-                            //                                           ),
-                            //                                           child:
-                            //                                           Stack(
-                            //                                             children: [
-                            //                                               Positioned
-                            //                                                   .fill(
-                            //                                                 child:
-                            //                                                 TextField(
-                            //                                                   onChanged: (value) {
-                            //                                                     setState(() {
-                            //                                                       nameerror = false;
-                            //                                                     });
-                            //                                                   },
-                            //                                                   controller: name,
-                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                            //                                                   decoration: InputDecoration(
-                            //                                                     hintText: "Enter a staff member name here..*",
-                            //                                                     hintStyle: TextStyle(
-                            //                                                       fontSize: 13,
-                            //                                                       color: Color(0xFF8A95A8),
-                            //                                                     ),
-                            //                                                     enabledBorder: nameerror
-                            //                                                         ? OutlineInputBorder(
-                            //                                                       borderRadius: BorderRadius.circular(2),
-                            //                                                       borderSide: BorderSide(
-                            //                                                         color: Colors.red,
-                            //                                                       ),
-                            //                                                     )
-                            //                                                         : InputBorder.none,
-                            //                                                     border: InputBorder.none,
-                            //                                                     contentPadding: EdgeInsets.all(12),
-                            //                                                   ),
-                            //                                                 ),
-                            //                                               ),
-                            //                                             ],
-                            //                                           ),
-                            //                                         ),
-                            //                                       ),
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           20),
-                            //                                     ],
-                            //                                   ),
-                            //                                   nameerror
-                            //                                       ? Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width:
-                            //                                         117,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         namemessage,
-                            //                                         style:
-                            //                                         TextStyle(color: Colors.red),
-                            //                                       ),
-                            //                                     ],
-                            //                                   )
-                            //                                       : Container(),
-                            //                                   SizedBox(
-                            //                                     height: 10,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width: 15,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         "Designation...*",
-                            //                                         style: TextStyle(
-                            //                                           // color: Colors.grey,
-                            //                                             color: Color(0xFF8A95A8),
-                            //                                             fontWeight: FontWeight.bold,
-                            //                                             fontSize: 13),
-                            //                                       ),
-                            //                                     ],
-                            //                                   ),
-                            //                                   SizedBox(
-                            //                                     height: 5,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           15),
-                            //                                       Material(
-                            //                                         elevation:
-                            //                                         4,
-                            //                                         child:
-                            //                                         Container(
-                            //                                           height:
-                            //                                           50,
-                            //                                           width: MediaQuery.of(context)
-                            //                                               .size
-                            //                                               .width *
-                            //                                               .54,
-                            //                                           decoration:
-                            //                                           BoxDecoration(
-                            //                                             borderRadius:
-                            //                                             BorderRadius.circular(2),
-                            //                                             border:
-                            //                                             Border.all(
-                            //                                               color:
-                            //                                               Color(0xFF8A95A8),
-                            //                                             ),
-                            //                                           ),
-                            //                                           child:
-                            //                                           Stack(
-                            //                                             children: [
-                            //                                               Positioned
-                            //                                                   .fill(
-                            //                                                 child:
-                            //                                                 TextField(
-                            //                                                   onChanged: (value) {
-                            //                                                     setState(() {
-                            //                                                       designationerror = false;
-                            //                                                     });
-                            //                                                   },
-                            //                                                   controller: designation,
-                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                            //                                                   decoration: InputDecoration(
-                            //                                                     hintText: "Enter Designation here..*",
-                            //                                                     hintStyle: TextStyle(
-                            //                                                       fontSize: 13,
-                            //                                                       color: Color(0xFF8A95A8),
-                            //                                                     ),
-                            //                                                     enabledBorder: designationerror
-                            //                                                         ? OutlineInputBorder(
-                            //                                                       borderRadius: BorderRadius.circular(2),
-                            //                                                       borderSide: BorderSide(
-                            //                                                         color: Colors.red,
-                            //                                                       ),
-                            //                                                     )
-                            //                                                         : InputBorder.none,
-                            //                                                     border: InputBorder.none,
-                            //                                                     contentPadding: EdgeInsets.all(12),
-                            //                                                   ),
-                            //                                                 ),
-                            //                                               ),
-                            //                                             ],
-                            //                                           ),
-                            //                                         ),
-                            //                                       ),
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           20),
-                            //                                     ],
-                            //                                   ),
-                            //                                   designationerror
-                            //                                       ? Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width:
-                            //                                         117,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         designationmessage,
-                            //                                         style:
-                            //                                         TextStyle(color: Colors.red),
-                            //                                       ),
-                            //                                     ],
-                            //                                   )
-                            //                                       : Container(),
-                            //                                   SizedBox(
-                            //                                     height: 10,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width: 15,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         "Phone Number...",
-                            //                                         style: TextStyle(
-                            //                                           // color: Colors.grey,
-                            //                                             color: Color(0xFF8A95A8),
-                            //                                             fontWeight: FontWeight.bold,
-                            //                                             fontSize: 13),
-                            //                                       ),
-                            //                                     ],
-                            //                                   ),
-                            //                                   SizedBox(
-                            //                                     height: 5,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           15),
-                            //                                       Material(
-                            //                                         elevation:
-                            //                                         4,
-                            //                                         child:
-                            //                                         Container(
-                            //                                           height:
-                            //                                           50,
-                            //                                           width: MediaQuery.of(context)
-                            //                                               .size
-                            //                                               .width *
-                            //                                               .54,
-                            //                                           decoration:
-                            //                                           BoxDecoration(
-                            //                                             borderRadius:
-                            //                                             BorderRadius.circular(2),
-                            //                                             border:
-                            //                                             Border.all(
-                            //                                               color:
-                            //                                               Color(0xFF8A95A8),
-                            //                                             ),
-                            //                                           ),
-                            //                                           child:
-                            //                                           Stack(
-                            //                                             children: [
-                            //                                               Positioned
-                            //                                                   .fill(
-                            //                                                 child:
-                            //                                                 TextField(
-                            //                                                   onChanged: (value) {
-                            //                                                     setState(() {
-                            //                                                       phonenumbererror = false;
-                            //                                                     });
-                            //                                                   },
-                            //                                                   controller: phonenumber,
-                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                            //                                                   decoration: InputDecoration(
-                            //                                                     hintText: "Enter Phone Number here..*",
-                            //                                                     hintStyle: TextStyle(
-                            //                                                       fontSize: 13,
-                            //                                                       color: Color(0xFF8A95A8),
-                            //                                                     ),
-                            //                                                     enabledBorder: phonenumbererror
-                            //                                                         ? OutlineInputBorder(
-                            //                                                       borderRadius: BorderRadius.circular(2),
-                            //                                                       borderSide: BorderSide(
-                            //                                                         color: Colors.red,
-                            //                                                       ),
-                            //                                                     )
-                            //                                                         : InputBorder.none,
-                            //                                                     border: InputBorder.none,
-                            //                                                     contentPadding: EdgeInsets.all(12),
-                            //                                                   ),
-                            //                                                 ),
-                            //                                               ),
-                            //                                             ],
-                            //                                           ),
-                            //                                         ),
-                            //                                       ),
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           20),
-                            //                                     ],
-                            //                                   ),
-                            //                                   phonenumbererror
-                            //                                       ? Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width:
-                            //                                         117,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         phonenumbermessage,
-                            //                                         style:
-                            //                                         TextStyle(color: Colors.red),
-                            //                                       ),
-                            //                                     ],
-                            //                                   )
-                            //                                       : Container(),
-                            //                                   SizedBox(
-                            //                                     height: 10,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width: 15,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         "Email...*",
-                            //                                         style: TextStyle(
-                            //                                           // color: Colors.grey,
-                            //                                             color: Color(0xFF8A95A8),
-                            //                                             fontWeight: FontWeight.bold,
-                            //                                             fontSize: 13),
-                            //                                       ),
-                            //                                     ],
-                            //                                   ),
-                            //                                   SizedBox(
-                            //                                     height: 5,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           15),
-                            //                                       Material(
-                            //                                         elevation:
-                            //                                         4,
-                            //                                         child:
-                            //                                         Container(
-                            //                                           height:
-                            //                                           50,
-                            //                                           width: MediaQuery.of(context)
-                            //                                               .size
-                            //                                               .width *
-                            //                                               .54,
-                            //                                           decoration:
-                            //                                           BoxDecoration(
-                            //                                             borderRadius:
-                            //                                             BorderRadius.circular(2),
-                            //                                             border:
-                            //                                             Border.all(
-                            //                                               color:
-                            //                                               Color(0xFF8A95A8),
-                            //                                             ),
-                            //                                           ),
-                            //                                           child:
-                            //                                           Stack(
-                            //                                             children: [
-                            //                                               Positioned
-                            //                                                   .fill(
-                            //                                                 child:
-                            //                                                 TextField(
-                            //                                                   onChanged: (value) {
-                            //                                                     setState(() {
-                            //                                                       emailerror = false;
-                            //                                                     });
-                            //                                                   },
-                            //                                                   controller: email,
-                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                            //                                                   decoration: InputDecoration(
-                            //                                                     hintText: "Enter Email here..*",
-                            //                                                     hintStyle: TextStyle(
-                            //                                                       fontSize: 13,
-                            //                                                       color: Color(0xFF8A95A8),
-                            //                                                     ),
-                            //                                                     enabledBorder: emailerror
-                            //                                                         ? OutlineInputBorder(
-                            //                                                       borderRadius: BorderRadius.circular(2),
-                            //                                                       borderSide: BorderSide(
-                            //                                                         color: Colors.red,
-                            //                                                       ),
-                            //                                                     )
-                            //                                                         : InputBorder.none,
-                            //                                                     border: InputBorder.none,
-                            //                                                     contentPadding: EdgeInsets.all(12),
-                            //                                                   ),
-                            //                                                 ),
-                            //                                               ),
-                            //                                             ],
-                            //                                           ),
-                            //                                         ),
-                            //                                       ),
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           20),
-                            //                                     ],
-                            //                                   ),
-                            //                                   emailerror
-                            //                                       ? Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width:
-                            //                                         117,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         emailmessage,
-                            //                                         style:
-                            //                                         TextStyle(color: Colors.red),
-                            //                                       ),
-                            //                                     ],
-                            //                                   )
-                            //                                       : Container(),
-                            //                                   SizedBox(
-                            //                                     height: 10,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width: 15,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         "Password...*",
-                            //                                         style: TextStyle(
-                            //                                           // color: Colors.grey,
-                            //                                             color: Color(0xFF8A95A8),
-                            //                                             fontWeight: FontWeight.bold,
-                            //                                             fontSize: 13),
-                            //                                       ),
-                            //                                     ],
-                            //                                   ),
-                            //                                   SizedBox(
-                            //                                     height: 5,
-                            //                                   ),
-                            //                                   Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           15),
-                            //                                       Material(
-                            //                                         elevation:
-                            //                                         4,
-                            //                                         child:
-                            //                                         Container(
-                            //                                           height:
-                            //                                           50,
-                            //                                           width: MediaQuery.of(context)
-                            //                                               .size
-                            //                                               .width *
-                            //                                               .54,
-                            //                                           decoration:
-                            //                                           BoxDecoration(
-                            //                                             borderRadius:
-                            //                                             BorderRadius.circular(2),
-                            //                                             border:
-                            //                                             Border.all(
-                            //                                               color:
-                            //                                               Color(0xFF8A95A8),
-                            //                                             ),
-                            //                                           ),
-                            //                                           child:
-                            //                                           Stack(
-                            //                                             children: [
-                            //                                               Positioned
-                            //                                                   .fill(
-                            //                                                 child:
-                            //                                                 TextField(
-                            //                                                   onChanged: (value) {
-                            //                                                     setState(() {
-                            //                                                       passworderror = false;
-                            //                                                     });
-                            //                                                   },
-                            //                                                   controller: password,
-                            //                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                            //                                                   decoration: InputDecoration(
-                            //                                                     hintText: "Enter Password here..*",
-                            //                                                     hintStyle: TextStyle(
-                            //                                                       fontSize: 13,
-                            //                                                       color: Color(0xFF8A95A8),
-                            //                                                     ),
-                            //                                                     enabledBorder: passworderror
-                            //                                                         ? OutlineInputBorder(
-                            //                                                       borderRadius: BorderRadius.circular(2),
-                            //                                                       borderSide: BorderSide(
-                            //                                                         color: Colors.red,
-                            //                                                       ),
-                            //                                                     )
-                            //                                                         : InputBorder.none,
-                            //                                                     border: InputBorder.none,
-                            //                                                     contentPadding: EdgeInsets.all(12),
-                            //                                                   ),
-                            //                                                 ),
-                            //                                               ),
-                            //                                             ],
-                            //                                           ),
-                            //                                         ),
-                            //                                       ),
-                            //                                       SizedBox(
-                            //                                           width:
-                            //                                           20),
-                            //                                     ],
-                            //                                   ),
-                            //                                   passworderror
-                            //                                       ? Row(
-                            //                                     children: [
-                            //                                       SizedBox(
-                            //                                         width:
-                            //                                         117,
-                            //                                       ),
-                            //                                       Text(
-                            //                                         passwordmessage,
-                            //                                         style:
-                            //                                         TextStyle(color: Colors.red),
-                            //                                       ),
-                            //                                     ],
-                            //                                   )
-                            //                                       : Container(),
-                            //                                   SizedBox(
-                            //                                     height: 20,
-                            //                                   ),
-                            //                                   GestureDetector(
-                            //                                     onTap:
-                            //                                         () async {
-                            //                                       if (name.text
-                            //                                           .isEmpty) {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               nameerror =
-                            //                                               true;
-                            //                                               namemessage =
-                            //                                               "name is required";
-                            //                                             });
-                            //                                       } else {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               nameerror =
-                            //                                               false;
-                            //                                             });
-                            //                                       }
-                            //                                       if (designation
-                            //                                           .text
-                            //                                           .isEmpty) {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               designationerror =
-                            //                                               true;
-                            //                                               designationmessage =
-                            //                                               "designation is required";
-                            //                                             });
-                            //                                       } else {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               designationerror =
-                            //                                               false;
-                            //                                             });
-                            //                                       }
-                            //                                       if (phonenumber
-                            //                                           .text
-                            //                                           .isEmpty) {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               phonenumbererror =
-                            //                                               true;
-                            //                                               phonenumbermessage =
-                            //                                               "number is required";
-                            //                                             });
-                            //                                       } else {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               phonenumbererror =
-                            //                                               false;
-                            //                                             });
-                            //                                       }
-                            //                                       if (email.text
-                            //                                           .isEmpty) {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               emailerror =
-                            //                                               true;
-                            //                                               emailmessage =
-                            //                                               "email is required";
-                            //                                             });
-                            //                                       } else {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               emailerror =
-                            //                                               false;
-                            //                                             });
-                            //                                       }
-                            //                                       if (password
-                            //                                           .text
-                            //                                           .isEmpty) {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               passworderror =
-                            //                                               true;
-                            //                                               passwordmessage =
-                            //                                               "password is required";
-                            //                                             });
-                            //                                       } else {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               passworderror =
-                            //                                               false;
-                            //                                             });
-                            //                                       }
-                            //                                       if (!nameerror &&
-                            //                                           !designationerror &&
-                            //                                           !phonenumbererror &&
-                            //                                           !emailerror &&
-                            //                                           !phonenumbererror) {
-                            //                                         setState(
-                            //                                                 () {
-                            //                                               loading =
-                            //                                               true;
-                            //                                             });
-                            //                                       }
-                            //                                       SharedPreferences
-                            //                                       prefs =
-                            //                                       await SharedPreferences
-                            //                                           .getInstance();
-                            //                                       String?
-                            //                                       adminId =
-                            //                                       prefs.getString(
-                            //                                           "adminId");
-                            //                                       if (adminId !=
-                            //                                           null) {
-                            //                                         try {
-                            //                                           await StaffMemberRepository()
-                            //                                               .addStaffMember(
-                            //                                             adminId:
-                            //                                             adminId,
-                            //                                             staffmemberName:
-                            //                                             name.text,
-                            //                                             staffmemberDesignation:
-                            //                                             designation.text,
-                            //                                             staffmemberPhoneNumber:
-                            //                                             phonenumber.text,
-                            //                                             staffmemberEmail:
-                            //                                             email.text,
-                            //                                             staffmemberPassword:
-                            //                                             password.text,
-                            //                                           );
-                            //                                           setState(
-                            //                                                   () {
-                            //                                                 loading =
-                            //                                                 false;
-                            //                                               });
-                            //                                           Navigator.of(
-                            //                                               context)
-                            //                                               .pop(
-                            //                                               true);
-                            //                                         } catch (e) {
-                            //                                           setState(
-                            //                                                   () {
-                            //                                                 loading =
-                            //                                                 false;
-                            //                                               });
-                            //                                           // Handle error
-                            //                                         }
-                            //                                       }
-                            //                                     },
-                            //                                     child: Row(
-                            //                                       children: [
-                            //                                         SizedBox(
-                            //                                             width: MediaQuery.of(context).size.width *
-                            //                                                 0.05),
-                            //                                         ClipRRect(
-                            //                                           borderRadius:
-                            //                                           BorderRadius.circular(
-                            //                                               5.0),
-                            //                                           child:
-                            //                                           Container(
-                            //                                             height:
-                            //                                             30.0,
-                            //                                             width: MediaQuery.of(context).size.width *
-                            //                                                 .36,
-                            //                                             decoration:
-                            //                                             BoxDecoration(
-                            //                                               borderRadius:
-                            //                                               BorderRadius.circular(5.0),
-                            //                                               color: Color.fromRGBO(
-                            //                                                   21,
-                            //                                                   43,
-                            //                                                   81,
-                            //                                                   1),
-                            //                                               boxShadow: [
-                            //                                                 BoxShadow(
-                            //                                                   color: Colors.grey,
-                            //                                                   offset: Offset(0.0, 1.0), //(x,y)
-                            //                                                   blurRadius: 6.0,
-                            //                                                 ),
-                            //                                               ],
-                            //                                             ),
-                            //                                             child:
-                            //                                             Center(
-                            //                                               child:
-                            //                                               Text(
-                            //                                                 "Add staff Member",
-                            //                                                 style: TextStyle(
-                            //                                                     color: Colors.white,
-                            //                                                     fontWeight: FontWeight.bold,
-                            //                                                     fontSize: 13),
-                            //                                               ),
-                            //                                             ),
-                            //                                           ),
-                            //                                         ),
-                            //                                         SizedBox(
-                            //                                           width: 15,
-                            //                                         ),
-                            //                                         Text(
-                            //                                             "Cancel"),
-                            //                                       ],
-                            //                                     ),
-                            //                                   ),
-                            //                                 ],
-                            //                               ),
-                            //                             ),
-                            //                           );
-                            //                         },
-                            //                       );
-                            //                     },
-                            //                   );
-                            //                 },
-                            //                 child: Row(
-                            //                   children: [
-                            //                     Icon(
-                            //                       Icons.add,
-                            //                       size: 16,
-                            //                     ),
-                            //                     SizedBox(width: 4),
-                            //                     Text(
-                            //                       'Add New Staffmember',
-                            //                       style: TextStyle(
-                            //                           fontSize:
-                            //                           MediaQuery.of(context)
-                            //                               .size
-                            //                               .width *
-                            //                               .027),
-                            //                     ),
-                            //                   ],
-                            //                 ),
-                            //               ),
-                            //             ),
-                            //           );
-                            //           if (selectedStaff == null && staffMembers.isNotEmpty) {
-                            //             selectedStaff = widget.properties.staffMemberData!.staffmemberName;
-                            //           }
-                            //           return Padding(
-                            //             padding: const EdgeInsets.all(10.0),
-                            //             child: Container(
-                            //               height: MediaQuery.of(context)
-                            //                   .size
-                            //                   .height *
-                            //                   .05,
-                            //               width: MediaQuery.of(context)
-                            //                   .size
-                            //                   .width *
-                            //                   .36,
-                            //               padding: EdgeInsets.symmetric(
-                            //                   horizontal: 8, vertical: 4),
-                            //               decoration: BoxDecoration(
-                            //                 border: Border.all(
-                            //                   color: Color(0xFF8A95A8),
-                            //                 ),
-                            //                 borderRadius:
-                            //                 BorderRadius.circular(5),
-                            //               ),
-                            //               child: DropdownButtonHideUnderline(
-                            //                 child: DropdownButton<String>(
-                            //                   value: selectedStaff,
-                            //                   hint: Text(
-                            //                     'Select',
-                            //                     style: TextStyle(
-                            //                       fontSize:
-                            //                       MediaQuery.of(context)
-                            //                           .size
-                            //                           .width *
-                            //                           .04,
-                            //                       color: Color(0xFF8A95A8),
-                            //                     ),
-                            //                   ),
-                            //                   onChanged: (String? newValue) {
-                            //                     if (newValue ==
-                            //                         'add_new_property') {
-                            //                       // Prevent the dropdown from changing the selected item
-                            //                       setState(() {
-                            //                         selectedStaff = null;
-                            //                       });
-                            //                       // Show the dialog
-                            //                       showDialog(
-                            //                         context: context,
-                            //                         builder:
-                            //                             (BuildContext context) {
-                            //                           //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
-                            //                           return StatefulBuilder(
-                            //                             builder: (BuildContext
-                            //                             context,
-                            //                                 StateSetter
-                            //                                 setState) {
-                            //                               return AlertDialog(
-                            //                                 backgroundColor:
-                            //                                 Colors.white,
-                            //                                 surfaceTintColor:
-                            //                                 Colors.white,
-                            //                                 title: Text(
-                            //                                   "Add Rental Owner",
-                            //                                   style: TextStyle(
-                            //                                       fontWeight:
-                            //                                       FontWeight
-                            //                                           .bold,
-                            //                                       color: Color
-                            //                                           .fromRGBO(
-                            //                                           21,
-                            //                                           43,
-                            //                                           81,
-                            //                                           1),
-                            //                                       fontSize: 15),
-                            //                                 ),
-                            //                                 content:
-                            //                                 SingleChildScrollView(
-                            //                                     child:
-                            //                                     Column(
-                            //                                       children: [],
-                            //                                     )),
-                            //                               );
-                            //                             },
-                            //                           );
-                            //                         },
-                            //                       );
-                            //                     } else {
-                            //                       setState(() {
-                            //                         selectedStaff = newValue;
-                            //                       });
-                            //                     }
-                            //                   },
-                            //                   items: dropdownItems,
-                            //                   isExpanded: true,
-                            //                 ),
-                            //               ),
-                            //             ),
-                            //           );
-                            //         }
-                            //       },
-                            //     ),
-                            //   ],
-                            // ),
+                            Row(
+                              children: [
+                                FutureBuilder<List<Staffmembers>>(
+                                  future: futureStaffMembers,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                          child: SpinKitFadingCircle(
+                                            color: Colors.black,
+                                            size: 40.0,
+                                          ));
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else if (!snapshot.hasData ||
+                                        snapshot.data!.isEmpty) {
+                                      return Text('No staff members found');
+                                    } else {
+                                      List<Staffmembers> staffMembers =
+                                      snapshot.data!;
+                                      List<DropdownMenuItem<String>>
+                                      dropdownItems = staffMembers
+                                          .map<DropdownMenuItem<String>>(
+                                              (Staffmembers staffMember) {
+                                            return DropdownMenuItem<String>(
+                                              value: staffMember.sId,
+                                              onTap: () {
+                                                setState(() {
+                                                  sid = staffMember.staffmemberId;
+                                                });
+                                              },
+                                              child: Text(
+                                                staffMember.staffmemberName ?? '',
+                                                style: TextStyle(fontSize: 14),
+                                              ),
+                                            );
+                                          }).toList();
+
+                                      // Add the special "Add new property" item
+                                      dropdownItems.add(
+                                        DropdownMenuItem<String>(
+                                          value: 'Edit_properties',
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  bool isChecked =
+                                                  false; // Moved isChecked inside the StatefulBuilder
+                                                  return StatefulBuilder(
+                                                    builder: (BuildContext
+                                                    context,
+                                                        StateSetter setState) {
+                                                      return AlertDialog(
+                                                        backgroundColor:
+                                                        Colors.white,
+                                                        surfaceTintColor:
+                                                        Colors.white,
+                                                        content:
+                                                        SingleChildScrollView(
+                                                          child: Column(
+                                                            children: [
+                                                              SizedBox(
+                                                                  height: 15),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    "New Staff Member",
+                                                                    style: TextStyle(
+                                                                        color: Color.fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            81,
+                                                                            1),
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        fontSize:
+                                                                        18),
+                                                                  ),
+                                                                  Spacer(),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                    Container(
+                                                                      //    color: Colors.redAccent,
+                                                                      padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                      child:
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .xmark,
+                                                                        size:
+                                                                        15,
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    "Staff member name..*",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        fontSize:
+                                                                        13),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      width:
+                                                                      15),
+                                                                  Material(
+                                                                    elevation:
+                                                                    4,
+                                                                    child:
+                                                                    Container(
+                                                                      height:
+                                                                      50,
+                                                                      width: MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          .54,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(2),
+                                                                        border:
+                                                                        Border.all(
+                                                                          color:
+                                                                          Color(0xFF8A95A8),
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                      Stack(
+                                                                        children: [
+                                                                          Positioned
+                                                                              .fill(
+                                                                            child:
+                                                                            TextField(
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  nameerror = false;
+                                                                                });
+                                                                              },
+                                                                              controller: name,
+                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              decoration: InputDecoration(
+                                                                                hintText: "Enter a staff member name here..*",
+                                                                                hintStyle: TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  color: Color(0xFF8A95A8),
+                                                                                ),
+                                                                                enabledBorder: nameerror
+                                                                                    ? OutlineInputBorder(
+                                                                                  borderRadius: BorderRadius.circular(2),
+                                                                                  borderSide: BorderSide(
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                )
+                                                                                    : InputBorder.none,
+                                                                                border: InputBorder.none,
+                                                                                contentPadding: EdgeInsets.all(12),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                      20),
+                                                                ],
+                                                              ),
+                                                              nameerror
+                                                                  ? Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width:
+                                                                    117,
+                                                                  ),
+                                                                  Text(
+                                                                    namemessage,
+                                                                    style:
+                                                                    TextStyle(color: Colors.red),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                                  : Container(),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    "Designation...*",
+                                                                    style: TextStyle(
+                                                                      // color: Colors.grey,
+                                                                        color: Color(0xFF8A95A8),
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 13),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      width:
+                                                                      15),
+                                                                  Material(
+                                                                    elevation:
+                                                                    4,
+                                                                    child:
+                                                                    Container(
+                                                                      height:
+                                                                      50,
+                                                                      width: MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          .54,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(2),
+                                                                        border:
+                                                                        Border.all(
+                                                                          color:
+                                                                          Color(0xFF8A95A8),
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                      Stack(
+                                                                        children: [
+                                                                          Positioned
+                                                                              .fill(
+                                                                            child:
+                                                                            TextField(
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  designationerror = false;
+                                                                                });
+                                                                              },
+                                                                              controller: designation,
+                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              decoration: InputDecoration(
+                                                                                hintText: "Enter Designation here..*",
+                                                                                hintStyle: TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  color: Color(0xFF8A95A8),
+                                                                                ),
+                                                                                enabledBorder: designationerror
+                                                                                    ? OutlineInputBorder(
+                                                                                  borderRadius: BorderRadius.circular(2),
+                                                                                  borderSide: BorderSide(
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                )
+                                                                                    : InputBorder.none,
+                                                                                border: InputBorder.none,
+                                                                                contentPadding: EdgeInsets.all(12),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                      20),
+                                                                ],
+                                                              ),
+                                                              designationerror
+                                                                  ? Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width:
+                                                                    117,
+                                                                  ),
+                                                                  Text(
+                                                                    designationmessage,
+                                                                    style:
+                                                                    TextStyle(color: Colors.red),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                                  : Container(),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    "Phone Number...",
+                                                                    style: TextStyle(
+                                                                      // color: Colors.grey,
+                                                                        color: Color(0xFF8A95A8),
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 13),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      width:
+                                                                      15),
+                                                                  Material(
+                                                                    elevation:
+                                                                    4,
+                                                                    child:
+                                                                    Container(
+                                                                      height:
+                                                                      50,
+                                                                      width: MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          .54,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(2),
+                                                                        border:
+                                                                        Border.all(
+                                                                          color:
+                                                                          Color(0xFF8A95A8),
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                      Stack(
+                                                                        children: [
+                                                                          Positioned
+                                                                              .fill(
+                                                                            child:
+                                                                            TextField(
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  phonenumbererror = false;
+                                                                                });
+                                                                              },
+                                                                              controller: phonenumber,
+                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              decoration: InputDecoration(
+                                                                                hintText: "Enter Phone Number here..*",
+                                                                                hintStyle: TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  color: Color(0xFF8A95A8),
+                                                                                ),
+                                                                                enabledBorder: phonenumbererror
+                                                                                    ? OutlineInputBorder(
+                                                                                  borderRadius: BorderRadius.circular(2),
+                                                                                  borderSide: BorderSide(
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                )
+                                                                                    : InputBorder.none,
+                                                                                border: InputBorder.none,
+                                                                                contentPadding: EdgeInsets.all(12),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                      20),
+                                                                ],
+                                                              ),
+                                                              phonenumbererror
+                                                                  ? Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width:
+                                                                    117,
+                                                                  ),
+                                                                  Text(
+                                                                    phonenumbermessage,
+                                                                    style:
+                                                                    TextStyle(color: Colors.red),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                                  : Container(),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    "Email...*",
+                                                                    style: TextStyle(
+                                                                      // color: Colors.grey,
+                                                                        color: Color(0xFF8A95A8),
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 13),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      width:
+                                                                      15),
+                                                                  Material(
+                                                                    elevation:
+                                                                    4,
+                                                                    child:
+                                                                    Container(
+                                                                      height:
+                                                                      50,
+                                                                      width: MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          .54,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(2),
+                                                                        border:
+                                                                        Border.all(
+                                                                          color:
+                                                                          Color(0xFF8A95A8),
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                      Stack(
+                                                                        children: [
+                                                                          Positioned
+                                                                              .fill(
+                                                                            child:
+                                                                            TextField(
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  emailerror = false;
+                                                                                });
+                                                                              },
+                                                                              controller: email,
+                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              decoration: InputDecoration(
+                                                                                hintText: "Enter Email here..*",
+                                                                                hintStyle: TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  color: Color(0xFF8A95A8),
+                                                                                ),
+                                                                                enabledBorder: emailerror
+                                                                                    ? OutlineInputBorder(
+                                                                                  borderRadius: BorderRadius.circular(2),
+                                                                                  borderSide: BorderSide(
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                )
+                                                                                    : InputBorder.none,
+                                                                                border: InputBorder.none,
+                                                                                contentPadding: EdgeInsets.all(12),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                      20),
+                                                                ],
+                                                              ),
+                                                              emailerror
+                                                                  ? Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width:
+                                                                    117,
+                                                                  ),
+                                                                  Text(
+                                                                    emailmessage,
+                                                                    style:
+                                                                    TextStyle(color: Colors.red),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                                  : Container(),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    "Password...*",
+                                                                    style: TextStyle(
+                                                                      // color: Colors.grey,
+                                                                        color: Color(0xFF8A95A8),
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 13),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      width:
+                                                                      15),
+                                                                  Material(
+                                                                    elevation:
+                                                                    4,
+                                                                    child:
+                                                                    Container(
+                                                                      height:
+                                                                      50,
+                                                                      width: MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          .54,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(2),
+                                                                        border:
+                                                                        Border.all(
+                                                                          color:
+                                                                          Color(0xFF8A95A8),
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                      Stack(
+                                                                        children: [
+                                                                          Positioned
+                                                                              .fill(
+                                                                            child:
+                                                                            TextField(
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  passworderror = false;
+                                                                                });
+                                                                              },
+                                                                              controller: password,
+                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              decoration: InputDecoration(
+                                                                                hintText: "Enter Password here..*",
+                                                                                hintStyle: TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  color: Color(0xFF8A95A8),
+                                                                                ),
+                                                                                enabledBorder: passworderror
+                                                                                    ? OutlineInputBorder(
+                                                                                  borderRadius: BorderRadius.circular(2),
+                                                                                  borderSide: BorderSide(
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                )
+                                                                                    : InputBorder.none,
+                                                                                border: InputBorder.none,
+                                                                                contentPadding: EdgeInsets.all(12),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                      20),
+                                                                ],
+                                                              ),
+                                                              passworderror
+                                                                  ? Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width:
+                                                                    117,
+                                                                  ),
+                                                                  Text(
+                                                                    passwordmessage,
+                                                                    style:
+                                                                    TextStyle(color: Colors.red),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                                  : Container(),
+                                                              SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  if (name.text
+                                                                      .isEmpty) {
+                                                                    setState(
+                                                                            () {
+                                                                          nameerror =
+                                                                          true;
+                                                                          namemessage =
+                                                                          "name is required";
+                                                                        });
+                                                                  } else {
+                                                                    setState(
+                                                                            () {
+                                                                          nameerror =
+                                                                          false;
+                                                                        });
+                                                                  }
+                                                                  if (designation
+                                                                      .text
+                                                                      .isEmpty) {
+                                                                    setState(
+                                                                            () {
+                                                                          designationerror =
+                                                                          true;
+                                                                          designationmessage =
+                                                                          "designation is required";
+                                                                        });
+                                                                  } else {
+                                                                    setState(
+                                                                            () {
+                                                                          designationerror =
+                                                                          false;
+                                                                        });
+                                                                  }
+                                                                  if (phonenumber
+                                                                      .text
+                                                                      .isEmpty) {
+                                                                    setState(
+                                                                            () {
+                                                                          phonenumbererror =
+                                                                          true;
+                                                                          phonenumbermessage =
+                                                                          "number is required";
+                                                                        });
+                                                                  } else {
+                                                                    setState(
+                                                                            () {
+                                                                          phonenumbererror =
+                                                                          false;
+                                                                        });
+                                                                  }
+                                                                  if (email.text
+                                                                      .isEmpty) {
+                                                                    setState(
+                                                                            () {
+                                                                          emailerror =
+                                                                          true;
+                                                                          emailmessage =
+                                                                          "email is required";
+                                                                        });
+                                                                  } else {
+                                                                    setState(
+                                                                            () {
+                                                                          emailerror =
+                                                                          false;
+                                                                        });
+                                                                  }
+                                                                  if (password
+                                                                      .text
+                                                                      .isEmpty) {
+                                                                    setState(
+                                                                            () {
+                                                                          passworderror =
+                                                                          true;
+                                                                          passwordmessage =
+                                                                          "password is required";
+                                                                        });
+                                                                  } else {
+                                                                    setState(
+                                                                            () {
+                                                                          passworderror =
+                                                                          false;
+                                                                        });
+                                                                  }
+                                                                  if (!nameerror &&
+                                                                      !designationerror &&
+                                                                      !phonenumbererror &&
+                                                                      !emailerror &&
+                                                                      !phonenumbererror) {
+                                                                    setState(
+                                                                            () {
+                                                                          loading =
+                                                                          true;
+                                                                        });
+                                                                  }
+                                                                  SharedPreferences
+                                                                  prefs =
+                                                                  await SharedPreferences
+                                                                      .getInstance();
+                                                                  String?
+                                                                  adminId =
+                                                                  prefs.getString(
+                                                                      "adminId");
+                                                                  if (adminId !=
+                                                                      null) {
+                                                                    try {
+                                                                      await StaffMemberRepository()
+                                                                          .addStaffMember(
+                                                                        adminId:
+                                                                        adminId,
+                                                                        staffmemberName:
+                                                                        name.text,
+                                                                        staffmemberDesignation:
+                                                                        designation.text,
+                                                                        staffmemberPhoneNumber:
+                                                                        phonenumber.text,
+                                                                        staffmemberEmail:
+                                                                        email.text,
+                                                                        staffmemberPassword:
+                                                                        password.text,
+                                                                      );
+                                                                      setState(
+                                                                              () {
+                                                                            loading =
+                                                                            false;
+                                                                          });
+                                                                      Navigator.of(
+                                                                          context)
+                                                                          .pop(
+                                                                          true);
+                                                                    } catch (e) {
+                                                                      setState(
+                                                                              () {
+                                                                            loading =
+                                                                            false;
+                                                                          });
+                                                                      // Handle error
+                                                                    }
+                                                                  }
+                                                                },
+                                                                child: Row(
+                                                                  children: [
+                                                                    SizedBox(
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.05),
+                                                                    ClipRRect(
+                                                                      borderRadius:
+                                                                      BorderRadius.circular(
+                                                                          5.0),
+                                                                      child:
+                                                                      Container(
+                                                                        height:
+                                                                        30.0,
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            .36,
+                                                                        decoration:
+                                                                        BoxDecoration(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(5.0),
+                                                                          color: Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              81,
+                                                                              1),
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Colors.grey,
+                                                                              offset: Offset(0.0, 1.0), //(x,y)
+                                                                              blurRadius: 6.0,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        child:
+                                                                        Center(
+                                                                          child:
+                                                                          Text(
+                                                                            "Add staff Member",
+                                                                            style: TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 13),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 15,
+                                                                    ),
+                                                                    Text(
+                                                                        "Cancel"),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.add,
+                                                  size: 16,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  'Add New Staffmember',
+                                                  style: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          .023),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
+                                      return Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height *
+                                              .05,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .36,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Color(0xFF8A95A8),
+                                            ),
+                                            borderRadius:
+                                            BorderRadius.circular(5),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              value: selectedStaff,
+                                              hint: Text(
+                                                'Select',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .04,
+                                                  color: Color(0xFF8A95A8),
+                                                ),
+                                              ),
+                                              onChanged: (String? newValue) {
+                                                if (newValue ==
+                                                    'Edit_properties') {
+                                                  // Prevent the dropdown from changing the selected item
+                                                  setState(() {
+                                                    selectedStaff = null;
+                                                  });
+                                                  // Show the dialog
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
+                                                      return StatefulBuilder(
+                                                        builder: (BuildContext
+                                                        context,
+                                                            StateSetter
+                                                            setState) {
+                                                          return AlertDialog(
+                                                            backgroundColor:
+                                                            Colors.white,
+                                                            surfaceTintColor:
+                                                            Colors.white,
+                                                            title: Text(
+                                                              "Add Rental Owner",
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      81,
+                                                                      1),
+                                                                  fontSize: 15),
+                                                            ),
+                                                            content:
+                                                            SingleChildScrollView(
+                                                                child:
+                                                                Column(
+                                                                  children: [],
+                                                                )),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                  );
+                                                } else {
+                                                  setState(() {
+                                                    selectedStaff = newValue;
+                                                  });
+                                                }
+                                              },
+                                              items: dropdownItems,
+                                              isExpanded: true,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
                           ],
                         )),
                   ),
@@ -8774,164 +9322,18 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 ),
                               ],
                             ),
-
-                            // Column(
-                            //   children: [
-                            //     Row(
-                            //       children: [
-                            //         Spacer(),
-                            //         IconButton(
-                            //           icon: Icon(Icons.close),
-                            //           onPressed: () {
-                            //             setState(() {});
-                            //           },
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 5.0),
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         Expanded(
-                            //           child: Container(
-                            //             height: 45,
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'SQFT *',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the square footage';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 16.0),
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         Expanded(
-                            //           child: Container(
-                            //             height: 45,
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Bath',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the unit address';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 16.0),
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         Expanded(
-                            //           child: Container(
-                            //             height: 45,
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Bed',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the square footage';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     if (propertyGroups.isNotEmpty)
-                            //       Column(
-                            //         crossAxisAlignment: CrossAxisAlignment.start,
-                            //         children: [
-                            //           SingleChildScrollView(
-                            //             child: Column(
-                            //               children: propertyGroups.map((group) {
-                            //                 int index = propertyGroups.indexOf(group);
-                            //                 return Padding(
-                            //                   padding: const EdgeInsets.all(16.0),
-                            //                   child: Column(
-                            //                     crossAxisAlignment: CrossAxisAlignment.start,
-                            //                     children: [
-                            //                       Align(
-                            //                         alignment: Alignment.centerRight,
-                            //                         child: InkWell(
-                            //                           onTap: () => removePropertyGroup(index),
-                            //                           child: Icon(Icons.close, color: Colors.black),
-                            //                         ),
-                            //                       ),
-                            //                       SizedBox(height: 5),
-                            //                       ...group,
-                            //                     ],
-                            //                   ),
-                            //                 );
-                            //               }).toList(),
-                            //             ),
-                            //           ),
-                            //           SizedBox(height: 10),
-                            //           Align(
-                            //             alignment: Alignment.centerRight,
-                            //             child: ElevatedButton(
-                            //               onPressed: addPropertyGroup,
-                            //               child: Text('Add More'),
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //
-                            //
-                            //   ],
-                            // ),
                             if (propertyGroups.isNotEmpty)
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SingleChildScrollView(
-                                    child:
-                                    Column(
+                                    child: Column(
                                       children: propertyGroups.map((group) {
                                         int index =
                                         propertyGroups.indexOf(group);
                                         return Padding(
-                                          padding: const EdgeInsets.only(left: 16,right: 16),
+                                          padding: const EdgeInsets.only(
+                                              left: 16, right: 16),
                                           child: Column(
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -8957,137 +9359,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   ),
                                 ],
                               ),
-                            // SizedBox(height: 16.0),
-                            // if (selectedpropertytypedata != null &&
-                            //     selectedpropertytypedata!.propertyType ==
-                            //         "Residential" &&
-                            //     selectedpropertytypedata!.isMultiunit == true)
-                            //   if (propertyGroups.isNotEmpty)
-                            //     Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.start,
-                            //       children: [
-                            //         SingleChildScrollView(
-                            //           child: Column(
-                            //             children: propertyGroups.map((group) {
-                            //               int index = propertyGroups.indexOf(group);
-                            //               return Padding(
-                            //                 padding: const EdgeInsets.all(16.0),
-                            //                 child: Column(
-                            //                   crossAxisAlignment: CrossAxisAlignment.start,
-                            //                   children: [
-                            //                     Align(
-                            //                       alignment: Alignment.centerRight,
-                            //                       child: InkWell(
-                            //                         onTap: () => removePropertyGroup(index),
-                            //                         child: Icon(Icons.close, color: Colors.black),
-                            //                       ),
-                            //                     ),
-                            //                     SizedBox(height: 5),
-                            //                     ...group,
-                            //                   ],
-                            //                 ),
-                            //               );
-                            //             }).toList(),
-                            //           ),
-                            //         ),
-                            //         SizedBox(height: 10),
-                            //         Align(
-                            //           alignment: Alignment.centerRight,
-                            //           child: ElevatedButton(
-                            //             onPressed: addPropertyGroup,
-                            //             child: Text('Add More'),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            // Column(
-                            //   children: [
-                            //     Row(
-                            //       children: [
-                            //         SizedBox(
-                            //           width: 10,
-                            //         ),
-                            //         IconButton(
-                            //           icon: Icon(Icons.close),
-                            //           onPressed: () {
-                            //             // setState(() {
-                            //             //   units.removeAt(index);
-                            //             // });
-                            //           },
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 10.0),
-                            //     Row(
-                            //       children: [
-                            //         Expanded(
-                            //           child: Container(
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Unit *',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the unit';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     SizedBox(height: 16.0),
-                            //     Row(
-                            //       children: [
-                            //         Expanded(
-                            //           child: Container(
-                            //             child: TextFormField(
-                            //               decoration: InputDecoration(
-                            //                 labelText: 'Unit Address',
-                            //                 border: OutlineInputBorder(),
-                            //               ),
-                            //               validator: (value) {
-                            //                 if (value == null ||
-                            //                     value.isEmpty) {
-                            //                   return 'Please enter the unit address';
-                            //                 }
-                            //                 return null;
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ],
-                            // ),
-                            // Row(
-                            //   children: [
-                            //     SizedBox(
-                            //       width: 10,
-                            //     ),
-                            //     Column(
-                            //       children: [
-                            //         Text(
-                            //           'Photo',
-                            //           style: TextStyle(color: Colors.black),
-                            //         ),
-                            //         SizedBox(height: 8.0),
-                            //         GestureDetector(
-                            //           onTap: () {
-                            //             // Add photo action
-                            //           },
-                            //           child: Text(
-                            //             '+ Add',
-                            //             style: TextStyle(color: Colors.green),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ],
-                            // ),
                             GestureDetector(
                               onTap: () {
                                 // if (selectedProperty != null) {
@@ -9286,7 +9557,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           int index =
                                           propertyGroups.indexOf(group);
                                           return Padding(
-                                            padding: const EdgeInsets.only(left: 16,right: 16),
+                                            padding: const EdgeInsets.only(
+                                                left: 16, right: 16),
                                             child: Column(
                                               crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -9529,228 +9801,238 @@ class _Edit_propertiesState extends State<Edit_properties> {
                     style: TextStyle(color: Colors.redAccent),
                   ),
                 SizedBox(height: 10),
-                // GestureDetector(
-                //   onTap: () async {
-                //     if (selectedProperty == null) {
-                //       setState(() {
-                //         propertyTypeError = true;
-                //         propertyTypeErrorMessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         propertyTypeError = false;
-                //       });
-                //     }
-                //     if (address.text.isEmpty) {
-                //       setState(() {
-                //         addresserror = true;
-                //         addressmessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         addresserror = false;
-                //       });
-                //     }
-                //     if (city.text.isEmpty) {
-                //       setState(() {
-                //         cityerror = true;
-                //         citymessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         cityerror = false;
-                //       });
-                //     }
-                //     if (state.text.isEmpty) {
-                //       setState(() {
-                //         stateerror = true;
-                //         statemessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         stateerror = false;
-                //       });
-                //     }
-                //     if (country.text.isEmpty) {
-                //       setState(() {
-                //         countryerror = true;
-                //         countrymessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         countryerror = false;
-                //       });
-                //     }
-                //     if (postalcode.text.isEmpty) {
-                //       setState(() {
-                //         postalcodeerror = true;
-                //         postalcodemessage = "required";
-                //       });
-                //     } else {
-                //       setState(() {
-                //         postalcodeerror = false;
-                //       });
-                //     }
-                //     if (addresserror &&
-                //         cityerror &&
-                //         stateerror &&
-                //         countryerror &&
-                //         postalcodeerror) {
-                //       setState(() {
-                //         loading = true;
-                //       });
-                //     }
-                //
-                //     SharedPreferences prefs =
-                //         await SharedPreferences.getInstance();
-                //
-                //     String? id = prefs.getString("adminId");
-                //     Rental_PropertiesRepository()
-                //         .addProperties(
-                //       adminId: id!,
-                //       property_id: widget.property?.propertyId,
-                //       rental_adress: address.text,
-                //       rental_city: city.text,
-                //       rental_state: state.text,
-                //       rental_country: country.text,
-                //       rental_postcode: postalcode.text,
-                //       staffmember_id: widget.staff!.staffmemberId,
-                //       processor_id: proid.text,
-                //     )
-                //         .then((value) {
-                //       setState(() {
-                //         isLoading = false;
-                //       });
-                //       Navigator.of(context).pop(true);
-                //     }).catchError((e) {
-                //       setState(() {
-                //         isLoading = false;
-                //       });
-                //     });
-                //   },
-                //   child: Row(
-                //     children: [
-                //       SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-                //       ClipRRect(
-                //         borderRadius: BorderRadius.circular(5.0),
-                //         child: Container(
-                //           height: 30,
-                //           width: MediaQuery.of(context).size.width * .3,
-                //           decoration: BoxDecoration(
-                //             // borderRadius: BorderRadius.circular(3),
-                //             color: Color.fromRGBO(21, 43, 81, 1),
-                //             boxShadow: [
-                //               BoxShadow(
-                //                 color: Colors.grey,
-                //                 offset: Offset(0.0, 1.0), //(x,y)
-                //                 blurRadius: 6.0,
-                //               ),
-                //             ],
-                //           ),
-                //           child: Center(
-                //             child: Text(
-                //               "Create Property",
-                //               style: TextStyle(
-                //                   color: Colors.white,
-                //                   // fontWeight: FontWeight.bold,
-                //                   fontSize: 10),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         width: 15,
-                //       ),
-                //       Text("Cancel"),
-                //     ],
-                //   ),
-                // ),
-                //create property
+
                 Row(
                   children: [
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
                         if (address.text.isEmpty) {
-                            setState(() {
-                              addresserror = true;
-                              addressmessage = "required";
+                          setState(() {
+                            addresserror = true;
+                            addressmessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            addresserror = false;
+                          });
+                        }
+                        if (city.text.isEmpty) {
+                          setState(() {
+                            cityerror = true;
+                            citymessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            cityerror = false;
+                          });
+                        }
+                        if (state.text.isEmpty) {
+                          setState(() {
+                            stateerror = true;
+                            statemessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            stateerror = false;
+                          });
+                        }
+                        if (country.text.isEmpty) {
+                          setState(() {
+                            countryerror = true;
+                            countrymessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            countryerror = false;
+                          });
+                        }
+                        if (postalcode.text.isEmpty) {
+                          setState(() {
+                            postalcodeerror = true;
+                            postalcodemessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            postalcodeerror = false;
+                          });
+                        }
+                        if (Ownersdetails == null) {
+                          setState(() {
+                            hasError = true;
+                            postalcodemessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            hasError = false;
+                          });
+                          // print(selectedpropertytypedata!.propertyId);
+                          print('hiii${widget.properties.propertyId}');
 
-                            });
-                          } else {
-                            setState(() {
-                              addresserror = false;
-                            });
+                          print('staff${widget.properties.staffMemberId}');
+                          SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                          String? id = prefs.getString("adminId");
+                          Rental rentals = Rental(
+                            rentalId: widget.rentalId,
+                            adminId: id,
+                            propertyId: widget.properties.propertyId,
+                            // propertyId: selectedpropertytypedata!.propertyId,
+                            address: address.text,
+                            city: city.text,
+                            state: state.text,
+                            country: country.text,
+                            postcode: postalcode.text,
+                            // staffMemberId: sid,
+                            staffMemberId: widget.properties.staffMemberId,
+                          );
+                          List<Unit> units = [];
+                          if (propertyGroupControllers.isNotEmpty) {
+                            List<TextEditingController> firstControllers =
+                            propertyGroupControllers[0];
+                            bool isFirstBlank = firstControllers
+                                .every((controller) => controller.text.isEmpty);
+                            //1714547540497
+                            //1709188861753
+                            if (isFirstBlank) {
+                              propertyGroupControllers.removeAt(0);
+                            }
                           }
-                          if (city.text.isEmpty) {
-                            setState(() {
-                              cityerror = true;
-                              citymessage = "required";
-                            });
-                          } else {
-                            setState(() {
-                              cityerror = false;
-                            });
-                          }
-                          if (state.text.isEmpty) {
-                            setState(() {
-                              stateerror = true;
-                              statemessage = "required";
+                          if (selectedpropertytype == 'Commercial' &&
+                              selectedIsMultiUnit == true) {
+                            for (int i = 0;
+                            i < propertyGroupControllers.length;
+                            i++) {
+                              if (units.length <= i) {
+                                units.add(Unit());
+                              }
+                              List<TextEditingController> controllers =
+                              propertyGroupControllers[i];
+                              units[i].unit = controllers[0].text;
+                              units[i].address = controllers[1].text;
+                              units[i].sqft = controllers[2].text;
+                              units[i].Image = propertyGroupImagenames[i];
+                              //      units[i].bath = controllers[3].text;
+                              //     units[i].bed = controllers[4].text;
 
-                            });
-                          } else {
-                            setState(() {
-                              stateerror = false;
-                            });
+//                                  units[i].unit = controllers[0].text;
+                            }
+                          } else if (selectedpropertytype == 'Residential' &&
+                              selectedIsMultiUnit == true) {
+                            for (int i = 0;
+                            i < propertyGroupControllers.length;
+                            i++) {
+                              if (units.length <= i) {
+                                units.add(Unit());
+                              }
+                              List<TextEditingController> controllers =
+                              propertyGroupControllers[i];
+                              units[i].unit = controllers[0].text;
+                              units[i].address = controllers[1].text;
+                              units[i].sqft = controllers[2].text;
+                              units[i].bath = controllers[3].text;
+                              units[i].bed = controllers[4].text;
+                              units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+                            }
+                          } else if (selectedpropertytype == 'Residential') {
+                            for (int i = 0;
+                            i < propertyGroupControllers.length;
+                            i++) {
+                              if (units.length <= i) {
+                                units.add(Unit());
+                              }
+                              List<TextEditingController> controllers =
+                              propertyGroupControllers[i];
+                              print(controllers.length);
+                              units[i].sqft = controllers[0].text;
+                              units[i].bath = controllers[1].text;
+                              units[i].bed = controllers[2].text;
+                              units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+                            }
+                          } else if (selectedpropertytype == 'Commercial') {
+                            for (int i = 0;
+                            i < propertyGroupControllers.length;
+                            i++) {
+                              if (units.length <= i) {
+                                units.add(Unit());
+                              }
+                              List<TextEditingController> controllers =
+                              propertyGroupControllers[i];
+                              units[i].sqft = controllers[0].text;
+                              units[i].Image = propertyGroupImagenames[i];
+                              //units[i].address = controllers[1].text;
+                              //units[i].sqft = controllers[2].text;
+//                                  units[i].unit = controllers[0].text;
+                            }
                           }
-                          if (country.text.isEmpty) {
+                          RentalOwners owners = RentalOwners(
+                            adminId: id,
+                            firstName: firstname.text,
+                            lastName: lastname.text,
+                            companyName: comname.text,
+                            primaryEmail: primaryemail.text,
+                            phoneNumber: phonenum.text,
+                            city: city2.text,
+                            state: state2.text,
+                            country: county2.text,
+                            postalCode: code2.text,
+                          );
+                          RentalRequest rentalrequest = RentalRequest(
+                              rentalOwner: owners,
+                              rental: rentals,
+                              units: units);
+                          Rentals properties = Rentals(
+                            adminId: id,
+                            rentalOwnerData: RentalOwnerData(
+                              adminId: id,
+                              rentalOwnerFirstName: firstname.text,
+                              rentalOwnerLastName: lastname.text,
+                              rentalOwnerCompanyName: comname.text,
+                              rentalOwnerPrimaryEmail: primaryemail.text,
+                              rentalOwnerPhoneNumber: phonenum.text,
+                              city: city2.text,
+                              state: state2.text,
+                              country: county2.text,
+                              postalCode: code2.text,
+                            ),
+                            rentalId: widget.rentalId,
+                            propertyId: widget.properties.propertyId,
+                            // propertyId: selectedpropertytypedata!.propertyId,
+                            rentalAddress: address.text,
+                            rentalCity: city.text,
+                            rentalState: state.text,
+                            rentalCountry: country.text,
+                            rentalPostcode: postalcode.text,
+                            // staffMemberId: sid,
+                            staffMemberId: widget.properties.staffMemberId,
+                          );
+                          // PropertiesRepository().updateRental1(rentals);
+                          // PropertiesRepository().updateRental(rentalrequest,widget.rentalId).then((value)
+                          PropertiesRepository()
+                              .updateRental1(properties)
+                              .then((value) {
                             setState(() {
-                              countryerror = true;
-                              countrymessage = "required";
-
+                              widget.properties.rentalAddress = address.text;
+                              widget.properties.propertyTypeData?.propertyType =
+                                  selectedpropertytype;
+                              widget.properties.propertyTypeData
+                                  ?.propertySubType = selectedpropertytype;
+                              widget.properties.rentalOwnerData
+                                  ?.rentalOwnerFirstName = firstname.text;
+                              widget.properties.rentalOwnerData
+                                  ?.rentalOwnerLastName = lastname.text;
+                              widget.properties.rentalOwnerData
+                                  ?.rentalOwnerCompanyName = comname.text;
+                              widget.properties.rentalOwnerData?.city =
+                                  city.text;
+                              widget.properties.rentalOwnerData
+                                  ?.rentalOwnerPrimaryEmail = primaryemail.text;
+                              widget.properties.rentalOwnerData
+                                  ?.rentalOwnerPhoneNumber = phonenum.text;
+                              isLoading = false;
                             });
-                          } else {
-                            setState(() {
-                              countryerror = false;
-                            });
-                          }
-                          if (postalcode.text.isEmpty) {
-                            setState(() {
-                              postalcodeerror = true;
-                              postalcodemessage = "required";
-                            });
-                          } else {
-                            setState(() {
-                              postalcodeerror = false;
-                            });
-                          }
-                          if (Ownersdetails == null) {
-                            setState(() {
-                              hasError = true;
-                              postalcodemessage = "required";
-                            });
-                          } else {
-                            setState(() {
-                              hasError = false;
-                            });
-
-                            SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                            String? id = prefs.getString("adminId");
-                            PropertiesRepository().updateRental(widget.properties).then((value)
-                          {
-                            // setState(() {
-                            //   widget.properties.rentalAddress = address.text;
-                            //   widget.properties.propertyTypeData?.propertyType = selectedpropertytype;
-                            //   widget.properties.propertyTypeData?.propertySubType = selectedpropertytype;
-                            //   widget.properties.rentalOwnerData?.rentalOwnerFirstName = firstname.text;
-                            //   widget.properties.rentalOwnerData?.rentalOwnerLastName= lastname.text;
-                            //   widget.properties.rentalOwnerData?.rentalOwnerCompanyName = comname.text;
-                            //   widget.properties.rentalOwnerData?.city = city.text;
-                            //   widget.properties.rentalOwnerData?.rentalOwnerPrimaryEmail = primaryemail.text;
-                            //   widget.properties.rentalOwnerData?.rentalOwnerPhoneNumber = phonenum.text;
-                            //   isLoading = false;
-                            // });
                             Navigator.of(context).pop(true);
                           }).catchError((e) {
                             setState(() {
@@ -9760,225 +10042,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         }
                         print(selectedValue);
                       },
-//                       onTap: () async {
-//                         // if (unit.text.isEmpty || unitaddress.text.isEmpty || bath.text.isEmpty || bed.text.isEmpty || sqft.text.isEmpty) {
-//                         //   iserror2 = true;
-//                         //
-//                         // } else {
-//                         //   iserror2 = false;
-//                         // }
-//                         if (address.text.isEmpty) {
-//                           setState(() {
-//                             addresserror = true;
-//                             addressmessage = "required";
-//
-//                           });
-//                         } else {
-//                           setState(() {
-//                             addresserror = false;
-//                           });
-//                         }
-//                         if (city.text.isEmpty) {
-//                           setState(() {
-//                             cityerror = true;
-//                             citymessage = "required";
-//                           });
-//                         } else {
-//                           setState(() {
-//                             cityerror = false;
-//                           });
-//                         }
-//                         if (state.text.isEmpty) {
-//                           setState(() {
-//                             stateerror = true;
-//                             statemessage = "required";
-//
-//                           });
-//                         } else {
-//                           setState(() {
-//                             stateerror = false;
-//                           });
-//                         }
-//                         if (country.text.isEmpty) {
-//                           setState(() {
-//                             countryerror = true;
-//                             countrymessage = "required";
-//
-//                           });
-//                         } else {
-//                           setState(() {
-//                             countryerror = false;
-//                           });
-//                         }
-//                         if (postalcode.text.isEmpty) {
-//                           setState(() {
-//                             postalcodeerror = true;
-//                             postalcodemessage = "required";
-//
-//                           });
-//                         } else {
-//                           setState(() {
-//                             postalcodeerror = false;
-//                           });
-//                         }
-//                         if (Ownersdetails == null) {
-//                           setState(() {
-//                             hasError = true;
-//                             postalcodemessage = "required";
-//                           });
-//                         } else {
-//                           setState(() {
-//                             hasError = false;
-//                           });
-//                         }
-//                         if (!addresserror &&
-//                             !cityerror &&
-//                             !stateerror &&
-//                             !countryerror &&
-//                             !postalcodeerror
-//                         ) {
-//                           setState(() {
-//                             loading = true;
-//                           });
-//                         }
-//                         SharedPreferences prefs =
-//                         await SharedPreferences.getInstance();
-//                         String? adminId = prefs.getString("adminId");
-//                         if (adminId != null) {
-//                           //  try {
-//                           RentalOwners owners =  RentalOwners(
-//                             firstName: firstname.text,
-//                             lastName: lastname.text,
-//                             companyName: comname.text,
-//                             primaryEmail: primaryemail.text,
-//                             phoneNumber: phonenum.text,
-//                             city:city2.text,
-//                             state:state2.text,
-//                             country:county2.text,
-//                             postalCode:code2.text,
-//                           );
-//                           Rental rentals = Rental(
-//                             adminId: adminId,
-//                             propertyId: selectedpropertytypedata!.propertyId,
-//                             address: address.text,
-//                             city: city.text,
-//                             state: state.text,
-//                             country: country.text,
-//                             postcode: postalcode.text,
-//                             staffMemberId: sid,
-//                           );
-//                           List<Unit> units = [];
-//                           if (propertyGroupControllers.isNotEmpty) {
-//                             List<TextEditingController> firstControllers = propertyGroupControllers[0];
-//                             bool isFirstBlank = firstControllers.every((controller) => controller.text.isEmpty);
-//
-//                             if (isFirstBlank) {
-//                               propertyGroupControllers.removeAt(0);
-//                             }
-//                           }
-//                           if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
-//                             for (int i = 0; i <
-//                                 propertyGroupControllers.length; i++) {
-//                               if (units.length <= i) {
-//                                 units.add(Unit());
-//                               }
-//                               List<
-//                                   TextEditingController> controllers = propertyGroupControllers[i];
-//                               units[i].unit = controllers[0].text;
-//                               units[i].address = controllers[1].text;
-//                               units[i].sqft = controllers[2].text;
-//                               units[i].Image = propertyGroupImagenames[i];
-//                               //      units[i].bath = controllers[3].text;
-//                               //     units[i].bed = controllers[4].text;
-//
-// //                                  units[i].unit = controllers[0].text;
-//
-//                             }
-//                           }
-//                           else if (selectedpropertytype == 'Residential' &&
-//                               selectedIsMultiUnit == true) {
-//                             for (int i = 0; i <
-//                                 propertyGroupControllers.length; i++) {
-//                               if (units.length <= i) {
-//                                 units.add(Unit());
-//                               }
-//                               List<
-//                                   TextEditingController> controllers = propertyGroupControllers[i];
-//                               units[i].unit = controllers[0].text;
-//                               units[i].address = controllers[1].text;
-//                               units[i].sqft = controllers[2].text;
-//                               units[i].bath = controllers[3].text;
-//                               units[i].bed = controllers[4].text;
-//                               units[i].Image = propertyGroupImagenames[i];
-// //                                  units[i].unit = controllers[0].text;
-//
-//                             }
-//                           }
-//                           else if (selectedpropertytype == 'Residential') {
-//
-//                             for (int i = 0; i <
-//                                 propertyGroupControllers.length; i++) {
-//                               if (units.length <= i) {
-//                                 units.add(Unit());
-//                               }
-//                               List<
-//                                   TextEditingController> controllers = propertyGroupControllers[i];
-//                               print(controllers.length);
-//                               units[i].sqft= controllers[0].text;
-//                               units[i].bath = controllers[1].text;
-//                               units[i].bed = controllers[2].text;
-//                               units[i].Image = propertyGroupImagenames[i];
-// //                                  units[i].unit = controllers[0].text;
-//
-//                             }
-//                           }
-//                           else if (selectedpropertytype == 'Commercial') {
-//
-//                             for (int i = 0; i <
-//                                 propertyGroupControllers.length; i++) {
-//                               if (units.length <= i) {
-//                                 units.add(Unit());
-//                               }
-//                               List<
-//                                   TextEditingController> controllers = propertyGroupControllers[i];
-//                               units[i].sqft = controllers[0].text;
-//                               units[i].Image = propertyGroupImagenames[i];
-//                               //units[i].address = controllers[1].text;
-//                               //units[i].sqft = controllers[2].text;
-// //                                  units[i].unit = controllers[0].text;
-//
-//                             }
-//                           }
-//                           print(units.first.Image);
-//
-//                           RentalRequest rentalrequest = RentalRequest(
-//                               rentalOwner: owners,
-//                               rental: rentals,
-//                               units: units
-//                           );
-//                           Rental_PropertiesRepository().createRental(rentalrequest);
-//
-//                           // await  Rental_PropertiesRepository().addProperties(
-//                           //   adminId: adminId!,
-//                           //   property_id: widget.property?.propertyId,
-//                           //   rental_adress: address.text,
-//                           //   rental_city: city.text,
-//                           //   rental_state: state.text,
-//                           //   rental_country: country.text,
-//                           //   rental_postcode: postalcode.text,
-//                           //   staffmember_id: widget.staff!.staffmemberId,
-//                           //   processor_id: proid.text,
-//                           // );
-//                           setState(() {
-//                             loading = false;
-//                           });
-//                           // Navigator.of(context).pop(true);
-//                           //  } catch (e) {
-//                           //   print(e);
-//
-//
-//                         }
-//                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
@@ -9995,12 +10058,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             ],
                           ),
                           child: Center(
-                            child:
-                            loading
+                            child: loading
                                 ? SpinKitFadingCircle(
                               color: Colors.white,
                               size: 25.0,
-                            ) :Text(
+                            )
+                                : Text(
                               "Edit Property",
                               style: TextStyle(
                                 color: Colors.white,
@@ -10032,31 +10095,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
       ),
     );
   }
-
-  // Future<void> checkIfRentalOwnerExists() async {
-  //
-  //     await Rental_PropertiesRepository().checkIfRentalOwnerExists(
-  //       rentalowner_id: rentalOwnerId!.rentalOwnerId,
-  //       rentalOwner_firstName: firstname.text,
-  //       rentalOwner_lastName: lastname.text,
-  //       rentalOwner_companyName: comname.text,
-  //       rentalOwner_primaryEmail: primaryemail.text,
-  //       rentalOwner_alternativeEmail: alternativeemail.text,
-  //       rentalOwner_phoneNumber: phonenum.text,
-  //       rentalOwner_homeNumber: homenum.text,
-  //       rentalOwner_businessNumber: businessnum.text,
-  //     )
-  //         .then((value) {
-  //   setState(() {
-  //   isLoading = false;
-  //   });
-  //   Navigator.pop(context,true);
-  //   }).catchError((e) {
-  //   setState(() {
-  //   isLoading = false;
-  //   });
-  //   });
-  // }
 
   Widget _buildProcessorGroup(int index) {
     ProcessorGroup group = _processorGroups[index];
@@ -10132,14 +10170,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
     );
   }
 
-  SetshowRentalOwnerTable(){
-
+  SetshowRentalOwnerTable() {
     Row(
       children: [
         Text("Hello"),
       ],
     );
-
   }
 
   void _addNewGroup() {
@@ -10302,15 +10338,20 @@ class _Edit_propertiesState extends State<Edit_properties> {
       ' rentalOwner_phoneNumber': rentalOwner_phoneNumber,
       ' rentalOwner_businessNumber': rentalOwner_businessNumber,
     };
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(jsonEncode(data));
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/rentals/rentals'),
       headers: <String, String>{
+        "authorization": "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
     );
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String? rental_id = prefs.getString("adminId");
     var responseData = json.decode(response.body);
 
@@ -10322,9 +10363,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
       throw Exception('Failed to add property type');
     }
   }
-
-
-
 
   void handleAddrentalOwner() {
     print(rentalOwnerId);
@@ -10405,28 +10443,29 @@ class Owner {
 
     return Owner(
       id: json['_id'],
-      rentalOwnerId: json['rentalowner_id']??"",
-      adminId: json['admin_id']??"",
-      firstName: json['rentalOwner_firstName']??"",
-      lastName: json['rentalOwner_lastName']??"",
-      companyName: json['rentalOwner_companyName']??"",
-      primaryEmail: json['rentalOwner_primaryEmail']??"",
-      alternateEmail: json['rentalOwner_alternateEmail']??"",
-      phoneNumber: json['rentalOwner_phoneNumber']??"",
-      homeNumber: json['rentalOwner_homeNumber']??"", // Nullable field
-      businessNumber: json['rentalOwner_businessNumber']??"", // Nullable field
-      birthDate: json['birth_date']??"",
-      startDate: json['start_date']??"",
-      endDate: json['end_date']??"",
-      taxpayerId: json['texpayer_id']??"",
-      identityType: json['text_identityType']??"",
-      streetAddress: json['street_address']??"",
-      city: json['city']??"",
-      state: json['state']??"",
-      country: json['country']??"",
-      postalCode: json['postal_code']??"",
-      createdAt: json['createdAt']??"",
-      updatedAt: json['updatedAt']??"",
+      rentalOwnerId: json['rentalowner_id'] ?? "",
+      adminId: json['admin_id'] ?? "",
+      firstName: json['rentalOwner_firstName'] ?? "",
+      lastName: json['rentalOwner_lastName'] ?? "",
+      companyName: json['rentalOwner_companyName'] ?? "",
+      primaryEmail: json['rentalOwner_primaryEmail'] ?? "",
+      alternateEmail: json['rentalOwner_alternateEmail'] ?? "",
+      phoneNumber: json['rentalOwner_phoneNumber'] ?? "",
+      homeNumber: json['rentalOwner_homeNumber'] ?? "", // Nullable field
+      businessNumber:
+      json['rentalOwner_businessNumber'] ?? "", // Nullable field
+      birthDate: json['birth_date'] ?? "",
+      startDate: json['start_date'] ?? "",
+      endDate: json['end_date'] ?? "",
+      taxpayerId: json['texpayer_id'] ?? "",
+      identityType: json['text_identityType'] ?? "",
+      streetAddress: json['street_address'] ?? "",
+      city: json['city'] ?? "",
+      state: json['state'] ?? "",
+      country: json['country'] ?? "",
+      postalCode: json['postal_code'] ?? "",
+      createdAt: json['createdAt'] ?? "",
+      updatedAt: json['updatedAt'] ?? "",
       isDelete: json['is_delete'],
       processorList: processorList,
     );
@@ -10466,10 +10505,12 @@ class ProcessorGroup {
 
   ProcessorGroup({required this.isChecked, required this.controller});
 }
-class OwnersDetails{
-  RentalOwner? Ownersdetails;
-  OwnersDetails({required this.Ownersdetails,});
 
+class OwnersDetails {
+  RentalOwner? Ownersdetails;
+  OwnersDetails({
+    required this.Ownersdetails,
+  });
 }
 
 class RentalOwnerSource extends DataTableSource {
@@ -10477,7 +10518,8 @@ class RentalOwnerSource extends DataTableSource {
   final Function(RentalOwner) onEdit;
   final Function(RentalOwner) onDelete;
 
-  RentalOwnerSource(this.rentalowner, {required this.onEdit, required this.onDelete});
+  RentalOwnerSource(this.rentalowner,
+      {required this.onEdit, required this.onDelete});
 
   @override
   DataRow getRow(int index) {
@@ -10517,7 +10559,6 @@ class RentalOwnerSource extends DataTableSource {
               ),
             ),
           ),
-
         ],
       )),
     ]);

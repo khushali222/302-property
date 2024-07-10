@@ -38,16 +38,19 @@ class Rental_PropertiesRepository{
       ' processor_id':  processor_id,
 
     };
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -83,15 +86,19 @@ class Rental_PropertiesRepository{
       ' rentalOwner_businessNumber':  rentalOwner_businessNumber,
 
     };
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
     );
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String? rental_id = prefs.getString("adminId");
    // var responseData = json.decode(response.body);
 
@@ -138,9 +145,14 @@ class Rental_PropertiesRepository{
       'rentalOwner_homeNumber': rentalOwner_homeNumber,
       'rentalOwner_businessNumber': rentalOwner_businessNumber,
     };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final response = await http.post(
       Uri.parse('${Api_url}/api/rental_owner/check_rental_owner'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(requestData),
@@ -226,11 +238,15 @@ class Rental_PropertiesRepository{
     required String? id
   }) async {
 
-    print('$apiUrl/$id');
-
+   // print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.delete(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -247,9 +263,15 @@ class Rental_PropertiesRepository{
   }
 
   Future<void> createRental(RentalRequest rentalRequest) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json'},
       body: jsonEncode(rentalRequest.toJson()),
     );
 

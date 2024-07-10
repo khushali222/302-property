@@ -23,6 +23,7 @@ import '../screens/Staff_Member/Staffmemvertable.dart';
 
 import '../screens/test_table/Property_table.dart';
 import '../screens/test_table/add_lease.dart';
+import '../screens/test_table/card.dart';
 import '../screens/test_table/properties_table.dart';
 import '../screens/test_table/rentalowners_table.dart';
 import '../screens/test_table/staff_table.dart';

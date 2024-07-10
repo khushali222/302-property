@@ -21,7 +21,7 @@ import '../../repository/properties.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../Property_Type/Add_property_type.dart';
 import '../Property_Type/Edit_property_type.dart';
-import '../Rental/Properties/edit_properties.dart';
+import '../Rental/Properties/EditProperties.dart';
 import '../Staff_Member/Edit_staff_member.dart';
 import 'package:http/http.dart'as http;
 
@@ -88,7 +88,7 @@ class _Properties_tableState extends State<Properties_table> {
         context,
         MaterialPageRoute(
           builder: (context) => Edit_properties(
-            properties: rentals,
+            properties: rentals, rentalId: '',
           ),
         ));
     /* if (result == true) {
@@ -849,7 +849,7 @@ class _Properties_tableState extends State<Properties_table> {
                                                                         builder:
                                                                             (context) =>
                                                                             Edit_properties(
-                                                                              properties: rentals,
+                                                                              properties: rentals, rentalId: '',
                                                                             )));
                                                               },
                                                             ),

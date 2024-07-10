@@ -76,23 +76,58 @@ class _Edit_leaseState extends State<Edit_lease>
     //
     //   });
     // });
+
     fetchDetails(widget.leaseId);
 
 
   }
   Future<void> fetchDetails(String leaseId) async {
- //   try {
+    try {
       LeaseDetails fetchedDetails = await LeaseRepository().fetchLeaseDetails(leaseId);
-      print(fetchedDetails.lease.leaseType);
-      // print(leaseId);
-      // setState(() {
-      //     _selectedLeaseType = fetchedDetails.lease.leaseData.leaseType;
-      //     _startDate.text = fetchedDetails.lease.leaseData.startDate!;
-      //
-      // });
- //   } catch (e) {
-   //   print('Failed to fetch lease details: $e');
-  //  }
+
+     // print(fetchedDetails.re);
+       print(leaseId);
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() {
+       // print(fetchedDetails.rental.rentalAddress);
+        _selectedProperty = fetchedDetails.rental.rentalId;
+          _selectedLeaseType = fetchedDetails.lease.leaseType;
+          _startDate.text = fetchedDetails.lease.startDate;
+          _endDate.text = fetchedDetails.lease.endDate;
+
+        _selectedRent = fetchedDetails.rentCharges!.first!.rentCycle;
+        rentMemo.text = fetchedDetails.rentCharges!.first!.memo;
+        rentNextDueDate.text= fetchedDetails.rentCharges!.first!.date;
+        rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
+
+        for(int i = 0 ; i< fetchedDetails.tenant!.length;i++){
+          Provider.of<SelectedTenantsProvider>(context,listen: false).addTenant(fetchedDetails.tenant![i]);
+        }
+        for(int i = 0 ; i< fetchedDetails.cosigner!.length;i++){
+          Provider.of<SelectedCosignersProvider>(context,listen: false).addCosigner(fetchedDetails.cosigner![i]);
+        }
+        if (fetchedDetails.one_charge_data != null && fetchedDetails.one_charge_data!.isNotEmpty) {
+          formDataOneTimeList = fetchedDetails.one_charge_data!.map((item) {
+            // Ensure item is a Map and all keys and values are strings
+            if (item is Map) {
+              return item.map((key, value) => MapEntry(key.toString(), value.toString()));
+            }
+            return <String, String>{};
+          }).toList();
+        }
+        if (fetchedDetails.rec_charge_data != null && fetchedDetails.rec_charge_data!.isNotEmpty) {
+          formDataRecurringList = fetchedDetails.rec_charge_data!.map((item) {
+            // Ensure item is a Map and all keys and values are strings
+            if (item is Map) {
+              return item.map((key, value) => MapEntry(key.toString(), value.toString()));
+            }
+            return <String, String>{};
+          }).toList();
+        }
+      });
+    } catch (e) {
+     print('Failed to fetch lease details: $e');
+    }
   }
 
 
@@ -337,10 +372,10 @@ class _Edit_leaseState extends State<Edit_lease>
     'memo': ''
   };
 
-  List<Map<String, String>> formDataOneTimeList = [];
+  List<Map<String, dynamic>> formDataOneTimeList = [];
 
   void _showPopupForm(BuildContext context, String rent,
-      {Map<String, String>? initialData, int? index}) async {
+      {Map<String, dynamic>? initialData, int? index}) async {
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) {
@@ -2056,7 +2091,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                 const SizedBox(
                                   height: 5,
                                 ),
-
+                              if (formDataRecurringList.isNotEmpty)
                               Table(
                                 border: TableBorder.all(
                                   width: 1,
@@ -2194,7 +2229,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                 const SizedBox(
                                   height: 5,
                                 ),
-
+                              if (formDataOneTimeList.isNotEmpty)
                               Table(
                                 border: TableBorder.all(
                                   width: 1,
@@ -2589,7 +2624,7 @@ class _Edit_leaseState extends State<Edit_lease>
                       ),
                     ),
                   ),
-                  const SizedBox(
+                 /* const SizedBox(
                     height: 10,
                   ),
                   Container(
@@ -2876,8 +2911,8 @@ class _Edit_leaseState extends State<Edit_lease>
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(
+                  ),*/
+               /*   const SizedBox(
                     height: 10,
                   ),
                   Container(
@@ -2929,7 +2964,7 @@ class _Edit_leaseState extends State<Edit_lease>
                         ],
                       ),
                     ),
-                  ),
+                  ),*/
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -2958,7 +2993,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
                                     // // Printing ChargeData object
                                     //Changes
-                                    List<Map<String, String>>
+                                    List<Map<String, dynamic>>
                                     mergedFormDataList = [
                                       ...formDataOneTimeList,
                                       ...formDataRecurringList,
@@ -3112,7 +3147,6 @@ class _Edit_leaseState extends State<Edit_lease>
                                       tenantData: tenantDataList,
                                     );
                                     LeaseRepository().updateLease(widget.lease);
-
                                     print('valid');
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -3128,7 +3162,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
                                     // // Printing ChargeData object
                                     //Changes
-                                    List<Map<String, String>>
+                                    List<Map<String, dynamic>>
                                     mergedFormDataList = [
                                       ...formDataOneTimeList,
                                       ...formDataRecurringList,
@@ -3290,7 +3324,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
     // // Printing ChargeData object
 
-    List<Map<String, String>> mergedFormDataList = [
+    List<Map<String, dynamic>> mergedFormDataList = [
       ...formDataOneTimeList,
       ...formDataRecurringList,
     ];
@@ -3581,8 +3615,8 @@ class _Edit_leaseState extends State<Edit_lease>
 }
 
 class OneTimeChargePopUp extends StatefulWidget {
-  final Function(Map<String, String>) onSave;
-  final Map<String, String>? initialData;
+  final Function(Map<String, dynamic>) onSave;
+  final Map<String, dynamic>? initialData;
 
   OneTimeChargePopUp({required this.onSave, this.initialData});
 

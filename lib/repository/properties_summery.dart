@@ -37,8 +37,12 @@ class Properies_summery_Repo{
   Future<List<TenantData>> fetchPropertiessummery(String id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     print(id);
-    final response = await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$id'));
+    final response = await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$id'),
+
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => TenantData.fromJson(data)).toList();
@@ -68,9 +72,14 @@ class Properies_summery_Repo{
     'rental_bed': rentalbed,
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/unit/unit'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -88,9 +97,13 @@ class Properies_summery_Repo{
   Future<List<unit_properties>> fetchunit(String id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     print(id);
     print("obj");
-    final response = await http.get(Uri.parse('${Api_url}/api/unit/rental_unit/$id'));
+    final response = await http.get(Uri.parse('${Api_url}/api/unit/rental_unit/$id'),
+
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => unit_properties.fromJson(data)).toList();
@@ -117,11 +130,16 @@ class Properies_summery_Repo{
       'installed_date': installeddate,
 
     };
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/appliance/appliance'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
+        "id":"CRM $id",
       },
       body: jsonEncode(data),
     );
@@ -159,10 +177,15 @@ class Properies_summery_Repo{
     };
 
    // print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
       },
       body: jsonEncode(data),
     );
@@ -186,9 +209,14 @@ class Properies_summery_Repo{
   }) async {
     // print('$apiUrl/$id');
     print('hello 123 ${unitId}');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.delete(
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -201,6 +229,53 @@ class Properies_summery_Repo{
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');
+    }
+  }
+
+  // Future<Rentals> fetchrentalDetails(String rentalId) async {
+  //
+  //   final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'));
+  //
+  //   print(response.body);
+  //   print(rentalId);
+  //   print('${Api_url}/api/rentals/rental_summary/$rentalId');
+  //
+  //   if (response.statusCode == 200) {
+  //     final jsonResponse = json.decode(response.body);
+  //     if (jsonResponse['data'] is List) {
+  //       return Rentals.fromJson(jsonResponse['data'][0]);
+  //     } else {
+  //       return Rentals.fromJson(jsonResponse['data']);
+  //     }
+  //   } else {
+  //     throw Exception('Failed to load rental');
+  //   }
+  // }
+
+  Future<Rentals> fetchrentalDetails(String rentalId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final response = await http.get(
+        Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id":"CRM $id",
+          "Content-Type": "application/json"
+        }
+    );
+    print(response.body);
+    print(rentalId);
+    print('${Api_url}/api/rentals/rental_summary/$rentalId');
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      if (jsonResponse['data'] is List) {
+        return Rentals.fromJson(jsonResponse['data'][0]);
+      } else {
+        return Rentals.fromJson(jsonResponse['data']);
+      }
+    } else {
+      throw Exception('Failed to load rental');
     }
   }
 

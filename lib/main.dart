@@ -96,6 +96,9 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => NameProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => LeaseLedgerProvider(),
+          ),
         ],
         child: MyApp(),
       ),

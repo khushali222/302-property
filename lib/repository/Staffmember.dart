@@ -26,10 +26,15 @@ class StaffMemberRepository {
       "staffmember_email": staffmemberEmail,
       "staffmember_password": staffmemberPassword,
     };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
 
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -43,23 +48,14 @@ class StaffMemberRepository {
       throw Exception('Failed to add StaffMember ');
     }
   }
-  // Future<List<Staffmembers>> fetchStaffmembers() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? id = prefs.getString("adminId");
-  //   final response = await http.get(Uri.parse('${Api_url}/api/staffmember/staff_member/$id'));
-  //   print(response.body);
-  //   if (response.statusCode == 200) {
-  //     List jsonResponse = json.decode(response.body)['data'];
-  //     return jsonResponse.map((data) => Staffmembers.fromJson(data)).toList();
-  //   } else {
-  //     throw Exception('Failed to load data');
-  //   }
-  // }
 
   Future<List<Staffmembers>> fetchStaffmembers() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('$apiUrl/$id'));
+    String? token = prefs.getString('token');
+    final response = await http.get(Uri.parse('$apiUrl/$id'),
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    );
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Staffmembers.fromJson(data)).toList();
@@ -88,9 +84,14 @@ class StaffMemberRepository {
     print(data);
     String apiUrl = "${Api_url}/api/staffmember/staff_member/$Sid";
     print(apiUrl);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.put(
       Uri.parse(apiUrl),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -109,11 +110,15 @@ class StaffMemberRepository {
     required String? id
   }) async {
 
-    print('$apiUrl/$id');
-
+   // print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.delete(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );

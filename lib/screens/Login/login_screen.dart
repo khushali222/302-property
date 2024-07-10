@@ -432,8 +432,14 @@ class _Login_ScreenState extends State<Login_Screen> {
     // String? token = prefs.getString('token');
 
     final response = await http.post(
-        Uri.parse('${Api_url}/api/admin/token_check_api'),
-        body: {"token": token});
+      Uri.parse('${Api_url}/api/admin/token_check_api'),
+      headers: {
+       // "authorization": "CRM $token",
+        //"id":"CRM $id",
+        "Content-Type": "application/json"
+      },
+      body: json.encode({"token": token}),
+    );
     print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData['id'] != "") {
@@ -468,7 +474,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
 
-      await checkToken(jsonData["token"]);
+       await checkToken(jsonData["token"]);
+     //  await checkToken("token", "id");
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => Dashboard()));
       /*final List<dynamic> data = jsonData['data'];

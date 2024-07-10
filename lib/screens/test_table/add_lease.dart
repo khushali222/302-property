@@ -81,7 +81,9 @@ class _addLease4State extends State<addLease4>
 
     try {
       final response =
-      await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+      await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'),headers: {
+
+      });
       print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {

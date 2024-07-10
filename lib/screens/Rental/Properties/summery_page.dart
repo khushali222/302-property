@@ -34,7 +34,6 @@ class Summery_page extends StatefulWidget {
   unit_properties? unit;
 
   //RentalSummary? tenantsummery;
-
   Summery_page({super.key, required this.properties, this.tenants, this.unit});
   @override
   _Summery_pageState createState() => _Summery_pageState();
@@ -111,7 +110,7 @@ class _Summery_pageState extends State<Summery_page>
     print(imageFile.path);
     final String uploadUrl = '${Api_url}/api/images/upload';
 
-    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl,));
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 

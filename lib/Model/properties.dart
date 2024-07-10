@@ -73,7 +73,6 @@ class Rentals {
     );
   }
 }
-
 class RentalOwnerData {
   String? id;
   String? rentalOwnerId;
@@ -144,7 +143,6 @@ class RentalOwnerData {
     );
   }
 }
-
 class PropertyTypeData {
   String? id;
   String? adminId;
@@ -182,8 +180,6 @@ class PropertyTypeData {
     );
   }
 }
-
-
 class StaffMemberData {
   String? id;
   String? adminId;

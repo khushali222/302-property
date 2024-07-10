@@ -22,7 +22,8 @@ import '../../../repository/rental_properties.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 
-import 'edit_properties.dart';
+import 'EditProperties.dart';
+
 
 class _Dessert {
   _Dessert(
@@ -301,7 +302,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         context,
         MaterialPageRoute(
             builder: (context) => Edit_properties(
-                  properties: properties,
+                  properties: properties, rentalId: properties.rentalId!,
                 )));
     if (check == true) {
       setState(() {});
@@ -444,8 +445,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
     final response =
-        await http.get(Uri.parse('${Api_url}/api/rentals/limitation/$id'));
+        await http.get(Uri.parse('${Api_url}/api/rentals/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -1256,12 +1258,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               onPressed:
                                                                   () async {
                                                                 // handleEdit(Propertytype);
-
-                                                                var check = await Navigator.push(
+                                                                    var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => Edit_properties(
-                                                                              properties: rentals,
+                                                                              properties: rentals, rentalId: rentals.rentalId!
                                                                             )));
                                                                 if (check ==
                                                                     true) {

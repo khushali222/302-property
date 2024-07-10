@@ -728,7 +728,6 @@ class _EditTenantsState extends State<EditTenants> {
                                 if (adminId != null) {
                                   try {
                                     await TenantsRepository().editTenant(
-
                                       tenantId: widget.tenants.tenantId ?? "",
                                       adminId: adminId,
                                       tenantFirstName: firstName.text,
@@ -783,7 +782,6 @@ class _EditTenantsState extends State<EditTenants> {
                                 setState(() {
                                   isLoading = false;
                                 });
-
                                 // if (success) {
                                 //   print('Form is valid');
                                 // } else {
@@ -818,7 +816,6 @@ class _EditTenantsState extends State<EditTenants> {
 
                                 // bool success = await TenantsRepository()
                                 //     .EditTenant(tenant, widget.tenantId);
-
                                 setState(() {
                                   isLoading = false;
                                 });

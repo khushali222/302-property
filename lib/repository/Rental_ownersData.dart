@@ -17,7 +17,10 @@ class RentalOwnerService {
   Future<List<RentalOwnerData>> fetchRentalOwners(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     adminId = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'));
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+    final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     print('$Api_url/api/rentals/rental-owners/$adminId');
     print(adminId);
     print(response.body);
@@ -52,12 +55,18 @@ class RentalOwnerService {
 
   Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
     final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     print(url);
     print(jsonEncode(rentalOwner.toJson()));
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "authorization" : "CRM $token",
+          "id":"CRM $id",
+          'Content-Type': 'application/json'},
         body: jsonEncode(rentalOwner.toJson()),
       );
 
@@ -181,10 +190,15 @@ class RentalOwnerService {
     String apiUrl = "${Api_url}/api/rental_owner/rental_owner/$rentalownerId";
     print('rentalowners ${rentalownerId}');
     print(apiUrl);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await
     http.put(
        Uri.parse(apiUrl),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -204,9 +218,14 @@ class RentalOwnerService {
   Future<Map<String, dynamic>> DeleteRentalOwners({
     required String? rentalownerId
   }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.delete(
       Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -224,11 +243,16 @@ class RentalOwnerService {
 
   Future<List<RentalOwnerData>> fetchRentalOwnerssummery(String rentalOwnerId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
    // adminId = prefs.getString("adminId");
    //  rentalOwnerId = "1718715476950"
     print(rentalOwnerId);
     print(rentalOwnerId);
-    final response = await http.get(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'));
+    final response = await http.get(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'),
+
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    );
    // print(adminId);
     //print(response.body);
     //  print('$baseUrl/rental-owners/$adminId');

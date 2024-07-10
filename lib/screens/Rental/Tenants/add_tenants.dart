@@ -739,12 +739,140 @@ class _AddTenantState extends State<AddTenant> {
   }
 }
 
+// class CustomTextField extends StatefulWidget {
+//   final String hintText;
+//   final TextEditingController? controller;
+//   final TextInputType keyboardType;
+//   final String? Function(String?)? validator;
+//   final bool obscureText;
+//
+//   final Widget? suffixIcon;
+//   final IconData? prefixIcon;
+//   final void Function()? onSuffixIconPressed;
+//   final void Function()? onTap;
+//   final bool readOnnly;
+//
+//   CustomTextField({
+//     Key? key,
+//     this.controller,
+//     required this.hintText,
+//     this.obscureText = false,
+//     this.keyboardType = TextInputType.emailAddress,
+//     this.readOnnly = false,
+//     this.prefixIcon,
+//     this.suffixIcon,
+//     this.validator,
+//     this.onSuffixIconPressed,
+//     this.onTap, // Initialize onTap
+//   }) : super(key: key);
+//
+//   @override
+//   CustomTextFieldState createState() => CustomTextFieldState();
+// }
+//
+// class CustomTextFieldState extends State<CustomTextField> {
+//   String? _errorMessage;
+//   TextEditingController _textController =
+//       TextEditingController(); // Add this line
+//
+//   @override
+//   void dispose() {
+//     _textController.dispose(); // Dispose the controller when not needed anymore
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Stack(
+//       clipBehavior: Clip.none,
+//       children: <Widget>[
+//         FormField<String>(
+//           validator: (value) {
+//             if (widget.controller!.text.isEmpty) {
+//               setState(() {
+//                 _errorMessage = 'Please ${widget.hintText}';
+//               });
+//               return '';
+//             }
+//             setState(() {
+//               _errorMessage = null;
+//             });
+//             return null;
+//           },
+//           builder: (FormFieldState<String> state) {
+//             return Column(
+//               children: <Widget>[
+//                 Material(
+//                   elevation:2,
+//                   borderRadius: BorderRadius.circular(8.0),
+//                   child: Container(
+//                     height: 50,
+//                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+//                     decoration: BoxDecoration(
+//                       color: Colors.white,
+//                       borderRadius: BorderRadius.circular(8.0),
+//                       //border: Border.all(color: blueColor),
+//                       boxShadow: [
+//                         BoxShadow(
+//                           color: Colors.black.withOpacity(0.2),
+//                           offset: Offset(4, 4),
+//                           blurRadius: 3,
+//                         ),
+//                       ],
+//                     ),
+//                     child: TextFormField(
+//                       onTap: widget.onTap,
+//                       obscureText: widget.obscureText,
+//                       readOnly: widget.readOnnly,
+//                       keyboardType: widget.keyboardType,
+//                       validator: (value) {
+//                         if (value == null || value.isEmpty) {
+//                           state.validate();
+//                         }
+//                         return null;
+//                       },
+//                       controller: widget.controller,
+//                       decoration: InputDecoration(
+//                         suffixIcon: widget.suffixIcon,
+//                         hintStyle:
+//                             TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+//                         border: InputBorder.none,
+//                         hintText: widget.hintText,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 if (state.hasError)
+//                   SizedBox(height: 24), // Reserve space for error message
+//               ],
+//             );
+//           },
+//         ),
+//         if (_errorMessage != null)
+//           Positioned(
+//             top: 60,
+//             left: 8,
+//             child: Text(
+//               _errorMessage!,
+//               style: TextStyle(
+//                 color: Colors.red,
+//                 fontSize: 12.0,
+//               ),
+//             ),
+//           ),
+//       ],
+//     );
+//   }
+// }
+
+
 class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final bool obscureText;
+  final Function(String)? onChanged;
 
   final Widget? suffixIcon;
   final IconData? prefixIcon;
@@ -754,6 +882,7 @@ class CustomTextField extends StatefulWidget {
 
   CustomTextField({
     Key? key,
+    this.onChanged,
     this.controller,
     required this.hintText,
     this.obscureText = false,
@@ -773,7 +902,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-      TextEditingController(); // Add this line
+  TextEditingController(); // Add this line
 
   @override
   void dispose() {
@@ -802,39 +931,44 @@ class CustomTextFieldState extends State<CustomTextField> {
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
-                Container(
-                  height: 50,
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    //border: Border.all(color: blueColor),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: Offset(4, 4),
-                        blurRadius: 3,
+                Material(
+                  elevation:2,
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                      //border: Border.all(color: blueColor),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: Offset(4, 4),
+                          blurRadius: 3,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      onChanged: widget.onChanged,
+                      onTap: widget.onTap,
+                      obscureText: widget.obscureText,
+                      readOnly: widget.readOnnly,
+                      keyboardType: widget.keyboardType,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          state.validate();
+                        }
+                        return null;
+                      },
+                      controller: widget.controller,
+                      decoration: InputDecoration(
+                        suffixIcon: widget.suffixIcon,
+                        hintStyle:
+                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        border: InputBorder.none,
+                        hintText: widget.hintText,
                       ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    onTap: widget.onTap,
-                    obscureText: widget.obscureText,
-                    readOnly: widget.readOnnly,
-                    keyboardType: widget.keyboardType,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        state.validate();
-                      }
-                      return null;
-                    },
-                    controller: widget.controller,
-                    decoration: InputDecoration(
-                      suffixIcon: widget.suffixIcon,
-                      hintStyle:
-                          TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
-                      border: InputBorder.none,
-                      hintText: widget.hintText,
                     ),
                   ),
                 ),

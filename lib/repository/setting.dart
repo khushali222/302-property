@@ -19,7 +19,17 @@ class SurchargeRepository {
   SurchargeRepository({required this.baseUrl});
 
   Future<Setting1> fetchSurchargeData(String adminId) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final response = await http.get(
+        Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id":"CRM $id",
+          "Content-Type": "application/json"
+        }
+    );
     final response_Data = jsonDecode(response.body);
     print(response_Data);
     if (response_Data["statusCode"] == 200) {
@@ -35,7 +45,11 @@ class SurchargeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(jsonEncode(data));
     String? id = prefs.getString("adminId");
-    final response = await http.put(Uri.parse('${Api_url}/api/surcharge/surcharge/$id'),body:data );
+    String? token = prefs.getString('token');
+    final response = await http.put(
+        Uri.parse('${Api_url}/api/surcharge/surcharge/$id'),
+        headers: {"authorization" : "CRM $token","id":"CRM $id",},
+        body:data );
     final response_Data = jsonDecode(response.body,);
     if (response_Data["statusCode"] == 200) {
       final apiResponse = ApiResponse.fromJson(jsonDecode(response.body)["data"]);
@@ -46,9 +60,15 @@ class SurchargeRepository {
   }
 
   Future<bool> updateSurchargeData(String surchargeId, Map<String, dynamic> data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final response = await http.put(
       Uri.parse('$baseUrl/api/surcharge/surcharge/$surchargeId'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
 
@@ -64,9 +84,15 @@ class SurchargeRepository {
 
   Future<bool> AddSurgeData(String surchargeId, Map<String, dynamic> data) async {
     print("$baseUrl/api/surcharge/surcharge");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final response = await http.post(
       Uri.parse('$baseUrl/api/surcharge/surcharge'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
     print(response.body);
@@ -83,7 +109,10 @@ class latefeeRepository {
   latefeeRepository({required this.baseUrl});
 
   Future<Setting2> fetchLatefeesData(String adminId) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final response = await http.get(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     final response_Data = jsonDecode(response.body);
     print(response_Data);
     if (response_Data["statusCode"] == 200) {
@@ -100,9 +129,15 @@ class latefeeRepository {
 
 
   Future<bool> updateLatefeesData(String surchargeId, Map<String, dynamic> data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final response = await http.put(
       Uri.parse('$baseUrl/api/latefee/latefee/$surchargeId'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
     print('$baseUrl/api/latefee/latefee/$surchargeId');
@@ -117,11 +152,18 @@ class latefeeRepository {
   }
 
   Future<bool> AddLatefeesData(String surchargeId, Map<String, dynamic> data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     print("$baseUrl/api/latefee/latefee");
     print(data);
     final response = await http.post(
       Uri.parse('$baseUrl/api/latefee/latefee'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        "authorization" : "CRM $token",
+        'Content-Type': 'application/json',
+        "id":"CRM $id",
+      },
       body: jsonEncode(data),
     );
     print(response.body);

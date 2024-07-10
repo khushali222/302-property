@@ -16,7 +16,10 @@ class TenantsRepository {
   Future<List<Tenant>> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response = await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'));
+    String? token = prefs.getString('token');
+    final response = await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'),
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    );
     print(response.body);
     print('${Api_url}/api//tenant/tenants/$id');
     if (response.statusCode == 200) {
@@ -30,11 +33,15 @@ class TenantsRepository {
   Future<bool> addTenant(Tenant tenant) async {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
     print(url);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
       print(jsonEncode(tenant.toJson()));
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json',"authorization" : "CRM $token","id":"CRM $id",},
         body: jsonEncode(tenant.toJson()),
       );
 
@@ -246,10 +253,14 @@ class TenantsRepository {
     };
 
     print('$apiUrl/$tenantId');
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final http.Response response = await http.put(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -278,10 +289,14 @@ class TenantsRepository {
         'company_name': companyName,
         'tenant_email': tenantEmail,
       });
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String?  id = prefs.getString('adminId');
       final http.Response response = await http.delete(
         uri,
         headers: <String, String>{
+          "authorization" : "CRM $token",
+          "id":"CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
@@ -304,9 +319,13 @@ class TenantsRepository {
 
   Future<List<Tenant>>? fetchTenantsummery(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     print(tenantId);
     final response = await http
-        .get(Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'));
+        .get(Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    );
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)["data"];
@@ -319,10 +338,13 @@ class TenantsRepository {
   }
 
   Future<String> fetchCompanyName(String adminId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     final String apiUrl = 'http://192.168.1.16:4000/api/admin/admin_profile/$adminId';
 
     try {
-      final http.Response response = await http.get(Uri.parse(apiUrl));
+      final http.Response response = await http.get(Uri.parse(apiUrl),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
