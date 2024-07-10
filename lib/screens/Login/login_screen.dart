@@ -529,9 +529,11 @@ class _Login_ScreenState extends State<Login_Screen> {
   Future<void> checkToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
+    String? adminId = prefs.getString('adminId').toString();
 
     final response = await http.post(
         Uri.parse('${Api_url}/api/admin/token_check_api'),
+        headers: {"authorization": "CRM $token",},
         body: {"token": token});
     print(response.body);
     final jsonData = json.decode(response.body);

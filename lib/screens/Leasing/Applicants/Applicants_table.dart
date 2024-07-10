@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +7,14 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/ApplicantModel.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/applicants.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/addApplicant.dart';
+import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -115,9 +119,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Main Type ",
+                        ? const Text("Name",
                             style: TextStyle(color: Colors.white))
-                        : const Text("Main Type",
+                        : const Text("Name",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
@@ -166,8 +170,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("Subtypes",
-                        style: TextStyle(color: Colors.white)),
+                    const Text("Email", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending2
                         ? const Padding(
@@ -215,8 +218,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("Created At",
-                        style: TextStyle(color: Colors.white)),
+                    const Text("Status", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending3
                         ? const Padding(
@@ -253,16 +255,18 @@ class _Applicants_tableState extends State<Applicants_table> {
     super.initState();
     futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
     futureApplicantdata = ApplicantRepository().fetchApplicants();
+    fetchapplicantadded();
   }
 
-  void handleEdit(propertytype property) async {
+  void handleEdit(Datum applicant) async {
     // Handle edit action
-    print('Edit ${property.sId}');
+    print('Edit ${applicant.applicantId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Edit_property_type(
-                  property: property,
+            builder: (context) => EditApplicant(
+                  applicant: applicant,
+                  applicantId: '',
                 )));
     if (check == true) {
       setState(() {});
@@ -280,12 +284,49 @@ class _Applicants_tableState extends State<Applicants_table> {
     }*/
   }
 
+  void _showDeleteAlert(BuildContext context, String id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this applicant!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            await ApplicantRepository().DeleteApplicant(id: id);
+            setState(() {
+              futureApplicantdata = ApplicantRepository().fetchApplicants();
+            });
+            fetchapplicantadded();
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
+
   void _showAlert(BuildContext context, String id) {
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this property!",
+      desc: "Once deleted, you will not be able to recover this applicant!",
       style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -304,11 +345,10 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(id: id);
+            var data = ApplicantRepository().DeleteApplicant(id: id);
             // Add your delete logic here
             setState(() {
-              futurePropertyTypes =
-                  PropertyTypeRepository().fetchPropertyTypes();
+              futureApplicantdata = ApplicantRepository().fetchApplicants();
             });
             Navigator.pop(context);
           },
@@ -318,13 +358,13 @@ class _Applicants_tableState extends State<Applicants_table> {
     ).show();
   }
 
-  List<propertytype> _tableData = [];
+  List<Datum> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<propertytype> get _pagedData {
+  List<Datum> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
@@ -338,8 +378,8 @@ class _Applicants_tableState extends State<Applicants_table> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(propertytype d) getField,
-      int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(Datum d) getField, int columnIndex,
+      bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -352,14 +392,14 @@ class _Applicants_tableState extends State<Applicants_table> {
     });
   }
 
-  void handleDelete(propertytype property) {
-    _showAlert(context, property.propertyId!);
+  void handleDelete(Datum applicant) {
+    _showAlert(context, applicant.applicantId!);
     // Handle delete action
-    print('Delete ${property.sId}');
+    print('Delete ${applicant.applicantId}');
   }
 
-  Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(propertytype d)? getField) {
+  Widget _buildHeader<T>(
+      String text, int columnIndex, Comparable<T> Function(Datum d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -394,13 +434,13 @@ class _Applicants_tableState extends State<Applicants_table> {
     );
   }
 
-  Widget _buildActionsCell(propertytype data) {
+  Widget _buildActionsCell(Datum data) {
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
-        child: Container(
+        child: SizedBox(
           height: 50,
-          // color: Colors.blue,
+          // color: Color.fromRGBO(21, 43, 83, 1),
           child: Row(
             children: [
               const SizedBox(
@@ -519,6 +559,72 @@ class _Applicants_tableState extends State<Applicants_table> {
     );
   }
 
+  int applicantCountLimit = 0;
+  int applicantCount = 0;
+  Future<void> fetchapplicantadded() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    final response =
+        await http.get(Uri.parse('${Api_url}/api/applicant/limitation/$id'));
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 200) {
+      print("error ${applicantCount}");
+      print("error ${applicantCountLimit}");
+      setState(() {
+        applicantCount = jsonData['applicantCount'];
+
+        print(applicantCount);
+        applicantCountLimit = jsonData['applicantCountLimit'];
+        print(applicantCountLimit);
+      });
+    } else {
+      throw Exception('Failed to load data the count');
+    }
+  }
+
+  void _showAlertforLimit(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Plan Limitation",
+      desc:
+          "The limit for adding applicant according to the plan has been reached.",
+      style: AlertStyle(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+          descStyle: TextStyle(fontSize: 14)
+          //  overlayColor: Colors.black.withOpacity(.8)
+          ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Color.fromRGBO(21, 43, 83, 1),
+        ),
+        /* DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+             var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )*/
+      ],
+    ).show();
+  }
+
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
@@ -597,8 +703,29 @@ class _Applicants_tableState extends State<Applicants_table> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddApplicant()));
+                      print(applicantCount);
+                      print(applicantCountLimit);
+                      // final result = await Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => Add_staffmember()));
+                      // if (result == true) {
+                      //   setState(() {
+                      //     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
+                      //   });
+                      // }
+                      if (applicantCount < applicantCountLimit) {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => AddApplicant()));
+                        if (result == true) {
+                          setState(() {
+                            futureApplicantdata =
+                                ApplicantRepository().fetchApplicants();
+                          });
+                          fetchapplicantadded();
+                        }
+                      } else {
+                        _showAlertforLimit(context);
+                      }
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
@@ -645,12 +772,153 @@ class _Applicants_tableState extends State<Applicants_table> {
             ),
             const SizedBox(height: 10),
             //search
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 13, right: 13),
+            //   child: Row(
+            //     children: [
+            //       if (MediaQuery.of(context).size.width < 500)
+            //         const SizedBox(width: 5),
+            //       if (MediaQuery.of(context).size.width > 500)
+            //         const SizedBox(width: 22),
+            //       Material(
+            //         elevation: 3,
+            //         borderRadius: BorderRadius.circular(2),
+            //         child: Container(
+            //           padding: const EdgeInsets.symmetric(horizontal: 10),
+            //           // height: 40,
+            //           height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+            //           width: MediaQuery.of(context).size.width < 500
+            //               ? MediaQuery.of(context).size.width * .52
+            //               : MediaQuery.of(context).size.width * .49,
+            //           decoration: BoxDecoration(
+            //               color: Colors.white,
+            //               borderRadius: BorderRadius.circular(2),
+            //               // border: Border.all(color: Colors.grey),
+            //               border: Border.all(color: const Color(0xFF8A95A8))),
+            //           child: Stack(
+            //             children: [
+            //               Positioned.fill(
+            //                 child: TextField(
+            //                   // onChanged: (value) {
+            //                   //   setState(() {
+            //                   //     cvverror = false;
+            //                   //   });
+            //                   // },
+            //                   // controller: cvv,
+            //                   onChanged: (value) {
+            //                     setState(() {
+            //                       searchvalue = value;
+            //                     });
+            //                   },
+            //                   cursorColor: const Color.fromRGBO(21, 43, 81, 1),
+            //                   decoration: const InputDecoration(
+            //                     border: InputBorder.none,
+            //                     hintText: "Search here...",
+            //                     hintStyle: TextStyle(
+            //                       // fontWeight: FontWeight.bold,
+            //                       color: Color(0xFF8A95A8),
+            //                     ),
+            //                     // contentPadding:
+            //                     //     EdgeInsets.symmetric(horizontal: 5),
+            //                   ),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //       const SizedBox(width: 15),
+            //       // DropdownButtonHideUnderline(
+            //       //   child: Material(
+            //       //     elevation: 3,
+            //       //     child: DropdownButton2<String>(
+            //       //       isExpanded: true,
+            //       //       hint: const Row(
+            //       //         children: [
+            //       //           SizedBox(
+            //       //             width: 4,
+            //       //           ),
+            //       //           Expanded(
+            //       //             child: Text(
+            //       //               'Type',
+            //       //               style: TextStyle(
+            //       //                 fontSize: 14,
+            //       //                 // fontWeight: FontWeight.bold,
+            //       //                 color: Color(0xFF8A95A8),
+            //       //               ),
+            //       //               overflow: TextOverflow.ellipsis,
+            //       //             ),
+            //       //           ),
+            //       //         ],
+            //       //       ),
+            //       //       items: items
+            //       //           .map((String item) => DropdownMenuItem<String>(
+            //       //                 value: item,
+            //       //                 child: Text(
+            //       //                   item,
+            //       //                   style: const TextStyle(
+            //       //                     fontSize: 14,
+            //       //                     fontWeight: FontWeight.bold,
+            //       //                     color: Colors.black,
+            //       //                   ),
+            //       //                   overflow: TextOverflow.ellipsis,
+            //       //                 ),
+            //       //               ))
+            //       //           .toList(),
+            //       //       value: selectedValue,
+            //       //       onChanged: (value) {
+            //       //         setState(() {
+            //       //           selectedValue = value;
+            //       //         });
+            //       //       },
+            //       //       buttonStyleData: ButtonStyleData(
+            //       //         height:
+            //       //             MediaQuery.of(context).size.width < 500 ? 40 : 50,
+            //       //         // width: 180,
+            //       //         width: MediaQuery.of(context).size.width < 500
+            //       //             ? MediaQuery.of(context).size.width * .35
+            //       //             : MediaQuery.of(context).size.width * .4,
+            //       //         padding: const EdgeInsets.only(left: 14, right: 14),
+            //       //         decoration: BoxDecoration(
+            //       //           borderRadius: BorderRadius.circular(2),
+            //       //           border: Border.all(
+            //       //             // color: Colors.black26,
+            //       //             color: const Color(0xFF8A95A8),
+            //       //           ),
+            //       //           color: Colors.white,
+            //       //         ),
+            //       //         elevation: 0,
+            //       //       ),
+            //       //       dropdownStyleData: DropdownStyleData(
+            //       //         maxHeight: 200,
+            //       //         width: 200,
+            //       //         decoration: BoxDecoration(
+            //       //           borderRadius: BorderRadius.circular(14),
+            //       //           //color: Colors.redAccent,
+            //       //         ),
+            //       //         offset: const Offset(-20, 0),
+            //       //         scrollbarTheme: ScrollbarThemeData(
+            //       //           radius: const Radius.circular(40),
+            //       //           thickness: MaterialStateProperty.all(6),
+            //       //           thumbVisibility: MaterialStateProperty.all(true),
+            //       //         ),
+            //       //       ),
+            //       //       menuItemStyleData: const MenuItemStyleData(
+            //       //         height: 40,
+            //       //         padding: EdgeInsets.only(left: 14, right: 14),
+            //       //       ),
+            //       //     ),
+            //       //   ),
+            //       // ),
+            //     ],
+            //   ),
+            // ),
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 19, right: 13),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 22),
                   Material(
@@ -661,128 +929,62 @@ class _Applicants_tableState extends State<Applicants_table> {
                       // height: 40,
                       height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
                       width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
+                          ? MediaQuery.of(context).size.width * .45
+                          : MediaQuery.of(context).size.width * .4,
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: const Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                });
-                              },
-                              cursorColor: const Color.fromRGBO(21, 43, 81, 1),
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                // contentPadding:
-                                //     EdgeInsets.symmetric(horizontal: 5),
-                              ),
-                            ),
-                          ),
-                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(2),
+                        border: Border.all(color: const Color(0xFF8A95A8)),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: items
-                            .map((String item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ))
-                            .toList(),
-                        value: selectedValue,
+                      child: TextField(
                         onChanged: (value) {
                           setState(() {
-                            selectedValue = value;
+                            searchvalue = value;
                           });
                         },
-                        buttonStyleData: ButtonStyleData(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          // width: 180,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
-                              : MediaQuery.of(context).size.width * .4,
-                          padding: const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(
-                              // color: Colors.black26,
-                              color: const Color(0xFF8A95A8),
-                            ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
+                        cursorColor: Colors.blue,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Search here...",
+                          hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                          // contentPadding: EdgeInsets.all(10),
                         ),
                       ),
                     ),
                   ),
+                  const Spacer(),
+                  Row(
+                    children: [
+                      Text(
+                        'Added : ${applicantCount.toString()}',
+                        // 'Added : 5',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8A95A8),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                      Text(
+                        'Total: ${applicantCountLimit.toString()}',
+                        // 'Total: 10',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8A95A8),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    const SizedBox(width: 10),
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(width: 25),
                 ],
               ),
             ),
@@ -796,38 +998,39 @@ class _Applicants_tableState extends State<Applicants_table> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
-                          child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                        child: SpinKitFadingCircle(
+                          color: Colors.black,
+                          size: 40.0,
+                        ),
+                      );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(child: Text('No data available'));
                     } else {
                       var data = snapshot.data!;
-                      // print('yash ${snapshot.data!.toList()}');
-                      if (selectedValue == null || selectedValue!.isEmpty) {
+
+                      if (selectedValue == null && searchvalue.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
-                      } else if (selectedValue!.isNotEmpty) {
+                      } else if (searchvalue.isNotEmpty) {
                         data = snapshot.data!
                             .where((applicant) =>
                                 applicant.applicantFirstName!
                                     .toLowerCase()
-                                    .contains(selectedValue!.toLowerCase()) ||
+                                    .contains(searchvalue.toLowerCase()) ||
                                 applicant.applicantLastName!
                                     .toLowerCase()
-                                    .contains(selectedValue!.toLowerCase()))
+                                    .contains(searchvalue.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
                             .where((applicant) =>
-                                applicant.applicantStatus.first.status ==
-                                selectedValue)
+                                applicant.applicantFirstName == selectedValue)
                             .toList();
                       }
+
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -843,7 +1046,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: Color.fromRGBO(21, 43, 83, 1))),
+                                      color:
+                                          const Color.fromRGBO(21, 43, 83, 1))),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -855,8 +1059,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: Color.fromRGBO(21, 43, 83, 1),
-                                      ),
+                                          color: const Color.fromRGBO(
+                                              21, 43, 83, 1)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -904,32 +1108,19 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    '   ${applicant.applicantFirstName}',
-                                                    style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${applicant.applicantLastName}',
-                                                    style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
+                                                    child: Text(
+                                                      '${applicant.applicantFirstName} ${applicant.applicantLastName}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 83, 1),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -942,7 +1133,25 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 Expanded(
                                                   child: Text(
                                                     '${applicant.applicantEmail}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
+                                                    style: const TextStyle(
                                                       color: Color.fromRGBO(
                                                           21, 43, 83, 1),
                                                       fontWeight:
@@ -993,69 +1202,32 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
-                                                                  TextSpan(
+                                                                  const TextSpan(
                                                                     text:
                                                                         'Phone Number : ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: applicant
-                                                                            .applicantPhoneNumber
-                                                                            ?.toString() ??
-                                                                        'N/A',
-                                                                    style: const TextStyle(
+                                                                    style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Status : ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ), // Bold and black
+                                                                                .bold,
+                                                                        color: Color.fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            83,
+                                                                            1)),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: applicant
-                                                                            .applicantStatus
-                                                                            .isNotEmpty
-                                                                        ? applicant.applicantStatus.first.status ??
-                                                                            'N/A'
+                                                                    text: applicant.applicantPhoneNumber !=
+                                                                            null
+                                                                        ? applicant
+                                                                            .applicantPhoneNumber
+                                                                            .toString()
                                                                         : 'N/A',
                                                                     style: const TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w700,
                                                                         color: Colors
-                                                                            .grey), // Light and grey
+                                                                            .grey),
                                                                   ),
                                                                 ],
                                                               ),
@@ -1063,7 +1235,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ],
                                                         ),
                                                       ),
-                                                      Container(
+                                                      SizedBox(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
@@ -1083,6 +1255,18 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                               onPressed:
                                                                   () async {
                                                                 // handleEdit(applicant);
+                                                                var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => EditApplicant(
+                                                                              applicant: applicant,
+                                                                              applicantId: applicant.applicantId!,
+                                                                            )));
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(
+                                                                      () {});
+                                                                }
                                                               },
                                                             ),
                                                             IconButton(
@@ -1100,6 +1284,10 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                               ),
                                                               onPressed: () {
                                                                 // handleDelete(applicant);
+                                                                _showDeleteAlert(
+                                                                    context,
+                                                                    applicant
+                                                                        .applicantId!);
                                                               },
                                                             ),
                                                           ],
@@ -1111,7 +1299,6 @@ class _Applicants_tableState extends State<Applicants_table> {
                                               ),
                                             ),
                                           ),
-                                        //SizedBox(height: 13,),
                                       ],
                                     ),
                                   );
@@ -1206,8 +1393,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                 ),
               ),
             if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<propertytype>>(
-                future: futurePropertyTypes,
+              FutureBuilder<List<Datum>>(
+                future: futureApplicantdata,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -1228,18 +1415,18 @@ class _Applicants_tableState extends State<Applicants_table> {
                       _tableData = snapshot.data!;
                     } else if (searchvalue.isNotEmpty) {
                       _tableData = snapshot.data!
-                          .where((property) =>
-                              property.propertyType!
+                          .where((applicant) =>
+                              !applicant.applicantFirstName!
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()) ||
-                              property.propertysubType!
+                              applicant.applicantLastName!
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()))
                           .toList();
                     } else {
                       _tableData = snapshot.data!
-                          .where((property) =>
-                              property.propertyType == selectedValue)
+                          .where((applicant) =>
+                              applicant.applicantFirstName == selectedValue)
                           .toList();
                     }
                     totalrecords = _tableData.length;
@@ -1254,7 +1441,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                 children: [
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
-                                    child: Container(
+                                    child: SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           .91,
                                       child: Table(
@@ -1274,19 +1461,17 @@ class _Applicants_tableState extends State<Applicants_table> {
                                               // TableCell(child: Text('yash')),
                                               // TableCell(child: Text('yash')),
                                               _buildHeader(
-                                                  'Main Type',
+                                                  'Name',
                                                   0,
-                                                  (property) =>
-                                                      property.propertyType!),
-                                              _buildHeader(
-                                                  'Subtype',
-                                                  1,
                                                   (property) => property
-                                                      .propertysubType!),
+                                                      .applicantFirstName!),
                                               _buildHeader(
-                                                  'Created At', 2, null),
-                                              _buildHeader(
-                                                  'Updated At', 3, null),
+                                                  'Email',
+                                                  1,
+                                                  (property) =>
+                                                      property.applicantEmail!),
+                                              _buildHeader('Phone ..', 2, null),
+                                              _buildHeader('Home ..', 3, null),
                                               _buildHeader('Actions', 4, null),
                                             ],
                                           ),
@@ -1339,17 +1524,31 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 // Text(
                                                 //     '${formatDate(_pagedData[i].updatedAt!)}'),
                                                 _buildDataCell(_pagedData[i]
-                                                    .propertyType!),
+                                                    .applicantFirstName!),
                                                 _buildDataCell(_pagedData[i]
-                                                    .propertysubType!),
+                                                    .applicantEmail!),
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].createdAt!),
+                                                  _pagedData[i]
+                                                              .applicantHomeNumber ==
+                                                          null
+                                                      ? ''
+                                                      : _pagedData[i]
+                                                          .applicantHomeNumber!
+                                                          .toString(),
                                                 ),
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].updatedAt!),
+                                                  _pagedData[i]
+                                                              .applicantHomeNumber ==
+                                                          null
+                                                      ? ''
+                                                      : _pagedData[i]
+                                                          .applicantHomeNumber!
+                                                          .toString(),
                                                 ),
+                                                // _buildDataCell(
+                                                //   _pagedData[i]
+                                                //       .applicantLastName!,
+                                                // ),
                                                 _buildActionsCell(
                                                     _pagedData[i]),
                                               ],

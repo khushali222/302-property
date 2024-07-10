@@ -152,6 +152,12 @@ class Datum {
         'applicant': applicant?.toJson(),
         'lease': lease?.toJson(),
       };
+  Map<String, dynamic> toUpdateJson() {
+    final Map<String, dynamic> data = {};
+    if (applicant != null) data['applicant'] = applicant!.toJson();
+    if (lease != null) data['lease'] = lease!.toJson();
+    return data;
+  }
 }
 
 class ApplicantNotesAndFile {

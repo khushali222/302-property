@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:d_chart/d_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -49,6 +50,51 @@ class ApplicantRepository {
       return applicantJson.map((json) => Datum.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load applicants');
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateApplicants({
+    required String applicantId,
+    required Map<String, dynamic> applicantData,
+  }) async {
+    print('Update Yash :${jsonEncode(applicantData)}');
+    print('id is that :${applicantId}');
+
+    final response = await http.put(
+      Uri.parse('$Api_url/api/applicant/applicant/$applicantId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(applicantData),
+    );
+
+    if (response.statusCode == 200) {
+      // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
+      return jsonDecode(response.body);
+    } else {
+      // Log the response body for debugging
+      print('Failed to update data: ${response.body}');
+      throw Exception('Failed to update applicant data');
+    }
+  }
+
+  Future<Map<String, dynamic>> DeleteApplicant({required String? id}) async {
+    // print('$apiUrl/$id');
+
+    final http.Response response = await http.delete(
+      Uri.parse('$Api_url/api/applicant/applicant/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add property type');
     }
   }
 }

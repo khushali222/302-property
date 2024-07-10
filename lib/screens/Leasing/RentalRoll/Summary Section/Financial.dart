@@ -8,13 +8,17 @@ import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
+import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Summary%20Section/AddCard.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Summary%20Section/LeaseLedgerModel.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Summary%20Section/enterCharge.dart';
 
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
 
 class FinancialTable extends StatefulWidget {
   final String leaseId;
-  FinancialTable({required this.leaseId});
+  final String status;
+  FinancialTable({required this.leaseId, required this.status});
   @override
   _FinancialTableState createState() => _FinancialTableState();
 }
@@ -111,9 +115,9 @@ class _FinancialTableState extends State<FinancialTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Main Type ",
+                        ? const Text("Tenant",
                             style: TextStyle(color: Colors.white))
-                        : const Text("Main Type",
+                        : const Text("Tenant",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
@@ -162,7 +166,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("Subtypes",
+                    const Text("Balance",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending2
@@ -211,8 +215,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("Created At",
-                        style: TextStyle(color: Colors.white)),
+                    const Text("Date", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending3
                         ? const Padding(
@@ -257,18 +260,19 @@ class _FinancialTableState extends State<FinancialTable> {
   //   futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
   // }
 
-  void handleEdit(propertytype property) async {
+  void handleEdit(LeaseLedger? ledge) async {
     // Handle edit action
-    print('Edit ${property.sId}');
-    var check = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Edit_property_type(
-                  property: property,
-                )));
-    if (check == true) {
-      setState(() {});
-    }
+    // print('Edit ${applicant.sId}');
+    // var check = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => EditApplicant(
+    //               applicant: ,
+    //               applicantId: ,
+    //             )));
+    // if (check == true) {
+    //   setState(() {});
+    // }
   }
 
   void _showAlert(BuildContext context, String id) {
@@ -309,13 +313,13 @@ class _FinancialTableState extends State<FinancialTable> {
     ).show();
   }
 
-  List<propertytype> _tableData = [];
+  List<LeaseLedger?> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<propertytype> get _pagedData {
+  List<LeaseLedger?> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
@@ -329,7 +333,7 @@ class _FinancialTableState extends State<FinancialTable> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(propertytype d) getField,
+  void _sort<T>(Comparable<T> Function(LeaseLedger? d) getField,
       int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -343,14 +347,14 @@ class _FinancialTableState extends State<FinancialTable> {
     });
   }
 
-  void handleDelete(propertytype property) {
-    _showAlert(context, property.propertyId!);
+  void handleDelete(LeaseLedger? ledge) {
+    _showAlert(context, ledge!.data!.first.leaseId!);
     // Handle delete action
-    print('Delete ${property.sId}');
+    // print('Delete ${property.sId}');
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(propertytype d)? getField) {
+      Comparable<T> Function(LeaseLedger? d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -385,7 +389,7 @@ class _FinancialTableState extends State<FinancialTable> {
     );
   }
 
-  Widget _buildActionsCell(propertytype data) {
+  Widget _buildActionsCell(LeaseLedger? data) {
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -518,13 +522,105 @@ class _FinancialTableState extends State<FinancialTable> {
         child: Column(
           children: [
             const SizedBox(
-              height: 20,
+              height: 10,
+            ),
+            widget.status == 'Active'
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                            height: 36,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => AddCard()));
+                                },
+                                child: Text(
+                                  'Add Cards',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromRGBO(21, 43, 83, 1)),
+                                ))),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                            height: 36,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: () {},
+                                child: Text(
+                                  'Make Payment',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromRGBO(21, 43, 83, 1)),
+                                ))),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                            height: 34,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => enterCharge(
+                                                leaseId: widget.leaseId,
+                                              )));
+                                },
+                                child: Text(
+                                  'Enter Charge',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromRGBO(21, 43, 83, 1)),
+                                )))
+                      ],
+                    ),
+                  )
+                : Container(),
+            const SizedBox(
+              height: 6,
             ),
             if (MediaQuery.of(context).size.width > 500)
               const SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.only(
+                      left: 10.0, right: 10.0, bottom: 10.0),
                   child: FutureBuilder<LeaseLedger?>(
                     future: _leaseLedgerFuture,
                     builder: (context, snapshot) {
@@ -544,7 +640,7 @@ class _FinancialTableState extends State<FinancialTable> {
                         return SingleChildScrollView(
                           child: Column(
                             children: [
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 5),
                               _buildHeaders(),
                               const SizedBox(height: 20),
                               Container(
@@ -634,7 +730,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               .08),
                                                   Expanded(
                                                     child: Text(
-                                                      ' \$${data.totalAmount!.toStringAsFixed(2)}', // Show total amount
+                                                      ' \$${data.balance!.toStringAsFixed(2)}', // Show total amount
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -680,9 +776,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   bottom: 20),
                                               child: SingleChildScrollView(
                                                 child: Column(
-                                                  children:
-                                                      data.entry!.map((entry) {
-                                                    return Row(
+                                                  children: [
+                                                    Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .start,
@@ -706,18 +801,22 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               Text.rich(
                                                                 TextSpan(
                                                                   children: [
-                                                                    TextSpan(
+                                                                    const TextSpan(
                                                                       text:
-                                                                          'Balance: ',
+                                                                          'Increase : ',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .bold,
-                                                                          color:
-                                                                              blueColor),
+                                                                          color: Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1)),
                                                                     ),
                                                                     TextSpan(
-                                                                      text:
-                                                                          '\$${data.balance!.toDouble()}',
+                                                                      text: data
+                                                                          .totalAmount
+                                                                          .toString(),
                                                                       style: const TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
@@ -730,18 +829,22 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               Text.rich(
                                                                 TextSpan(
                                                                   children: [
-                                                                    TextSpan(
+                                                                    const TextSpan(
                                                                       text:
-                                                                          'Account: ',
+                                                                          'Tenant : ',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .bold,
-                                                                          color:
-                                                                              blueColor),
+                                                                          color: Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1)),
                                                                     ),
                                                                     TextSpan(
-                                                                      text: entry
-                                                                          .account,
+                                                                      text: data
+                                                                          .totalAmount
+                                                                          .toString(),
                                                                       style: const TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
@@ -751,35 +854,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Amount: ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color:
-                                                                              blueColor),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${entry.amount.toString()}',
-                                                                      style: const TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                              Colors.grey),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              // Add more fields here as necessary
                                                             ],
                                                           ),
                                                         ),
-                                                        Container(
+                                                        SizedBox(
                                                           width: 40,
                                                           child: Column(
                                                             children: [
@@ -798,20 +876,18 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 ),
                                                                 onPressed:
                                                                     () async {
-                                                                  // handleEdit(Propertytype);
-
-                                                                  // var check =
-                                                                  //     await Navigator.push(
-                                                                  //   context,
-                                                                  //   MaterialPageRoute(
-                                                                  //     builder: (context) =>
-                                                                  //         Edit_property_type(
-                                                                  //       property: Propertytype,
-                                                                  //     ),
-                                                                  //   ),
-                                                                  // );
-                                                                  // if (check == true) {
-                                                                  //   setState(() {});
+                                                                  // handleEdit(applicant);
+                                                                  // var check = await Navigator.push(
+                                                                  //     context,
+                                                                  //     MaterialPageRoute(
+                                                                  //         builder: (context) => EditApplicant(
+                                                                  //               applicant: applicant,
+                                                                  //               applicantId: applicant.applicantId!,
+                                                                  //             )));
+                                                                  // if (check ==
+                                                                  //     true) {
+                                                                  //   setState(
+                                                                  //       () {});
                                                                   // }
                                                                 },
                                                               ),
@@ -829,16 +905,105 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                           1),
                                                                 ),
                                                                 onPressed: () {
-                                                                  // handleDelete(Propertytype);
-                                                                  // _showAlert(context, data.id);
+                                                                  // handleDelete(applicant);
+                                                                  // _showDeleteAlert(
+                                                                  //     context,
+                                                                  //     applicant
+                                                                  //         .applicantId!);
                                                                 },
                                                               ),
                                                             ],
                                                           ),
                                                         ),
                                                       ],
-                                                    );
-                                                  }).toList(),
+                                                    ),
+                                                    Column(
+                                                      children: data.entry!
+                                                          .map((entry) {
+                                                        return Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 50,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <Widget>[
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Account: ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              "${entry.account}        ",
+                                                                          style: const TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: Colors.grey),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              "         \$${entry.amount.toString()}",
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: Color.fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  // Text.rich(
+                                                                  //   TextSpan(
+                                                                  //     children: [
+                                                                  //       TextSpan(
+                                                                  //         text:
+                                                                  //             'Amount: ',
+                                                                  //         style: TextStyle(
+                                                                  //             fontWeight: FontWeight.bold,
+                                                                  //             color: blueColor),
+                                                                  //       ),
+                                                                  //       TextSpan(
+                                                                  //         text:
+                                                                  //             '${entry.amount.toString()}',
+                                                                  //         style: const TextStyle(
+                                                                  //             fontWeight: FontWeight.w700,
+                                                                  //             color: Colors.grey),
+                                                                  //       ),
+                                                                  //     ],
+                                                                  //   ),
+                                                                  // ),
+                                                                  // Add more fields here as necessary
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ),
@@ -857,8 +1022,8 @@ class _FinancialTableState extends State<FinancialTable> {
                     },
                   )),
             if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<propertytype>>(
-                future: futurePropertyTypes,
+              FutureBuilder<LeaseLedger?>(
+                future: _leaseLedgerFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -869,30 +1034,9 @@ class _FinancialTableState extends State<FinancialTable> {
                     );
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  } else if (!snapshot.hasData) {
                     return const Center(child: Text('No data available'));
                   } else {
-                    _tableData = snapshot.data!;
-                    if (selectedValue == null && searchvalue.isEmpty) {
-                      _tableData = snapshot.data!;
-                    } else if (selectedValue == "All") {
-                      _tableData = snapshot.data!;
-                    } else if (searchvalue.isNotEmpty) {
-                      _tableData = snapshot.data!
-                          .where((property) =>
-                              property.propertyType!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()) ||
-                              property.propertysubType!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()))
-                          .toList();
-                    } else {
-                      _tableData = snapshot.data!
-                          .where((property) =>
-                              property.propertyType == selectedValue)
-                          .toList();
-                    }
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Column(
@@ -922,13 +1066,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                               _buildHeader(
                                                   'Main Type',
                                                   0,
-                                                  (property) =>
-                                                      property.propertyType!),
+                                                  (property) => property!
+                                                      .data!.first.totalAmount
+                                                      .toString()),
                                               _buildHeader(
                                                   'Subtype',
                                                   1,
-                                                  (property) => property
-                                                      .propertysubType!),
+                                                  (property) => property!
+                                                      .data!.first.totalAmount
+                                                      .toString()),
                                               _buildHeader(
                                                   'Created At', 2, null),
                                               _buildHeader(
@@ -971,17 +1117,29 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 ),
                                               ),
                                               children: [
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertyType!),
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertysubType!),
+                                                _buildDataCell(_pagedData[i]!
+                                                    .data!
+                                                    .first!
+                                                    .balance
+                                                    .toString()),
+                                                _buildDataCell(_pagedData[i]!
+                                                    .data!
+                                                    .first!
+                                                    .balance
+                                                    .toString()),
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].createdAt!),
+                                                  _pagedData[i]!
+                                                      .data!
+                                                      .first!
+                                                      .balance
+                                                      .toString(),
                                                 ),
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].updatedAt!),
+                                                  _pagedData[i]!
+                                                      .data!
+                                                      .first!
+                                                      .balance
+                                                      .toString(),
                                                 ),
                                                 _buildActionsCell(
                                                     _pagedData[i]),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/Model/EnterChargeModel.dart';
 import 'package:three_zero_two_property/Model/LeaseSummary.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Summary%20Section/LeaseLedgerModel.dart';
 import '../constant/constant.dart';
@@ -86,8 +87,11 @@ class LeaseRepository {
   Future<List<Lease1>> fetchLease(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     adminId = prefs.getString("adminId");
-    final response =
-        await http.get(Uri.parse('$Api_url/api/leases/leases/$adminId'));
+    String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('$Api_url/api/leases/leases/$adminId'),
+      headers: {"authorization": "CRM $token"},
+    );
     print('$Api_url/api/leases/leases/$adminId');
     print(adminId);
     print(response.body);
@@ -105,6 +109,9 @@ class LeaseRepository {
     required String leaseId,
     required String companyName,
   }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? token = prefs.getString('token');
     try {
       final Uri uri = Uri.parse('$Api_url/api/leases/leases/$leaseId')
           .replace(queryParameters: {
@@ -115,6 +122,7 @@ class LeaseRepository {
         uri,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          "authorization": "CRM $token",
         },
       );
 
@@ -134,8 +142,7 @@ class LeaseRepository {
   }
 
   Future<String> fetchCompanyName(String adminId) async {
-    final String apiUrl =
-        'http://192.168.1.16:4000/api/admin/admin_profile/$adminId';
+    final String apiUrl = '$Api_url/api/admin/admin_profile/$adminId';
 
     try {
       final http.Response response = await http.get(Uri.parse(apiUrl));
@@ -173,8 +180,13 @@ class LeaseRepository {
   }
 
   static Future<LeaseSummary> fetchLeaseSummary(String leaseId) async {
-    final response =
-        await http.get(Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
+      headers: {"authorization": "CRM $token"},
+    );
 
     if (response.statusCode == 200) {
       return LeaseSummary.fromJson(jsonDecode(response.body));
@@ -184,13 +196,42 @@ class LeaseRepository {
   }
 
   Future<LeaseLedger?> fetchLeaseLedger(String id) async {
-    final response =
-        await http.get(Uri.parse('$Api_url/api/payment/charges_payments/$id'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('$Api_url/api/payment/charges_payments/$id'),
+      headers: {"authorization": "CRM $token"},
+    );
 
     if (response.statusCode == 200) {
       return LeaseLedger.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load lease ledger');
     }
+  }
+
+  Future<int> postCharge(Charge charge) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final response = await http.post(
+      Uri.parse('$Api_url/api/charge/charge'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'CRM $token',
+      },
+      body: jsonEncode(charge.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      // Successfully posted
+      print('Charge posted successfully');
+    } else {
+      // Handle error
+      print('Failed to post charge: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    return response.statusCode;
   }
 }

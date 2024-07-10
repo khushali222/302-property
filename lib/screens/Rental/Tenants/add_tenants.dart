@@ -770,6 +770,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final bool obscureText;
+  final Function(String)? onChanged;
 
   final Widget? suffixIcon;
   final IconData? prefixIcon;
@@ -779,6 +780,7 @@ class CustomTextField extends StatefulWidget {
 
   CustomTextField({
     Key? key,
+    this.onChanged,
     this.controller,
     required this.hintText,
     this.obscureText = false,
@@ -843,6 +845,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     ],
                   ),
                   child: TextFormField(
+                    onChanged: widget.onChanged,
                     onTap: widget.onTap,
                     obscureText: widget.obscureText,
                     readOnly: widget.readOnnly,

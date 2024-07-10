@@ -79,8 +79,13 @@ class _DashboardState extends State<Dashboard> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
-      final response =
-          await http.get(Uri.parse('${Api_url}/api/admin/counts/${id!}'));
+
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('${Api_url}/api/admin/counts/${id!}'),
+        headers: {"authorization": "CRM $token"},
+      );
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
@@ -113,8 +118,12 @@ class _DashboardState extends State<Dashboard> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/payment/admin_balance/$id'));
+    String? token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/payment/admin_balance/$id'),
+      headers: {"authorization": "CRM $token"},
+    );
     print('${Api_url}/api/payment/admin_balance/$id');
 
     if (response.statusCode == 200) {

@@ -237,8 +237,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       children: [
                         SummaryPage(),
                         FinancialTable(
-                          leaseId: widget.leaseId,
-                        ),
+                            leaseId: widget.leaseId,
+                            status:
+                                '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}'),
                         Tenant(context),
                       ],
                     ),
