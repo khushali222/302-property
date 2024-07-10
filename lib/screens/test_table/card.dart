@@ -8,12 +8,6 @@ import 'package:http/http.dart' as http;
 
 import '../Rental/Tenants/add_tenants.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: DynamicCardScreen(),
-  ));
-}
-
 class DynamicCardScreen extends StatefulWidget {
 
   @override
@@ -22,6 +16,7 @@ class DynamicCardScreen extends StatefulWidget {
 
 class _DynamicCardScreenState extends State<DynamicCardScreen> {
   List<Map<String, dynamic>> rows = [];
+  List<Map<String, dynamic>> check = [];
 
 
   Map<String, List<Map<String, dynamic>>> groupedCharges = {};
@@ -36,6 +31,18 @@ class _DynamicCardScreenState extends State<DynamicCardScreen> {
     });
   }
 
+  void addcheck(){
+    setState(() {
+      check.add({
+        "checkController": TextEditingController(),
+      });
+    });
+  }
+  void removecheck(int index) {
+    setState(() {
+      rows.removeAt(index);
+    });
+  }
 
   void removeRow(int index) {
     setState(() {

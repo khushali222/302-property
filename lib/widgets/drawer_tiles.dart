@@ -78,6 +78,8 @@ void navigateToOption(
     "Work Order": (context) => Workorder_table(),
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
+    "Vendor": (context) => Vendor_table(),
+
   };
   Navigator.push(
     context,

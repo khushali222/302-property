@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
 
 import '../../../model/LeaseLedgerModel.dart';
+import '../../test_table/card.dart';
 import 'AddCard.dart';
 import 'enterCharge.dart';
 
@@ -573,7 +574,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                             BorderRadius.circular(10.0)),
                                     elevation: 0,
                                     backgroundColor: Colors.white),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DynamicCardScreen()));
+                                },
                                 child: Text(
                                   'Make Payment',
                                   style: TextStyle(

@@ -31,7 +31,10 @@ import '../../../repository/rentalowner.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../Staff_Member/Add_staffmember.dart';
 import '../../Staff_Member/Edit_staff_member.dart';
+
 import 'package:http/http.dart' as http;
+
+
 import 'newAddLease.dart';
 
 class Lease_table extends StatefulWidget {
@@ -107,7 +110,7 @@ class _Lease_tableState extends State<Lease_table> {
               ),
             ),
             Expanded(
-              // flex: 3,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -158,7 +161,7 @@ class _Lease_tableState extends State<Lease_table> {
               ),
             ),
             Expanded(
-             // flex: 2,
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -206,7 +209,7 @@ class _Lease_tableState extends State<Lease_table> {
               ),
             ),
             Expanded(
-             // flex: 2,
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -423,9 +426,8 @@ class _Lease_tableState extends State<Lease_table> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
     final response =
-        await http.get(Uri.parse('${Api_url}/api/leases/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+        await http.get(Uri.parse('${Api_url}/api/leases/limitation/$id'));
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -817,40 +819,47 @@ class _Lease_tableState extends State<Lease_table> {
                                                     ),
                                                   ),
                                                 ),
-                                                InkWell(
-                                                  onTap: (){
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                SummeryPageLease(
-                                                                    leaseId:
-                                                                    lease.leaseId!)));
-                                                  },
+                                                InkWell(onTap: (){
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SummeryPageLease(
+                                                                  leaseId:
+                                                                  lease.leaseId!)));
+                                                },
                                                   child: Expanded(
-                                                   // flex: 4, // Larger size for the first field
+                                                    flex: 4, // Larger size for the first field
                                                     child: Padding(
                                                       padding: const EdgeInsets.only(left: 8.0),
-                                                      child: Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: ' ${lease.rentalAddress} \n',
-                                                              style: TextStyle(
-                                                                color: blueColor,
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 13,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          // Navigator.push(
+                                                          //   context,
+                                                          //   MaterialPageRoute(builder: (context) => enterCharge(leaseId: lease.leaseId!)),
+                                                          // );
+                                                        },
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: ' ${lease.rentalAddress} \n',
+                                                                style: TextStyle(
+                                                                  color: blueColor,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 13,
+                                                                ),
                                                               ),
-                                                            ),
-                                                            TextSpan(
-                                                              text: lease.tenantNames,
-                                                              style: TextStyle(
-                                                                color: Colors.lightBlue, // Light blue color for tenant names
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 13,
+                                                              TextSpan(
+                                                                text: lease.tenantNames,
+                                                                style: TextStyle(
+                                                                  color: Colors.lightBlue, // Light blue color for tenant names
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 13,
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -858,7 +867,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                 ),
                                                 SizedBox(width: MediaQuery.of(context).size.width * .08),
                                                 Expanded(
-                                                //  flex: 2, // Smaller size for the second field
+                                                  flex: 2, // Smaller size for the second field
                                                   child: Text(
                                                     formatDate('${lease.startDate}'),
                                                     style: TextStyle(
@@ -870,7 +879,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                 ),
                                                 SizedBox(width: MediaQuery.of(context).size.width * .08),
                                                 Expanded(
-                                                 // flex: 2, // Smaller size for the third field
+                                                  flex: 2, // Smaller size for the third field
                                                   child: Text(
                                                     formatDate('${lease.endDate}'),
                                                     style: TextStyle(
@@ -1189,6 +1198,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => Edit_lease(lease: lease, leaseId: lease.leaseId!,
+                                                                         
                                                                         )));
                                                                 if (check ==
                                                                     true) {
