@@ -76,13 +76,14 @@ class _Edit_leaseState extends State<Edit_lease>
     //
     //   });
     // });
-
+    print(widget.leaseId);
     fetchDetails(widget.leaseId);
 
 
   }
   Future<void> fetchDetails(String leaseId) async {
-    try {
+    //try {
+
       LeaseDetails fetchedDetails = await LeaseRepository().fetchLeaseDetails(leaseId);
 
      // print(fetchedDetails.re);
@@ -125,9 +126,9 @@ class _Edit_leaseState extends State<Edit_lease>
           }).toList();
         }
       });
-    } catch (e) {
-     print('Failed to fetch lease details: $e');
-    }
+    //} catch (e) {
+     //print('Failed to fetch lease details: $e');
+    //}
   }
 
 
@@ -160,6 +161,7 @@ class _Edit_leaseState extends State<Edit_lease>
   Future<void> _loadProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
 
     setState(() {
       _isLoading = true;
@@ -167,7 +169,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
     try {
       final response =
-      await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+      await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
       print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {
@@ -200,10 +202,12 @@ class _Edit_leaseState extends State<Edit_lease>
     setState(() {
       _isLoading = true;
     });
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     try {
       final response =
-      await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'));
+      await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
@@ -236,9 +240,10 @@ class _Edit_leaseState extends State<Edit_lease>
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -3714,9 +3719,11 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
+
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -4302,10 +4309,15 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
       };
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String?  id = prefs.getString('adminId');
+      String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "authorization" : "CRM $token","id":"CRM $id",
+          'Content-Type': 'application/json'
+        },
         body: json.encode(formData),
       );
 
@@ -4429,9 +4441,10 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -4985,10 +4998,14 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
       };
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String?  id = prefs.getString('adminId');
+      String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "authorization" : "CRM $token","id":"CRM $id",
+          'Content-Type': 'application/json'},
         body: json.encode(formData),
       );
 
@@ -5113,8 +5130,9 @@ class _AddTenantState extends State<AddTenant> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
       final response =
-      await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'));
+      await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = json.decode(response.body);

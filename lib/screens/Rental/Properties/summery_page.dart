@@ -435,7 +435,6 @@ class _Summery_pageState extends State<Summery_page>
               controller: _tabController,
               children: [
                 Summary_page(),
-
                 // showdetails
                 //     ? unitScreen(properties: widget.properties
                 //         //properties: widget.properties,

@@ -79,6 +79,7 @@ void navigateToOption(
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
+    "Work Order": (context) => Cardpayment(leaseId: '',),
 
   };
   Navigator.push(

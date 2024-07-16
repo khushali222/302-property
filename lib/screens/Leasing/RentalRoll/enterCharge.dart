@@ -477,7 +477,6 @@ class _enterChargeState extends State<enterCharge> {
                                 );
                               },
                             );
-
                             if (pickedDate != null) {
                               String formattedDate =
                                   "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";

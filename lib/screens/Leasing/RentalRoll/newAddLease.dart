@@ -79,14 +79,14 @@ class _addLease3State extends State<addLease3>
   Future<void> _loadProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-
+    String? token = prefs.getString('token');
     setState(() {
       _isLoading = true;
     });
 
     try {
       final response =
-      await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+      await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
       print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {
@@ -119,10 +119,12 @@ class _addLease3State extends State<addLease3>
     setState(() {
       _isLoading = true;
     });
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     try {
       final response =
-      await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'));
+      await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
@@ -155,9 +157,10 @@ class _addLease3State extends State<addLease3>
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -2553,294 +2556,294 @@ class _addLease3State extends State<addLease3>
                   const SizedBox(
                     height: 10,
                   ),
-                  Container(
-                    height: 400,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color.fromRGBO(21, 43, 83, 1),
-                      ),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            'E-Signature',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF152b51),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            height: 330, // Set a fixed height for TabBarView
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            isEnjoyNowSelected = true;
-                                          });
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: isEnjoyNowSelected
-                                                ? null
-                                                : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
-                                            gradient: isEnjoyNowSelected
-                                                ? const LinearGradient(
-                                              colors: [
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                              ],
-                                            )
-                                                : null,
-                                            borderRadius:
-                                            const BorderRadius.only(
-                                              topLeft: Radius.circular(4),
-                                              bottomLeft: Radius.circular(4),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          padding: isEnjoyNowSelected
-                                              ? const EdgeInsets.symmetric(
-                                              vertical: 13)
-                                              : const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          child: isEnjoyNowSelected
-                                              ? Text(
-                                            "Draw Signature",
-                                            style: TextStyle(
-                                              color: !isEnjoyNowSelected
-                                                  ? Colors.transparent
-                                                  : Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                              : ShaderMask(
-                                            shaderCallback: (bounds) {
-                                              return const LinearGradient(
-                                                colors: [
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                ],
-                                              ).createShader(bounds);
-                                            },
-                                            child: Text(
-                                              "Draw Signature",
-                                              style: TextStyle(
-                                                color: isEnjoyNowSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            isEnjoyNowSelected = false;
-                                          });
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: isEnjoyNowSelected == false
-                                                ? null
-                                                : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
-                                            gradient:
-                                            isEnjoyNowSelected == false
-                                                ? const LinearGradient(
-                                              colors: [
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                              ],
-                                            )
-                                                : null,
-                                            borderRadius:
-                                            const BorderRadius.only(
-                                              topRight: Radius.circular(4),
-                                              bottomRight: Radius.circular(4),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          padding: isEnjoyNowSelected
-                                              ? const EdgeInsets.symmetric(
-                                              vertical: 12)
-                                              : const EdgeInsets.symmetric(
-                                              vertical: 13),
-                                          child: !isEnjoyNowSelected
-                                              ? Text(
-                                            "Type Signature",
-                                            style: TextStyle(
-                                              color: isEnjoyNowSelected
-                                                  ? Colors.transparent
-                                                  : Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                              : ShaderMask(
-                                            shaderCallback: (bounds) {
-                                              return const LinearGradient(
-                                                colors: [
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                ],
-                                              ).createShader(bounds);
-                                            },
-                                            child: Text(
-                                              "Type Signature",
-                                              style: TextStyle(
-                                                color: !isEnjoyNowSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                isEnjoyNowSelected
-                                    ? Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.end,
-                                  children: [
-                                    const SizedBox(height: 5),
-                                    Container(
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(10.0),
-                                        border: Border.all(width: 1),
-                                      ),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                          ),
-                                          backgroundColor: Colors.white,
-                                        ),
-                                        onPressed: () {
-                                          _signaturePadKey.currentState!
-                                              .clear();
-                                        },
-                                        child: const Text('Clear'),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Container(
-                                      child: SfSignaturePad(
-                                        key: _signaturePadKey,
-                                        strokeColor: Colors.black,
-                                        backgroundColor: Colors.grey[200],
-                                      ),
-                                      height: 200,
-                                      width: 300,
-                                    ),
-                                  ],
-                                )
-                                    : Padding(
-                                  padding:
-                                  const EdgeInsets.only(top: 16.0),
-                                  child: Container(
-                                    height: 250,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(10.0),
-                                      border: Border.all(width: 1),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 10.0),
-                                          child: TextFormField(
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'please enter signature';
-                                              }
-                                              return null;
-                                            },
-                                            maxLength: 30,
-                                            decoration: InputDecoration(
-                                              hintText: 'Type Signature',
-                                              hintStyle: TextStyle(
-                                                color: Colors.grey[400],
-                                                fontSize: 16,
-                                                fontWeight:
-                                                FontWeight.w500,
-                                              ),
-                                            ),
-                                            controller:
-                                            signatureController,
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                signatureController.text =
-                                                    newValue;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        Container(
-                                          child: Text(
-                                            '${signatureController.text}',
-                                            style:
-                                            GoogleFonts.dancingScript(
-                                              fontSize: 38,
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  // Container(
+                  //   height: 400,
+                  //   width: double.infinity,
+                  //   decoration: BoxDecoration(
+                  //     border: Border.all(
+                  //       color: const Color.fromRGBO(21, 43, 83, 1),
+                  //     ),
+                  //     borderRadius: BorderRadius.circular(10.0),
+                  //   ),
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(12.0),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         const SizedBox(
+                  //           height: 10,
+                  //         ),
+                  //         const Text(
+                  //           'E-Signature',
+                  //           style: TextStyle(
+                  //             fontSize: 16,
+                  //             fontWeight: FontWeight.w500,
+                  //             color: Color(0xFF152b51),
+                  //           ),
+                  //         ),
+                  //         const SizedBox(height: 10),
+                  //         SizedBox(
+                  //           height: 330, // Set a fixed height for TabBarView
+                  //           child: Column(
+                  //             children: [
+                  //               Row(
+                  //                 children: [
+                  //                   Expanded(
+                  //                     child: GestureDetector(
+                  //                       onTap: () {
+                  //                         setState(() {
+                  //                           isEnjoyNowSelected = true;
+                  //                         });
+                  //                       },
+                  //                       child: Container(
+                  //                         decoration: BoxDecoration(
+                  //                           border: isEnjoyNowSelected
+                  //                               ? null
+                  //                               : Border.all(
+                  //                               color: const Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               width: 1),
+                  //                           gradient: isEnjoyNowSelected
+                  //                               ? const LinearGradient(
+                  //                             colors: [
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                             ],
+                  //                           )
+                  //                               : null,
+                  //                           borderRadius:
+                  //                           const BorderRadius.only(
+                  //                             topLeft: Radius.circular(4),
+                  //                             bottomLeft: Radius.circular(4),
+                  //                           ),
+                  //                         ),
+                  //                         alignment: Alignment.center,
+                  //                         padding: isEnjoyNowSelected
+                  //                             ? const EdgeInsets.symmetric(
+                  //                             vertical: 13)
+                  //                             : const EdgeInsets.symmetric(
+                  //                             vertical: 12),
+                  //                         child: isEnjoyNowSelected
+                  //                             ? Text(
+                  //                           "Draw Signature",
+                  //                           style: TextStyle(
+                  //                             color: !isEnjoyNowSelected
+                  //                                 ? Colors.transparent
+                  //                                 : Colors.white,
+                  //                             fontWeight: FontWeight.bold,
+                  //                           ),
+                  //                         )
+                  //                             : ShaderMask(
+                  //                           shaderCallback: (bounds) {
+                  //                             return const LinearGradient(
+                  //                               colors: [
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                               ],
+                  //                             ).createShader(bounds);
+                  //                           },
+                  //                           child: Text(
+                  //                             "Draw Signature",
+                  //                             style: TextStyle(
+                  //                               color: isEnjoyNowSelected
+                  //                                   ? Colors.transparent
+                  //                                   : Colors.white,
+                  //                               fontWeight:
+                  //                               FontWeight.bold,
+                  //                             ),
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                   Expanded(
+                  //                     child: GestureDetector(
+                  //                       onTap: () {
+                  //                         setState(() {
+                  //                           isEnjoyNowSelected = false;
+                  //                         });
+                  //                       },
+                  //                       child: Container(
+                  //                         decoration: BoxDecoration(
+                  //                           border: isEnjoyNowSelected == false
+                  //                               ? null
+                  //                               : Border.all(
+                  //                               color: const Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               width: 1),
+                  //                           gradient:
+                  //                           isEnjoyNowSelected == false
+                  //                               ? const LinearGradient(
+                  //                             colors: [
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                             ],
+                  //                           )
+                  //                               : null,
+                  //                           borderRadius:
+                  //                           const BorderRadius.only(
+                  //                             topRight: Radius.circular(4),
+                  //                             bottomRight: Radius.circular(4),
+                  //                           ),
+                  //                         ),
+                  //                         alignment: Alignment.center,
+                  //                         padding: isEnjoyNowSelected
+                  //                             ? const EdgeInsets.symmetric(
+                  //                             vertical: 12)
+                  //                             : const EdgeInsets.symmetric(
+                  //                             vertical: 13),
+                  //                         child: !isEnjoyNowSelected
+                  //                             ? Text(
+                  //                           "Type Signature",
+                  //                           style: TextStyle(
+                  //                             color: isEnjoyNowSelected
+                  //                                 ? Colors.transparent
+                  //                                 : Colors.white,
+                  //                             fontWeight: FontWeight.bold,
+                  //                           ),
+                  //                         )
+                  //                             : ShaderMask(
+                  //                           shaderCallback: (bounds) {
+                  //                             return const LinearGradient(
+                  //                               colors: [
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                               ],
+                  //                             ).createShader(bounds);
+                  //                           },
+                  //                           child: Text(
+                  //                             "Type Signature",
+                  //                             style: TextStyle(
+                  //                               color: !isEnjoyNowSelected
+                  //                                   ? Colors.transparent
+                  //                                   : Colors.white,
+                  //                               fontWeight:
+                  //                               FontWeight.bold,
+                  //                             ),
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               isEnjoyNowSelected
+                  //                   ? Column(
+                  //                 crossAxisAlignment:
+                  //                 CrossAxisAlignment.end,
+                  //                 children: [
+                  //                   const SizedBox(height: 5),
+                  //                   Container(
+                  //                     height: 36,
+                  //                     decoration: BoxDecoration(
+                  //                       borderRadius:
+                  //                       BorderRadius.circular(10.0),
+                  //                       border: Border.all(width: 1),
+                  //                     ),
+                  //                     child: ElevatedButton(
+                  //                       style: ElevatedButton.styleFrom(
+                  //                         shape: RoundedRectangleBorder(
+                  //                           borderRadius:
+                  //                           BorderRadius.circular(10),
+                  //                         ),
+                  //                         backgroundColor: Colors.white,
+                  //                       ),
+                  //                       onPressed: () {
+                  //                         _signaturePadKey.currentState!
+                  //                             .clear();
+                  //                       },
+                  //                       child: const Text('Clear'),
+                  //                     ),
+                  //                   ),
+                  //                   const SizedBox(height: 5),
+                  //                   Container(
+                  //                     child: SfSignaturePad(
+                  //                       key: _signaturePadKey,
+                  //                       strokeColor: Colors.black,
+                  //                       backgroundColor: Colors.grey[200],
+                  //                     ),
+                  //                     height: 200,
+                  //                     width: 300,
+                  //                   ),
+                  //                 ],
+                  //               )
+                  //                   : Padding(
+                  //                 padding:
+                  //                 const EdgeInsets.only(top: 16.0),
+                  //                 child: Container(
+                  //                   height: 250,
+                  //                   decoration: BoxDecoration(
+                  //                     borderRadius:
+                  //                     BorderRadius.circular(10.0),
+                  //                     border: Border.all(width: 1),
+                  //                   ),
+                  //                   child: Column(
+                  //                     children: [
+                  //                       Container(
+                  //                         padding:
+                  //                         const EdgeInsets.symmetric(
+                  //                             horizontal: 10.0),
+                  //                         child: TextFormField(
+                  //                           validator: (value) {
+                  //                             if (value == null ||
+                  //                                 value.isEmpty) {
+                  //                               return 'please enter signature';
+                  //                             }
+                  //                             return null;
+                  //                           },
+                  //                           maxLength: 30,
+                  //                           decoration: InputDecoration(
+                  //                             hintText: 'Type Signature',
+                  //                             hintStyle: TextStyle(
+                  //                               color: Colors.grey[400],
+                  //                               fontSize: 16,
+                  //                               fontWeight:
+                  //                               FontWeight.w500,
+                  //                             ),
+                  //                           ),
+                  //                           controller:
+                  //                           signatureController,
+                  //                           onChanged: (newValue) {
+                  //                             setState(() {
+                  //                               signatureController.text =
+                  //                                   newValue;
+                  //                             });
+                  //                           },
+                  //                         ),
+                  //                       ),
+                  //                       const SizedBox(height: 20),
+                  //                       Container(
+                  //                         child: Text(
+                  //                           '${signatureController.text}',
+                  //                           style:
+                  //                           GoogleFonts.dancingScript(
+                  //                             fontSize: 38,
+                  //                             color: Colors.blue,
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 10,
+                  // ),
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -3637,9 +3640,10 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -4225,10 +4229,14 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
       };
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String?  id = prefs.getString('adminId');
+      String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "authorization" : "CRM $token","id":"CRM $id",
+          'Content-Type': 'application/json'},
         body: json.encode(formData),
       );
 
@@ -4352,9 +4360,11 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
+
+    String?  id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -4908,10 +4918,14 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
       };
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String?  id = prefs.getString('adminId');
+      String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "authorization" : "CRM $token","id":"CRM $id",
+          'Content-Type': 'application/json'},
         body: json.encode(formData),
       );
 
@@ -5036,8 +5050,9 @@ class _AddTenantState extends State<AddTenant> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
       final response =
-      await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'));
+      await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {"authorization" : "CRM $token","id":"CRM $id",});
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = json.decode(response.body);

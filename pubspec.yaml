@@ -66,6 +66,7 @@ dependencies:
   syncfusion_flutter_signaturepad: ^25.2.7
   google_fonts:
   file_picker: ^6.2.1
+  flutter_slidable:
 
 dev_dependencies:
   flutter_test:

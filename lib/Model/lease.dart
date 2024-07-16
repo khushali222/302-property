@@ -89,8 +89,8 @@ class Entry {
       amount: json['amount'],
       chargeType: json['charge_type'],
       date: json['date'],
-      isRepeatable: json['is_repeatable'],
-      memo: json['memo'],
+      isRepeatable: json['is_repeatable'] ?? false,
+      memo: json['memo']??"",
       rentCycle: json['rent_cycle'],
       tenantId: json['tenant_id'],
     );

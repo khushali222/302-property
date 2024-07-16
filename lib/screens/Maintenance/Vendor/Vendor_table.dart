@@ -940,63 +940,66 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                         .width *
                                                         .08),
                                                 Expanded(
-                                                  child:Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      IconButton(
-                                                        icon: FaIcon(
-                                                          FontAwesomeIcons
-                                                              .edit,
-                                                          size: 20,
-                                                          color: Color
-                                                              .fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1),
+                                                  child: Container(
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 20,
                                                         ),
-                                                        onPressed:
-                                                            () async {
-                                                          // handleEdit(Propertytype);
-
-                                                            var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => edit_vendor(
-                                                                          vender_id: Propertytype.vendorId,
-                                                                        )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
-                                                                          () {
-                                                                            futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
-                                                                          });
-                                                                }
-                                                        },
-                                                      ),
-                                                      IconButton(
-                                                        icon: FaIcon(
-                                                          FontAwesomeIcons
-                                                              .trashCan,
-                                                          size: 20,
-                                                          color: Color
-                                                              .fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1),
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            var check = await
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => edit_vendor(
+                                                                      vender_id: Propertytype.vendorId,
+                                                                    )));
+                                                            if (check == true) {
+                                                              setState(() {});
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .edit,
+                                                              size: 20,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                  21,
+                                                                  43,
+                                                                  83,
+                                                                  1),
+                                                            ),
+                                                          ),
                                                         ),
-                                                        onPressed: () {
-                                                          print("edit calling");
-                                                          //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .vendorId!);
-                                                        },
-                                                      ),
-                                                    ],
-                                                  )
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            _showAlert(
+                                                                context,
+                                                                Propertytype
+                                                                    .vendorId!);
+                                                          },
+                                                          child: Container(
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .trashCan,
+                                                              size: 20,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                  21,
+                                                                  43,
+                                                                  83,
+                                                                  1),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                                 SizedBox(
                                                     width:

@@ -873,7 +873,7 @@ class CustomTextField extends StatefulWidget {
   final String? Function(String?)? validator;
   final bool obscureText;
   final Function(String)? onChanged;
-
+  final Function(String)? onChanged2;
   final Widget? suffixIcon;
   final IconData? prefixIcon;
   final void Function()? onSuffixIconPressed;
@@ -892,7 +892,7 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.validator,
     this.onSuffixIconPressed,
-    this.onTap, // Initialize onTap
+    this.onTap, this.onChanged2, // Initialize onTap
   }) : super(key: key);
 
   @override
@@ -950,6 +950,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       ],
                     ),
                     child: TextFormField(
+                      onFieldSubmitted: widget.onChanged2,
                       onChanged: widget.onChanged,
                       onTap: widget.onTap,
                       obscureText: widget.obscureText,

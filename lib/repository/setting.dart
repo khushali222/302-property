@@ -9,10 +9,6 @@ import 'package:http/http.dart'as http;
 import '../constant/constant.dart';
 import '../model/setting.dart';
 
-
-
-
-
 class SurchargeRepository {
   final String baseUrl;
 
@@ -126,8 +122,6 @@ class latefeeRepository {
     }
   }
 
-
-
   Future<bool> updateLatefeesData(String surchargeId, Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -173,4 +167,5 @@ class latefeeRepository {
       return false;
     }
   }
+
 }

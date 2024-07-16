@@ -9,19 +9,21 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
-
+import 'make_payment.dart';
 
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
 
 import '../../../model/LeaseLedgerModel.dart';
 import '../../test_table/card.dart';
-import 'AddCard.dart';
+
+import 'addcard/AddCard.dart';
 import 'enterCharge.dart';
 
 class FinancialTable extends StatefulWidget {
   final String leaseId;
+  final String tenantId;
   final String status;
-  FinancialTable({required this.leaseId, required this.status});
+  FinancialTable({required this.leaseId, required this.status, required this.tenantId});
   @override
   _FinancialTableState createState() => _FinancialTableState();
 }
@@ -66,6 +68,8 @@ class _FinancialTableState extends State<FinancialTable> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
+
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -550,7 +554,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => AddCard()));
+                                          builder: (context) => AddCard(leaseId: widget.leaseId,)));
                                 },
                                 child: Text(
                                   'Add Cards',
@@ -578,7 +582,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => DynamicCardScreen()));
+                                          builder: (context) => MakePayment(leaseId: widget.leaseId, tenantId: widget.tenantId,)));
                                 },
                                 child: Text(
                                   'Make Payment',
