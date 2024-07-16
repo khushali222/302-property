@@ -66,6 +66,7 @@ dependencies:
   syncfusion_flutter_signaturepad: ^25.2.7
   google_fonts:
   file_picker: ^6.2.1
+  flutter_slidable: ^3.1.1
 
 dev_dependencies:
   flutter_test:
@@ -127,6 +128,10 @@ flutter:
      - family: mulish
        fonts:
          - asset: assets/font/Mulish-ExtraLight.ttf
+
+
+
+         
 
 
   # For details regarding fonts from package dependencies,

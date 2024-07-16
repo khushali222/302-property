@@ -8,19 +8,17 @@ import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
-import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
-
-
-import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
-
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/AddCard/AddCard/AddCard.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/make_payment.dart';
 import '../../../model/LeaseLedgerModel.dart';
-import 'AddCard.dart';
 import 'enterCharge.dart';
 
 class FinancialTable extends StatefulWidget {
+  final String tenantId;
   final String leaseId;
   final String status;
-  FinancialTable({required this.leaseId, required this.status});
+  FinancialTable(
+      {required this.leaseId, required this.status, required this.tenantId});
   @override
   _FinancialTableState createState() => _FinancialTableState();
 }
@@ -549,7 +547,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => AddCard()));
+                                          builder: (context) => AddCard(
+                                                leaseId: widget.leaseId,
+                                              )));
                                 },
                                 child: Text(
                                   'Add Cards',
@@ -557,7 +557,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       fontSize: 12,
                                       color: Color.fromRGBO(21, 43, 83, 1)),
                                 ))),
-                         SizedBox(
+                        SizedBox(
                           width: 5,
                         ),
                         Container(
@@ -573,14 +573,22 @@ class _FinancialTableState extends State<FinancialTable> {
                                             BorderRadius.circular(10.0)),
                                     elevation: 0,
                                     backgroundColor: Colors.white),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MakePayment(
+                                                leaseId: widget.leaseId,
+                                                tenantId: widget.tenantId,
+                                              )));
+                                },
                                 child: Text(
                                   'Make Payment',
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: Color.fromRGBO(21, 43, 83, 1)),
                                 ))),
-                         SizedBox(
+                        SizedBox(
                           width: 5,
                         ),
                         Container(
@@ -635,7 +643,9 @@ class _FinancialTableState extends State<FinancialTable> {
                         );
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData) {
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.data == null ||
+                          snapshot.data!.data!.isEmpty) {
                         return Center(child: Text('No data found'));
                       } else {
                         final leaseLedger = snapshot.data!;

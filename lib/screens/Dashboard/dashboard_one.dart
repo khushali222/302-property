@@ -79,18 +79,15 @@ class _DashboardState extends State<Dashboard> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
-       String? token = prefs.getString('token');
+      String? token = prefs.getString('token');
+      print('token ${token}');
 
-      final response =
-          await http.get(
-              Uri.parse('${Api_url}/api/admin/counts/${id!}'),
-            headers: {
-                 "id":"CRM $id",
-                 "authorization": "CRM $token",
-                 "Content-Type": "application/json"
-            }
-
-            );
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/admin/counts/${id!}'), headers: {
+        "id": "CRM $id",
+        "authorization": "CRM $token",
+        "Content-Type": "application/json"
+      });
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
@@ -123,16 +120,13 @@ class _DashboardState extends State<Dashboard> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
-     String? token = prefs.getString('token');
-    final response =
-        await http.get(
-            Uri.parse('${Api_url}/api/payment/admin_balance/$id'),
-            headers: {
-              "authorization": "CRM $token",
-              "id":"CRM $id",
-              "Content-Type": "application/json"
-            }
-        );
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/payment/admin_balance/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+      "Content-Type": "application/json"
+    });
     print('${Api_url}/api/payment/admin_balance/$id');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);

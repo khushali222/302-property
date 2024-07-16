@@ -52,10 +52,14 @@ class _enterChargeState extends State<enterCharge> {
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
+    print(token);
     String? id = prefs.getString("adminId");
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
-      headers: {"authorization": "CRM $token","id":"CRM $id",},
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
     );
 
     if (response.statusCode == 200) {
@@ -89,7 +93,10 @@ class _enterChargeState extends State<enterCharge> {
       String? id = prefs.getString("adminId");
       final response = await http.get(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
-        headers: {"authorization": "CRM $token","id":"CRM $id",},
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
       );
 
       if (response.statusCode == 200) {

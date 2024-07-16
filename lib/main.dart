@@ -1,12 +1,9 @@
-//import 'package:device_preview/device_preview.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:three_zero_two_property/provider/add_property.dart';
 import 'package:three_zero_two_property/provider/lease_provider.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
-
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
 // void main() {
@@ -107,21 +104,20 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
   // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      // navigatorKey: navigatorKey,
-      theme: ThemeData(
-        iconTheme: IconThemeData(color: Colors.black),
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromRGBO(21, 43, 83, 1)),
-        useMaterial3: false,
-      ),
-      home: SplashScreen(),
-    );
+        debugShowCheckedModeBanner: false,
+        // navigatorKey: navigatorKey,
+        theme: ThemeData(
+          iconTheme: IconThemeData(color: Colors.black),
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: Color.fromRGBO(21, 43, 83, 1)),
+          useMaterial3: false,
+        ),
+        home: SplashScreen());
   }
 }
 
