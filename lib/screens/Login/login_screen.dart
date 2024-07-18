@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ import 'package:three_zero_two_property/screens/Password/changepassword.dart';
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
 
+import '../../StaffModule/screen/dashboard.dart';
+import '../../TenantsModule/screen/dashboard.dart';
 import '../../constant/constant.dart';
 import '../Dashboard/dashboard_one.dart';
 import '../Password/forgotpassword.dart';
@@ -25,19 +28,33 @@ class Login_Screen extends StatefulWidget {
 }
 
 class _Login_ScreenState extends State<Login_Screen> {
+  String? selectedRole; // Initially, no role is selected
+
+  final List<Map<String, String>> roles = [
+    {'role_id': '1', 'role_name': 'Admin'},
+    {'role_id': '2', 'role_name': 'Staffmember'},
+    {'role_id': '3', 'role_name': 'Tenant'},
+    {'role_id': '4', 'role_name': 'Vendor'}
+  ];
+
   TextEditingController password = TextEditingController();
-  // TextEditingController lastname = TextEditingController();
+   TextEditingController company = TextEditingController();
   TextEditingController email = TextEditingController();
 
   bool passworderror = false;
   bool visiable_password = true;
   bool emailerror = false;
+  bool companyerror = false;
+  bool roleerror = false;
 
   bool loading = false;
   String passwordmessage = "";
-  // String lastnamemessage = "";
+   String companymessage = "";
   String emailmessage = "";
+  String rolemessage = "";
   final GlobalKey formkey = GlobalKey<FormState>();
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -48,7 +65,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           child: ListView(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
+                height: MediaQuery.of(context).size.height * 0.05,
               ),
               Image(
                 image: AssetImage('assets/images/logo.png'),
@@ -83,6 +100,74 @@ class _Login_ScreenState extends State<Login_Screen> {
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 35,),
+
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: const Text('Select Role'),
+                    value: selectedRole,
+                    items: roles.map((role) {
+                      return DropdownMenuItem<String>(
+                        value: role['role_id'],
+                        child: Text(role['role_name']!),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRole = value;
+                        roleerror = false;
+                      });
+                      print('Selected role_id: $selectedRole');
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      height: 45,
+                      width: 170,
+                      padding: const EdgeInsets.only(left: 14, right: 14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      elevation: 2,
+                    ),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                      ),
+                      iconSize: 24,
+                      iconEnabledColor: Color(0xFFb0b6c3),
+                      iconDisabledColor: Colors.grey,
+                    ),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(6),
+                        thickness: MaterialStateProperty.all(6),
+                        thumbVisibility: MaterialStateProperty.all(true),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                      padding: EdgeInsets.only(left: 14, right: 14),
+                    ),
+                  ),
+                ),
+              ),
+              roleerror
+                  ? Center(
+                  child: Text(
+                    rolemessage,
+                    style: TextStyle(color: Colors.red),
+                  ))
+                  : Container(),
+
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.025,
               ),
               // Email
               Row(
@@ -159,6 +244,86 @@ class _Login_ScreenState extends State<Login_Screen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.025,
               ),
+              if(selectedRole !="1" && selectedRole != null)
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.099,
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromRGBO(196, 196, 196, .3),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: TextField(
+                                  keyboardType: TextInputType.emailAddress,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      companyerror = false;
+                                    });
+                                  },
+                                  controller: company,
+                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                  decoration: InputDecoration(
+                                    enabledBorder: companyerror
+                                        ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
+                                        : InputBorder.none,
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.all(14),
+                                    prefixIcon: Container(
+                                      height: 20,
+                                      width: 20,
+                                      padding: EdgeInsets.all(13),
+                                      child: FaIcon(
+                                        FontAwesomeIcons.businessTime,
+                                        size: 20,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    hintText: "Company Name",
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey[600], fontSize: 15),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.095,
+                      ),
+                    ],
+                  ),
+                  companyerror
+                      ? Center(
+                      child: Text(
+                        companymessage,
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ))
+                      : Container(),
+
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.025,
+                  ),
+                ],
+              ),
+
               // Password
               Row(
                 children: [
@@ -294,11 +459,13 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                 ],
               ),
-
-              // Login button
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.16,
+                height: MediaQuery.of(context).size.height * 0.025,
               ),
+              // Login button
+              /*SizedBox(
+                height: MediaQuery.of(context).size.height * 0.16,
+              ),*/
               GestureDetector(
                 onTap: () async {
                   setState(() {
@@ -329,13 +496,42 @@ class _Login_ScreenState extends State<Login_Screen> {
                         //firstnamemessage = "Firstname is required";
                       });
                     }
+                    if(selectedRole == null){
+                      setState(() {
+                        roleerror = true;
+                        rolemessage = "Please select the role";
+                      });
+                    }
+                    else{
+                      setState(() {
+                        roleerror = false;
+                        //firstnamemessage = "Firstname is required";
+                      });
+                    }
+                    if(selectedRole != "1" && selectedRole != null && company.text.isEmpty){
+                      setState(() {
+                        companyerror = true;
+                        companymessage = "Company Name is required";
+                      });
+                    }
+                    else{
+                      setState(() {
+                        companyerror = false;
+                        //firstnamemessage = "Firstname is required";
+                      });
+                    }
+
+
                   });
 
-                  if (emailerror == false && passworderror == false) {
-                    await loginsubmit();
+                  if (emailerror == false && passworderror == false && roleerror == false && companyerror == false) {
 
+                    if(selectedRole == "1")
+                       await loginsubmit();
+                    if(selectedRole != "1")
+                    await checkCompany(company.text);
                     // Save authentication status to SharedPreferences
-                    /*// Navigate to the appropriate screen based on authentication status
+                   /* // Navigate to the appropriate screen based on authentication status
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -430,9 +626,11 @@ class _Login_ScreenState extends State<Login_Screen> {
   Future<void> checkToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
+    List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
+    String rolename  =selectedroledata.first["role_name"];
 
     final response = await http.post(
-      Uri.parse('${Api_url}/api/admin/token_check_api'),
+      Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/token_check_api'),
       headers: {
        // "authorization": "CRM $token",
         //"id":"CRM $id",
@@ -446,9 +644,10 @@ class _Login_ScreenState extends State<Login_Screen> {
       print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
+      prefs.setString("role", "admin");
       print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
-      prefs.setString('adminId', adminId!);
+    //  prefs.setString('adminId', adminId!);
       prefs.setString('first_name', jsonData['data']['first_name']);
       prefs.setString('last_name', jsonData['data']['last_name']);
       prefs.setString('first_name', jsonData['data']['first_name']);
@@ -459,7 +658,223 @@ class _Login_ScreenState extends State<Login_Screen> {
       print('Failed to check token');
     }
   }
+  Future<void> checkTokenStaff(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String? token = prefs.getString('token');
+    List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
+    String rolename  =selectedroledata.first["role_name"];
 
+    final response = await http.post(
+      Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/token_check'),
+      headers: {
+        // "authorization": "CRM $token",
+        //"id":"CRM $id",
+        "Content-Type": "application/json"
+      },
+      body: json.encode({"token": token}),
+    );
+    print(response.body);
+    final jsonData = json.decode(response.body);
+    if (jsonData['id'] != "") {
+      print(jsonData);
+      //prefs.setString('checkedToken',jsonData["token"]);
+      // String? adminId = jsonData['data']['admin_id'];
+      // print('Admin ID: $adminId');
+
+      prefs.setString("staff_id", jsonData["${rolename.toLowerCase()}_id"]);
+      prefs.setString("role", rolename);
+      print(jsonData["${rolename.toLowerCase()}_firstName"]);
+
+      prefs.setString('checkedToken', token);
+      //  prefs.setString('adminId', adminId!);
+      String stafffirstname = jsonData['staffmember_name'];
+      List<String> firstname =stafffirstname.split(" ") ;
+      print(firstname);
+      prefs.setString('first_name', firstname.first);
+      prefs.setString('last_name', firstname[1]);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
+    } else {
+      print('Failed to check token');
+    }
+  }
+  Future<void> checkTokenTenant(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String? token = prefs.getString('token');
+    List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
+    String rolename  =selectedroledata.first["role_name"];
+
+    final response = await http.post(
+      Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/token_check'),
+      headers: {
+        // "authorization": "CRM $token",
+        //"id":"CRM $id",
+        "Content-Type": "application/json"
+      },
+      body: json.encode({"token": token}),
+    );
+    print(response.body);
+    final jsonData = json.decode(response.body);
+    if (jsonData['id'] != "") {
+      print(jsonData);
+      //prefs.setString('checkedToken',jsonData["token"]);
+      // String? adminId = jsonData['data']['admin_id'];
+      // print('Admin ID: $adminId');
+      prefs.setString("role", rolename);
+      print(jsonData["${rolename.toLowerCase()}_firstName"]);
+      prefs.setString("tenant_id", jsonData["${rolename.toLowerCase()}_id"]);
+      prefs.setString('checkedToken', token);
+      //  prefs.setString('adminId', adminId!);
+       prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
+      prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastName']);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard_tenants()));
+    } else {
+      print('Failed to check token');
+    }
+  }
+  Future<void> checkTokenVendor(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String? token = prefs.getString('token');
+    List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
+    String rolename  =selectedroledata.first["role_name"];
+
+    final response = await http.post(
+      Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/token_check'),
+      headers: {
+        // "authorization": "CRM $token",
+        //"id":"CRM $id",
+        "Content-Type": "application/json"
+      },
+      body: json.encode({"token": token}),
+    );
+    print(response.body);
+    final jsonData = json.decode(response.body);
+    if (jsonData['id'] != "") {
+      print(jsonData);
+      //prefs.setString('checkedToken',jsonData["token"]);
+      // String? adminId = jsonData['data']['admin_id'];
+      // print('Admin ID: $adminId');
+      prefs.setString("role", jsonData["${rolename.toLowerCase()}_id"]);
+      print(jsonData["${rolename.toLowerCase()}_firstName"]);
+
+      prefs.setString('checkedToken', token);
+      //  prefs.setString('adminId', adminId!);
+      /* prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
+      prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastname']);
+*/
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
+    } else {
+      print('Failed to check token');
+    }
+  }
+  Future<void> checkCompany(String token) async {
+    setState(() {
+      loading = true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String? token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/admin/check_company/${token}'),
+      headers: {
+        // "authorization": "CRM $token",
+        //"id":"CRM $id",
+        "Content-Type": "application/json"
+      },
+     // body: json.encode({"token": token}),
+    );
+    print(response.body);
+    final jsonData = json.decode(response.body);
+    //if (jsonData["data"]['id'] != "") {
+      print(jsonData);
+     if(jsonData["statusCode"] ==200)
+       {
+         //prefs.setString('checkedToken',jsonData["token"]);
+         String? adminId = jsonData['data']['admin_id'];
+         print('Admin ID: $adminId');
+         prefs.setString('checkedToken', token);
+         prefs.setString('adminId', adminId!);
+         /*prefs.setString('first_name', jsonData['data']['first_name']);
+      prefs.setString('last_name', jsonData['data']['last_name']);
+      prefs.setString('first_name', jsonData['data']['first_name']);
+      prefs.setString('last_name', jsonData['data']['last_name']);*/
+         /* Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));*/
+         loginsubmit_usingrole(adminId);
+       }
+      else{
+        setState(() {
+          companyerror = true;
+          companymessage = "Company is not found";
+          loading = false;
+        });
+     }
+
+  }
+  Future<void> loginsubmit_usingrole(String adminId) async {
+    setState(() {
+      loading = true;
+    });
+    List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
+    String rolename  =selectedroledata.first["role_name"];
+
+    print("${Api_url}/api/${rolename.toLowerCase()}/login");
+    print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
+    final response = await http.post(Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/login'),
+        body: {"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
+    print(response.body);
+    final jsonData = json.decode(response.body);
+    if (jsonData["statusCode"] == 200) {
+      print(jsonData);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isAuthenticated', true);
+      prefs.setString('token', jsonData["token"]);
+      prefs.setString('adminId', adminId);
+      if(rolename == "Staffmember")
+      await checkTokenStaff(jsonData["token"]);
+      if(rolename == "Tenant")
+        await checkTokenTenant(jsonData["token"]);
+      if(rolename == "Vendor")
+        await checkTokenVendor(jsonData["token"]);
+
+
+      //  await checkToken("token", "id");
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => Dashboard()));
+      /*final List<dynamic> data = jsonData['data'];
+      List<String> urls = [];
+      List<String> banners = [];
+      List<bool> banner_status = [];
+      for (var item in data) {
+        urls.add(item['url']);
+        banners.add(item['id']);
+        banner_status.add(item['status']);
+      }
+      for (var i = 0 ; i < banner_status.length;i++){
+        setState(() {
+          if(banner_status[i])
+            selectedIndex = i;
+        });
+      }
+      setState(() {
+        imageUrls = urls;
+        bannerid = banners;
+        bannerstatus = banner_status;
+        isLoading = false;
+      });
+      print(imageUrls);*/
+      setState(() {
+        loading = false;
+      });
+    } else {
+      Fluttertoast.showToast(msg: jsonData["message"]);
+      setState(() {
+        loading = false;
+      });
+    }
+  }
   Future<void> loginsubmit() async {
     setState(() {
       loading = true;

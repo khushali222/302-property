@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/screen/dashboard.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../Login/login_screen.dart'; // Import your login screen file
 
@@ -20,19 +22,47 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(Duration(seconds: 3)); // Simulate splash screen delay
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
+    String role = prefs.getString("role") ??"";
+    if(role == "Admin") {
+
+    } else if(role == "Staffmember"){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => isAuthenticated == true ? Dashboard_staff() : Login_Screen(),
+        ),
+      );
+    }
+    else if(role == "Tenant"){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => isAuthenticated == true ? Dashboard_tenants() : Login_Screen(),
+        ),
+      );
+    }
+    else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>  Login_Screen(),
+        ),
+      );
+    }
+
     print(isAuthenticated);
-    Navigator.pushReplacement(
+   /* Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => isAuthenticated == true ? Dashboard() : Login_Screen(),
       ),
-    );
-    Navigator.pushReplacement(
+    );*/
+  /*  Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => isAuthenticated == true ? Dashboard() : Login_Screen(),
       ),
-    );
+    );*/
   }
   @override
   Widget build(BuildContext context) {
