@@ -12,10 +12,6 @@ import '../../../widgets/titleBar.dart';
 import 'add_vendor.dart';
 import 'edit_vendor.dart';
 
-
-
-
-
 class Vendor_table extends StatefulWidget {
   const Vendor_table({super.key});
 
@@ -117,29 +113,27 @@ class _Vendor_tableState extends State<Vendor_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name ",
-                        style: TextStyle(color: Colors.white))
-                        : Text("Name",
-                        style: TextStyle(color: Colors.white)),
+                        ? Text("Name ", style: TextStyle(color: Colors.white))
+                        : Text("Name", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -173,21 +167,21 @@ class _Vendor_tableState extends State<Vendor_table> {
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -219,7 +213,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                 child: Row(
                   children: [
                     Text("Action", style: TextStyle(color: Colors.white)),
-                   /* SizedBox(width: 5),
+                    /* SizedBox(width: 5),
                     ascending3
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
@@ -246,6 +240,7 @@ class _Vendor_tableState extends State<Vendor_table> {
       ),
     );
   }
+
   void initState() {
     super.initState();
     futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
@@ -254,13 +249,13 @@ class _Vendor_tableState extends State<Vendor_table> {
   void handleEdit(Vendor property) async {
     // Handle edit action
     //print('Edit ${property.sId}');
-   /* var check = await Navigator.push(
+    /* var check = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => Edit_property_type(
               property: property,
             )));*/
-   /* if (check == true) {
+    /* if (check == true) {
       setState(() {});
     }*/
     // final result = await Navigator.push(
@@ -300,14 +295,15 @@ class _Vendor_tableState extends State<Vendor_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = await VendorRepository(baseUrl: '').DeleteVender( vender_id: id).then((value) {
+            var data = await VendorRepository(baseUrl: '')
+                .DeleteVender(vender_id: id)
+                .then((value) {
               setState(() {
                 futurePropertyTypes =
                     VendorRepository(baseUrl: '').getVendors();
               });
             });
             // Add your delete logic here
-
 
             Navigator.pop(context);
           },
@@ -337,8 +333,8 @@ class _Vendor_tableState extends State<Vendor_table> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(Vendor d) getField,
-      int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(Vendor d) getField, int columnIndex,
+      bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -350,6 +346,7 @@ class _Vendor_tableState extends State<Vendor_table> {
       });
     });
   }
+
   Widget _buildDataCell(String text) {
     return TableCell(
       child: Padding(
@@ -358,14 +355,15 @@ class _Vendor_tableState extends State<Vendor_table> {
       ),
     );
   }
+
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Vendor d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -384,6 +382,7 @@ class _Vendor_tableState extends State<Vendor_table> {
       ),
     );
   }
+
   void handleDelete(Vendor property) {
     _showAlert(context, property.vendorId!);
     // Handle delete action
@@ -479,15 +478,15 @@ class _Vendor_tableState extends State<Vendor_table> {
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
           ),
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -500,15 +499,15 @@ class _Vendor_tableState extends State<Vendor_table> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -555,24 +554,41 @@ class _Vendor_tableState extends State<Vendor_table> {
                   ),
                   "Add Staff Member",
                   false),
-              buildDropdownListTile(context, FaIcon(
-                FontAwesomeIcons.key,
-                size: 20,
-                color: Colors.black,
-              ), "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],selectedSubtopic: "Vendor"),
-              buildDropdownListTile(context, FaIcon(
-                FontAwesomeIcons.thumbsUp,
-                size: 20,
-                color: Colors.black,
-              ),
-                  "Leasing", ["Rent Roll", "Applicants"],selectedSubtopic: "Vendor"),
+              buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.key,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Rental",
+                  ["Properties", "RentalOwner", "Tenants"],
+                  selectedSubtopic: "Vendor"),
+              buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.thumbsUp,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Leasing",
+                  ["Rent Roll", "Applicants"],
+                  selectedSubtopic: "Vendor"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"],selectedSubtopic: "Vendor"),
+                  ["Vendor", "Work Order"],
+                  selectedSubtopic: "Vendor"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -623,7 +639,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width * 0.034,
+                                    MediaQuery.of(context).size.width * 0.034,
                               ),
                             ),
                           ],
@@ -673,9 +689,11 @@ class _Vendor_tableState extends State<Vendor_table> {
                         children: [
                           Positioned.fill(
                             child: TextField(
-                              style:TextStyle(
-                                  fontSize:  MediaQuery.of(context).size.width < 500 ? 12 : 14
-                              ),
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -692,13 +710,15 @@ class _Vendor_tableState extends State<Vendor_table> {
                                   border: InputBorder.none,
                                   hintText: "Search here...",
                                   hintStyle: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18,
                                     // fontWeight: FontWeight.bold,
                                     color: Color(0xFF8A95A8),
                                   ),
-                                  contentPadding:
-                                  EdgeInsets.only(left: 5,bottom: 13,top: 14)
-                              ),
+                                  contentPadding: EdgeInsets.only(
+                                      left: 5, bottom: 13, top: 14)),
                             ),
                           ),
                         ],
@@ -706,7 +726,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                     ),
                   ),
                   SizedBox(width: 15),
-                /*  DropdownButtonHideUnderline(
+                  /*  DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
                       child: DropdownButton2<String>(
@@ -801,24 +821,24 @@ class _Vendor_tableState extends State<Vendor_table> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                           child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                        color: Colors.black,
+                        size: 40.0,
+                      ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(child: Text('No data available'));
                     } else {
                       var data = snapshot.data!;
-                      if (searchvalue!= "") {
+                      if (searchvalue != "") {
                         data = snapshot.data!
                             .where((property) =>
-                        property.vendorName!
-                            .toLowerCase()
-                            .contains(searchvalue!.toLowerCase()) ||
-                            property.vendorPhoneNumber!
-                                .toLowerCase()
-                                .contains(searchvalue!.toLowerCase()))
+                                property.vendorName!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()) ||
+                                property.vendorPhoneNumber!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()))
                             .toList();
                       }
                       sortData(data);
@@ -857,9 +877,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
@@ -890,15 +910,15 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                         left: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
-                                                        bottom: 10)
+                                                            bottom: 10)
                                                         : EdgeInsets.only(
-                                                        top: 10),
+                                                            top: 10),
                                                     child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                          .sortUp
+                                                              .sortUp
                                                           : FontAwesomeIcons
-                                                          .sortDown,
+                                                              .sortDown,
                                                       size: 20,
                                                       color: Color.fromRGBO(
                                                           21, 43, 83, 1),
@@ -911,34 +931,34 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .08),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
                                                 Expanded(
                                                   child: Text(
                                                     '${Propertytype.vendorPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .08),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
                                                 Expanded(
                                                   child: Container(
                                                     child: Row(
@@ -948,13 +968,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                         ),
                                                         InkWell(
                                                           onTap: () async {
-                                                            var check = await
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => edit_vendor(
-                                                                      vender_id: Propertytype.vendorId,
-                                                                    )));
+                                                            var check = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            edit_vendor(
+                                                                              vender_id: Propertytype.vendorId,
+                                                                            )));
                                                             if (check == true) {
                                                               setState(() {});
                                                             }
@@ -966,10 +987,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                               size: 20,
                                                               color: Color
                                                                   .fromRGBO(
-                                                                  21,
-                                                                  43,
-                                                                  83,
-                                                                  1),
+                                                                      21,
+                                                                      43,
+                                                                      83,
+                                                                      1),
                                                             ),
                                                           ),
                                                         ),
@@ -990,10 +1011,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                               size: 20,
                                                               color: Color
                                                                   .fromRGBO(
-                                                                  21,
-                                                                  43,
-                                                                  83,
-                                                                  1),
+                                                                      21,
+                                                                      43,
+                                                                      83,
+                                                                      1),
                                                             ),
                                                           ),
                                                         ),
@@ -1003,10 +1024,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .02),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .02),
                                               ],
                                             ),
                                           ),
@@ -1021,43 +1042,44 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                            .sortUp
+                                                                .sortUp
                                                             : FontAwesomeIcons
-                                                            .sortDown,
+                                                                .sortDown,
                                                         size: 50,
                                                         color:
-                                                        Colors.transparent,
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: <Widget>[
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                    'Email : ',
+                                                                        'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         color:
-                                                                        blueColor), // Bold and black
+                                                                            blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: '${Propertytype.vendorEmail}',
+                                                                    text:
+                                                                        '${Propertytype.vendorEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
+                                                                            FontWeight
+                                                                                .w700,
                                                                         color: Colors
                                                                             .grey), // Light and grey
                                                                   ),
@@ -1151,7 +1173,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                       //     ],
                                                       //   ),
                                                       // ),
-                                                     /* Container(
+                                                      /* Container(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
@@ -1188,7 +1210,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                          Border.all(color: Colors.grey),
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -1204,7 +1226,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               setState(() {
                                                 itemsPerPage = newValue!;
                                                 currentPage =
-                                                0; // Reset to first page when items per page change
+                                                    0; // Reset to first page when items per page change
                                               });
                                             },
                                           ),
@@ -1225,10 +1247,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_back),
@@ -1261,10 +1283,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
                                           : null,
                                     ),
                                   ],
@@ -1295,15 +1317,15 @@ class _Vendor_tableState extends State<Vendor_table> {
                     return Center(child: Text('No data available'));
                   } else {
                     _tableData = snapshot.data!;
-                   if (searchvalue != "") {
+                    if (searchvalue != "") {
                       _tableData = snapshot.data!
                           .where((property) =>
-                      property.vendorName!
-                          .toLowerCase()
-                          .contains(searchvalue.toLowerCase()) ||
-                          property.vendorPhoneNumber!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()))
+                              property.vendorName!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()) ||
+                              property.vendorPhoneNumber!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()))
                           .toList();
                     }
                     totalrecords = _tableData.length;
@@ -1323,13 +1345,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                                           .91,
                                       child: Table(
                                         defaultColumnWidth:
-                                        IntrinsicColumnWidth(),
+                                            IntrinsicColumnWidth(),
                                         children: [
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                // color: blueColor
-                                              ),
+                                                  // color: blueColor
+                                                  ),
                                             ),
                                             children: [
                                               // TableCell(child: Text('yash')),
@@ -1340,15 +1362,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               _buildHeader(
                                                   'Name',
                                                   0,
-                                                      (property) =>
-                                                  property.vendorName!),
+                                                  (property) =>
+                                                      property.vendorName!),
                                               _buildHeader(
                                                   'PhoneNumber',
                                                   1,
-                                                      (property) => property
+                                                  (property) => property
                                                       .vendorPhoneNumber!),
-                                              _buildHeader(
-                                                  'Email', 2, null),
+                                              _buildHeader('Email', 2, null),
 
                                               _buildHeader('Actions', 4, null),
                                             ],
@@ -1359,14 +1380,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   horizontal: BorderSide.none),
                                             ),
                                             children: List.generate(
-                                               4 ,
-                                                    (index) => TableCell(
+                                                4,
+                                                (index) => TableCell(
                                                     child:
-                                                    Container(height: 20))),
+                                                        Container(height: 20))),
                                           ),
                                           for (var i = 0;
-                                          i < _pagedData.length;
-                                          i++)
+                                              i < _pagedData.length;
+                                              i++)
                                             TableRow(
                                               decoration: BoxDecoration(
                                                 border: Border(
@@ -1380,10 +1401,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                       color: Color.fromRGBO(
                                                           21, 43, 81, 1)),
                                                   bottom: i ==
-                                                      _pagedData.length - 1
+                                                          _pagedData.length - 1
                                                       ? BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1))
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 81, 1))
                                                       : BorderSide.none,
                                                 ),
                                               ),
@@ -1401,12 +1422,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 //     '${formatDate(_pagedData[i].createdAt!)}'),
                                                 // Text(
                                                 //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                _buildDataCell(_pagedData[i]
-                                                    .vendorName!),
+                                                _buildDataCell(
+                                                    _pagedData[i].vendorName!),
                                                 _buildDataCell(_pagedData[i]
                                                     .vendorPhoneNumber!),
-                                                _buildDataCell(_pagedData[i]
-                                                    .vendorEmail!),
+                                                _buildDataCell(
+                                                    _pagedData[i].vendorEmail!),
 
                                                 _buildActionsCell(
                                                     _pagedData[i]),

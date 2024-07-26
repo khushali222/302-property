@@ -394,8 +394,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -521,6 +526,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   "Maintenance",
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "RentalOwner"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -825,8 +838,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           MaterialPageRoute(
                                                               builder: (context) =>
                                                                   Rentalowners_summery(
-                                                                    rentalOwnersid: rentals.rentalownerId!,)));
-                                                      },
+                                                                    rentalOwnersid:
+                                                                        rentals
+                                                                            .rentalownerId!,
+                                                                  )));
+                                                    },
                                                     child: Text(
                                                       '   ${rentals.rentalOwnername}',
                                                       style: TextStyle(

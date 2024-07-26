@@ -569,6 +569,14 @@ class _Lease_tableState extends State<Lease_table> {
                   "Maintenance",
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "Rent Roll"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),

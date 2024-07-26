@@ -616,8 +616,13 @@ class _Tenants_tableState extends State<Tenants_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/tenant/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/tenant/limitation/$id'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -764,6 +769,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                   "Maintenance",
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "Tenants"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -1114,7 +1127,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                           const EdgeInsets.all(
                                                               10.0),
                                                       child: Text(
-                                                        '${tenants.tenantFirstName} ${tenants.tenantLastName}',
+                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1151,8 +1164,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 Expanded(
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${tenants.createdAt}'),
+
+                                                    '${tenants.createdAt ?? ''}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

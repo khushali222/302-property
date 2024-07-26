@@ -37,10 +37,10 @@ class _ReportsMainScreenState extends State<ReportsMainScreen> {
                   context,
                   const Icon(
                     CupertinoIcons.circle_grid_3x3,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Dashboard",
-                  true),
+                  false),
               buildListTile(
                   context,
                   const Icon(

@@ -242,10 +242,10 @@ class _DashboardState extends State<Dashboard> {
                   context,
                   const FaIcon(
                     FontAwesomeIcons.letterboxd,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Reports",
-                  true),
+                  false),
             ],
           ),
         ),
