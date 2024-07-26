@@ -36,6 +36,7 @@ class Tenant {
   String? tenantAlternativeEmail;
   String? tenantPassword;
   String? tenantBirthDate;
+  bool? tenant_residentStatus;
   String? taxPayerId;
   String? comments;
   EmergencyContact? emergencyContact;
@@ -62,6 +63,7 @@ class Tenant {
     this.taxPayerId,
     this.comments,
     this.emergencyContact,
+    this.tenant_residentStatus,
     this.createdAt,
     this.updatedAt,
     this.isDelete,
@@ -80,6 +82,7 @@ class Tenant {
     tenantPhoneNumber = json['tenant_phoneNumber']??"";
     tenantAlternativeNumber = json['tenant_alternativeNumber']??"";
     tenantEmail = json['tenant_email']??"";
+    tenant_residentStatus = json['tenant_residentStatus']??false;
     tenantAlternativeEmail = json['tenant_alternativeEmail']??"";
     tenantPassword = json['tenant_password']??"";
     tenantBirthDate = json['tenant_birthDate']??"";
@@ -112,7 +115,8 @@ class Tenant {
     if (emergencyContact != null) {
       data['emergency_contact'] = emergencyContact!.toJson();
     }
-
+    data['createdAt'] = updatedAt;
+     data['updatedAt'] = createdAt;
     data['rental_adress'] = rentalAddress;
     data['rental_unit'] = rentalUnit;
     return data;

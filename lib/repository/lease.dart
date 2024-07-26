@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -196,9 +197,10 @@ class LeaseRepository {
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
     // Replace with your actual API call
+
     final response =
         await http.get(Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
-
+   print(response.body);
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -206,17 +208,23 @@ class LeaseRepository {
     }
   }
 
-  // Future<void> updateLease(String leaseId, Lease1 leaseData) async {
-  //   //final String apiUrl = 'https://saas.cloudrentalmanager.com/api/leases/leases/$leaseId';
+
+  // Future<void> updateLease(Lease1 lease) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   String?  id = prefs.getString('adminId');
+  //   final response = await http.put(
+  //     Uri.parse('$Api_url/api/leases/leases/${lease.leaseId}'),
   //
-  //   final http.Response response = await http.put(
-  //     Uri.parse('$Api_url/api/leases/leases/$leaseId'),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     headers: {
+  //       "authorization" : "CRM $token",
+  //       "id":"CRM $id",
+  //       'Content-Type': 'application/json',
   //     },
-  //     body: jsonEncode(leaseData.toJson()),
+  //     body: json.encode(lease.toJson()),
   //   );
   //
+  //   print(lease.leaseId);
   //   var responseData = json.decode(response.body);
   //   print(response.body);
   //   print(responseData);
@@ -228,31 +236,58 @@ class LeaseRepository {
   //     throw Exception('Failed to update lease');
   //   }
   // }
-  Future<void> updateLease(Lease1 lease) async {
+  Future<bool> updateLease(Lease lease) async {
+    print(lease);
+    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
-    final response = await http.put(
-      Uri.parse('$Api_url/api/leases/leases/${lease.leaseId}'),
+    String? id = prefs.getString('adminId');
 
-      headers: {
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
-        'Content-Type': 'application/json',
-      },
-      body: json.encode(lease.toJson()),
-    );
+    print('Lease ID: ${lease.leaseData.leaseId}');
+    print('Token: $token');
+    print('Admin ID: $id');
+    print('API URL: $Api_url/api/leases/leases/${lease.leaseData.leaseId}');
+    print('Lease Data: ${json.encode(lease)}');
 
-    print(lease.leaseId);
-    var responseData = json.decode(response.body);
-    print(response.body);
-    print(responseData);
+    try {
+      print('Entering the try block');
+      final response = await http.put(
+        Uri.parse('$Api_url/api/leases/leases/${lease.leaseData.leaseId}'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
+        body: json.encode(lease),
+      );
+      print('Request complete');
 
-    if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
-    } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to update lease');
+      var responseData = jsonDecode(response.body);
+      print('Response Data: $responseData');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          print('Response successfully: ${responseData['data']}');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Successfully updated lease');
+
+          return true;
+        } else {
+          print('Failed to add lease: ${responseData}');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to update lease');
+          return false;
+        }
+      } else {
+        print('Failed to add lease: ${responseData}');
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to update lease');
+        return false;
+      }
+    } catch (error) {
+      print('Exception occurred: $error');
+      Fluttertoast.showToast(msg: 'An error occurred: $error');
+      return false;
     }
   }
 
@@ -278,11 +313,12 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
+    print('$Api_url/api/leases/lease_summary/$leaseId');
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
       headers: {"authorization": "CRM $token","id":"CRM $id",},
     );
-
+    log(response.body);
     if (response.statusCode == 200) {
       return LeaseSummary.fromJson(jsonDecode(response.body));
     } else {

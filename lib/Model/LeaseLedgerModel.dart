@@ -83,7 +83,7 @@ class Data {
     isDelete = json['is_delete'];
     iV = json['__v'];
     tenantData = json['tenantData'];
-    balance = (json['balance'] as num?)?.toDouble(); // Parse as double
+    balance = (json['balance'] as num?)?.toDouble()??0.0; // Parse as double
   }
 
   Map<String, dynamic> toJson() {

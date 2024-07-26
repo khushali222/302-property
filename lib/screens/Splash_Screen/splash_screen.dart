@@ -27,12 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
         builder: (context) => isAuthenticated == true ? Dashboard() : Login_Screen(),
       ),
     );
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => isAuthenticated == true ? Dashboard() : Login_Screen(),
-      ),
-    );
+
   }
   @override
   Widget build(BuildContext context) {

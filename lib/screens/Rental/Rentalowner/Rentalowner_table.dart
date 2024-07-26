@@ -555,7 +555,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
                           : MediaQuery.of(context).size.width * 0.065,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      width:  (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -566,7 +568,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.034,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 14
+                                : 20,
                           ),
                         ),
                       ),
@@ -624,7 +628,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 19),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -1171,7 +1175,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                       // TableCell(child: Text('yash')),
                                       // TableCell(child: Text('yash')),
                                       // TableCell(child: Text('yash')),
-
                                       _buildHeader('Name', 0,
                                           (rental) => rental.rentalOwnername!),
                                       _buildHeader(

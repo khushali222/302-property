@@ -180,7 +180,7 @@ class LeaseData {
   String? companyName;
   String? endDate;
   List<Entry>? entry;
-  int? leaseAmount;
+  String? leaseAmount;
   String? leaseType;
   String? rentalId;
   String? startDate;

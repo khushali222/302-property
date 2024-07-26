@@ -603,12 +603,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
+                          ? 35
+                          : MediaQuery.of(context).size.width * 0.058,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width:  (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.3
+                          : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -623,7 +625,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width * 0.034,
+                                MediaQuery.of(context).size.width < 500
+                                    ? 14
+                                    : 20,
                               ),
                             ),
                           ],
@@ -653,7 +657,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 24),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -1313,7 +1317,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5),
+                                  horizontal: 22.0, vertical: 5),
                               child: Column(
                                 children: [
                                   SingleChildScrollView(

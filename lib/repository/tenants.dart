@@ -341,7 +341,7 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final String apiUrl = 'http://192.168.1.16:4000/api/admin/admin_profile/$adminId';
+    final String apiUrl = '$Api_url/api/admin/admin_profile/$adminId';
 
     try {
       final http.Response response = await http.get(Uri.parse(apiUrl),headers: {"authorization" : "CRM $token","id":"CRM $id",},);

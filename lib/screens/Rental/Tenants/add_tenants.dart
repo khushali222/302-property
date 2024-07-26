@@ -878,7 +878,11 @@ class CustomTextField extends StatefulWidget {
   final IconData? prefixIcon;
   final void Function()? onSuffixIconPressed;
   final void Function()? onTap;
+  final String? label;
   final bool readOnnly;
+  final bool? amount_check;
+  final String? max_amount;
+  final String? error_mess;
 
   CustomTextField({
     Key? key,
@@ -892,7 +896,13 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.validator,
     this.onSuffixIconPressed,
-    this.onTap, this.onChanged2, // Initialize onTap
+    this.label,
+    this.onTap, this.onChanged2,
+    this.amount_check,
+    this.max_amount,
+    this.error_mess,
+
+    // Initialize onTap
   }) : super(key: key);
 
   @override
@@ -919,12 +929,16 @@ class CustomTextFieldState extends State<CustomTextField> {
           validator: (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {
+                if(widget.label == null)
                 _errorMessage = 'Please ${widget.hintText}';
+                else
+                  _errorMessage = 'Please ${widget.label}';
               });
               return '';
             }
+            else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
             setState(() {
-              _errorMessage = null;
+              _errorMessage = '${widget.error_mess}';
             });
             return null;
           },
@@ -950,8 +964,37 @@ class CustomTextFieldState extends State<CustomTextField> {
                       ],
                     ),
                     child: TextFormField(
+                  /*    onFieldSubmitted: (value){
+                        if(value.isNotEmpty){
+
+                          if(widget.amount_check != null){
+                            if(int.parse(value) > int.parse(widget.max_amount!)){
+                              setState(() {
+                                _errorMessage = '${widget.error_mess}';
+                              });
+                            }
+                          }
+                          else{
+                            setState(() {
+                              _errorMessage = null;
+                            });
+                          }
+
+                        }
+                        print(value);
+                        widget.onChanged2;
+                      },*/
                       onFieldSubmitted: widget.onChanged2,
-                      onChanged: widget.onChanged,
+                      onChanged:(value){
+                        if(value.isNotEmpty){
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+                        widget.onChanged;
+                      },
+
+
                       onTap: widget.onTap,
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
@@ -973,8 +1016,9 @@ class CustomTextFieldState extends State<CustomTextField> {
                     ),
                   ),
                 ),
-                if (state.hasError)
-                  SizedBox(height: 24), // Reserve space for error message
+                if (state.hasError || widget.amount_check != null)
+                  SizedBox(height: 24),
+                // Reserve space for error message
               ],
             );
           },

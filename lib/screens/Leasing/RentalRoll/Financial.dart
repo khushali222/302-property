@@ -122,13 +122,13 @@ class _FinancialTableState extends State<FinancialTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Tenant",
+                        ? const Text("Type",
                             style: TextStyle(color: Colors.white))
-                        : const Text("Tenant",
+                        : const Text("Type",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
-                    ascending1
+                   /* ascending1
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -144,7 +144,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               size: 20,
                               color: Colors.white,
                             ),
-                          ),
+                          ),*/
                   ],
                 ),
               ),
@@ -173,10 +173,10 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("Balance",
+                    const Text("Balance      ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    ascending2
+                    /*ascending2
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -192,7 +192,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               size: 20,
                               color: Colors.white,
                             ),
-                          ),
+                          ),*/
                   ],
                 ),
               ),
@@ -222,9 +222,9 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("Date", style: TextStyle(color: Colors.white)),
+                    const Text("      Date", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    ascending3
+                   /* ascending3
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -240,7 +240,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               size: 20,
                               color: Colors.white,
                             ),
-                          ),
+                          ),*/
                   ],
                 ),
               ),
@@ -578,12 +578,18 @@ class _FinancialTableState extends State<FinancialTable> {
                                             BorderRadius.circular(10.0)),
                                     elevation: 0,
                                     backgroundColor: Colors.white),
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async{
+                                 final value = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => MakePayment(leaseId: widget.leaseId, tenantId: widget.tenantId,)));
-                                },
+                                  if(value== true){
+                                    setState(() {
+                                      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+                                    });
+
+                                  }
+                                 },
                                 child: Text(
                                   'Make Payment',
                                   style: TextStyle(
@@ -724,7 +730,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           const EdgeInsets.all(
                                                               8.0),
                                                       child: Text(
-                                                        ' ${data.entry!.first.account}', // Assuming you want to show the charge type here
+                                                        ' ${data.type}'??"", // Assuming you want to show the charge type here
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -826,9 +832,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                               1)),
                                                                     ),
                                                                     TextSpan(
-                                                                      text: data
-                                                                          .totalAmount
-                                                                          .toString(),
+                                                                      text: '${data.type == "Refund" ? data.totalAmount : null}',
                                                                       style: const TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,

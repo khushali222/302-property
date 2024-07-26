@@ -799,10 +799,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
+                          : MediaQuery.of(context).size.width * 0.05,
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.30
+                          : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -817,7 +819,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.034,
+                                MediaQuery.of(context).size.width < 500
+                                    ? 14
+                                    : 20,
                               ),
                             ),
                           ],
@@ -882,7 +886,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 24),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -1151,8 +1155,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 Expanded(
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${tenants.createdAt}'),
+                                                        '${tenants.createdAt}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1618,8 +1621,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   _buildDataCell(_pagedData[i]
                                                       .tenantAlternativeEmail!),
                                                   _buildDataCell(
-                                                    formatDate(_pagedData[i]
-                                                        .createdAt!),
+                                                    _pagedData[i]
+                                                        .createdAt!,
                                                   ),
                                                   _buildActionsCell(
                                                       _pagedData[i]),

@@ -548,8 +548,10 @@ class _StaffTableState extends State<StaffTable> {
                       // height: 40,
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                          : MediaQuery.of(context).size.width * 0.062,
+                      width:  (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -560,7 +562,9 @@ class _StaffTableState extends State<StaffTable> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.034,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 14
+                                : 20,
                           ),
                         ),
                       ),
@@ -621,7 +625,7 @@ class _StaffTableState extends State<StaffTable> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 19),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -1209,7 +1213,7 @@ class _StaffTableState extends State<StaffTable> {
                     totalrecords = _tableData.length;
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 5),
+                          horizontal: 25.0, vertical: 5),
                       child: Column(
                         children: [
                           SingleChildScrollView(

@@ -9,8 +9,8 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String Api_url = "http://192.168.1.19:4000";
 //String Api_url = "http://192.168.1.15:4000";
 //String Api_url = "http://192.168.1.14:4000";
-String Api_url = "http://192.168.129.213:4000";
-//String Api_url = "http://192.168.1.25:4000";
+//String Api_url = "http://192.168.129.213:4000";
+String Api_url = "http://192.168.1.33:4000";
 
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
@@ -25,3 +25,5 @@ String formatDate2(String dateStr) {
 }
 
 Color blueColor = Color.fromRGBO(21, 43, 83, 1);
+
+Color greyColor = Color.fromRGBO(73, 81, 96, 1);

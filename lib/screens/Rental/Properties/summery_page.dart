@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -21,12 +22,17 @@ import '../../../Model/unit.dart';
 import '../../../constant/constant.dart';
 import '../../../model/properties.dart';
 import '../../../model/properties_summery.dart';
+import '../../../model/properties_workorders.dart';
 import '../../../model/unitsummery_propeties.dart';
+import '../../../model/workordr.dart';
+import '../../../provider/properties_workorders.dart';
 import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../repository/unit_data.dart';
+import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
+import '../../Maintenance/Workorder/Add_workorder.dart';
 
 class Summery_page extends StatefulWidget {
   Rentals properties;
@@ -44,6 +50,7 @@ class _Summery_pageState extends State<Summery_page>
   TabController? _tabController;
   late Future<List<TenantData>> futurePropertysummery;
   late Future<List<unit_properties>> futureUnitsummery;
+
   //late Future<List<RentalSummary>> futuresummery;
 
   unit_properties? unit;
@@ -96,13 +103,53 @@ class _Summery_pageState extends State<Summery_page>
         Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
     futurePropertysummery = Properies_summery_Repo()
         .fetchPropertiessummery(widget.properties.rentalId!);
+    futureworkordersummery = Properies_summery_Repo().fetchWorkOrders(widget.properties.rentalId!);
     // futuresummery = Properies_summery_Repo().fetchPropertiessummery(widget.properties.rentalId!);
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
     _fetchData();
-    fetchunits1();
-    fetchLeases();
+   // fetchunits1();
+    //fetchLeases();
+   // fetchAndSetCounts(context);
+    //workorder
+    // fetchAndSetCounts(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+
   }
+
+
+  Future<Map<String, dynamic>> fetchDataOfCountWork(String rentalId) async {
+
+    final response = await http.get(Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'));
+
+    if (response.statusCode == 200) {
+      // Parse the response body
+      final Map<String, dynamic> data = json.decode(response.body);
+      return {
+        "count": data['count'] ?? 0,
+        "complete_count": data['complete_count'] ?? 0,
+      };
+    } else {
+      throw Exception('Failed to load count data');
+    }
+  }
+
+  Future<void> fetchAndSetCounts(BuildContext context) async {
+    try {
+      final data = await fetchDataOfCountWork(widget.properties.rentalId!);
+      int newCount = data['count'] ?? 0;
+      int newCompleteCount = data['complete_count'] ?? 0;
+      print(newCompleteCount);
+      print(newCount);
+      final provider = Provider.of<WorkOrderCountProvider>(context, listen: false);
+      provider.updateCount(newCount);
+      provider.updateCompleteCount(newCompleteCount);
+    } catch (error) {
+      print('Error fetching counts: $error');
+    }
+  }
+
+
 
   File? _image;
   String? _uploadedFileName;
@@ -126,6 +173,8 @@ class _Summery_pageState extends State<Summery_page>
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
   }
+
+
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -195,22 +244,27 @@ class _Summery_pageState extends State<Summery_page>
   final Properies_summery_Repo unitRepository = Properies_summery_Repo();
   int unitCount = 0;
   int tenentCount = 0;
+  int count = 0;
+  int complete_count = 0;
+
   Future<void> _fetchData() async {
     try {
       final data = await unitRepository.fetchunit(widget.properties.rentalId!);
       final data1 = await Properies_summery_Repo()
           .fetchPropertiessummery(widget.properties.rentalId!);
-      // final data1 = await unitRepository.fetchunit(widget.properties.rentalId!);
+       final data2 = await Properies_summery_Repo()
+           .fetchWorkOrders(widget.properties.rentalId!);
       setState(() {
         unitCount = data.length;
         tenentCount = data1.length;
+        count = data2.length;
+        complete_count = data2.length;
       });
     } catch (e) {
       // Handle error
       print(e);
     }
   }
-
   List<unit_properties> data = [];
   final Properies_summery_Repo unit1Repository = Properies_summery_Repo();
   Future<void> fetchunits1() async {
@@ -266,6 +320,404 @@ class _Summery_pageState extends State<Summery_page>
     final end = DateTime.parse(endDate);
     return (now.isAfter(start) && now.isBefore(end)) ? 'Active' : 'Inactive';
   }
+
+  //work order
+  int totalrecords = 0;
+  late Future<List<propertiesworkData>> futureworkordersummery;
+  int rowsPerPage = 5;
+  int sortColumnIndex = 0;
+  bool sortAscending = true;
+  int currentPage = 0;
+  int itemsPerPage = 10;
+  List<int> itemsPerPageOptions = [
+    10,
+    25,
+    50,
+    100,
+  ]; // Options for items per page
+
+  void sortData(List<propertiesworkData> data) {
+    if (sorting1) {
+      data.sort((a, b) => ascending1
+          ? a.workSubject!.compareTo(b.workSubject!)
+          : b.workSubject!.compareTo(a.workSubject!));
+    } else if (sorting2) {
+      data.sort((a, b) => ascending2
+          ? a.workSubject!.compareTo(b.workSubject!)
+          : b.workSubject!.compareTo(a.workSubject!));
+    }
+  }
+
+  int? expandedIndex;
+  Set<int> expandedIndices = {};
+  late bool isExpanded;
+  bool sorting1 = false;
+  bool sorting2 = false;
+  bool sorting3 = false;
+  bool ascending1 = false;
+  bool ascending2 = false;
+  bool ascending3 = false;
+  bool isChecked = false;
+  Widget _buildHeaders() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+        color: blueColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        // leading: Container(
+        //   child: Icon(
+        //     Icons.expand_less,
+        //     color: Colors.transparent,
+        //   ),
+        // ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Work Order ",
+                        style: TextStyle(color: Colors.white))
+                        : Text("Work Order",
+                        style: TextStyle(color: Colors.white)),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 3),
+                    ascending1
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("   Status", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("   Billable ", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  final List<String> items = ['New', "In Progress", "On Hold","Completed","Over Due","All"];
+  String? selectedValue;
+  String searchvalue = "";
+  List<propertiesworkData> _tableData = [];
+  int _rowsPerPage = 10;
+  int _currentPage = 0;
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
+
+  List<propertiesworkData> get _pagedData {
+    int startIndex = _currentPage * _rowsPerPage;
+    int endIndex = startIndex + _rowsPerPage;
+    return _tableData.sublist(startIndex,
+        endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void _changeRowsPerPage(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPage = selectedRowsPerPage;
+      _currentPage = 0; // Reset to the first page when changing rows per page
+    });
+  }
+
+  void _sort<T>(Comparable<T> Function(propertiesworkData d) getField,
+      int columnIndex, bool ascending) {
+    setState(() {
+      _sortColumnIndex = columnIndex;
+      _sortAscending = ascending;
+      _tableData.sort((a, b) {
+        final aValue = getField(a);
+        final bValue = getField(b);
+        final result = aValue.compareTo(bValue as T);
+        return _sortAscending ? result : -result;
+      });
+    });
+  }
+
+
+  Widget _buildHeader<T>(String text, int columnIndex,
+      Comparable<T> Function(propertiesworkData d)? getField) {
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+          _sort(getField, columnIndex, !_sortAscending);
+        }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
+      ),
+    );
+  }
+  Widget _buildDataCellBillable(bool isBillable) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (isBillable)
+              Icon(Icons.check, color: blueColor),
+            if(!isBillable)
+              Icon(Icons.close, color: blueColor),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+  Widget _buildPaginationControls() {
+    int numorpages = 1;
+    numorpages = (totalrecords / _rowsPerPage).ceil();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // Text('Rows per page: '),
+        // SizedBox(width: 10),
+        Material(
+          elevation: 2,
+          color: Colors.white,
+          child: Container(
+            height: 55,
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _rowsPerPage,
+                items: [10, 25, 50, 100].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  if (newValue != null) {
+                    _changeRowsPerPage(newValue);
+                  }
+                },
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  size: 40,
+                ),
+                style: TextStyle(color: Colors.black, fontSize: 17),
+                dropdownColor: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.circleChevronLeft,
+            size: 30,
+            color:
+            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+          ),
+          onPressed: _currentPage == 0
+              ? null
+              : () {
+            setState(() {
+              _currentPage--;
+            });
+          },
+        ),
+        Text(
+          'Page ${_currentPage + 1} of $numorpages',
+          style: TextStyle(fontSize: 18),
+        ),
+        IconButton(
+          icon: FaIcon(
+            size: 30,
+            FontAwesomeIcons.circleChevronRight,
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+                ? Colors.grey
+                : Color.fromRGBO(
+                21, 43, 83, 1), // Change color based on availability
+          ),
+          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+              ? null
+              : () {
+            setState(() {
+              _currentPage++;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -427,6 +879,16 @@ class _Summery_pageState extends State<Summery_page>
                     return Tab(text: 'Tenant($tenentCount)');
                   },
                 ),
+                StatefulBuilder(
+                  builder: (BuildContext context, void Function(void Function()) setState) {
+                    return Tab(text: 'Work(${!isChecked ? count : complete_count})');
+                  },
+                ),
+                // Consumer<WorkOrderCountProvider>(
+                //   builder: (context, provider, child) {
+                //     return Tab(text: 'Work(${provider.isChecked ? provider.count : provider.count})');
+                //   },
+                // ),
               ],
             ),
           ),
@@ -446,6 +908,7 @@ class _Summery_pageState extends State<Summery_page>
                 // Center(child: Text('Content of Tab 2')),
                 //  Container(color:Colors.blue),
                 Tenants(context),
+                Workorder(context),
               ],
             ),
           ),
@@ -456,7 +919,8 @@ class _Summery_pageState extends State<Summery_page>
 
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
-    return Container(
+    return
+      Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: SingleChildScrollView(
         child: Column(
@@ -895,6 +1359,8 @@ class _Summery_pageState extends State<Summery_page>
                             width: 20,
                           ),
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(
                                 height: 4,
@@ -918,7 +1384,7 @@ class _Summery_pageState extends State<Summery_page>
                                 ],
                               ),
                               const SizedBox(
-                                height: 4,
+                                height: 6,
                               ),
                               Row(
                                 children: [
@@ -5296,6 +5762,920 @@ class _Summery_pageState extends State<Summery_page>
         ],
       ),
     );
+  }
+
+  Workorder(BuildContext context){
+    return
+      SingleChildScrollView(
+        child:
+        Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            //add Data
+            Padding(
+              padding: const EdgeInsets.only(left: 13, right: 13),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 8),
+                  Row(
+                    children: [
+                      Text("Billable To Tenants",style: TextStyle(
+                          color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize:  MediaQuery.of(context).size.width > 500 ?
+                                  20 :12
+                      ),
+                      ),
+                      if (MediaQuery.of(context).size.width < 500)
+                      SizedBox(width: 10,),
+                      if (MediaQuery.of(context).size.width > 500)
+                        SizedBox(width: 20),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                        height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                        child: Checkbox(
+                          value: isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              isChecked = value ?? false;
+                            });
+                          },
+                          activeColor: isChecked
+                              ? Color.fromRGBO(21, 43, 81, 1)
+                              : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => AddWorkorder(rentalid: widget.properties.rentalId,)));
+                      if (result == true) {
+                        setState(() {
+                          futureworkordersummery = Properies_summery_Repo().fetchWorkOrders(widget.properties.rentalId!);
+                        });
+                      }
+                    },
+                    child: Container(
+                      height: (MediaQuery.of(context).size.width < 500)
+                          ? 40
+                          : MediaQuery.of(context).size.width * 0.063,
+
+                      // height:  MediaQuery.of(context).size.width * 0.07,
+                      // height:  40,
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(21, 43, 81, 1),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Add Work Order",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                  fontSize:  MediaQuery.of(context).size.width > 500 ?
+                                  20 : 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 2),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 8),
+                ],
+              ),
+            ),
+            // SizedBox(height: 15),
+            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 20),
+            if (MediaQuery.of(context).size.width < 500) SizedBox(height: 15),
+            //search
+            Padding(
+              padding: const EdgeInsets.only(left: 13, right: 13),
+              child: Row(
+                children: [
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 2),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 8),
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(2),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      // height: 40,
+                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      width: MediaQuery.of(context).size.width < 500
+                          ? MediaQuery.of(context).size.width * .52
+                          : MediaQuery.of(context).size.width * .49,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(2),
+                          // border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Color(0xFF8A95A8))),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: TextField(
+                              style:TextStyle(
+                                  fontSize:  MediaQuery.of(context).size.width < 500 ? 12 : 14
+                              ),
+                              // onChanged: (value) {
+                              //   setState(() {
+                              //     cvverror = false;
+                              //   });
+                              // },
+                              // controller: cvv,
+                              onChanged: (value) {
+                                setState(() {
+                                  searchvalue = value;
+                                });
+                              },
+                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ,
+                                    // fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                  contentPadding:
+                                  EdgeInsets.only(left: 5,bottom: 13,top: 14)
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                 Spacer(),
+                  DropdownButtonHideUnderline(
+                    child: Material(
+                      elevation: 3,
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Row(
+                          children: [
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Type',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  // fontWeight: FontWeight.bold,
+                                  color: Color(0xFF8A95A8),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        items: items
+                            .map((String item) => DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
+                            .toList(),
+                        value: selectedValue,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedValue = value;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height:
+                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          // width: 180,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? MediaQuery.of(context).size.width * .35
+                              : MediaQuery.of(context).size.width * .4,
+                          padding: const EdgeInsets.only(left: 14, right: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            border: Border.all(
+                              // color: Colors.black26,
+                              color: Color(0xFF8A95A8),
+                            ),
+                            color: Colors.white,
+                          ),
+                          elevation: 0,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            //color: Colors.redAccent,
+                          ),
+                          offset: const Offset(-20, 0),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(40),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 14, right: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 8),
+                ],
+              ),
+            ),
+            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: FutureBuilder<List<propertiesworkData>>(
+                  future: futureworkordersummery,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                          child: SpinKitFadingCircle(
+                            color: Colors.black,
+                            size: 40.0,
+                          ));
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No data available'));
+                    } else {
+                      var data = snapshot.data!;
+                      if (selectedValue == null && searchvalue!.isEmpty) {
+                        data = snapshot.data!;
+
+                      } else if (selectedValue == "All") {
+                        data = snapshot.data!;
+                      } else if (searchvalue!.isNotEmpty) {
+                        data = snapshot.data!
+                            .where((workorder) =>
+                        workorder.workSubject
+                        !.toLowerCase()
+                            .contains(searchvalue!.toLowerCase()) ||
+                            workorder.workCategory!.toLowerCase()
+                                .contains(searchvalue!.toLowerCase()))
+                            .toList();
+                      } else {
+                        data = snapshot.data!
+                            .where((workorder) =>
+                        workorder.status
+                        ! == selectedValue)
+                            .toList();
+                        // count = data.where((workorder) => workorder.status != 'Completed').length;
+                        // complete_count = data.where((workorder) => workorder.status == 'Completed').length;
+                      }
+                      if (isChecked) {
+                        data = data.where((workorder) => workorder.status == 'Completed').toList();
+                        Provider.of<WorkOrderCountProvider>(context).updateCount(data.length);
+
+                      }
+                      else{
+                        data = data.where((workorder) => workorder.status != 'Completed').toList();
+                        Provider.of<WorkOrderCountProvider>(context).updateCount(data.length);
+
+                      }
+                      sortData(data);
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20),
+                            _buildHeaders(),
+                            SizedBox(height: 20),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: blueColor)),
+                              child: Column(
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded = expandedIndex == index;
+                                  propertiesworkData workOrder = entry.value;
+                                  //return CustomExpansionTile(data: Data, index: index);
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                    ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    // setState(() {
+                                                    //    isExpanded = !isExpanded;
+                                                    // //  expandedIndex = !expandedIndex;
+                                                    //
+                                                    // });
+                                                    // setState(() {
+                                                    //   if (isExpanded) {
+                                                    //     expandedIndex = null;
+                                                    //     isExpanded = !isExpanded;
+                                                    //   } else {
+                                                    //     expandedIndex = index;
+                                                    //   }
+                                                    // });
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex = null;
+                                                      } else {
+                                                        expandedIndex = index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5),
+                                                    padding: !isExpanded
+                                                        ? EdgeInsets.only(
+                                                        bottom: 10)
+                                                        : EdgeInsets.only(
+                                                        top: 10),
+                                                    child: FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                          .sortUp
+                                                          : FontAwesomeIcons
+                                                          .sortDown,
+                                                      size: 20,
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    '   ${workOrder.workSubject}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .099),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${workOrder.status}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .08),
+                                                Expanded(
+                                                  child:
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      if (workOrder.isBillable == true)
+                                                        Icon(
+                                                          Icons.check,
+                                                          color: blueColor,
+                                                        ),
+                                                      if(workOrder.isBillable == false)
+                                                        Icon(
+                                                          Icons.close,
+                                                          color: blueColor,
+                                                        ),
+
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .02),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            margin: EdgeInsets.only(bottom: 20),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                            .sortUp
+                                                            : FontAwesomeIcons
+                                                            .sortDown,
+                                                        size: 50,
+                                                        color:
+                                                        Colors.transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    ' Category : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    '${workOrder.workCategory}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: Colors
+                                                                            .grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Created At : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    formatDate('${workOrder.createdAt}'),
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: Colors
+                                                                            .grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment.start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Assign ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: '${workOrder.staffmemberName}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: Colors
+                                                                            .grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Updated At : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: formatDate('${workOrder.updatedAt}'),
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: Colors
+                                                                            .grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        //SizedBox(height: 13,),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Text('Rows per page:'),
+                                    SizedBox(width: 10),
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                          Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                itemsPerPage = newValue!;
+                                                currentPage =
+                                                0; // Reset to first page when items per page change
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronLeft,
+                                        color: currentPage == 0
+                                            ? Colors.grey
+                                            : Color.fromRGBO(21, 43, 83, 1),
+                                      ),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
+                                    ),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_back),
+                                    //   onPressed: currentPage > 0
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage--;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    Text(
+                                        'Page ${currentPage + 1} of $totalPages'),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_forward),
+                                    //   onPressed: currentPage < totalPages - 1
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage++;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronRight,
+                                        color: currentPage < totalPages - 1
+                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: currentPage < totalPages - 1
+                                          ? () {
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
+                                          : null,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<List<propertiesworkData>>(
+                future: futureworkordersummery,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 55.0,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No data available'));
+                  } else {
+                    _tableData = snapshot.data!;
+                    if (selectedValue == null && searchvalue.isEmpty) {
+                      _tableData = snapshot.data!;
+                    } else if (selectedValue == "All") {
+                      _tableData = snapshot.data!;
+                    } else if (searchvalue.isNotEmpty) {
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.workSubject!
+                          .toLowerCase()
+                          .contains(searchvalue.toLowerCase()) ||
+                          property.workCategory!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()))
+                          .toList();
+                    } else {
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.status == selectedValue)
+                          .toList();
+                    }
+                    if (isChecked) {
+                      _tableData = snapshot.data!.where((workorder) => workorder.status == 'Completed').toList();
+                    }else{
+                      _tableData = snapshot.data!.where((workorder) => workorder.status != 'Completed').toList();
+                    }
+                    totalrecords = _tableData.length;
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 5),
+                              child: Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      // width: MediaQuery.of(context).size.width *
+                                      //     .91,
+                                      child: Table(
+                                        defaultColumnWidth:
+                                        IntrinsicColumnWidth(),
+                                        children: [
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                // color: blueColor
+                                              ),
+                                            ),
+                                            children: [
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              _buildHeader(
+                                                  'Work Orders',
+                                                  0,
+                                                      (property) =>
+                                                  property.workSubject!),
+                                              _buildHeader(
+                                                  'Category',
+                                                  1,
+                                                      (property) => property
+                                                      .workCategory!),
+                                              _buildHeader(
+                                                  'Billable',
+                                                  2,
+                                                      (property) => property
+                                                      .isBillable!.toString()),
+                                              _buildHeader(
+                                                  'Assign',
+                                                  3,
+                                                      (property) => property
+                                                      .staffmemberName!),
+                                              _buildHeader(
+                                                  'Status',
+                                                  4,
+                                                      (property) => property
+                                                      .status!),
+                                              _buildHeader(
+                                                  'Created At', 5, null),
+                                              _buildHeader(
+                                                  'Updated At', 6, null),
+
+                                            ],
+                                          ),
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border.symmetric(
+                                                  horizontal: BorderSide.none),
+                                            ),
+                                            children: List.generate(
+                                                7,
+                                                    (index) => TableCell(
+                                                    child:
+                                                    Container(height: 20))),
+                                          ),
+                                          for (var i = 0;
+                                          i < _pagedData.length;
+                                          i++)
+                                            TableRow(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  left: BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 81, 1)),
+                                                  right: BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 81, 1)),
+                                                  top: BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 81, 1)),
+                                                  bottom: i ==
+                                                      _pagedData.length - 1
+                                                      ? BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 81, 1))
+                                                      : BorderSide.none,
+                                                ),
+                                              ),
+                                              children: [
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // Text(
+                                                //     '${_pagedData[i].propertyType!}'),
+                                                // Text(
+                                                //     '${_pagedData[i].propertysubType!}'),
+                                                // Text(
+                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
+                                                // Text(
+                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
+                                                _buildDataCell(_pagedData[i]
+                                                    .workSubject.toString()),
+                                                _buildDataCell(_pagedData[i]
+                                                    .workCategory.toString()),
+                                                _buildDataCellBillable(_pagedData[i].isBillable == true),
+                                                _buildDataCell(_pagedData[i]
+                                                    .staffmemberName ??""),
+                                                _buildDataCell(_pagedData[i]
+                                                    .status.toString()),
+                                                _buildDataCell(
+                                                  formatDate(
+                                                      _pagedData[i].createdAt!),
+                                                ),
+                                                _buildDataCell(
+                                                  formatDate(
+                                                      _pagedData[i].updatedAt!),
+                                                ),
+
+                                              ],
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 25),
+                                  _buildPaginationControls(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 25),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+          ],
+        ),
+      );
   }
 
   reload_Screen() {

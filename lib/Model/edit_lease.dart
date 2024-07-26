@@ -45,7 +45,7 @@ class LeaseDetails {
           .toList()
           : null,
       rental: EditRental.fromJson(json['rental']),
-      unitData: unit_lease .fromJson(json['unit_data']),
+      unitData: unit_lease .fromJson(json['unit_data']??{}),
       one_charge_data: json["one_charge_data"],
         rec_charge_data : json['rec_charge_data'],
       rentCharges: json['rent_charge_data'] != null

@@ -7,6 +7,7 @@ import '../screens/Leasing/Applicants/Applicants_table.dart';
 
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
+import '../screens/Maintenance/Workorder/Add_workorder.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
 import '../screens/Rental/Rentalowner/Add_RentalOwners.dart';
@@ -75,11 +76,11 @@ void navigateToOption(
     "RentalOwner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
     "Vendor": (context) => Vendor_table(),
-    "Work Order": (context) => Workorder_table(),
+  //  "Work Order": (context) => Workorder_table(),
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
-    "Work Order": (context) => Cardpayment(leaseId: '',),
+    "Work Order": (context) => Workorder_table(),
 
   };
   Navigator.push(

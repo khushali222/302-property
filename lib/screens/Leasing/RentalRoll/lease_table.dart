@@ -590,8 +590,10 @@ class _Lease_tableState extends State<Lease_table> {
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                          : MediaQuery.of(context).size.width * 0.063,
+                      width:  (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.30
+                          : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -602,7 +604,9 @@ class _Lease_tableState extends State<Lease_table> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.034,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 14
+                                : 22,
                           ),
                         ),
                       ),
@@ -660,7 +664,7 @@ class _Lease_tableState extends State<Lease_table> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 19),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -996,7 +1000,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Rent',
+                                                                        'Rent: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1006,7 +1010,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${lease.rentalUnit}',
+                                                                        '${lease.amount}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1381,7 +1385,7 @@ class _Lease_tableState extends State<Lease_table> {
                     _tableData = filteredData!;
                     totalrecords = _tableData.length;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 23.0),
                       child: Column(
                         children: [
                           SingleChildScrollView(
@@ -1416,7 +1420,7 @@ class _Lease_tableState extends State<Lease_table> {
                                         _buildHeader('Rent Start', 4,
                                             (lease) => lease.rentDueDate!),
                                         _buildHeader('Rent', 5,
-                                            (lease) => lease.rentalUnit!),
+                                            (lease) => lease.amount!),
                                         _buildHeader('Deposit Held', 6,
                                             (lease) => lease.deposit!),
                                         _buildHeader('Charges', 7,
@@ -1472,7 +1476,7 @@ class _Lease_tableState extends State<Lease_table> {
                                           _buildDataCell(
                                               _pagedData[i].rentDueDate!),
                                           _buildDataCell(
-                                              _pagedData[i].rentalUnit!),
+                                              _pagedData[i].amount.toString()),
                                           _buildDataCell((_pagedData[i]
                                                   .deposit
                                                   ?.toString() ??
