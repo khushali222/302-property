@@ -206,7 +206,7 @@ class _Staffmember_tableState extends State<Staffmember_table>
                   context,
                   const FaIcon(
                     FontAwesomeIcons.letterboxd,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Reports",
                   false),

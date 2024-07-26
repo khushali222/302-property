@@ -509,10 +509,10 @@ class _StaffTableState extends State<StaffTable> {
                   context,
                   const FaIcon(
                     FontAwesomeIcons.letterboxd,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Reports",
-                  true),
+                  false),
             ],
           ),
         ),
