@@ -722,6 +722,8 @@ class _AddTenantState extends State<AddTenant> {
       comments: comments.text,
       emergencyContact: emergencyContact,
     );
+ 
+    
 
     bool success = await TenantsRepository().addTenant(tenant);
 
@@ -865,7 +867,6 @@ class _AddTenantState extends State<AddTenant> {
 //   }
 // }
 
-
 class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
@@ -892,7 +893,8 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.validator,
     this.onSuffixIconPressed,
-    this.onTap, this.onChanged2, // Initialize onTap
+    this.onTap,
+    this.onChanged2, // Initialize onTap
   }) : super(key: key);
 
   @override
@@ -902,7 +904,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   @override
   void dispose() {
@@ -932,11 +934,12 @@ class CustomTextFieldState extends State<CustomTextField> {
             return Column(
               children: <Widget>[
                 Material(
-                  elevation:2,
+                  elevation: 2,
                   borderRadius: BorderRadius.circular(8.0),
                   child: Container(
                     height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -966,7 +969,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),

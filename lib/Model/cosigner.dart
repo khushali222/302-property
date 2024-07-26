@@ -14,7 +14,6 @@ class Cosigner {
   String country;
   String postalCode;
 
-
   Cosigner({
     this.c_id,
     this.cosignerId,
@@ -30,10 +29,13 @@ class Cosigner {
     required this.city,
     required this.country,
     required this.postalCode,
-
   });
 
   factory Cosigner.fromJson(Map<String, dynamic> json) {
+    print('Consigner Data');
+    json.forEach((key, value) {
+      print('$key: $value');
+    });
     return Cosigner(
       c_id: json['_id'],
       cosignerId: json['cosigner_id'],
@@ -49,7 +51,6 @@ class Cosigner {
       city: json['cosigner_city'] ?? '',
       country: json['cosigner_country'] ?? '',
       postalCode: json['cosigner_postalcode']?.toString() ?? '',
-
     );
   }
 }

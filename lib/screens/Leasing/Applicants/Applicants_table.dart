@@ -13,6 +13,7 @@ import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/applicants.dart';
+import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/applicant_summery2.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/addApplicant.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
@@ -21,7 +22,6 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/ApplicantModel.dart';
-import 'applicant_summery.dart';
 
 class Applicants_table extends StatefulWidget {
   @override
@@ -311,7 +311,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await ApplicantRepository().DeleteApplicant(id: id);
+            await ApplicantRepository().DeleteApplicant(Applicantid: id);
             setState(() {
               futureApplicantdata = ApplicantRepository().fetchApplicants();
             });
@@ -348,7 +348,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = ApplicantRepository().DeleteApplicant(id: id);
+            var data = ApplicantRepository().DeleteApplicant(Applicantid: id);
             // Add your delete logic here
             setState(() {
               futureApplicantdata = ApplicantRepository().fetchApplicants();
@@ -569,8 +569,11 @@ class _Applicants_tableState extends State<Applicants_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/applicant/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/applicant/limitation/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 200) {
@@ -1113,12 +1116,16 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 ),
                                                 Expanded(
                                                   child: InkWell(
-                                                    onTap:(){
+                                                    onTap: () {
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                              applicant_summery(applicant_id: applicant.applicantId,)));
+                                                                  applicant_summery(
+                                                                    applicant_id:
+                                                                        applicant
+                                                                            .applicantId,
+                                                                  )));
                                                     },
                                                     child: Padding(
                                                       padding:
@@ -1300,7 +1307,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 _showDeleteAlert(
                                                                     context,
                                                                     applicant
-                                                                        .applicantId!);
+                                                                        .applicantId
+                                                                        .toString());
                                                               },
                                                             ),
                                                           ],

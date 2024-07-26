@@ -1,17 +1,17 @@
-//import 'package:device_preview/device_preview.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:three_zero_two_property/provider/add_property.dart';
+import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/provider/lease_provider.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
-
+import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/SummaryEditApplicant.dart';
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
 // void main() {
 //   runApp(
-//     MultiProvider(providers: [ ChangeNotifierProvider(
+//     MultiProvider(providers: [
+// ChangeNotifierProvider(
 //       create: (context) => OwnerDetailsProvider(),
 //       // child: MyApp(),
 //     ),
@@ -98,6 +98,12 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (context) => LeaseLedgerProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => EditFormState(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => ApplicantDetailsProvider(),
           ),
         ],
         child: MyApp(),

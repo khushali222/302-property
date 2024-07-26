@@ -12,8 +12,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-
-
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -77,7 +75,7 @@ class _AddCardState extends State<AddCard> {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
-          '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+              '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
         });
       }
 
@@ -158,7 +156,7 @@ class _AddCardState extends State<AddCard> {
       }
 
       CustomerData? customerData =
-      await postBillingCustomerVault(customervaultid.toString());
+          await postBillingCustomerVault(customervaultid.toString());
 
       if (customerData != null) {
         setState(() {
@@ -201,6 +199,7 @@ class _AddCardState extends State<AddCard> {
       return '';
     }
   }
+
   Future<CustomerData?> postBillingCustomerVault(String customerVaultId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -259,17 +258,34 @@ class _AddCardState extends State<AddCard> {
       customerVaultId: customervaultid,
     );
 
-    AddCardService apiService = AddCardService();
-    int deleteResponse = await apiService.deleteCard(cardmodelfordelete);
+    if (cardDetails.length == 1) {
+      AddCardService apiService = AddCardService();
+      int deleteResponse =
+          await apiService.deleteOneCardDelete(customervaultid);
 
-    if (deleteResponse == 200) {
-      await apiService.deletefromdatabaseCard(billingData.billingId.toString());
-      setState(() {
-        cardDetails
-            .remove(billingData); // Remove the deleted card from the list
-      });
+      if (deleteResponse == 200) {
+        await apiService.deleteOneCardfromdatabase(customervaultid);
+        setState(() {
+          cardDetails
+              .remove(billingData); // Remove the deleted card from the list
+        });
+      } else {
+        // Handle the error case
+      }
     } else {
-      // Handle the error case
+      AddCardService apiService = AddCardService();
+      int deleteResponse = await apiService.deleteCard(cardmodelfordelete);
+
+      if (deleteResponse == 200) {
+        await apiService
+            .deletefromdatabaseCard(billingData.billingId.toString());
+        setState(() {
+          cardDetails
+              .remove(billingData); // Remove the deleted card from the list
+        });
+      } else {
+        // Handle the error case
+      }
     }
   }
 
@@ -281,8 +297,6 @@ class _AddCardState extends State<AddCard> {
     }
     return binResults;
   }
-
-
 
   String _formatCardNumber(String cardNumber) {
     if (cardNumber.length != 16) {
@@ -453,10 +467,10 @@ class _AddCardState extends State<AddCard> {
                     ),
                     showmessage
                         ? Text('${errorMessageDropdown.toString()}',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red))
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red))
                         : Container(),
                     const SizedBox(
                       height: 8,
@@ -468,75 +482,75 @@ class _AddCardState extends State<AddCard> {
                             color: Colors.grey)),
                     tenants.isEmpty
                         ? Center(
-                      child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 55.0,
-                      ),
-                    )
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 55.0,
+                            ),
+                          )
                         : DropdownButtonHideUnderline(
-                      child: DropdownButtonFormField2<String>(
-                        decoration:
-                        InputDecoration(border: InputBorder.none),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select resident';
-                          }
-                          return null;
-                        },
-                        isExpanded: true,
-                        hint: const Text('Select Resident'),
-                        value: selectedTenantId,
-                        items: tenants.map((tenant) {
-                          return DropdownMenuItem<String>(
-                            value: tenant['tenant_id'],
-                            child: Text(tenant['tenant_name']!),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedTenantId = value;
-                            showmessage = false;
-                          });
-                          fetchcreditcard(value!);
-                          print('Selected tenant_id: $selectedTenantId');
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height: 45,
-                          width: double.infinity,
-                          padding:
-                          const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: Colors.white,
+                            child: DropdownButtonFormField2<String>(
+                              decoration:
+                                  InputDecoration(border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select resident';
+                                }
+                                return null;
+                              },
+                              isExpanded: true,
+                              hint: const Text('Select Resident'),
+                              value: selectedTenantId,
+                              items: tenants.map((tenant) {
+                                return DropdownMenuItem<String>(
+                                  value: tenant['tenant_id'],
+                                  child: Text(tenant['tenant_name']!),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedTenantId = value;
+                                  showmessage = false;
+                                });
+                                fetchcreditcard(value!);
+                                print('Selected tenant_id: $selectedTenantId');
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 45,
+                                width: double.infinity,
+                                padding:
+                                    const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                elevation: 2,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(6),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
                           ),
-                          elevation: 2,
-                        ),
-                        iconStyleData: const IconStyleData(
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                          ),
-                          iconSize: 24,
-                          iconEnabledColor: Color(0xFFb0b6c3),
-                          iconDisabledColor: Colors.grey,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: Colors.white,
-                          ),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(6),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility:
-                            MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
-                        ),
-                      ),
-                    ),
                     const SizedBox(
                       height: 8,
                     ),
@@ -731,53 +745,53 @@ class _AddCardState extends State<AddCard> {
               selectedTenantId == null
                   ? Container()
                   : Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: const Text('Cards',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF152b51))),
-              ),
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: const Text('Cards',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF152b51))),
+                    ),
               selectedTenantId == null ? Container() : SizedBox(height: 8),
               selectedTenantId == null
                   ? Container()
                   : Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: isLoading
-                    ? const Center(
-                  child: SpinKitFadingCircle(
-                    color: Colors.black,
-                    size: 55.0,
-                  ),
-                )
-                    : cardDetails.isEmpty
-                    ? Center(
-                  child: Text(messageCardAvailable ??
-                      'No card details available'),
-                )
-                    : ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: cardDetails.length,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: _buildCreditCard(
-                              cardDetails[index],
-                              customervaultid.toString()),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: isLoading
+                          ? const Center(
+                              child: SpinKitFadingCircle(
+                                color: Colors.black,
+                                size: 55.0,
+                              ),
+                            )
+                          : cardDetails.isEmpty
+                              ? Center(
+                                  child: Text(messageCardAvailable ??
+                                      'No card details available'),
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: cardDetails.length,
+                                  itemBuilder: (context, index) {
+                                    return Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildCreditCard(
+                                              cardDetails[index],
+                                              customervaultid.toString()),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                    ),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
                 child: Row(
@@ -790,20 +804,20 @@ class _AddCardState extends State<AddCard> {
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                const Color.fromRGBO(21, 43, 83, 1),
+                                    const Color.fromRGBO(21, 43, 83, 1),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () async {
                               if (_formKey.currentState?.validate() ?? false) {
                                 SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                                    await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 String? token = prefs.getString('token');
 
                                 String randomNumber = generateRandomNumber(10);
 
                                 String? comapanyName =
-                                await fetchCompanyName(id!);
+                                    await fetchCompanyName(id!);
 
                                 CardModel cardwithOutVaultId = CardModel(
                                   firstName: firstName.text,
@@ -840,10 +854,10 @@ class _AddCardState extends State<AddCard> {
                                     email: email.text,
                                     country: country.text,
                                     customervaultid:
-                                    customervaultid.toString());
+                                        customervaultid.toString());
 
                                 AddCardService addCardService =
-                                AddCardService();
+                                    AddCardService();
 
                                 if (messageCardAvailable ==
                                     "No card found for this tenant") {
@@ -851,8 +865,8 @@ class _AddCardState extends State<AddCard> {
                                   // await addCardService
                                   //     .postCardDetails(cardwithOutVaultId);
                                   CardResponse? cardResponse =
-                                  await addCardService
-                                      .postCardDetails(cardwithOutVaultId);
+                                      await addCardService
+                                          .postCardDetails(cardwithOutVaultId);
 
                                   if (cardResponse != null) {
                                     print(
@@ -866,7 +880,7 @@ class _AddCardState extends State<AddCard> {
                                     tenantId: selectedTenantId,
                                     billingId: randomNumber,
                                     customerVaultId:
-                                    cardResponse!.customerVaultId,
+                                        cardResponse!.customerVaultId,
                                     responseCode: cardResponse.responseCode,
                                   );
 
@@ -877,8 +891,8 @@ class _AddCardState extends State<AddCard> {
                                       msg: 'Add Card Successfully');
                                 } else {
                                   CardResponse? cardResponses =
-                                  await addCardService
-                                      .postCardWithVaultId(cardwithVaultId);
+                                      await addCardService
+                                          .postCardWithVaultId(cardwithVaultId);
                                   if (cardResponses != null) {
                                     print(
                                         'Customer Vault ID: ${cardResponses.customerVaultId}');
@@ -891,7 +905,7 @@ class _AddCardState extends State<AddCard> {
                                     tenantId: selectedTenantId,
                                     billingId: randomNumber,
                                     customerVaultId:
-                                    cardResponses!.customerVaultId,
+                                        cardResponses!.customerVaultId,
                                     responseCode: cardResponses.responseCode,
                                   );
                                   await addCardService
@@ -1050,7 +1064,7 @@ class _AddCardState extends State<AddCard> {
                   _buildDetailsBlock(
                     label: 'CARDHOLDER',
                     value:
-                    '${billingData.firstName ?? ''} ${billingData.lastName ?? ''}',
+                        '${billingData.firstName ?? ''} ${billingData.lastName ?? ''}',
                   ),
                   _buildDetailsBlock(
                       label: 'VALID THRU',

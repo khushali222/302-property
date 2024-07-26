@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
 import '../screens/Leasing/Applicants/Applicants_table.dart';
-
 
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
@@ -52,6 +52,9 @@ Widget buildListTile(
         } else if (title == "Add Staff Member") {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => StaffTable()));
+        } else if (title == "Reports") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ReportsMainScreen()));
         }
       },
       leading: leadingIcon,
@@ -79,8 +82,9 @@ void navigateToOption(
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
-    "Work Order": (context) => Cardpayment(leaseId: '',),
-
+    "Work Order": (context) => Cardpayment(
+          leaseId: '',
+        ),
   };
   Navigator.push(
     context,

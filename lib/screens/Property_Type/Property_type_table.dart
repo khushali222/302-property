@@ -656,6 +656,14 @@ class _PropertyTableState extends State<PropertyTable> {
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.white,
+                  ),
+                  "Reports",
+                  true),
             ],
           ),
         ),
@@ -756,9 +764,11 @@ class _PropertyTableState extends State<PropertyTable> {
                         children: [
                           Positioned.fill(
                             child: TextField(
-                              style:TextStyle(
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 12 : 14
-                              ),
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -772,16 +782,18 @@ class _PropertyTableState extends State<PropertyTable> {
                               },
                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
                               decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                contentPadding:
-                                   EdgeInsets.only(left: 5,bottom: 13,top: 14)
-                              ),
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18,
+                                    // fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                  contentPadding: EdgeInsets.only(
+                                      left: 5, bottom: 13, top: 14)),
                             ),
                           ),
                         ],
@@ -895,7 +907,6 @@ class _PropertyTableState extends State<PropertyTable> {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
-
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {

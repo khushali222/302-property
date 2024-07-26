@@ -23,7 +23,8 @@ class FinancialTable extends StatefulWidget {
   final String leaseId;
   final String tenantId;
   final String status;
-  FinancialTable({required this.leaseId, required this.status, required this.tenantId});
+  FinancialTable(
+      {required this.leaseId, required this.status, required this.tenantId});
   @override
   _FinancialTableState createState() => _FinancialTableState();
 }
@@ -68,7 +69,6 @@ class _FinancialTableState extends State<FinancialTable> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
-
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
@@ -554,7 +554,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => AddCard(leaseId: widget.leaseId,)));
+                                          builder: (context) => AddCard(
+                                                leaseId: widget.leaseId,
+                                              )));
                                 },
                                 child: Text(
                                   'Add Cards',
@@ -562,7 +564,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       fontSize: 12,
                                       color: Color.fromRGBO(21, 43, 83, 1)),
                                 ))),
-                         SizedBox(
+                        SizedBox(
                           width: 5,
                         ),
                         Container(
@@ -582,7 +584,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => MakePayment(leaseId: widget.leaseId, tenantId: widget.tenantId,)));
+                                          builder: (context) => MakePayment(
+                                                leaseId: widget.leaseId,
+                                                tenantId: widget.tenantId,
+                                              )));
                                 },
                                 child: Text(
                                   'Make Payment',
@@ -590,7 +595,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       fontSize: 12,
                                       color: Color.fromRGBO(21, 43, 83, 1)),
                                 ))),
-                         SizedBox(
+                        SizedBox(
                           width: 5,
                         ),
                         Container(
@@ -724,7 +729,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           const EdgeInsets.all(
                                                               8.0),
                                                       child: Text(
-                                                        ' ${data.entry!.first.account}', // Assuming you want to show the charge type here
+                                                        ' ${data.type}' ??
+                                                            '', // Assuming you want to show the charge type here
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:

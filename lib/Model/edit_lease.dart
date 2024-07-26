@@ -12,7 +12,7 @@ class LeaseDetails {
   final List<Tenant>? tenant;
   final List<Cosigner>? cosigner;
   final EditRental rental;
-  final unit_lease  unitData;
+  final unit_lease unitData;
   List? one_charge_data;
   List? rec_charge_data;
   final List<Entry>? rentCharges;
@@ -23,11 +23,11 @@ class LeaseDetails {
     required this.tenant,
     required this.rental,
     required this.unitData,
-      this.one_charge_data,
+    this.one_charge_data,
     this.rentCharges,
     this.cosigner,
     this.rec_charge_data,
-     this.securityCharges,
+    this.securityCharges,
   });
 
   factory LeaseDetails.fromJson(Map<String, dynamic> json) {
@@ -36,34 +36,36 @@ class LeaseDetails {
       lease: EditLease.fromJson(json['leases']),
       cosigner: json['cosigner'] != null
           ? (json['cosigner'] as List)
-          .map((tenant) => Cosigner.fromJson(tenant))
-          .toList()
+              .map((tenant) => Cosigner.fromJson(tenant))
+              .toList()
           : null,
       tenant: json['tenant'] != null
           ? (json['tenant'] as List)
-          .map((tenant) => Tenant.fromJson(tenant))
-          .toList()
+              .map((tenant) => Tenant.fromJson(tenant))
+              .toList()
           : null,
       rental: EditRental.fromJson(json['rental']),
-      unitData: unit_lease .fromJson(json['unit_data']),
+      unitData: unit_lease.fromJson(json['unit_data'] ?? {}),
       one_charge_data: json["one_charge_data"],
-        rec_charge_data : json['rec_charge_data'],
+      rec_charge_data: json['rec_charge_data'],
       rentCharges: json['rent_charge_data'] != null
           ? (json['rent_charge_data'] as List<dynamic>)
-          .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
-          .toList()
+              .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
+              .toList()
           : [],
       securityCharges: json['security_charge_data'] != null
           ? (json['security_charge_data'] as List<dynamic>)
-          .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
-          .toList()
+              .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
+              .toList()
           : [],
     );
   }
 }
+
 class EditRental {
   String? id;
   String? rentalId;
+  
   String? adminId;
   String? rentalOwnerId;
   String? propertyId;
@@ -101,6 +103,10 @@ class EditRental {
   });
 
   factory EditRental.fromJson(Map<String, dynamic> json) {
+    print('\n\nrental detail');
+    json.forEach((key, value) {
+      print('$key: $value');
+    });
     return EditRental(
       id: json['_id'],
       rentalId: json['rental_id'],
@@ -145,7 +151,6 @@ class EditRental {
   }
 }
 
-
 class EditLease {
   final String id;
   final String leaseId;
@@ -186,6 +191,10 @@ class EditLease {
   });
 
   factory EditLease.fromJson(Map<String, dynamic> json) {
+    print('\n\nlease data');
+    json.forEach((key, value) {
+      print('$key: $value');
+    });
     return EditLease(
       id: json['_id'],
       leaseId: json['lease_id'],

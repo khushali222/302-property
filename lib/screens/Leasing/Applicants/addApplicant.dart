@@ -59,10 +59,11 @@ class _AddApplicantState extends State<AddApplicant> {
     });
 
     try {
-      final response =
-          await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'),
-            headers: {"authorization" : "CRM $token","id":"CRM $id",}
-          );
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
       print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {
@@ -98,8 +99,11 @@ class _AddApplicantState extends State<AddApplicant> {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
-      final response =
-          await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+      final response = await http
+          .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
@@ -198,6 +202,14 @@ class _AddApplicantState extends State<AddApplicant> {
                   "Maintenance",
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "Properties"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.white,
+                  ),
+                  "Reports",
+                  true),
             ],
           ),
         ),
@@ -617,7 +629,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor:blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () async {
@@ -724,7 +736,7 @@ class _AddApplicantState extends State<AddApplicant> {
 
       // Handle successful response
       Navigator.pop(context);
-      print('Response: $response');
+      // print('Response: $response');
     } catch (e) {
       // Handle error
       print('Error posting applicant and lease: $e');

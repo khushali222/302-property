@@ -40,10 +40,14 @@ class Lease1 {
   });
 
   factory Lease1.fromJson(Map<String, dynamic> json) {
+    print(json);
+    
     return Lease1(
       leaseId: json['lease_id'] as String?,
       adminId: json['admin_id'] as String?,
-      tenantIds: (json['tenant_id'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      tenantIds: (json['tenant_id'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       rentalId: json['rental_id'] as String?,
       unitId: json['unit_id'] as String?,
       leaseType: json['lease_type'] as String?,

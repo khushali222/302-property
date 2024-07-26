@@ -51,7 +51,7 @@ class _MakePaymentState extends State<MakePayment> {
   double chargeAmount = 0.0;
   double surchargeIncluded = 0.0;
   double totalAmount = 0.0;
-  int? selectedcardindex ;
+  int? selectedcardindex;
   @override
   void initState() {
     super.initState();
@@ -1118,17 +1118,18 @@ class _MakePaymentState extends State<MakePayment> {
                                                                   color: Colors
                                                                       .red))
                                                           : Checkbox(
-                                                              value: selectedcardindex == index ? true :
-                                                                  false,
+                                                              value:
+                                                                  selectedcardindex ==
+                                                                          index
+                                                                      ? true
+                                                                      : false,
                                                               onChanged: (bool?
                                                                   value) async {
-                                                                setState(
-                                                                    ()  {
+                                                                setState(() {
                                                                   selectedcardindex =
                                                                       index;
-                                                                    });
-                                                                  await fetchSurcharge();
-
+                                                                });
+                                                                await fetchSurcharge();
                                                               },
                                                             ),
                                                     ),
@@ -1686,7 +1687,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text('Row ${index + 1}',
+                                          Text('Charge ${index + 1}',
                                               style: TextStyle(
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.bold)),
@@ -2089,7 +2090,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () async {
-                            /*  if (_formKey.currentState?.validate() ?? false) {
+                              /*  if (_formKey.currentState?.validate() ?? false) {
                                 setState(() {
                                   _isLoading = true;
                                 });
@@ -2166,11 +2167,10 @@ class _MakePaymentState extends State<MakePayment> {
                               print(cardDetails[selectedcardindex!].ccNumber);
                               print(cardDetails[selectedcardindex!].firstName);
                               print(cardDetails[selectedcardindex!].lastName);
-                             // print(cardDetails[selectedcardindex!].b);
+                              // print(cardDetails[selectedcardindex!].b);
                               print(cardDetails[selectedcardindex!].company);
                               print(cardDetails[selectedcardindex!].address_1);
                               print(cardDetails[selectedcardindex!].email);
-
                             },
                             child: const Text(
                               'Make Payment',
