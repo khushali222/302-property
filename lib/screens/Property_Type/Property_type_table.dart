@@ -660,10 +660,10 @@ class _PropertyTableState extends State<PropertyTable> {
                   context,
                   const FaIcon(
                     FontAwesomeIcons.letterboxd,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Reports",
-                  true),
+                  false),
             ],
           ),
         ),
