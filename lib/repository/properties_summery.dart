@@ -103,8 +103,9 @@ class Properies_summery_Repo{
     print(id);
     print("obj");
     final response = await http.get(Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
-
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    // print(jsonEncode('data'));
+    print(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => unit_properties.fromJson(data)).toList();
@@ -152,6 +153,49 @@ class Properies_summery_Repo{
     } else {
       Fluttertoast.showToast(msg: "Failed to add appliances");
       throw Exception('Failed to add appliances');
+    }
+  }
+  Future<Map<String, dynamic>> Editappliances({
+    String? adminId,
+    String? unitId,
+    String? applianceid,
+    String? appliancename,
+    String? appliancedescription,
+    String? installeddate,
+
+  }) async {
+    final Map<String, dynamic> data = {
+      'admin_id': adminId,
+      'unit_id': unitId,
+      'appliance_id': applianceid,
+      'appliance_name': appliancename,
+      'appliance_description': appliancedescription,
+      'installed_date': installeddate,
+
+    };
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/appliance/appliance/$applianceid'),
+      headers: <String, String>{
+        "authorization" : "CRM $token",
+        'Content-Type': 'application/json; charset=UTF-8',
+        "id":"CRM $id",
+      },
+      body: jsonEncode(data),
+
+    );
+    print(applianceid);
+    print('hii api${response.body}');
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg:"edit appliances successfully");
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: "Failed to edit appliances");
+      throw Exception('Failed to edit appliances');
     }
   }
 
@@ -205,6 +249,33 @@ class Properies_summery_Repo{
     }
   }
 
+  Future<Map<String, dynamic>> Deleteapplences({
+    required String? appliance_id
+  }) async {
+    // print('$apiUrl/$id');
+    print('hello 123 ${appliance_id}');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final http.Response response = await http.delete(
+      Uri.parse('${Api_url}/api/appliance/appliance/$appliance_id'),
+      headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to delete applences');
+    }
+  }
   Future<Map<String, dynamic>> Deleteunit({
     required String? unitId
   }) async {

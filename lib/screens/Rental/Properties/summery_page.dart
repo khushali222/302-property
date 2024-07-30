@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
@@ -32,6 +34,8 @@ import 'package:http/http.dart' as http;
 import '../../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
+import '../../Leasing/Applicants/addApplicant.dart';
+import '../../Leasing/RentalRoll/newAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
 
 class Summery_page extends StatefulWidget {
@@ -114,6 +118,7 @@ class _Summery_pageState extends State<Summery_page>
     //workorder
     // fetchAndSetCounts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
+
 
   }
 
@@ -635,7 +640,7 @@ class _Summery_pageState extends State<Summery_page>
 
   Widget _buildPaginationControls() {
     int numorpages = 1;
-    numorpages = (totalrecords / _rowsPerPage).ceil();
+    numorpages = (totalrecordsmulti / _rowsPerPage).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -717,8 +722,483 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-  final _scrollController = ScrollController();
 
+   //for multiunit table
+
+  int totalrecordsmulti = 0;
+
+  int rowsPerPagemulti = 5;
+  int sortColumnIndexmulti = 0;
+  bool sortAscendingmulti = true;
+  int currentPagemulti = 0;
+  int itemsPerPagemulti = 10;
+  List<int> itemsPerPageOptionsmulti = [
+    10,
+    25,
+    50,
+    100,
+  ]; // Options for items per page
+
+  void sortDatamulti(List<unit_properties> data) {
+    if (sorting1multi) {
+      data.sort((a, b) => ascending1multi
+          ? a.rentalunit!.compareTo(b.rentalunit!)
+          : b.rentalunit!.compareTo(a.rentalunit!));
+    } else if (sorting2multi) {
+      data.sort((a, b) => ascending2multi
+          ? a.rentalunitadress!.compareTo(b.rentalunitadress!)
+          : b.rentalunitadress!.compareTo(a.rentalunitadress!));
+    } else if (sorting3multi) {
+      data.sort((a, b) => ascending3multi
+          ? a.createdAt!.compareTo(b.createdAt!)
+          : b.createdAt!.compareTo(a.createdAt!));
+    }
+  }
+
+  int? expandedIndexmulti;
+  Set<int> expandedIndicesmulti = {};
+  late bool isExpandedmulti;
+  bool sorting1multi = false;
+  bool sorting2multi = false;
+  bool sorting3multi = false;
+  bool ascending1multi = false;
+  bool ascending2multi = false;
+  bool ascending3multi = false;
+
+  Widget _buildHeadersmulti() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+        color: blueColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        // leading: Container(
+        //   child: Icon(
+        //     Icons.expand_less,
+        //     color: Colors.transparent,
+        //   ),
+        // ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1multi == true) {
+                      sorting2multi = false;
+                      sorting3multi = false;
+                      ascending1multi = sorting1multi ? !ascending1multi : true;
+                      ascending2multi = false;
+                      ascending3multi = false;
+                    } else {
+                      sorting1multi = !sorting1multi;
+                      sorting2multi = false;
+                      sorting3multi = false;
+                      ascending1multi = sorting1multi ? !ascending1multi : true;
+                      ascending2multi = false;
+                      ascending3multi = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Unit ",
+                        style: TextStyle(color: Colors.white))
+                        : Text("Unit",
+                        style: TextStyle(color: Colors.white)),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 3),
+                    ascending1multi
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2multi) {
+                      sorting1multi = false;
+                      sorting2multi = sorting2multi;
+                      sorting3multi = false;
+                      ascending2multi = sorting2multi ? !ascending2multi : true;
+                      ascending1multi = false;
+                      ascending3multi = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Address", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending2multi
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3multi) {
+                      sorting1multi = false;
+                      sorting2multi = false;
+                      sorting3multi = sorting3multi;
+                      ascending3multi = sorting3multi ? !ascending3multi : true;
+                      ascending2multi = false;
+                      ascending1multi = false;
+                    } else {
+                      sorting1multi = false;
+                      sorting2multi = false;
+                      sorting3multi = !sorting3multi;
+                      ascending3multi = sorting3multi ? !ascending3multi : true;
+                      ascending2multi = false;
+                      ascending1multi = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Action", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3multi
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  // void handleEdit(unit_properties property) async {
+  //   // Handle edit action
+  //   print('Edit ${property.unitId}');
+  //   var check = await Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) => Edit_property_type(
+  //             property: property,
+  //           )));
+  //   if (check == true) {
+  //     setState(() {});
+  //   }
+    // final result = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_property_type(
+    //               property: property,
+    //             )));
+    /* if (result == true) {
+      setState(() {
+        futureUnitsummery = PropertyTypeRepository().fetchPropertyTypes();
+      });
+    }*/
+ // }
+  // void _showAlertmulti(BuildContext context, String id) {
+  //   Alert(
+  //     context: context,
+  //     type: AlertType.warning,
+  //     title: "Are you sure?",
+  //     desc: "Once deleted, you will not be able to recover this property!",
+  //     style: AlertStyle(
+  //       backgroundColor: Colors.white,
+  //     ),
+  //     buttons: [
+  //       DialogButton(
+  //         child: Text(
+  //           "Cancel",
+  //           style: TextStyle(color: Colors.white, fontSize: 18),
+  //         ),
+  //         onPressed: () => Navigator.pop(context),
+  //         color: Colors.grey,
+  //       ),
+  //       DialogButton(
+  //         child: Text(
+  //           "Delete",
+  //           style: TextStyle(color: Colors.white, fontSize: 18),
+  //         ),
+  //         onPressed: () async {
+  //          // var data = PropertyTypeRepository().DeletePropertyType(id: id);
+  //           // Add your delete logic here
+  //           setState(() {
+  //             // futureUnitsummery =
+  //             //     PropertyTypeRepository().fetchPropertyTypes();
+  //           });
+  //           Navigator.pop(context);
+  //         },
+  //         color: Colors.red,
+  //       )
+  //     ],
+  //   ).show();
+  // }
+  List<unit_properties> _tableDatamulti = [];
+  int _rowsPerPagemulti = 10;
+  int _currentPagemulti = 0;
+  int? _sortColumnIndexmulti;
+  bool _sortAscendingmulti = true;
+
+  List<unit_properties> get _pagedDatamulti {
+    int startIndex = _currentPagemulti * _rowsPerPagemulti;
+    int endIndex = startIndex + _rowsPerPagemulti;
+    return _tableDatamulti.sublist(startIndex,
+        endIndex > _tableDatamulti.length ? _tableDatamulti.length : endIndex);
+  }
+
+  void _changeRowsPerPagemulti(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPagemulti = selectedRowsPerPage;
+      _currentPagemulti = 0; // Reset to the first page when changing rows per page
+    });
+  }
+
+  void _sortmulti<T>(Comparable<T> Function(unit_properties d) getField,
+      int columnIndex, bool ascending) {
+    setState(() {
+      _sortColumnIndexmulti = columnIndex;
+      _sortAscendingmulti = ascending;
+      _tableDatamulti.sort((a, b) {
+        final aValue = getField(a);
+        final bValue = getField(b);
+        final result = aValue.compareTo(bValue as T);
+        return _sortAscendingmulti ? result : -result;
+      });
+    });
+  }
+
+
+
+  Widget _buildHeadermulti<T>(String text, int columnIndex,
+      Comparable<T> Function(unit_properties d)? getField) {
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+          _sortmulti(getField, columnIndex, !_sortAscendingmulti);
+        }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndexmulti == columnIndex)
+                Icon(_sortAscendingmulti
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildDataCellmulti(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16,bottom: 10),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
+      ),
+    );
+  }
+  Widget _buildActionsCellmulti(unit_properties data) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+              ),
+              InkWell(
+                onTap: () {
+                 // handleEdit(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () {
+                //  handleDelete(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.trashCan,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildPaginationControlsmulti() {
+    int numorpages = 1;
+    numorpages = (totalrecords / _rowsPerPagemulti).ceil();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // Text('Rows per page: '),
+        // SizedBox(width: 10),
+        Material(
+          elevation: 2,
+          color: Colors.white,
+          child: Container(
+            height: 55,
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _rowsPerPage,
+                items: [10, 25, 50, 100].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  if (newValue != null) {
+                    _changeRowsPerPagemulti(newValue);
+                  }
+                },
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  size: 40,
+                ),
+                style: TextStyle(color: Colors.black, fontSize: 17),
+                dropdownColor: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        IconButton(
+          icon: FaIcon(
+            FontAwesomeIcons.circleChevronLeft,
+            size: 30,
+            color:
+            _currentPagemulti == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+          ),
+          onPressed: _currentPagemulti == 0
+              ? null
+              : () {
+            setState(() {
+              _currentPagemulti--;
+            });
+          },
+        ),
+        Text(
+          'Page ${_currentPagemulti + 1} of $numorpages',
+          style: TextStyle(fontSize: 18),
+        ),
+        IconButton(
+          icon: FaIcon(
+            size: 30,
+            FontAwesomeIcons.circleChevronRight,
+            color: (_currentPagemulti + 1) * _rowsPerPagemulti >= _tableDatamulti.length
+                ? Colors.grey
+                : Color.fromRGBO(
+                21, 43, 83, 1), // Change color based on availability
+          ),
+          onPressed: (_currentPagemulti + 1) * _rowsPerPagemulti >= _tableDatamulti.length
+              ? null
+              : () {
+            setState(() {
+              _currentPagemulti++;
+            });
+          },
+        ),
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -790,47 +1270,19 @@ class _Summery_pageState extends State<Summery_page>
           Row(
             children: [
               const SizedBox(
-                width: 10,
+                width: 20,
               ),
               Text('${widget.properties.rentalAddress}',
-                  style: const TextStyle(
+                  style:  TextStyle(
                       color: Color.fromRGBO(21, 43, 81, 1),
-                      fontWeight: FontWeight.bold)),
-              const Spacer(),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                      child: Container(
-                        height: 40,
-                        width: 80,
-                        decoration: const BoxDecoration(
-                          color: Color.fromRGBO(21, 43, 81, 1),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(5),
-                          ),
-                        ),
-                        child: const Center(
-                            child: Text(
-                          "Back",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, color: Colors.white),
-                        )),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+                      fontWeight: FontWeight.bold,
+                    fontSize:
+                    MediaQuery.of(context).size.width < 500
+                        ? 14
+                        : 20,
+                  )),
+
+
             ],
           ),
           const SizedBox(
@@ -839,13 +1291,16 @@ class _Summery_pageState extends State<Summery_page>
           Row(
             children: [
               const SizedBox(
-                width: 10,
+                width: 20,
               ),
               Text('${widget.properties.propertyTypeData?.propertyType}',
-                  style: const TextStyle(
+                  style:  TextStyle(
                       color: Color(0xFF8A95A8),
                       fontWeight: FontWeight.bold,
-                      fontSize: 12)),
+                    fontSize:
+                    MediaQuery.of(context).size.width < 500
+                        ? 13
+                        : 20,)),
             ],
           ),
           const SizedBox(
@@ -864,12 +1319,19 @@ class _Summery_pageState extends State<Summery_page>
               controller: _tabController,
               dividerColor: Colors.transparent,
               indicatorWeight: 5,
+              labelStyle: TextStyle(
+                fontSize:
+                MediaQuery.of(context).size.width < 500
+                    ? 14
+                    : 20,
+                // fontWeight: FontWeight.bold,
+              ),
               //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
               indicatorColor: const Color.fromRGBO(21, 43, 81, 1),
               labelColor: const Color.fromRGBO(21, 43, 81, 1),
               unselectedLabelColor: const Color.fromRGBO(21, 43, 81, 1),
               tabs: [
-                const Tab(text: 'Summary'),
+                 Tab(text: 'Summary',),
                 Tab(
                   text: 'Units($unitCount)',
                 ),
@@ -903,7 +1365,9 @@ class _Summery_pageState extends State<Summery_page>
                 //       //  unit: unit,
                 //       )
                 //     : Unit_page(),
+               // showdetails ? unitScreen1(context, unit!) : Unit_page(context),
                 showdetails ? unitScreen1(context, unit!) : Unit_page(context),
+
                 // unitScreen(),
                 // Center(child: Text('Content of Tab 2')),
                 //  Container(color:Colors.blue),
@@ -2157,8 +2621,1021 @@ class _Summery_pageState extends State<Summery_page>
         child: Column(
           children: [
             const SizedBox(height: 20),
+         //  this for single unit table show
+         //    if (!showdetails &&
+         //        widget.properties.propertyTypeData!.isMultiunit! == false)
+         //      Padding(
+         //        padding: const EdgeInsets.all(10.0),
+         //        child: FutureBuilder<List<unit_properties>>(
+         //          future: Properies_summery_Repo()
+         //              .fetchunit(widget.properties.rentalId!),
+         //          builder: (context, snapshot) {
+         //            if (snapshot.connectionState == ConnectionState.waiting) {
+         //              return const Center(
+         //                  child: SpinKitFadingCircle(
+         //                color: Colors.black,
+         //                size: 40.0,
+         //              ));
+         //            } else if (snapshot.hasError) {
+         //              return Center(child: Text('Error: ${snapshot.error}'));
+         //            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+         //              return const Center(child: Text('No data available'));
+         //            }
+         //            final data = snapshot.data!;
+         //            return SingleChildScrollView(
+         //              scrollDirection: Axis.horizontal,
+         //              child: Padding(
+         //                padding: const EdgeInsets.all(2.0),
+         //                child: Container(
+         //                  decoration: BoxDecoration(
+         //                      border: Border.all(
+         //                    color: const Color.fromRGBO(21, 43, 83, 1),
+         //                  )),
+         //                  child: DataTable(
+         //                    // headingRowColor: MaterialStateColor.resolveWith(
+         //                    //         (states) => Color.fromRGBO(21, 43, 83, 1)),
+         //                    headingTextStyle: const TextStyle(
+         //                        color: Colors.white,
+         //                        fontWeight: FontWeight.bold),
+         //                    columnSpacing: 20,
+         //                    dataRowHeight: 60,
+         //                    columns: [
+         //                      const DataColumn(
+         //                        label: Text(
+         //                          'TENANTS',
+         //                          style: TextStyle(
+         //                            color: Color.fromRGBO(21, 43, 81, 1),
+         //                            fontWeight: FontWeight.bold,
+         //                          ),
+         //                        ),
+         //                      ),
+         //                      const DataColumn(
+         //                        label: Text(
+         //                          'ACTION',
+         //                          style: TextStyle(
+         //                            color: Color.fromRGBO(21, 43, 81, 1),
+         //                            fontWeight: FontWeight.bold,
+         //                          ),
+         //                        ),
+         //                      ),
+         //                    ],
+         //                    rows: data.map((unitData) {
+         //                      return DataRow(
+         //                        cells: [
+         //                          DataCell(
+         //                            Text(
+         //                              ' ${tenentCount}',
+         //                              style:
+         //                                  const TextStyle(color: Color(0xFF8A95A8)),
+         //                            ),
+         //                            onTap: () {
+         //                              setState(() {
+         //                                // showdetails = !showdetails;
+         //                                showdetails = true;
+         //                                unit = unitData;
+         //                              });
+         //
+         //                              // if (showdetails) {
+         //                              //   // Navigator.push(
+         //                              //   //   context,
+         //                              //   //   MaterialPageRoute(builder: (context) => unitScreen()),
+         //                              //   // );
+         //                              //   // unitScreen();
+         //                              //   Container(
+         //                              //       color: Colors.blue,
+         //                              //     child: Text("data"),
+         //                              //   );
+         //                              // }
+         //                            },
+         //                          ),
+         //                          DataCell(
+         //                            IconButton(
+         //                              icon: const FaIcon(
+         //                                FontAwesomeIcons.edit,
+         //                                size: 15,
+         //                                color: Color(0xFF8A95A8),
+         //                              ),
+         //                              onPressed: () {
+         //                                sqft3.text = unitData.rentalsqft!;
+         //                                if (widget.properties.propertyTypeData!
+         //                                            .isMultiunit! ==
+         //                                        false &&
+         //                                    widget.properties.propertyTypeData!
+         //                                            .propertyType ==
+         //                                        'Residential') {
+         //                                  showDialog(
+         //                                    context: context,
+         //                                    builder: (BuildContext context) {
+         //                                      bool isChecked =
+         //                                          false; // Moved isChecked inside the StatefulBuilder
+         //                                      return StatefulBuilder(
+         //                                        builder: (BuildContext context,
+         //                                            StateSetter setState) {
+         //                                          return AlertDialog(
+         //                                            backgroundColor:
+         //                                                Colors.white,
+         //                                            surfaceTintColor:
+         //                                                Colors.white,
+         //                                            content:
+         //                                                SingleChildScrollView(
+         //                                              child: Column(
+         //                                                children: [
+         //                                                  Row(
+         //                                                    children: [
+         //                                                      const Text(
+         //                                                        "Add Unit Details",
+         //                                                        style:
+         //                                                            TextStyle(
+         //                                                          color: Color
+         //                                                              .fromRGBO(
+         //                                                                  21,
+         //                                                                  43,
+         //                                                                  81,
+         //                                                                  1),
+         //                                                          fontWeight:
+         //                                                              FontWeight
+         //                                                                  .bold,
+         //                                                        ),
+         //                                                      ),
+         //                                                      const Spacer(),
+         //                                                      Align(
+         //                                                        alignment: Alignment
+         //                                                            .centerRight,
+         //                                                        child: InkWell(
+         //                                                          onTap: () {
+         //                                                            Navigator.pop(
+         //                                                                context);
+         //                                                          },
+         //                                                          child: const Icon(
+         //                                                              Icons
+         //                                                                  .close,
+         //                                                              color: Colors
+         //                                                                  .black),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  const Row(
+         //                                                    children: [
+         //                                                      Text(
+         //                                                        "SQFT",
+         //                                                        style: TextStyle(
+         //                                                            color: Color(
+         //                                                                0xFF8A95A8),
+         //                                                            fontWeight:
+         //                                                                FontWeight
+         //                                                                    .bold),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  Padding(
+         //                                                    padding:
+         //                                                        const EdgeInsets
+         //                                                            .symmetric(
+         //                                                            vertical:
+         //                                                                1),
+         //                                                    child: Material(
+         //                                                      elevation: 3,
+         //                                                      borderRadius:
+         //                                                          BorderRadius
+         //                                                              .circular(
+         //                                                                  3),
+         //                                                      child:
+         //                                                          TextFormField(
+         //                                                        controller:
+         //                                                            sqft3,
+         //                                                        cursorColor:
+         //                                                            Colors
+         //                                                                .black,
+         //                                                        decoration:
+         //                                                            InputDecoration(
+         //                                                          //  hintText: label,
+         //                                                          // labelText: label,
+         //                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
+         //                                                          filled: true,
+         //                                                          fillColor:
+         //                                                              Colors
+         //                                                                  .white,
+         //                                                          border:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                BorderSide
+         //                                                                    .none,
+         //                                                          ),
+         //                                                          enabledBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                const BorderSide(
+         //                                                                    color:
+         //                                                                        Color(0xFF8A95A8)),
+         //                                                          ),
+         //                                                          focusedBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide: const BorderSide(
+         //                                                                color: Color(
+         //                                                                    0xFF8A95A8),
+         //                                                                width:
+         //                                                                    2),
+         //                                                          ),
+         //                                                          contentPadding: const EdgeInsets.symmetric(
+         //                                                              vertical:
+         //                                                                  10.0,
+         //                                                              horizontal:
+         //                                                                  10.0),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ),
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  const Row(
+         //                                                    children: [
+         //                                                      Text(
+         //                                                        "bath",
+         //                                                        style: TextStyle(
+         //                                                            color: Color(
+         //                                                                0xFF8A95A8),
+         //                                                            fontWeight:
+         //                                                                FontWeight
+         //                                                                    .bold),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  Padding(
+         //                                                    padding:
+         //                                                        const EdgeInsets
+         //                                                            .symmetric(
+         //                                                            vertical:
+         //                                                                1),
+         //                                                    child: Material(
+         //                                                      elevation: 3,
+         //                                                      borderRadius:
+         //                                                          BorderRadius
+         //                                                              .circular(
+         //                                                                  3),
+         //                                                      child:
+         //                                                          TextFormField(
+         //                                                        controller:
+         //                                                            bath3,
+         //                                                        cursorColor:
+         //                                                            Colors
+         //                                                                .black,
+         //                                                        decoration:
+         //                                                            InputDecoration(
+         //                                                          //  hintText: label,
+         //                                                          // labelText: label,
+         //                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
+         //                                                          filled: true,
+         //                                                          fillColor:
+         //                                                              Colors
+         //                                                                  .white,
+         //                                                          border:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                BorderSide
+         //                                                                    .none,
+         //                                                          ),
+         //                                                          enabledBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                const BorderSide(
+         //                                                                    color:
+         //                                                                        Color(0xFF8A95A8)),
+         //                                                          ),
+         //                                                          focusedBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide: const BorderSide(
+         //                                                                color: Color(
+         //                                                                    0xFF8A95A8),
+         //                                                                width:
+         //                                                                    2),
+         //                                                          ),
+         //                                                          contentPadding: const EdgeInsets.symmetric(
+         //                                                              vertical:
+         //                                                                  10.0,
+         //                                                              horizontal:
+         //                                                                  10.0),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ),
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  const Row(
+         //                                                    children: [
+         //                                                      Text(
+         //                                                        "bed",
+         //                                                        style: TextStyle(
+         //                                                            color: Color(
+         //                                                                0xFF8A95A8),
+         //                                                            fontWeight:
+         //                                                                FontWeight
+         //                                                                    .bold),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  Padding(
+         //                                                    padding:
+         //                                                        const EdgeInsets
+         //                                                            .symmetric(
+         //                                                            vertical:
+         //                                                                1),
+         //                                                    child: Material(
+         //                                                      elevation: 3,
+         //                                                      borderRadius:
+         //                                                          BorderRadius
+         //                                                              .circular(
+         //                                                                  3),
+         //                                                      child:
+         //                                                          TextFormField(
+         //                                                        controller:
+         //                                                            bed3,
+         //                                                        cursorColor:
+         //                                                            Colors
+         //                                                                .black,
+         //                                                        decoration:
+         //                                                            InputDecoration(
+         //                                                          //  hintText: label,
+         //                                                          // labelText: label,
+         //                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
+         //                                                          filled: true,
+         //                                                          fillColor:
+         //                                                              Colors
+         //                                                                  .white,
+         //                                                          border:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                BorderSide
+         //                                                                    .none,
+         //                                                          ),
+         //                                                          enabledBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                const BorderSide(
+         //                                                                    color:
+         //                                                                        Color(0xFF8A95A8)),
+         //                                                          ),
+         //                                                          focusedBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide: const BorderSide(
+         //                                                                color: Color(
+         //                                                                    0xFF8A95A8),
+         //                                                                width:
+         //                                                                    2),
+         //                                                          ),
+         //                                                          contentPadding: const EdgeInsets.symmetric(
+         //                                                              vertical:
+         //                                                                  10.0,
+         //                                                              horizontal:
+         //                                                                  10.0),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ),
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  const Row(
+         //                                                    children: [
+         //                                                      Text(
+         //                                                        'Photo',
+         //                                                        style: TextStyle(
+         //                                                            color: Colors
+         //                                                                .black),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(height: 8.0),
+         //                                                  Row(
+         //                                                    children: [
+         //                                                      GestureDetector(
+         //                                                        onTap: () {
+         //                                                          _pickImage()
+         //                                                              .then(
+         //                                                                  (_) {
+         //                                                            setState(
+         //                                                                () {}); // Rebuild the widget after selecting the image
+         //                                                          });
+         //                                                        },
+         //                                                        child: const Text(
+         //                                                          '+ Add',
+         //                                                          style: TextStyle(
+         //                                                              color: Colors
+         //                                                                  .green),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  _image != null
+         //                                                      ? Column(
+         //                                                          children: [
+         //                                                            Image.file(
+         //                                                              _image!,
+         //                                                              height:
+         //                                                                  80,
+         //                                                              width: 80,
+         //                                                              fit: BoxFit
+         //                                                                  .cover,
+         //                                                            ),
+         //                                                            Text(
+         //                                                                _uploadedFileName ??
+         //                                                                    ""),
+         //                                                          ],
+         //                                                        )
+         //                                                      : const Text(''),
+         //                                                  const SizedBox(height: 8.0),
+         //                                                  Row(
+         //                                                    children: [
+         //                                                      const SizedBox(
+         //                                                        width: 0,
+         //                                                      ),
+         //                                                      GestureDetector(
+         //                                                        onTap:
+         //                                                            () async {
+         //                                                          if (sqft3.text
+         //                                                              .isEmpty) {
+         //                                                            setState(
+         //                                                                () {
+         //                                                              iserror =
+         //                                                                  true;
+         //                                                            });
+         //                                                          } else {
+         //                                                            setState(
+         //                                                                () {
+         //                                                              isLoading =
+         //                                                                  true;
+         //                                                              iserror =
+         //                                                                  false;
+         //                                                            });
+         //                                                            SharedPreferences
+         //                                                                prefs =
+         //                                                                await SharedPreferences
+         //                                                                    .getInstance();
+         //
+         //                                                            String? id =
+         //                                                                prefs.getString(
+         //                                                                    "adminId");
+         //                                                            Properies_summery_Repo()
+         //                                                                .Editunit(
+         //                                                                    rentalsqft: sqft3
+         //                                                                        .text,
+         //                                                                    rentalunitadress: street3
+         //                                                                        .text,
+         //                                                                    rentalbath: bath3
+         //                                                                        .text,
+         //                                                                    rentalbed: bed3
+         //                                                                        .text,
+         //                                                                    unitId: unitData
+         //                                                                        .unitId,
+         //                                                                    adminId:
+         //                                                                        id,
+         //                                                                    rentalId: unitData
+         //                                                                        .rentalId)
+         //                                                                .then(
+         //                                                                    (value) {
+         //                                                              setState(
+         //                                                                  () {
+         //                                                                isLoading =
+         //                                                                    false;
+         //                                                              });
+         //                                                              Navigator.of(
+         //                                                                      context)
+         //                                                                  .pop(
+         //                                                                      true);
+         //                                                              reload_Screen();
+         //                                                            }).catchError(
+         //                                                                    (e) {
+         //                                                              setState(
+         //                                                                  () {
+         //                                                                isLoading =
+         //                                                                    false;
+         //                                                              });
+         //                                                            });
+         //                                                          }
+         //                                                        },
+         //                                                        child: Material(
+         //                                                          elevation: 3,
+         //                                                          borderRadius:
+         //                                                              const BorderRadius
+         //                                                                  .all(
+         //                                                            Radius
+         //                                                                .circular(
+         //                                                                    5),
+         //                                                          ),
+         //                                                          child:
+         //                                                              Container(
+         //                                                            height: 30,
+         //                                                            width: 80,
+         //                                                            decoration:
+         //                                                                const BoxDecoration(
+         //                                                              color: Color
+         //                                                                  .fromRGBO(
+         //                                                                      21,
+         //                                                                      43,
+         //                                                                      81,
+         //                                                                      1),
+         //                                                              borderRadius:
+         //                                                                  BorderRadius
+         //                                                                      .all(
+         //                                                                Radius.circular(
+         //                                                                    5),
+         //                                                              ),
+         //                                                            ),
+         //                                                            child: const Center(
+         //                                                                child: Text(
+         //                                                              "Save",
+         //                                                              style: TextStyle(
+         //                                                                  fontWeight: FontWeight
+         //                                                                      .w500,
+         //                                                                  color:
+         //                                                                      Colors.white),
+         //                                                            )),
+         //                                                          ),
+         //                                                        ),
+         //                                                      ),
+         //                                                      const SizedBox(
+         //                                                          width: 10),
+         //                                                      GestureDetector(
+         //                                                        onTap: () {
+         //                                                          Navigator.pop(
+         //                                                              context);
+         //                                                        },
+         //                                                        child: Material(
+         //                                                          elevation: 3,
+         //                                                          borderRadius:
+         //                                                              const BorderRadius
+         //                                                                  .all(
+         //                                                            Radius
+         //                                                                .circular(
+         //                                                                    5),
+         //                                                          ),
+         //                                                          child:
+         //                                                              Container(
+         //                                                            height: 30,
+         //                                                            width: 80,
+         //                                                            decoration:
+         //                                                                const BoxDecoration(
+         //                                                              color: Colors
+         //                                                                  .white,
+         //                                                              borderRadius:
+         //                                                                  BorderRadius
+         //                                                                      .all(
+         //                                                                Radius.circular(
+         //                                                                    5),
+         //                                                              ),
+         //                                                            ),
+         //                                                            child: const Center(
+         //                                                                child: Text(
+         //                                                              "Cancel",
+         //                                                              style: TextStyle(
+         //                                                                  fontWeight: FontWeight
+         //                                                                      .w500,
+         //                                                                  color: Color.fromRGBO(
+         //                                                                      21,
+         //                                                                      43,
+         //                                                                      81,
+         //                                                                      1)),
+         //                                                            )),
+         //                                                          ),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(height: 8.0),
+         //                                                  if (iserror)
+         //                                                    const Text(
+         //                                                      "Please fill in all fields correctly.",
+         //                                                      style: TextStyle(
+         //                                                          color: Colors
+         //                                                              .redAccent),
+         //                                                    ),
+         //                                                ],
+         //                                              ),
+         //                                            ),
+         //                                          );
+         //                                        },
+         //                                      );
+         //                                    },
+         //                                  );
+         //                                }
+         //                                if (widget.properties.propertyTypeData!
+         //                                            .isMultiunit! ==
+         //                                        false &&
+         //                                    widget.properties.propertyTypeData!
+         //                                            .propertyType ==
+         //                                        'Commercial') {
+         //                                  showDialog(
+         //                                    context: context,
+         //                                    builder: (BuildContext context) {
+         //                                      bool isChecked =
+         //                                          false; // Moved isChecked inside the StatefulBuilder
+         //                                      return StatefulBuilder(
+         //                                        builder: (BuildContext context,
+         //                                            StateSetter setState) {
+         //                                          return AlertDialog(
+         //                                            backgroundColor:
+         //                                                Colors.white,
+         //                                            surfaceTintColor:
+         //                                                Colors.white,
+         //                                            content:
+         //                                                SingleChildScrollView(
+         //                                              child: Column(
+         //                                                children: [
+         //                                                  Row(
+         //                                                    children: [
+         //                                                      const Text(
+         //                                                        "Add Unit Details",
+         //                                                        style:
+         //                                                            TextStyle(
+         //                                                          color: Color
+         //                                                              .fromRGBO(
+         //                                                                  21,
+         //                                                                  43,
+         //                                                                  81,
+         //                                                                  1),
+         //                                                          fontWeight:
+         //                                                              FontWeight
+         //                                                                  .bold,
+         //                                                        ),
+         //                                                      ),
+         //                                                      const Spacer(),
+         //                                                      Align(
+         //                                                        alignment: Alignment
+         //                                                            .centerRight,
+         //                                                        child: InkWell(
+         //                                                          onTap: () {
+         //                                                            Navigator.pop(
+         //                                                                context);
+         //                                                          },
+         //                                                          child: const Icon(
+         //                                                              Icons
+         //                                                                  .close,
+         //                                                              color: Colors
+         //                                                                  .black),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  const Row(
+         //                                                    children: [
+         //                                                      Text(
+         //                                                        "SQFT",
+         //                                                        style: TextStyle(
+         //                                                            color: Color(
+         //                                                                0xFF8A95A8),
+         //                                                            fontWeight:
+         //                                                                FontWeight
+         //                                                                    .bold),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  Padding(
+         //                                                    padding:
+         //                                                        const EdgeInsets
+         //                                                            .symmetric(
+         //                                                            vertical:
+         //                                                                1),
+         //                                                    child: Material(
+         //                                                      elevation: 3,
+         //                                                      borderRadius:
+         //                                                          BorderRadius
+         //                                                              .circular(
+         //                                                                  3),
+         //                                                      child:
+         //                                                          TextFormField(
+         //                                                        controller:
+         //                                                            sqft3,
+         //                                                        cursorColor:
+         //                                                            Colors
+         //                                                                .black,
+         //                                                        decoration:
+         //                                                            InputDecoration(
+         //                                                          //  hintText: label,
+         //                                                          // labelText: label,
+         //                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
+         //                                                          filled: true,
+         //                                                          fillColor:
+         //                                                              Colors
+         //                                                                  .white,
+         //                                                          border:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                BorderSide
+         //                                                                    .none,
+         //                                                          ),
+         //                                                          enabledBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide:
+         //                                                                const BorderSide(
+         //                                                                    color:
+         //                                                                        Color(0xFF8A95A8)),
+         //                                                          ),
+         //                                                          focusedBorder:
+         //                                                              OutlineInputBorder(
+         //                                                            borderRadius:
+         //                                                                BorderRadius
+         //                                                                    .circular(3),
+         //                                                            borderSide: const BorderSide(
+         //                                                                color: Color(
+         //                                                                    0xFF8A95A8),
+         //                                                                width:
+         //                                                                    2),
+         //                                                          ),
+         //                                                          contentPadding: const EdgeInsets.symmetric(
+         //                                                              vertical:
+         //                                                                  10.0,
+         //                                                              horizontal:
+         //                                                                  10.0),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ),
+         //                                                  ),
+         //                                                  const SizedBox(
+         //                                                    height: 10,
+         //                                                  ),
+         //                                                  const Row(
+         //                                                    children: [
+         //                                                      Text(
+         //                                                        'Photo',
+         //                                                        style: TextStyle(
+         //                                                            color: Colors
+         //                                                                .black),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(height: 8.0),
+         //                                                  Row(
+         //                                                    children: [
+         //                                                      GestureDetector(
+         //                                                        onTap: () {
+         //                                                          _pickImage()
+         //                                                              .then(
+         //                                                                  (_) {
+         //                                                            setState(
+         //                                                                () {}); // Rebuild the widget after selecting the image
+         //                                                          });
+         //                                                        },
+         //                                                        child: const Text(
+         //                                                          '+ Add',
+         //                                                          style: TextStyle(
+         //                                                              color: Colors
+         //                                                                  .green),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(height: 8.0),
+         //                                                  _image != null
+         //                                                      ? Column(
+         //                                                          children: [
+         //                                                            Image.file(
+         //                                                              _image!,
+         //                                                              height:
+         //                                                                  80,
+         //                                                              width: 80,
+         //                                                              fit: BoxFit
+         //                                                                  .cover,
+         //                                                            ),
+         //                                                            Text(
+         //                                                                _uploadedFileName ??
+         //                                                                    ""),
+         //                                                          ],
+         //                                                        )
+         //                                                      : const Text(''),
+         //                                                  const SizedBox(height: 8.0),
+         //                                                  Row(
+         //                                                    children: [
+         //                                                      const SizedBox(
+         //                                                        width: 0,
+         //                                                      ),
+         //                                                      GestureDetector(
+         //                                                        onTap:
+         //                                                            () async {
+         //                                                          if (sqft3.text
+         //                                                              .isEmpty) {
+         //                                                            setState(
+         //                                                                () {
+         //                                                              iserror =
+         //                                                                  true;
+         //                                                            });
+         //                                                          } else {
+         //                                                            setState(
+         //                                                                () {
+         //                                                              isLoading =
+         //                                                                  true;
+         //                                                              iserror =
+         //                                                                  false;
+         //                                                            });
+         //                                                            SharedPreferences
+         //                                                                prefs =
+         //                                                                await SharedPreferences
+         //                                                                    .getInstance();
+         //                                                            String? id =
+         //                                                                prefs.getString(
+         //                                                                    "adminId");
+         //                                                            Properies_summery_Repo()
+         //                                                                .Editunit(
+         //                                                              rentalsqft:
+         //                                                                  sqft3
+         //                                                                      .text,
+         //                                                              unitId: unitData
+         //                                                                  .unitId!,
+         //                                                            )
+         //                                                                .then(
+         //                                                                    (value) {
+         //                                                              setState(
+         //                                                                  () {
+         //                                                                isLoading =
+         //                                                                    false;
+         //                                                              });
+         //
+         //                                                              Navigator.of(
+         //                                                                      context)
+         //                                                                  .pop(
+         //                                                                      true);
+         //                                                            }).catchError(
+         //                                                                    (e) {
+         //                                                              setState(
+         //                                                                  () {
+         //                                                                isLoading =
+         //                                                                    false;
+         //                                                              });
+         //                                                            });
+         //                                                          }
+         //                                                        },
+         //                                                        child: Material(
+         //                                                          elevation: 3,
+         //                                                          borderRadius:
+         //                                                              const BorderRadius
+         //                                                                  .all(
+         //                                                            Radius
+         //                                                                .circular(
+         //                                                                    5),
+         //                                                          ),
+         //                                                          child:
+         //                                                              Container(
+         //                                                            height: 30,
+         //                                                            width: 80,
+         //                                                            decoration:
+         //                                                                const BoxDecoration(
+         //                                                              color: Color
+         //                                                                  .fromRGBO(
+         //                                                                      21,
+         //                                                                      43,
+         //                                                                      81,
+         //                                                                      1),
+         //                                                              borderRadius:
+         //                                                                  BorderRadius
+         //                                                                      .all(
+         //                                                                Radius.circular(
+         //                                                                    5),
+         //                                                              ),
+         //                                                            ),
+         //                                                            child: const Center(
+         //                                                                child: Text(
+         //                                                              "Save",
+         //                                                              style: TextStyle(
+         //                                                                  fontWeight: FontWeight
+         //                                                                      .w500,
+         //                                                                  color:
+         //                                                                      Colors.white),
+         //                                                            )),
+         //                                                          ),
+         //                                                        ),
+         //                                                      ),
+         //                                                      const SizedBox(
+         //                                                          width: 10),
+         //                                                      GestureDetector(
+         //                                                        onTap: () {
+         //                                                          Navigator.pop(
+         //                                                              context);
+         //                                                        },
+         //                                                        child: Material(
+         //                                                          elevation: 3,
+         //                                                          borderRadius:
+         //                                                              const BorderRadius
+         //                                                                  .all(
+         //                                                            Radius
+         //                                                                .circular(
+         //                                                                    5),
+         //                                                          ),
+         //                                                          child:
+         //                                                              Container(
+         //                                                            height: 30,
+         //                                                            width: 80,
+         //                                                            decoration:
+         //                                                                const BoxDecoration(
+         //                                                              color: Colors
+         //                                                                  .white,
+         //                                                              borderRadius:
+         //                                                                  BorderRadius
+         //                                                                      .all(
+         //                                                                Radius.circular(
+         //                                                                    5),
+         //                                                              ),
+         //                                                            ),
+         //                                                            child: const Center(
+         //                                                                child: Text(
+         //                                                              "Cancel",
+         //                                                              style: TextStyle(
+         //                                                                  fontWeight: FontWeight
+         //                                                                      .w500,
+         //                                                                  color: Color.fromRGBO(
+         //                                                                      21,
+         //                                                                      43,
+         //                                                                      81,
+         //                                                                      1)),
+         //                                                            )),
+         //                                                          ),
+         //                                                        ),
+         //                                                      ),
+         //                                                    ],
+         //                                                  ),
+         //                                                  const SizedBox(height: 8.0),
+         //                                                  if (iserror)
+         //                                                    const Text(
+         //                                                      "Please fill in all fields correctly.",
+         //                                                      style: TextStyle(
+         //                                                          color: Colors
+         //                                                              .redAccent),
+         //                                                    ),
+         //                                                ],
+         //                                              ),
+         //                                            ),
+         //                                          );
+         //                                        },
+         //                                      );
+         //                                    },
+         //                                  );
+         //                                }
+         //                              },
+         //                            ),
+         //                          ),
+         //                        ],
+         //                      );
+         //                    }).toList(),
+         //                  ),
+         //                ),
+         //              ),
+         //            );
+         //          },
+         //        ),
+         //      ),
+
+           //this is for mutiunit add button show
+            /*this for single unit*/
             if (!showdetails &&
-                widget.properties.propertyTypeData!.isMultiunit! == false)
+                 widget.properties.propertyTypeData!.isMultiunit! == false)
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: FutureBuilder<List<unit_properties>>(
@@ -2168,447 +3645,416 @@ class _Summery_pageState extends State<Summery_page>
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                           child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                            color: Colors.black,
+                            size: 40.0,
+                          ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(child: Text('No data available'));
                     }
                     final data = snapshot.data!;
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
-                          )),
-                          child: DataTable(
-                            // headingRowColor: MaterialStateColor.resolveWith(
-                            //         (states) => Color.fromRGBO(21, 43, 83, 1)),
-                            headingTextStyle: const TextStyle(
+                    //print('rentalimage${data.first.rentalImages}');
+                    //print('$image_url${data[0].rentalImages}');
+                   // print('hii$image_url${data[0].rentalImages!.first}');
+                  return  SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10,bottom: 10),
+                            child: Container(
+                              //height: screenHeight * 0.82,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.0),
                                 color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                            columnSpacing: 20,
-                            dataRowHeight: 60,
-                            columns: [
-                              const DataColumn(
-                                label: Text(
-                                  'TENANTS',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                border: Border.all(
+                                  color: const Color.fromRGBO(21, 43, 83, 1),
+                                  width: 1,
                                 ),
                               ),
-                              const DataColumn(
-                                label: Text(
-                                  'ACTION',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontWeight: FontWeight.bold,
+                              child: Column(
+                                // mainAxisAlignment: MainAxisAlignment.start,
+                                // crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 10,
                                   ),
-                                ),
-                              ),
-                            ],
-                            rows: data.map((unitData) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(
-                                    Text(
-                                      ' ${tenentCount}',
-                                      style:
-                                          const TextStyle(color: Color(0xFF8A95A8)),
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        // showdetails = !showdetails;
-                                        showdetails = true;
-                                        unit = unitData;
-                                      });
-
-                                      // if (showdetails) {
-                                      //   // Navigator.push(
-                                      //   //   context,
-                                      //   //   MaterialPageRoute(builder: (context) => unitScreen()),
-                                      //   // );
-                                      //   // unitScreen();
-                                      //   Container(
-                                      //       color: Colors.blue,
-                                      //     child: Text("data"),
-                                      //   );
-                                      // }
-                                    },
-                                  ),
-                                  DataCell(
-                                    IconButton(
-                                      icon: const FaIcon(
-                                        FontAwesomeIcons.edit,
-                                        size: 15,
-                                        color: Color(0xFF8A95A8),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 5,
                                       ),
-                                      onPressed: () {
-                                        sqft3.text = unitData.rentalsqft!;
-                                        if (widget.properties.propertyTypeData!
-                                                    .isMultiunit! ==
-                                                false &&
-                                            widget.properties.propertyTypeData!
-                                                    .propertyType ==
-                                                'Residential') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              bool isChecked =
-                                                  false; // Moved isChecked inside the StatefulBuilder
-                                              return StatefulBuilder(
-                                                builder: (BuildContext context,
-                                                    StateSetter setState) {
-                                                  return AlertDialog(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    surfaceTintColor:
-                                                        Colors.white,
-                                                    content:
-                                                        SingleChildScrollView(
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                "Add Unit Details",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                              const Spacer(),
-                                                              Align(
-                                                                alignment: Alignment
-                                                                    .centerRight,
-                                                                child: InkWell(
-                                                                  onTap: () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: const Icon(
-                                                                      Icons
-                                                                          .close,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "SQFT",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          height: 36,
+                                          width: 100,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              sqft3.text = data[0].rentalsqft!;
+                                              bath3.text = data[0].rentalbath!;
+                                              bed3.text = data[0].rentalbed!;
+                                              street3.text = data[0].rentalunitadress!;
+                                              unitnum.text = data[0].rentalunit!;
+                                              //_image = data[0].p;
+                                              if (widget.properties.propertyTypeData!
+                                                  .isMultiunit! ==
+                                                  false &&
+                                                  widget.properties.propertyTypeData!
+                                                      .propertyType ==
+                                                      'Residential') {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    bool isChecked =
+                                                    false; // Moved isChecked inside the StatefulBuilder
+                                                    return StatefulBuilder(
+                                                      builder: (BuildContext context,
+                                                          StateSetter setState) {
+                                                        return AlertDialog(
+                                                          backgroundColor:
+                                                          Colors.white,
+                                                          surfaceTintColor:
+                                                          Colors.white,
+                                                          content:
+                                                          SingleChildScrollView(
+                                                            child: Column(
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                      "Edit Unit Details",
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            81,
+                                                                            1),
+                                                                        fontWeight:
                                                                         FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    sqft3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
+                                                                            .bold,
+                                                                      ),
+                                                                    ),
+                                                                    const Spacer(),
+                                                                    Align(
+                                                                      alignment: Alignment
+                                                                          .centerRight,
+                                                                      child: InkWell(
+                                                                        onTap: () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child: const Icon(
+                                                                            Icons
+                                                                                .close,
+                                                                            color: Colors
+                                                                                .black),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                const Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "SQFT",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
                                                                       vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "bath",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    bath3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
+                                                                      1),
+                                                                  child: Material(
+                                                                    elevation: 3,
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        3),
+                                                                    child:
+                                                                    TextFormField(
+                                                                      controller:
+                                                                      sqft3,
+                                                                      cursorColor:
                                                                       Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
+                                                                          .black,
+                                                                      decoration:
+                                                                      InputDecoration(
+                                                                        //  hintText: label,
+                                                                        // labelText: label,
+                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                        filled: true,
+                                                                        fillColor:
+                                                                        Colors
+                                                                            .white,
+                                                                        border:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          BorderSide
+                                                                              .none,
+                                                                        ),
+                                                                        enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          const BorderSide(
+                                                                              color:
+                                                                              Color(0xFF8A95A8)),
+                                                                        ),
+                                                                        focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide: const BorderSide(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              width:
+                                                                              2),
+                                                                        ),
+                                                                        contentPadding: const EdgeInsets.symmetric(
+                                                                            vertical:
+                                                                            10.0,
+                                                                            horizontal:
+                                                                            10.0),
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "bed",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    bed3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                const Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "bath",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                      1),
+                                                                  child: Material(
+                                                                    elevation: 3,
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        3),
+                                                                    child:
+                                                                    TextFormField(
+                                                                      controller:
+                                                                      bath3,
+                                                                      cursorColor:
                                                                       Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
+                                                                          .black,
+                                                                      decoration:
+                                                                      InputDecoration(
+                                                                        //  hintText: label,
+                                                                        // labelText: label,
+                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                        filled: true,
+                                                                        fillColor:
+                                                                        Colors
+                                                                            .white,
+                                                                        border:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          BorderSide
+                                                                              .none,
+                                                                        ),
+                                                                        enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          const BorderSide(
+                                                                              color:
+                                                                              Color(0xFF8A95A8)),
+                                                                        ),
+                                                                        focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide: const BorderSide(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              width:
+                                                                              2),
+                                                                        ),
+                                                                        contentPadding: const EdgeInsets.symmetric(
+                                                                            vertical:
+                                                                            10.0,
+                                                                            horizontal:
+                                                                            10.0),
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                const Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "bed",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
                                                                       vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
+                                                                      1),
+                                                                  child: Material(
+                                                                    elevation: 3,
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        3),
+                                                                    child:
+                                                                    TextFormField(
+                                                                      controller:
+                                                                      bed3,
+                                                                      cursorColor:
+                                                                      Colors
+                                                                          .black,
+                                                                      decoration:
+                                                                      InputDecoration(
+                                                                        //  hintText: label,
+                                                                        // labelText: label,
+                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                        filled: true,
+                                                                        fillColor:
+                                                                        Colors
+                                                                            .white,
+                                                                        border:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          BorderSide
+                                                                              .none,
+                                                                        ),
+                                                                        enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          const BorderSide(
+                                                                              color:
+                                                                              Color(0xFF8A95A8)),
+                                                                        ),
+                                                                        focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide: const BorderSide(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              width:
+                                                                              2),
+                                                                        ),
+                                                                        contentPadding: const EdgeInsets.symmetric(
+                                                                            vertical:
+                                                                            10.0,
+                                                                            horizontal:
+                                                                            10.0),
+                                                                      ),
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                'Photo',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  _pickImage()
-                                                                      .then(
-                                                                          (_) {
-                                                                    setState(
-                                                                        () {}); // Rebuild the widget after selecting the image
-                                                                  });
-                                                                },
-                                                                child: const Text(
-                                                                  '+ Add',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .green),
+                                                                const SizedBox(
+                                                                  height: 10,
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          _image != null
-                                                              ? Column(
+                                                                const Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'Photo',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(height: 8.0),
+                                                                Row(
+                                                                  children: [
+                                                                    GestureDetector(
+                                                                      onTap: () {
+                                                                        _pickImage()
+                                                                            .then(
+                                                                                (_) {
+                                                                              setState(
+                                                                                      () {}); // Rebuild the widget after selecting the image
+                                                                            });
+                                                                      },
+                                                                      child: const Text(
+                                                                        '+ Add',
+                                                                        style: TextStyle(
+                                                                            color: Colors
+                                                                                .green),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                _image != null
+                                                                    ? Column(
                                                                   children: [
                                                                     Image.file(
                                                                       _image!,
                                                                       height:
-                                                                          80,
+                                                                      80,
                                                                       width: 80,
                                                                       fit: BoxFit
                                                                           .cover,
@@ -2618,365 +4064,363 @@ class _Summery_pageState extends State<Summery_page>
                                                                             ""),
                                                                   ],
                                                                 )
-                                                              : const Text(''),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                width: 0,
-                                                              ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (sqft3.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      iserror =
-                                                                          true;
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      isLoading =
-                                                                          true;
-                                                                      iserror =
-                                                                          false;
-                                                                    });
-                                                                    SharedPreferences
-                                                                        prefs =
-                                                                        await SharedPreferences
-                                                                            .getInstance();
+                                                                    : const Text(''),
+                                                                const SizedBox(height: 8.0),
+                                                                Row(
+                                                                  children: [
+                                                                    const SizedBox(
+                                                                      width: 0,
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      onTap:
+                                                                          () async {
+                                                                        if (sqft3.text
+                                                                            .isEmpty) {
+                                                                          setState(
+                                                                                  () {
+                                                                                iserror =
+                                                                                true;
+                                                                              });
+                                                                        } else {
+                                                                          setState(
+                                                                                  () {
+                                                                                isLoading =
+                                                                                true;
+                                                                                iserror =
+                                                                                false;
+                                                                              });
+                                                                          SharedPreferences
+                                                                          prefs =
+                                                                          await SharedPreferences
+                                                                              .getInstance();
 
-                                                                    String? id =
-                                                                        prefs.getString(
-                                                                            "adminId");
-                                                                    Properies_summery_Repo()
-                                                                        .Editunit(
-                                                                            rentalsqft: sqft3
-                                                                                .text,
-                                                                            rentalunitadress: street3
-                                                                                .text,
-                                                                            rentalbath: bath3
-                                                                                .text,
-                                                                            rentalbed: bed3
-                                                                                .text,
-                                                                            unitId: unitData
-                                                                                .unitId,
-                                                                            adminId:
-                                                                                id,
-                                                                            rentalId: unitData
-                                                                                .rentalId)
-                                                                        .then(
-                                                                            (value) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(
-                                                                              true);
-                                                                      reload_Screen();
-                                                                    }).catchError(
-                                                                            (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
+                                                                          String? id =
+                                                                          prefs.getString(
+                                                                              "adminId");
+                                                                          Properies_summery_Repo()
+                                                                              .Editunit(
+                                                                              rentalsqft: sqft3
+                                                                                  .text,
+                                                                              rentalunitadress: street3
+                                                                                  .text,
+                                                                              rentalbath: bath3
+                                                                                  .text,
+                                                                              rentalbed: bed3
+                                                                                  .text,
+                                                                              unitId: unit?.unitId,
+                                                                              adminId:
+                                                                              id,
+                                                                              rentalId: unit?.rentalId)
+                                                                              .then(
+                                                                                  (value) {
+                                                                                setState(
+                                                                                        () {
+                                                                                      isLoading =
+                                                                                      false;
+                                                                                    });
+                                                                                Navigator.of(
+                                                                                    context)
+                                                                                    .pop(
+                                                                                    true);
+                                                                                reload_Screen();
+                                                                              }).catchError(
+                                                                                  (e) {
+                                                                                setState(
+                                                                                        () {
+                                                                                      isLoading =
+                                                                                      false;
+                                                                                    });
+                                                                              });
+                                                                        }
+                                                                      },
+                                                                      child: Material(
+                                                                        elevation: 3,
+                                                                        borderRadius:
+                                                                        const BorderRadius
+                                                                            .all(
+                                                                          Radius
+                                                                              .circular(
+                                                                              5),
+                                                                        ),
+                                                                        child:
+                                                                        Container(
+                                                                          height: 30,
+                                                                          width: 80,
+                                                                          decoration:
+                                                                          const BoxDecoration(
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                81,
+                                                                                1),
+                                                                            borderRadius:
+                                                                            BorderRadius
+                                                                                .all(
+                                                                              Radius.circular(
+                                                                                  5),
+                                                                            ),
+                                                                          ),
+                                                                          child: const Center(
+                                                                              child: Text(
+                                                                                "Save",
+                                                                                style: TextStyle(
+                                                                                    fontWeight: FontWeight
+                                                                                        .w500,
+                                                                                    color:
+                                                                                    Colors.white),
+                                                                              )),
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Save",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color:
-                                                                              Colors.white),
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
+                                                                    const SizedBox(
+                                                                        width: 10),
+                                                                    GestureDetector(
+                                                                      onTap: () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: Material(
+                                                                        elevation: 3,
+                                                                        borderRadius:
+                                                                        const BorderRadius
+                                                                            .all(
+                                                                          Radius
+                                                                              .circular(
+                                                                              5),
+                                                                        ),
+                                                                        child:
+                                                                        Container(
+                                                                          height: 30,
+                                                                          width: 80,
+                                                                          decoration:
+                                                                          const BoxDecoration(
+                                                                            color: Colors
+                                                                                .white,
+                                                                            borderRadius:
+                                                                            BorderRadius
+                                                                                .all(
+                                                                              Radius.circular(
+                                                                                  5),
+                                                                            ),
+                                                                          ),
+                                                                          child: const Center(
+                                                                              child: Text(
+                                                                                "Cancel",
+                                                                                style: TextStyle(
+                                                                                    fontWeight: FontWeight
+                                                                                        .w500,
+                                                                                    color: Color.fromRGBO(
+                                                                                        21,
+                                                                                        43,
+                                                                                        81,
+                                                                                        1)),
+                                                                              )),
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Cancel",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1)),
-                                                                    )),
-                                                                  ),
+                                                                  ],
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          if (iserror)
-                                                            const Text(
-                                                              "Please fill in all fields correctly.",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .redAccent),
+                                                                const SizedBox(height: 8.0),
+                                                                if (iserror)
+                                                                  const Text(
+                                                                    "Please fill in all fields correctly.",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .redAccent),
+                                                                  ),
+                                                              ],
                                                             ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          );
-                                        }
-                                        if (widget.properties.propertyTypeData!
-                                                    .isMultiunit! ==
-                                                false &&
-                                            widget.properties.propertyTypeData!
-                                                    .propertyType ==
-                                                'Commercial') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              bool isChecked =
-                                                  false; // Moved isChecked inside the StatefulBuilder
-                                              return StatefulBuilder(
-                                                builder: (BuildContext context,
-                                                    StateSetter setState) {
-                                                  return AlertDialog(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    surfaceTintColor:
-                                                        Colors.white,
-                                                    content:
-                                                        SingleChildScrollView(
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                "Add Unit Details",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                              const Spacer(),
-                                                              Align(
-                                                                alignment: Alignment
-                                                                    .centerRight,
-                                                                child: InkWell(
-                                                                  onTap: () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: const Icon(
-                                                                      Icons
-                                                                          .close,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ],
                                                           ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "SQFT",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                );
+                                              }
+                                              if (widget.properties.propertyTypeData!
+                                                  .isMultiunit! ==
+                                                  false &&
+                                                  widget.properties.propertyTypeData!
+                                                      .propertyType ==
+                                                      'Commercial') {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    bool isChecked =
+                                                    false; // Moved isChecked inside the StatefulBuilder
+                                                    return StatefulBuilder(
+                                                      builder: (BuildContext context,
+                                                          StateSetter setState) {
+                                                        return AlertDialog(
+                                                          backgroundColor:
+                                                          Colors.white,
+                                                          surfaceTintColor:
+                                                          Colors.white,
+                                                          content:
+                                                          SingleChildScrollView(
+                                                            child: Column(
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                      "Edit Unit Details",
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            81,
+                                                                            1),
+                                                                        fontWeight:
                                                                         FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    sqft3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
+                                                                            .bold,
+                                                                      ),
+                                                                    ),
+                                                                    const Spacer(),
+                                                                    Align(
+                                                                      alignment: Alignment
+                                                                          .centerRight,
+                                                                      child: InkWell(
+                                                                        onTap: () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child: const Icon(
+                                                                            Icons
+                                                                                .close,
+                                                                            color: Colors
+                                                                                .black),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                const Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "SQFT",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
                                                                       vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
+                                                                      1),
+                                                                  child: Material(
+                                                                    elevation: 3,
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        3),
+                                                                    child:
+                                                                    TextFormField(
+                                                                      controller:
+                                                                      sqft3,
+                                                                      cursorColor:
+                                                                      Colors
+                                                                          .black,
+                                                                      decoration:
+                                                                      InputDecoration(
+                                                                        //  hintText: label,
+                                                                        // labelText: label,
+                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                        filled: true,
+                                                                        fillColor:
+                                                                        Colors
+                                                                            .white,
+                                                                        border:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          BorderSide
+                                                                              .none,
+                                                                        ),
+                                                                        enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide:
+                                                                          const BorderSide(
+                                                                              color:
+                                                                              Color(0xFF8A95A8)),
+                                                                        ),
+                                                                        focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(3),
+                                                                          borderSide: const BorderSide(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              width:
+                                                                              2),
+                                                                        ),
+                                                                        contentPadding: const EdgeInsets.symmetric(
+                                                                            vertical:
+                                                                            10.0,
+                                                                            horizontal:
+                                                                            10.0),
+                                                                      ),
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                'Photo',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  _pickImage()
-                                                                      .then(
-                                                                          (_) {
-                                                                    setState(
-                                                                        () {}); // Rebuild the widget after selecting the image
-                                                                  });
-                                                                },
-                                                                child: const Text(
-                                                                  '+ Add',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .green),
+                                                                const SizedBox(
+                                                                  height: 10,
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          _image != null
-                                                              ? Column(
+                                                                const Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'Photo',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(height: 8.0),
+                                                                Row(
+                                                                  children: [
+                                                                    GestureDetector(
+                                                                      onTap: () {
+                                                                        _pickImage()
+                                                                            .then(
+                                                                                (_) {
+                                                                              setState(
+                                                                                      () {}); // Rebuild the widget after selecting the image
+                                                                            });
+                                                                      },
+                                                                      child: const Text(
+                                                                        '+ Add',
+                                                                        style: TextStyle(
+                                                                            color: Colors
+                                                                                .green),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(height: 8.0),
+                                                                _image != null
+                                                                    ? Column(
                                                                   children: [
                                                                     Image.file(
                                                                       _image!,
                                                                       height:
-                                                                          80,
+                                                                      80,
                                                                       width: 80,
                                                                       fit: BoxFit
                                                                           .cover,
@@ -2986,186 +4430,351 @@ class _Summery_pageState extends State<Summery_page>
                                                                             ""),
                                                                   ],
                                                                 )
-                                                              : const Text(''),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                width: 0,
-                                                              ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (sqft3.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      iserror =
-                                                                          true;
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      isLoading =
-                                                                          true;
-                                                                      iserror =
-                                                                          false;
-                                                                    });
-                                                                    SharedPreferences
-                                                                        prefs =
-                                                                        await SharedPreferences
-                                                                            .getInstance();
-                                                                    String? id =
-                                                                        prefs.getString(
-                                                                            "adminId");
-                                                                    Properies_summery_Repo()
-                                                                        .Editunit(
-                                                                      rentalsqft:
-                                                                          sqft3
-                                                                              .text,
-                                                                      unitId: unitData
-                                                                          .unitId!,
-                                                                    )
-                                                                        .then(
-                                                                            (value) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
+                                                                    : const Text(''),
+                                                                const SizedBox(height: 8.0),
+                                                                Row(
+                                                                  children: [
+                                                                    const SizedBox(
+                                                                      width: 0,
+                                                                    ),
+                                                                    GestureDetector(
+                                                                      onTap:
+                                                                          () async {
+                                                                        if (sqft3.text
+                                                                            .isEmpty) {
+                                                                          setState(
+                                                                                  () {
+                                                                                iserror =
+                                                                                true;
+                                                                              });
+                                                                        } else {
+                                                                          setState(
+                                                                                  () {
+                                                                                isLoading =
+                                                                                true;
+                                                                                iserror =
+                                                                                false;
+                                                                              });
+                                                                          SharedPreferences
+                                                                          prefs =
+                                                                          await SharedPreferences
+                                                                              .getInstance();
+                                                                          String? id =
+                                                                          prefs.getString(
+                                                                              "adminId");
+                                                                          Properies_summery_Repo()
+                                                                              .Editunit(
+                                                                            rentalsqft:
+                                                                            sqft3
+                                                                                .text,
+                                                                            unitId: unit?.unitId,
+                                                                          )
+                                                                              .then(
+                                                                                  (value) {
+                                                                                setState(
+                                                                                        () {
+                                                                                      isLoading =
+                                                                                      false;
+                                                                                    });
 
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(
-                                                                              true);
-                                                                    }).catchError(
-                                                                            (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
+                                                                                Navigator.of(
+                                                                                    context)
+                                                                                    .pop(
+                                                                                    true);
+                                                                              }).catchError(
+                                                                                  (e) {
+                                                                                setState(
+                                                                                        () {
+                                                                                      isLoading =
+                                                                                      false;
+                                                                                    });
+                                                                              });
+                                                                        }
+                                                                      },
+                                                                      child: Material(
+                                                                        elevation: 3,
+                                                                        borderRadius:
+                                                                        const BorderRadius
+                                                                            .all(
+                                                                          Radius
+                                                                              .circular(
+                                                                              5),
+                                                                        ),
+                                                                        child:
+                                                                        Container(
+                                                                          height: 30,
+                                                                          width: 80,
+                                                                          decoration:
+                                                                          const BoxDecoration(
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                81,
+                                                                                1),
+                                                                            borderRadius:
+                                                                            BorderRadius
+                                                                                .all(
+                                                                              Radius.circular(
+                                                                                  5),
+                                                                            ),
+                                                                          ),
+                                                                          child: const Center(
+                                                                              child: Text(
+                                                                                "Save",
+                                                                                style: TextStyle(
+                                                                                    fontWeight: FontWeight
+                                                                                        .w500,
+                                                                                    color:
+                                                                                    Colors.white),
+                                                                              )),
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Save",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color:
-                                                                              Colors.white),
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
+                                                                    const SizedBox(
+                                                                        width: 10),
+                                                                    GestureDetector(
+                                                                      onTap: () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: Material(
+                                                                        elevation: 3,
+                                                                        borderRadius:
+                                                                        const BorderRadius
+                                                                            .all(
+                                                                          Radius
+                                                                              .circular(
+                                                                              5),
+                                                                        ),
+                                                                        child:
+                                                                        Container(
+                                                                          height: 30,
+                                                                          width: 80,
+                                                                          decoration:
+                                                                          const BoxDecoration(
+                                                                            color: Colors
+                                                                                .white,
+                                                                            borderRadius:
+                                                                            BorderRadius
+                                                                                .all(
+                                                                              Radius.circular(
+                                                                                  5),
+                                                                            ),
+                                                                          ),
+                                                                          child: const Center(
+                                                                              child: Text(
+                                                                                "Cancel",
+                                                                                style: TextStyle(
+                                                                                    fontWeight: FontWeight
+                                                                                        .w500,
+                                                                                    color: Color.fromRGBO(
+                                                                                        21,
+                                                                                        43,
+                                                                                        81,
+                                                                                        1)),
+                                                                              )),
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Cancel",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1)),
-                                                                    )),
-                                                                  ),
+                                                                  ],
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          if (iserror)
-                                                            const Text(
-                                                              "Please fill in all fields correctly.",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .redAccent),
+                                                                const SizedBox(height: 8.0),
+                                                                if (iserror)
+                                                                  const Text(
+                                                                    "Please fill in all fields correctly.",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .redAccent),
+                                                                  ),
+                                                              ],
                                                             ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                );
+                                              }
                                             },
-                                          );
-                                        }
-                                      },
+                                            child: const Text(
+                                              'Update unit',
+                                              style: TextStyle(
+                                                  fontSize: 12, color: Colors.white),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                const Color.fromRGBO(21, 43, 83, 1),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(12.0))),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    width: 150,
+                                    decoration: const BoxDecoration(color: Colors.blue),
+                                    child: Image.network(
+                                      data[0].rentalImages!.first != null ? "$image_url${data[0].rentalImages!.first}"
+                                          : 'https://i.pinimg.com/originals/59/11/81/591181790b40c5e1f8cc04b55ebdbf25.jpg',
+                                      fit: BoxFit.fill,
+                                      height: 100,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Container(
+                                      width: double.infinity,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child: Text(
+                                              'ADDRESS',
+                                              style: TextStyle(
+                                                  fontSize: 12, color: Colors.grey[800]),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child: Text(
+                                              '${widget.properties?.rentalAddress}',
+                                              style: TextStyle(
+                                                  fontSize: 12, color: Colors.grey[800]),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child: Text(
+                                              '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                                              style: TextStyle(
+                                                  fontSize: 12, color: Colors.grey[800]),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child: Text(
+                                              '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
+                                              style: TextStyle(
+                                                  fontSize: 12, color: Colors.grey[800]),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      // height: screenHeight * 0.26,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12.0),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: const Color.fromRGBO(21, 43, 83, 1),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: Text(
+                                                'Add Lease',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Color.fromRGBO(21, 43, 83, 1),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              height: 36,
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>addLease3()));
+                                                },
+                                                child: const Text(
+                                                  'Add Lease',
+                                                  style: TextStyle(
+                                                      fontSize: 12, color: Colors.white),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                    const Color.fromRGBO(21, 43, 83, 1),
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(10.0))),
+                                              ),
+                                            ),
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: Text(
+                                                'Rental Applicant',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Color.fromRGBO(21, 43, 83, 1),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              height: 36,
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>AddApplicant()));
+                                                },
+                                                child: const Text(
+                                                  'Create Applicant',
+                                                  style: TextStyle(
+                                                      fontSize: 12, color: Colors.white),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                    const Color.fromRGBO(21, 43, 83, 1),
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(10.0))),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
-                              );
-                            }).toList(),
+                              ),
+                            ),
                           ),
-                        ),
+                          LeasesTable(unit:widget.unit),
+                          AppliancesPart(unit:widget.unit,),
+                        ],
                       ),
                     );
+
+
                   },
                 ),
               ),
+              //this for add ubit button
             if (widget.properties.propertyTypeData!.isMultiunit!)
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -3175,12 +4784,12 @@ class _Summery_pageState extends State<Summery_page>
                     onTap: () {
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
-                              'Residential') {
+                              'Residential')
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             bool isChecked =
-                                false; // Moved isChecked inside the StatefulBuilder
+                            false; // Moved isChecked inside the StatefulBuilder
                             return StatefulBuilder(
                               builder:
                                   (BuildContext context, StateSetter setState) {
@@ -3192,7 +4801,7 @@ class _Summery_pageState extends State<Summery_page>
                                       children: [
                                         Row(
                                           children: [
-                                            const Text(
+                                            Text(
                                               "Add Unit Details",
                                               style: TextStyle(
                                                 color: Color.fromRGBO(
@@ -3200,23 +4809,23 @@ class _Summery_pageState extends State<Summery_page>
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const Spacer(),
+                                            Spacer(),
                                             Align(
                                               alignment: Alignment.centerRight,
                                               child: InkWell(
                                                 onTap: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: const Icon(Icons.close,
+                                                child: Icon(Icons.close,
                                                     color: Colors.black),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "Unit Number",
@@ -3226,7 +4835,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
                                         Padding(
@@ -3235,7 +4844,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: unitnum,
                                               cursorColor: Colors.black,
@@ -3247,36 +4856,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "Street Address",
@@ -3292,7 +4901,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: street3,
                                               cursorColor: Colors.black,
@@ -3304,36 +4913,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "SQFT",
@@ -3349,7 +4958,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: sqft3,
                                               cursorColor: Colors.black,
@@ -3361,36 +4970,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "bath",
@@ -3406,7 +5015,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: bath3,
                                               cursorColor: Colors.black,
@@ -3418,36 +5027,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "bed",
@@ -3463,7 +5072,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: bed3,
                                               cursorColor: Colors.black,
@@ -3475,36 +5084,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               'Photo',
@@ -3513,17 +5122,17 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8.0),
+                                        SizedBox(height: 8.0),
                                         Row(
                                           children: [
                                             GestureDetector(
                                               onTap: () {
                                                 _pickImage().then((_) {
                                                   setState(
-                                                      () {}); // Rebuild the widget after selecting the image
+                                                          () {}); // Rebuild the widget after selecting the image
                                                 });
                                               },
-                                              child: const Text(
+                                              child: Text(
                                                 '+ Add',
                                                 style: TextStyle(
                                                     color: Colors.green),
@@ -3531,26 +5140,26 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
                                         _image != null
                                             ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : const Text(''),
-                                        const SizedBox(height: 8.0),
+                                          children: [
+                                            Image.file(
+                                              _image!,
+                                              height: 80,
+                                              width: 80,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            Text(_uploadedFileName ?? ""),
+                                          ],
+                                        )
+                                            : Text(''),
+                                        SizedBox(height: 8.0),
                                         Row(
                                           children: [
-                                            const SizedBox(
+                                            SizedBox(
                                               width: 0,
                                             ),
                                             GestureDetector(
@@ -3569,8 +5178,8 @@ class _Summery_pageState extends State<Summery_page>
                                                     iserror = false;
                                                   });
                                                   SharedPreferences prefs =
-                                                      await SharedPreferences
-                                                          .getInstance();
+                                                  await SharedPreferences
+                                                      .getInstance();
                                                   String? id = prefs
                                                       .getString("adminId");
                                                   Properies_summery_Repo()
@@ -3580,7 +5189,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         .properties.rentalId,
                                                     rentalunit: unitnum.text,
                                                     rentalunitadress:
-                                                        street3.text,
+                                                    street3.text,
                                                     rentalsqft: sqft3.text,
                                                     rentalbath: bath3.text,
                                                     rentalbed: bed3.text,
@@ -3594,9 +5203,9 @@ class _Summery_pageState extends State<Summery_page>
                                                             .properties
                                                             .rentalId,
                                                         rentalunit:
-                                                            unitnum.text,
+                                                        unitnum.text,
                                                         rentalunitadress:
-                                                            street3.text,
+                                                        street3.text,
                                                         rentalsqft: sqft3.text,
                                                         rentalbath: bath3.text,
                                                         rentalbed: bed3.text,
@@ -3613,68 +5222,68 @@ class _Summery_pageState extends State<Summery_page>
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: const BorderRadius.all(
+                                                borderRadius: BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
                                                   height: 30,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(
+                                                  decoration: BoxDecoration(
                                                     color: Color.fromRGBO(
                                                         21, 43, 81, 1),
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                    BorderRadius.all(
                                                       Radius.circular(5),
                                                     ),
                                                   ),
-                                                  child: const Center(
+                                                  child: Center(
                                                       child: Text(
-                                                    "Save",
-                                                    style: TextStyle(
-                                                        fontWeight:
+                                                        "Save",
+                                                        style: TextStyle(
+                                                            fontWeight:
                                                             FontWeight.w500,
-                                                        color: Colors.white),
-                                                  )),
+                                                            color: Colors.white),
+                                                      )),
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(width: 10),
+                                            SizedBox(width: 10),
                                             GestureDetector(
                                               onTap: () {
                                                 Navigator.pop(context);
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: const BorderRadius.all(
+                                                borderRadius: BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
                                                   height: 30,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(
+                                                  decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                    BorderRadius.all(
                                                       Radius.circular(5),
                                                     ),
                                                   ),
-                                                  child: const Center(
+                                                  child: Center(
                                                       child: Text(
-                                                    "Cancel",
-                                                    style: TextStyle(
-                                                        fontWeight:
+                                                        "Cancel",
+                                                        style: TextStyle(
+                                                            fontWeight:
                                                             FontWeight.w500,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                  )),
+                                                            color: Color.fromRGBO(
+                                                                21, 43, 81, 1)),
+                                                      )),
                                                 ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8.0),
+                                        SizedBox(height: 8.0),
                                         if (iserror)
-                                          const Text(
+                                          Text(
                                             "Please fill in all fields correctly.",
                                             style: TextStyle(
                                                 color: Colors.redAccent),
@@ -3687,15 +5296,14 @@ class _Summery_pageState extends State<Summery_page>
                             );
                           },
                         );
-                      }
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
-                              'Commercial') {
+                              'Commercial')
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             bool isChecked =
-                                false; // Moved isChecked inside the StatefulBuilder
+                            false; // Moved isChecked inside the StatefulBuilder
                             return StatefulBuilder(
                               builder:
                                   (BuildContext context, StateSetter setState) {
@@ -3707,7 +5315,7 @@ class _Summery_pageState extends State<Summery_page>
                                       children: [
                                         Row(
                                           children: [
-                                            const Text(
+                                            Text(
                                               "Add Unit Details",
                                               style: TextStyle(
                                                 color: Color.fromRGBO(
@@ -3715,23 +5323,23 @@ class _Summery_pageState extends State<Summery_page>
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const Spacer(),
+                                            Spacer(),
                                             Align(
                                               alignment: Alignment.centerRight,
                                               child: InkWell(
                                                 onTap: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: const Icon(Icons.close,
+                                                child: Icon(Icons.close,
                                                     color: Colors.black),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "Unit Number",
@@ -3741,7 +5349,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
                                         Padding(
@@ -3750,7 +5358,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: unitnum,
                                               cursorColor: Colors.black,
@@ -3762,36 +5370,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "Street Address",
@@ -3807,7 +5415,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: street3,
                                               cursorColor: Colors.black,
@@ -3819,36 +5427,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               "SQFT",
@@ -3864,7 +5472,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Material(
                                             elevation: 3,
                                             borderRadius:
-                                                BorderRadius.circular(3),
+                                            BorderRadius.circular(3),
                                             child: TextFormField(
                                               controller: sqft3,
                                               cursorColor: Colors.black,
@@ -3876,36 +5484,36 @@ class _Summery_pageState extends State<Summery_page>
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                                   borderSide: BorderSide.none,
                                                 ),
                                                 enabledBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
-                                                    OutlineInputBorder(
+                                                OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: const BorderSide(
+                                                  BorderRadius.circular(3),
+                                                  borderSide: BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
+                                        SizedBox(
                                           height: 10,
                                         ),
-                                        const Row(
+                                        Row(
                                           children: [
                                             Text(
                                               'Photo',
@@ -3914,17 +5522,17 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8.0),
+                                        SizedBox(height: 8.0),
                                         Row(
                                           children: [
                                             GestureDetector(
                                               onTap: () {
                                                 _pickImage().then((_) {
                                                   setState(
-                                                      () {}); // Rebuild the widget after selecting the image
+                                                          () {}); // Rebuild the widget after selecting the image
                                                 });
                                               },
-                                              child: const Text(
+                                              child: Text(
                                                 '+ Add',
                                                 style: TextStyle(
                                                     color: Colors.green),
@@ -3932,24 +5540,24 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8.0),
+                                        SizedBox(height: 8.0),
                                         _image != null
                                             ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : const Text(''),
-                                        const SizedBox(height: 8.0),
+                                          children: [
+                                            Image.file(
+                                              _image!,
+                                              height: 80,
+                                              width: 80,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            Text(_uploadedFileName ?? ""),
+                                          ],
+                                        )
+                                            : Text(''),
+                                        SizedBox(height: 8.0),
                                         Row(
                                           children: [
-                                            const SizedBox(
+                                            SizedBox(
                                               width: 0,
                                             ),
                                             GestureDetector(
@@ -3966,8 +5574,8 @@ class _Summery_pageState extends State<Summery_page>
                                                     iserror = false;
                                                   });
                                                   SharedPreferences prefs =
-                                                      await SharedPreferences
-                                                          .getInstance();
+                                                  await SharedPreferences
+                                                      .getInstance();
                                                   String? id = prefs
                                                       .getString("adminId");
                                                   Properies_summery_Repo()
@@ -3976,7 +5584,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     rentalId: widget
                                                         .properties.rentalId,
                                                     rentalunitadress:
-                                                        street3.text,
+                                                    street3.text,
                                                     rentalsqft: sqft3.text,
                                                     rentalunit: unitnum.text,
                                                   )
@@ -3989,10 +5597,10 @@ class _Summery_pageState extends State<Summery_page>
                                                             .properties
                                                             .rentalId,
                                                         rentalunitadress:
-                                                            street3.text,
+                                                        street3.text,
                                                         rentalsqft: sqft3.text,
                                                         rentalunit:
-                                                            unitnum.text,
+                                                        unitnum.text,
                                                       ));
                                                     });
                                                     Navigator.pop(
@@ -4006,68 +5614,68 @@ class _Summery_pageState extends State<Summery_page>
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: const BorderRadius.all(
+                                                borderRadius: BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
                                                   height: 30,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(
+                                                  decoration: BoxDecoration(
                                                     color: Color.fromRGBO(
                                                         21, 43, 81, 1),
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                    BorderRadius.all(
                                                       Radius.circular(5),
                                                     ),
                                                   ),
-                                                  child: const Center(
+                                                  child: Center(
                                                       child: Text(
-                                                    "Save",
-                                                    style: TextStyle(
-                                                        fontWeight:
+                                                        "Save",
+                                                        style: TextStyle(
+                                                            fontWeight:
                                                             FontWeight.w500,
-                                                        color: Colors.white),
-                                                  )),
+                                                            color: Colors.white),
+                                                      )),
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(width: 10),
+                                            SizedBox(width: 10),
                                             GestureDetector(
                                               onTap: () {
                                                 Navigator.pop(context);
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: const BorderRadius.all(
+                                                borderRadius: BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
                                                   height: 30,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(
+                                                  decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                    BorderRadius.all(
                                                       Radius.circular(5),
                                                     ),
                                                   ),
-                                                  child: const Center(
+                                                  child: Center(
                                                       child: Text(
-                                                    "Cancel",
-                                                    style: TextStyle(
-                                                        fontWeight:
+                                                        "Cancel",
+                                                        style: TextStyle(
+                                                            fontWeight:
                                                             FontWeight.w500,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                  )),
+                                                            color: Color.fromRGBO(
+                                                                21, 43, 81, 1)),
+                                                      )),
                                                 ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8.0),
+                                        SizedBox(height: 8.0),
                                         if (iserror)
-                                          const Text(
+                                          Text(
                                             "Please fill in all fields correctly.",
                                             style: TextStyle(
                                                 color: Colors.redAccent),
@@ -4080,11 +5688,10 @@ class _Summery_pageState extends State<Summery_page>
                             );
                           },
                         );
-                      }
                     },
                     child: Material(
                       elevation: 3,
-                      borderRadius: const BorderRadius.all(
+                      borderRadius: BorderRadius.all(
                         Radius.circular(5),
                       ),
                       child: Container(
@@ -4092,1424 +5699,3119 @@ class _Summery_pageState extends State<Summery_page>
                         width: 95,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: const BorderRadius.all(
+                          borderRadius: BorderRadius.all(
                             Radius.circular(5),
                           ),
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color: Color.fromRGBO(21, 43, 81, 1),
                           ),
                         ),
-                        child: const Center(
+                        child: Center(
                             child: Text(
-                          "Add Unit",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 81, 1)),
-                        )),
+                              "Add Unit",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Color.fromRGBO(21, 43, 81, 1)),
+                            )),
                       ),
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 8,
                   ),
                 ],
               ),
-            const SizedBox(height: 20),
+
+            //and this is mutiunit table show this is as it is
             if (!showdetails &&
                 widget.properties.propertyTypeData!.isMultiunit! == true)
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<unit_properties>>(
-                  future: Properies_summery_Repo()
-                      .fetchunit(widget.properties.rentalId!),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                          child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No data available'));
+              if (MediaQuery.of(context).size.width < 500)
+                            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: FutureBuilder<List<unit_properties>>(
+                future: futureUnitsummery,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                        child: SpinKitFadingCircle(
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No data available'));
+                  } else {
+                    var data = snapshot.data!;
+                    if (selectedValue == null && searchvalue!.isEmpty) {
+                      data = snapshot.data!;
+
+                    } else if (selectedValue == "All") {
+                      data = snapshot.data!;
+                    } else if (searchvalue!.isNotEmpty) {
+                      data = snapshot.data!;
+                    //       .where((property) =>
+                    //   property.propertyType!
+                    //       .toLowerCase()
+                    //       .contains(searchvalue!.toLowerCase()) ||
+                    //       property.propertysubType!
+                    //           .toLowerCase()
+                    //           .contains(searchvalue!.toLowerCase()))
+                    //       .toList();
+                    // } else {
+                    //   data = snapshot.data!
+                    //       .where((property) =>
+                    //   property.propertyType == selectedValue)
+                    //       .toList();
                     }
-                    final data = snapshot.data!;
+                   // sortData(data);
+                    final totalPages = (data.length / itemsPerPagemulti).ceil();
+                    final currentPageData = data
+                        .skip(currentPagemulti * itemsPerPagemulti)
+                        .take(itemsPerPagemulti)
+                        .toList();
                     return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
-                          )),
-                          child: DataTable(
-                            // headingRowColor: MaterialStateColor.resolveWith(
-                            //         (states) => Color.fromRGBO(21, 43, 83, 1)),
-                            headingTextStyle: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                            columnSpacing: 20,
-                            dataRowHeight: 60,
-                            columns: [
-                              const DataColumn(
-                                label: Text(
-                                  'UNIT',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontWeight: FontWeight.bold,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          _buildHeadersmulti(),
+                          SizedBox(height: 20),
+                          Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: blueColor)),
+                            child: Column(
+                              children: currentPageData
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                int index = entry.key;
+                                bool isExpanded = expandedIndex == index;
+                                unit_properties Propertytype = entry.value;
+                                //return CustomExpansionTile(data: Propertytype, index: index);
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: blueColor),
                                   ),
-                                ),
-                              ),
-                              const DataColumn(
-                                label: Text(
-                                  'ADDRESS',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const DataColumn(
-                                label: Text(
-                                  'TENANTS',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const DataColumn(
-                                label: Text(
-                                  'ACTION',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                            rows: data.map((unitData) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(
-                                    Text(
-                                      ' ${unitData.rentalunit}',
-                                      style:
-                                          const TextStyle(color: Color(0xFF8A95A8)),
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        // showdetails = !showdetails;
-                                        showdetails = true;
-                                        unit = unitData;
-                                      });
+                                  child: Column(
+                                    children: <Widget>[
+                                      ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        title: Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              InkWell(
+                                                onTap: () {
+                                                  // setState(() {
+                                                  //    isExpanded = !isExpanded;
+                                                  // //  expandedIndex = !expandedIndex;
+                                                  //
+                                                  // });
+                                                  // setState(() {
+                                                  //   if (isExpanded) {
+                                                  //     expandedIndex = null;
+                                                  //     isExpanded = !isExpanded;
+                                                  //   } else {
+                                                  //     expandedIndex = index;
+                                                  //   }
+                                                  // });
+                                                  setState(() {
+                                                    if (expandedIndex ==
+                                                        index) {
+                                                      expandedIndex = null;
+                                                    } else {
+                                                      expandedIndex = index;
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: 5),
+                                                  padding: !isExpanded
+                                                      ? EdgeInsets.only(
+                                                      bottom: 10)
+                                                      : EdgeInsets.only(
+                                                      top: 10),
+                                                  child: FaIcon(
+                                                    isExpanded
+                                                        ? FontAwesomeIcons
+                                                        .sortUp
+                                                        : FontAwesomeIcons
+                                                        .sortDown,
+                                                    size: 20,
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 83, 1),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: InkWell(
+                                                  onTap:(){
+                                                    setState(() {
+                                                      showdetails = true;
+                                                      unit = Propertytype;
+                                                    });
+                                                    },
+                                                  child: Text(
+                                                    '   ${Propertytype.rentalunit}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .08),
+                                              Expanded(
+                                                child: Text(
+                                                  '${Propertytype.rentalunitadress}',
+                                                  style: TextStyle(
+                                                    color: blueColor,
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .08),
+                                              Expanded(
+                                                child:
+                                                Container(
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          unitnum.text = Propertytype.rentalunit!;
+                                                          street3.text =
+                                                          Propertytype.rentalunitadress!;
+                                                          sqft3.text = Propertytype.rentalsqft!;
+                                                          bath3.text = Propertytype.rentalbath!;
+                                                          bed3.text = Propertytype.rentalbed!;
+                                                          if (widget.properties.propertyTypeData!
+                                                              .isMultiunit! &&
+                                                              widget.properties.propertyTypeData!
+                                                                  .propertyType ==
+                                                                  'Residential') {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext context) {
+                                                         // Moved isChecked inside the StatefulBuilder
+                                                                return StatefulBuilder(
+                                                                  builder: (BuildContext context,
+                                                                      StateSetter setState) {
+                                                                    return AlertDialog(
+                                                                      backgroundColor:
+                                                                      Colors.white,
+                                                                      surfaceTintColor:
+                                                                      Colors.white,
+                                                                      content:
+                                                                      SingleChildScrollView(
+                                                                        child: Column(
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                const Text(
+                                                                                  "Edit Unit Details",
+                                                                                  style:
+                                                                                  TextStyle(
+                                                                                    color: Color
+                                                                                        .fromRGBO(
+                                                                                        21,
+                                                                                        43,
+                                                                                        81,
+                                                                                        1),
+                                                                                    fontWeight:
+                                                                                    FontWeight
+                                                                                        .bold,
+                                                                                  ),
+                                                                                ),
+                                                                                const Spacer(),
+                                                                                Align(
+                                                                                  alignment: Alignment
+                                                                                      .centerRight,
+                                                                                  child: InkWell(
+                                                                                    onTap: () {
+                                                                                      Navigator.pop(
+                                                                                          context);
+                                                                                    },
+                                                                                    child: const Icon(
+                                                                                        Icons
+                                                                                            .close,
+                                                                                        color: Colors
+                                                                                            .black),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Unit Number",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  unitnum,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Street Address",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  street3,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "SQFT",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  sqft3,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "bath",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  bath3,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "bed",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  bed3,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  'Photo',
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .black),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(height: 8.0),
+                                                                            Row(
+                                                                              children: [
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    _pickImage()
+                                                                                        .then(
+                                                                                            (_) {
+                                                                                          setState(
+                                                                                                  () {}); // Rebuild the widget after selecting the image
+                                                                                        });
+                                                                                  },
+                                                                                  child: const Text(
+                                                                                    '+ Add',
+                                                                                    style: TextStyle(
+                                                                                        color: Colors
+                                                                                            .green),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            _image != null
+                                                                                ? Column(
+                                                                              children: [
+                                                                                Image.file(
+                                                                                  _image!,
+                                                                                  height:
+                                                                                  80,
+                                                                                  width: 80,
+                                                                                  fit: BoxFit
+                                                                                      .cover,
+                                                                                ),
+                                                                                Text(
+                                                                                    _uploadedFileName ??
+                                                                                        ""),
+                                                                              ],
+                                                                            )
+                                                                                : const Text(''),
+                                                                            const SizedBox(height: 8.0),
+                                                                            Row(
+                                                                              children: [
+                                                                                const SizedBox(
+                                                                                  width: 0,
+                                                                                ),
+                                                                                GestureDetector(
+                                                                                  onTap:
+                                                                                      () async {
+                                                                                    if (unitnum.text.isEmpty ||
+                                                                                        street3
+                                                                                            .text
+                                                                                            .isEmpty ||
+                                                                                        sqft3.text
+                                                                                            .isEmpty ||
+                                                                                        bath3.text
+                                                                                            .isEmpty ||
+                                                                                        bed3.text
+                                                                                            .isEmpty) {
+                                                                                      setState(
+                                                                                              () {
+                                                                                            iserror =
+                                                                                            true;
+                                                                                          });
+                                                                                    } else {
+                                                                                      setState(
+                                                                                              () {
+                                                                                            isLoading =
+                                                                                            true;
+                                                                                            iserror =
+                                                                                            false;
+                                                                                          });
+                                                                                      SharedPreferences
+                                                                                      prefs =
+                                                                                      await SharedPreferences
+                                                                                          .getInstance();
 
-                                      // if (showdetails) {
-                                      //   // Navigator.push(
-                                      //   //   context,
-                                      //   //   MaterialPageRoute(builder: (context) => unitScreen()),
-                                      //   // );
-                                      //   // unitScreen();
-                                      //   Container(
-                                      //       color: Colors.blue,
-                                      //     child: Text("data"),
-                                      //   );
-                                      // }
-                                    },
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      ' ${unitData.rentalunitadress}',
-                                      style:
-                                          const TextStyle(color: Color(0xFF8A95A8)),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      ' ${tenentCount}',
-                                      style:
-                                          const TextStyle(color: Color(0xFF8A95A8)),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    IconButton(
-                                      icon: const FaIcon(
-                                        FontAwesomeIcons.edit,
-                                        size: 15,
-                                        color: Color(0xFF8A95A8),
+                                                                                      String? id =
+                                                                                      prefs.getString(
+                                                                                          "adminId");
+                                                                                      Properies_summery_Repo()
+                                                                                          .Editunit(
+                                                                                          rentalunit: unitnum
+                                                                                              .text,
+                                                                                          rentalsqft: sqft3
+                                                                                              .text,
+                                                                                          rentalunitadress: street3
+                                                                                              .text,
+                                                                                          rentalbath: bath3
+                                                                                              .text,
+                                                                                          rentalbed: bed3
+                                                                                              .text,
+                                                                                          unitId: Propertytype
+                                                                                              .unitId,
+                                                                                          adminId:
+                                                                                          id,
+                                                                                          rentalId: Propertytype
+                                                                                              .rentalId)
+                                                                                          .then(
+                                                                                              (value) {
+                                                                                            setState(
+                                                                                                    () {
+
+
+                                                                                                  isLoading =
+                                                                                                  false;
+                                                                                                });
+
+                                                                                            Navigator.of(
+                                                                                                context)
+                                                                                                .pop(
+                                                                                                true);
+                                                                                            reload_Screen();
+                                                                                          }).catchError(
+                                                                                              (e) {
+                                                                                            setState(
+                                                                                                    () {
+                                                                                                  isLoading =
+                                                                                                  false;
+                                                                                                });
+                                                                                          });
+                                                                                    }
+                                                                                  },
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    const BorderRadius
+                                                                                        .all(
+                                                                                      Radius
+                                                                                          .circular(
+                                                                                          5),
+                                                                                    ),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 30,
+                                                                                      width: 80,
+                                                                                      decoration:
+                                                                                      const BoxDecoration(
+                                                                                        color: Color
+                                                                                            .fromRGBO(
+                                                                                            21,
+                                                                                            43,
+                                                                                            81,
+                                                                                            1),
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .all(
+                                                                                          Radius.circular(
+                                                                                              5),
+                                                                                        ),
+                                                                                      ),
+                                                                                      child: const Center(
+                                                                                          child: Text(
+                                                                                            "Save",
+                                                                                            style: TextStyle(
+                                                                                                fontWeight: FontWeight
+                                                                                                    .w500,
+                                                                                                color:
+                                                                                                Colors.white),
+                                                                                          )),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                    width: 10),
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    Navigator.pop(
+                                                                                        context);
+                                                                                  },
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    const BorderRadius
+                                                                                        .all(
+                                                                                      Radius
+                                                                                          .circular(
+                                                                                          5),
+                                                                                    ),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 30,
+                                                                                      width: 80,
+                                                                                      decoration:
+                                                                                      const BoxDecoration(
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .all(
+                                                                                          Radius.circular(
+                                                                                              5),
+                                                                                        ),
+                                                                                      ),
+                                                                                      child: const Center(
+                                                                                          child: Text(
+                                                                                            "Cancel",
+                                                                                            style: TextStyle(
+                                                                                                fontWeight: FontWeight
+                                                                                                    .w500,
+                                                                                                color: Color.fromRGBO(
+                                                                                                    21,
+                                                                                                    43,
+                                                                                                    81,
+                                                                                                    1)),
+                                                                                          )),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(height: 8.0),
+                                                                            if (iserror)
+                                                                              const Text(
+                                                                                "Please fill in all fields correctly.",
+                                                                                style: TextStyle(
+                                                                                    color: Colors
+                                                                                        .redAccent),
+                                                                              ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                            );
+                                                          }
+                                                          if (widget.properties.propertyTypeData!
+                                                              .isMultiunit! &&
+                                                              widget.properties.propertyTypeData!
+                                                                  .propertyType ==
+                                                                  'Commercial') {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext context) {
+                                                                bool isChecked =
+                                                                false; // Moved isChecked inside the StatefulBuilder
+                                                                return StatefulBuilder(
+                                                                  builder: (BuildContext context,
+                                                                      StateSetter setState) {
+                                                                    return AlertDialog(
+                                                                      backgroundColor:
+                                                                      Colors.white,
+                                                                      surfaceTintColor:
+                                                                      Colors.white,
+                                                                      content:
+                                                                      SingleChildScrollView(
+                                                                        child: Column(
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                const Text(
+                                                                                  "Edit Unit Details",
+                                                                                  style:
+                                                                                  TextStyle(
+                                                                                    color: Color
+                                                                                        .fromRGBO(
+                                                                                        21,
+                                                                                        43,
+                                                                                        81,
+                                                                                        1),
+                                                                                    fontWeight:
+                                                                                    FontWeight
+                                                                                        .bold,
+                                                                                  ),
+                                                                                ),
+                                                                                const Spacer(),
+                                                                                Align(
+                                                                                  alignment: Alignment
+                                                                                      .centerRight,
+                                                                                  child: InkWell(
+                                                                                    onTap: () {
+                                                                                      Navigator.pop(
+                                                                                          context);
+                                                                                    },
+                                                                                    child: const Icon(
+                                                                                        Icons
+                                                                                            .close,
+                                                                                        color: Colors
+                                                                                            .black),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Unit Number",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  unitnum,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Street Address",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  street3,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "SQFT",
+                                                                                  style: TextStyle(
+                                                                                      color: Color(
+                                                                                          0xFF8A95A8),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets
+                                                                                  .symmetric(
+                                                                                  vertical:
+                                                                                  1),
+                                                                              child: Material(
+                                                                                elevation: 3,
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    3),
+                                                                                child:
+                                                                                TextFormField(
+                                                                                  controller:
+                                                                                  sqft3,
+                                                                                  cursorColor:
+                                                                                  Colors
+                                                                                      .black,
+                                                                                  decoration:
+                                                                                  InputDecoration(
+                                                                                    //  hintText: label,
+                                                                                    // labelText: label,
+                                                                                    // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                    filled: true,
+                                                                                    fillColor:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    border:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      BorderSide
+                                                                                          .none,
+                                                                                    ),
+                                                                                    enabledBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide:
+                                                                                      const BorderSide(
+                                                                                          color:
+                                                                                          Color(0xFF8A95A8)),
+                                                                                    ),
+                                                                                    focusedBorder:
+                                                                                    OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(3),
+                                                                                      borderSide: const BorderSide(
+                                                                                          color: Color(
+                                                                                              0xFF8A95A8),
+                                                                                          width:
+                                                                                          2),
+                                                                                    ),
+                                                                                    contentPadding: const EdgeInsets.symmetric(
+                                                                                        vertical:
+                                                                                        10.0,
+                                                                                        horizontal:
+                                                                                        10.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            const Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  'Photo',
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .black),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(height: 8.0),
+                                                                            Row(
+                                                                              children: [
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    _pickImage()
+                                                                                        .then(
+                                                                                            (_) {
+                                                                                          setState(
+                                                                                                  () {}); // Rebuild the widget after selecting the image
+                                                                                        });
+                                                                                  },
+                                                                                  child: const Text(
+                                                                                    '+ Add',
+                                                                                    style: TextStyle(
+                                                                                        color: Colors
+                                                                                            .green),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(height: 8.0),
+                                                                            _image != null
+                                                                                ? Column(
+                                                                              children: [
+                                                                                Image.file(
+                                                                                  _image!,
+                                                                                  height:
+                                                                                  80,
+                                                                                  width: 80,
+                                                                                  fit: BoxFit
+                                                                                      .cover,
+                                                                                ),
+                                                                                Text(
+                                                                                    _uploadedFileName ??
+                                                                                        ""),
+                                                                              ],
+                                                                            )
+                                                                                : const Text(''),
+                                                                            const SizedBox(height: 8.0),
+                                                                            Row(
+                                                                              children: [
+                                                                                const SizedBox(
+                                                                                  width: 0,
+                                                                                ),
+                                                                                GestureDetector(
+                                                                                  onTap:
+                                                                                      () async {
+                                                                                    if (unitnum.text.isEmpty ||
+                                                                                        street3
+                                                                                            .text
+                                                                                            .isEmpty ||
+                                                                                        sqft3.text
+                                                                                            .isEmpty) {
+                                                                                      setState(
+                                                                                              () {
+                                                                                            iserror =
+                                                                                            true;
+                                                                                          });
+                                                                                    } else {
+                                                                                      setState(
+                                                                                              () {
+                                                                                            isLoading =
+                                                                                            true;
+                                                                                            iserror =
+                                                                                            false;
+                                                                                          });
+                                                                                      SharedPreferences
+                                                                                      prefs =
+                                                                                      await SharedPreferences
+                                                                                          .getInstance();
+                                                                                      String? id =
+                                                                                      prefs.getString(
+                                                                                          "adminId");
+                                                                                      Properies_summery_Repo()
+                                                                                          .Editunit(
+                                                                                        rentalunit:
+                                                                                        unitnum
+                                                                                            .text,
+                                                                                        rentalsqft:
+                                                                                        sqft3
+                                                                                            .text,
+                                                                                        rentalunitadress:
+                                                                                        street3
+                                                                                            .text,
+                                                                                        unitId: Propertytype
+                                                                                            .unitId!,
+                                                                                      )
+                                                                                          .then(
+                                                                                              (value) {
+                                                                                            setState(
+                                                                                                    () {
+
+                                                                                                  isLoading =
+                                                                                                  false;
+                                                                                                });
+                                                                                            Navigator.of(
+                                                                                                context)
+                                                                                                .pop(
+                                                                                                true);
+                                                                                          }).catchError(
+                                                                                              (e) {
+                                                                                            setState(
+                                                                                                    () {
+                                                                                                  isLoading =
+                                                                                                  false;
+                                                                                                });
+                                                                                          });
+                                                                                    }
+                                                                                  },
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    const BorderRadius
+                                                                                        .all(
+                                                                                      Radius
+                                                                                          .circular(
+                                                                                          5),
+                                                                                    ),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 30,
+                                                                                      width: 80,
+                                                                                      decoration:
+                                                                                      const BoxDecoration(
+                                                                                        color: Color
+                                                                                            .fromRGBO(
+                                                                                            21,
+                                                                                            43,
+                                                                                            81,
+                                                                                            1),
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .all(
+                                                                                          Radius.circular(
+                                                                                              5),
+                                                                                        ),
+                                                                                      ),
+                                                                                      child: const Center(
+                                                                                          child: Text(
+                                                                                            "Save",
+                                                                                            style: TextStyle(
+                                                                                                fontWeight: FontWeight
+                                                                                                    .w500,
+                                                                                                color:
+                                                                                                Colors.white),
+                                                                                          )),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                    width: 10),
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    Navigator.pop(
+                                                                                        context);
+                                                                                  },
+                                                                                  child: Material(
+                                                                                    elevation: 3,
+                                                                                    borderRadius:
+                                                                                    const BorderRadius
+                                                                                        .all(
+                                                                                      Radius
+                                                                                          .circular(
+                                                                                          5),
+                                                                                    ),
+                                                                                    child:
+                                                                                    Container(
+                                                                                      height: 30,
+                                                                                      width: 80,
+                                                                                      decoration:
+                                                                                      const BoxDecoration(
+                                                                                        color: Colors
+                                                                                            .white,
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .all(
+                                                                                          Radius.circular(
+                                                                                              5),
+                                                                                        ),
+                                                                                      ),
+                                                                                      child: const Center(
+                                                                                          child: Text(
+                                                                                            "Cancel",
+                                                                                            style: TextStyle(
+                                                                                                fontWeight: FontWeight
+                                                                                                    .w500,
+                                                                                                color: Color.fromRGBO(
+                                                                                                    21,
+                                                                                                    43,
+                                                                                                    81,
+                                                                                                    1)),
+                                                                                          )),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(height: 8.0),
+                                                                            if (iserror)
+                                                                              const Text(
+                                                                                "Please fill in all fields correctly.",
+                                                                                style: TextStyle(
+                                                                                    color: Colors
+                                                                                        .redAccent),
+                                                                              ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                            );
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          child: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .edit,
+                                                            size: 20,
+                                                            color: Color
+                                                                .fromRGBO(
+                                                                21,
+                                                                43,
+                                                                83,
+                                                                1),
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                      .02),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      onPressed: () {
-                                        unitnum.text = unitData.rentalunit!;
-                                        street3.text =
-                                            unitData.rentalunitadress!;
-                                        sqft3.text = unitData.rentalsqft!;
-                                        bath3.text = unitData.rentalbath!;
-                                        bed3.text = unitData.rentalbed!;
-                                        if (widget.properties.propertyTypeData!
-                                                .isMultiunit! &&
-                                            widget.properties.propertyTypeData!
-                                                    .propertyType ==
-                                                'Residential') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-// Moved isChecked inside the StatefulBuilder
-                                              return StatefulBuilder(
-                                                builder: (BuildContext context,
-                                                    StateSetter setState) {
-                                                  return AlertDialog(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    surfaceTintColor:
-                                                        Colors.white,
-                                                    content:
-                                                        SingleChildScrollView(
+                                      if (isExpanded)
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          margin: EdgeInsets.only(bottom: 20),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  children: [
+                                                    FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                          .sortUp
+                                                          : FontAwesomeIcons
+                                                          .sortDown,
+                                                      size: 50,
+                                                      color:
+                                                      Colors.transparent,
+                                                    ),
+                                                    Expanded(
                                                       child: Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                "Add Unit Details",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                  fontWeight:
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                        children: <Widget>[
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Tenant :',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
                                                                       FontWeight
                                                                           .bold,
+                                                                      color:
+                                                                      blueColor), // Bold and black
                                                                 ),
-                                                              ),
-                                                              const Spacer(),
-                                                              Align(
-                                                                alignment: Alignment
-                                                                    .centerRight,
-                                                                child: InkWell(
-                                                                  onTap: () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: const Icon(
-                                                                      Icons
-                                                                          .close,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "Unit Number",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    unitnum,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "Street Address",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    street3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "SQFT",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    sqft3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "bath",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    bath3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "bed",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    bed3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                'Photo',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  _pickImage()
-                                                                      .then(
-                                                                          (_) {
-                                                                    setState(
-                                                                        () {}); // Rebuild the widget after selecting the image
-                                                                  });
-                                                                },
-                                                                child: const Text(
-                                                                  '+ Add',
+                                                                TextSpan(
+                                                                  text: '${tenentCount}',
                                                                   style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
                                                                       color: Colors
-                                                                          .green),
+                                                                          .grey), // Light and grey
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          _image != null
-                                                              ? Column(
-                                                                  children: [
-                                                                    Image.file(
-                                                                      _image!,
-                                                                      height:
-                                                                          80,
-                                                                      width: 80,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                    Text(
-                                                                        _uploadedFileName ??
-                                                                            ""),
-                                                                  ],
-                                                                )
-                                                              : const Text(''),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                width: 0,
-                                                              ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (unitnum.text.isEmpty ||
-                                                                      street3
-                                                                          .text
-                                                                          .isEmpty ||
-                                                                      sqft3.text
-                                                                          .isEmpty ||
-                                                                      bath3.text
-                                                                          .isEmpty ||
-                                                                      bed3.text
-                                                                          .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      iserror =
-                                                                          true;
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      isLoading =
-                                                                          true;
-                                                                      iserror =
-                                                                          false;
-                                                                    });
-                                                                    SharedPreferences
-                                                                        prefs =
-                                                                        await SharedPreferences
-                                                                            .getInstance();
-
-                                                                    String? id =
-                                                                        prefs.getString(
-                                                                            "adminId");
-                                                                    Properies_summery_Repo()
-                                                                        .Editunit(
-                                                                            rentalunit: unitnum
-                                                                                .text,
-                                                                            rentalsqft: sqft3
-                                                                                .text,
-                                                                            rentalunitadress: street3
-                                                                                .text,
-                                                                            rentalbath: bath3
-                                                                                .text,
-                                                                            rentalbed: bed3
-                                                                                .text,
-                                                                            unitId: unitData
-                                                                                .unitId,
-                                                                            adminId:
-                                                                                id,
-                                                                            rentalId: unitData
-                                                                                .rentalId)
-                                                                        .then(
-                                                                            (value) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
-
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(
-                                                                              true);
-                                                                      reload_Screen();
-                                                                    }).catchError(
-                                                                            (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
-                                                                      ),
-                                                                    ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Save",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color:
-                                                                              Colors.white),
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
-                                                                      ),
-                                                                    ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Cancel",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1)),
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          if (iserror)
-                                                            const Text(
-                                                              "Please fill in all fields correctly.",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .redAccent),
+                                                              ],
                                                             ),
+                                                          ),
                                                         ],
                                                       ),
                                                     ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          );
-                                        }
-                                        if (widget.properties.propertyTypeData!
-                                                .isMultiunit! &&
-                                            widget.properties.propertyTypeData!
-                                                    .propertyType ==
-                                                'Commercial') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              bool isChecked =
-                                                  false; // Moved isChecked inside the StatefulBuilder
-                                              return StatefulBuilder(
-                                                builder: (BuildContext context,
-                                                    StateSetter setState) {
-                                                  return AlertDialog(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    surfaceTintColor:
-                                                        Colors.white,
-                                                    content:
-                                                        SingleChildScrollView(
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                "Add Unit Details",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                              const Spacer(),
-                                                              Align(
-                                                                alignment: Alignment
-                                                                    .centerRight,
-                                                                child: InkWell(
-                                                                  onTap: () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: const Icon(
-                                                                      Icons
-                                                                          .close,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "Unit Number",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    unitnum,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "Street Address",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    street3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                "SQFT",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        1),
-                                                            child: Material(
-                                                              elevation: 3,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          3),
-                                                              child:
-                                                                  TextFormField(
-                                                                controller:
-                                                                    sqft3,
-                                                                cursorColor:
-                                                                    Colors
-                                                                        .black,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  //  hintText: label,
-                                                                  // labelText: label,
-                                                                  // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        BorderSide
-                                                                            .none,
-                                                                  ),
-                                                                  enabledBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8)),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(3),
-                                                                    borderSide: const BorderSide(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        width:
-                                                                            2),
-                                                                  ),
-                                                                  contentPadding: const EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.0,
-                                                                      horizontal:
-                                                                          10.0),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          const Row(
-                                                            children: [
-                                                              Text(
-                                                                'Photo',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  _pickImage()
-                                                                      .then(
-                                                                          (_) {
-                                                                    setState(
-                                                                        () {}); // Rebuild the widget after selecting the image
-                                                                  });
-                                                                },
-                                                                child: const Text(
-                                                                  '+ Add',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .green),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          _image != null
-                                                              ? Column(
-                                                                  children: [
-                                                                    Image.file(
-                                                                      _image!,
-                                                                      height:
-                                                                          80,
-                                                                      width: 80,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                    Text(
-                                                                        _uploadedFileName ??
-                                                                            ""),
-                                                                  ],
-                                                                )
-                                                              : const Text(''),
-                                                          const SizedBox(height: 8.0),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                width: 0,
-                                                              ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (unitnum.text.isEmpty ||
-                                                                      street3
-                                                                          .text
-                                                                          .isEmpty ||
-                                                                      sqft3.text
-                                                                          .isEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      iserror =
-                                                                          true;
-                                                                    });
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      isLoading =
-                                                                          true;
-                                                                      iserror =
-                                                                          false;
-                                                                    });
-                                                                    SharedPreferences
-                                                                        prefs =
-                                                                        await SharedPreferences
-                                                                            .getInstance();
-                                                                    String? id =
-                                                                        prefs.getString(
-                                                                            "adminId");
-                                                                    Properies_summery_Repo()
-                                                                        .Editunit(
-                                                                      rentalunit:
-                                                                          unitnum
-                                                                              .text,
-                                                                      rentalsqft:
-                                                                          sqft3
-                                                                              .text,
-                                                                      rentalunitadress:
-                                                                          street3
-                                                                              .text,
-                                                                      unitId: unitData
-                                                                          .unitId!,
-                                                                    )
-                                                                        .then(
-                                                                            (value) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(
-                                                                              true);
-                                                                    }).catchError(
-                                                                            (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        isLoading =
-                                                                            false;
-                                                                      });
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
-                                                                      ),
-                                                                    ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Save",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color:
-                                                                              Colors.white),
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Material(
-                                                                  elevation: 3,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 30,
-                                                                    width: 80,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      borderRadius:
-                                                                          BorderRadius
-                                                                              .all(
-                                                                        Radius.circular(
-                                                                            5),
-                                                                      ),
-                                                                    ),
-                                                                    child: const Center(
-                                                                        child: Text(
-                                                                      "Cancel",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1)),
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 8.0),
-                                                          if (iserror)
-                                                            const Text(
-                                                              "Please fill in all fields correctly.",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .redAccent),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
+
+
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      //SizedBox(height: 13,),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  // Text('Rows per page:'),
+                                  SizedBox(width: 10),
+                                  Material(
+                                    elevation: 3,
+                                    child: Container(
+                                      height: 40,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      decoration: BoxDecoration(
+                                        border:
+                                        Border.all(color: Colors.grey),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<int>(
+                                          value: itemsPerPagemulti,
+                                          items: itemsPerPageOptionsmulti
+                                              .map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(value.toString()),
+                                            );
+                                          }).toList(),
+                                          onChanged: (newValue) {
+                                            setState(() {
+                                              itemsPerPagemulti = newValue!;
+                                              currentPagemulti =
+                                              0; // Reset to first page when items per page change
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
-                              );
-                            }).toList(),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronLeft,
+                                      color: currentPagemulti == 0
+                                          ? Colors.grey
+                                          : Color.fromRGBO(21, 43, 83, 1),
+                                    ),
+                                    onPressed: currentPagemulti == 0
+                                        ? null
+                                        : () {
+                                      setState(() {
+                                        currentPagemulti--;
+                                      });
+                                    },
+                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.arrow_back),
+                                  //   onPressed: currentPage > 0
+                                  //       ? () {
+                                  //     setState(() {
+                                  //       currentPage--;
+                                  //     });
+                                  //   }
+                                  //       : null,
+                                  // ),
+                                  Text(
+                                      'Page ${currentPagemulti + 1} of $totalPages'),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.arrow_forward),
+                                  //   onPressed: currentPage < totalPages - 1
+                                  //       ? () {
+                                  //     setState(() {
+                                  //       currentPage++;
+                                  //     });
+                                  //   }
+                                  //       : null,
+                                  // ),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronRight,
+                                      color: currentPagemulti < totalPages - 1
+                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: currentPagemulti < totalPages - 1
+                                        ? () {
+                                      setState(() {
+                                        currentPagemulti++;
+                                      });
+                                    }
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
+                        ],
                       ),
                     );
-                  },
-                ),
+                  }
+                },
               ),
+            ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<List<unit_properties>>(
+              future: futureUnitsummery,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 55.0,
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No data available'));
+                } else {
+                  _tableDatamulti = snapshot.data!;
+                  if (selectedValue == null && searchvalue.isEmpty) {
+                    _tableDatamulti = snapshot.data!;
+                  } else if (selectedValue == "All") {
+                    _tableDatamulti = snapshot.data!;
+                  } else if (searchvalue.isNotEmpty) {
+                    _tableDatamulti = snapshot.data!
+                        .where((property) =>
+                    property.rentalunit!
+                        .toLowerCase()
+                        .contains(searchvalue.toLowerCase()) ||
+                        property.rentalunitadress!
+                            .toLowerCase()
+                            .contains(searchvalue.toLowerCase()))
+                        .toList();
+                  } else {
+                    _tableDatamulti = snapshot.data!
+                        .where((property) =>
+                    property.rentalunit == selectedValue)
+                        .toList();
+                  }
+                  totalrecordsmulti = _tableDatamulti.length;
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 10),
+                        Container(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24.0, vertical: 5),
+                            child: Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        .91,
+                                    child: Table(
+                                      defaultColumnWidth:
+                                      IntrinsicColumnWidth(),
+                                      children: [
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              // color: blueColor
+                                            ),
+                                          ),
+                                          children: [
+                                            // TableCell(child: Text('yash')),
+                                            // TableCell(child: Text('yash')),
+                                            // TableCell(child: Text('yash')),
+                                            // TableCell(child: Text('yash')),
+                                            _buildHeadermulti('Unit', 0,
+                                                    (rental) => rental.rentalunit!),
+                                            _buildHeadermulti(
+                                                'Adress',
+                                                1,
+                                                    (rental) =>
+                                                rental.rentalunitadress!),
+                                            _buildHeadermulti(
+                                                'Tenants',
+                                                2,
+                                                    (rental) =>
+                                                rental.tenantCount!),
+                                            _buildHeadermulti('Actions', 3, null),
+                                          ],
+                                        ),
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border.symmetric(
+                                                horizontal: BorderSide.none),
+                                          ),
+                                          children: List.generate(
+                                              4,
+                                                  (index) => TableCell(
+                                                  child:
+                                                  Container(height: 20))),
+                                        ),
+                                        for (var i = 0;
+                                        i < _pagedDatamulti.length;
+                                        i++)
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                left: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                right: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                top: BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1)),
+                                                bottom: i ==
+                                                    _pagedDatamulti.length - 1
+                                                    ? BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1))
+                                                    : BorderSide.none,
+                                              ),
+                                            ),
+                                            children: [
+                                              InkWell(
+                                                onTap:(){
+                                                  setState(() {
+                                                    showdetails = true;
+                                                    unit = _tableDatamulti.first;
+                                                  });
+                                                },
+                                                child: _buildDataCellmulti(
+                                                    _pagedDatamulti[i].rentalunit!),
+                                              ),
+                                              // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
+                                              _buildDataCellmulti(
+                                                  _pagedDatamulti[i]
+                                                      .rentalunitadress!),
+                                              _buildDataCellmulti(
+                                                  _pagedDatamulti[i]
+                                                      .tenantCount!.toString()),
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 13,
+                                                  ),
+                                                  Container(
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            unitnum.text = _tableDatamulti.first.rentalunit!;
+                                                            street3.text =
+                                                            _tableDatamulti.first.rentalunitadress!;
+                                                            sqft3.text = _tableDatamulti.first.rentalsqft!!;
+                                                            bath3.text = _tableDatamulti.first.rentalbath!;
+                                                            bed3.text =_tableDatamulti.first.rentalbed!;
+                                                            if (widget.properties.propertyTypeData!
+                                                                .isMultiunit! &&
+                                                                widget.properties.propertyTypeData!
+                                                                    .propertyType ==
+                                                                    'Residential') {
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (BuildContext context) {
+                                                                  // Moved isChecked inside the StatefulBuilder
+                                                                  return StatefulBuilder(
+                                                                    builder: (BuildContext context,
+                                                                        StateSetter setState) {
+                                                                      return AlertDialog(
+                                                                        backgroundColor:
+                                                                        Colors.white,
+                                                                        surfaceTintColor:
+                                                                        Colors.white,
+                                                                        content:
+                                                                        SingleChildScrollView(
+                                                                          child: Column(
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  const Text(
+                                                                                    "Edit Unit Details",
+                                                                                    style:
+                                                                                    TextStyle(
+                                                                                      color: Color
+                                                                                          .fromRGBO(
+                                                                                          21,
+                                                                                          43,
+                                                                                          81,
+                                                                                          1),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                    ),
+                                                                                  ),
+                                                                                  const Spacer(),
+                                                                                  Align(
+                                                                                    alignment: Alignment
+                                                                                        .centerRight,
+                                                                                    child: InkWell(
+                                                                                      onTap: () {
+                                                                                        Navigator.pop(
+                                                                                            context);
+                                                                                      },
+                                                                                      child: const Icon(
+                                                                                          Icons
+                                                                                              .close,
+                                                                                          color: Colors
+                                                                                              .black),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "Unit Number",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    unitnum,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "Street Address",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    street3,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "SQFT",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    sqft3,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "bath",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    bath3,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "bed",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    bed3,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    'Photo',
+                                                                                    style: TextStyle(
+                                                                                        color: Colors
+                                                                                            .black),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(height: 8.0),
+                                                                              Row(
+                                                                                children: [
+                                                                                  GestureDetector(
+                                                                                    onTap: () {
+                                                                                      _pickImage()
+                                                                                          .then(
+                                                                                              (_) {
+                                                                                            setState(
+                                                                                                    () {}); // Rebuild the widget after selecting the image
+                                                                                          });
+                                                                                    },
+                                                                                    child: const Text(
+                                                                                      '+ Add',
+                                                                                      style: TextStyle(
+                                                                                          color: Colors
+                                                                                              .green),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              _image != null
+                                                                                  ? Column(
+                                                                                children: [
+                                                                                  Image.file(
+                                                                                    _image!,
+                                                                                    height:
+                                                                                    80,
+                                                                                    width: 80,
+                                                                                    fit: BoxFit
+                                                                                        .cover,
+                                                                                  ),
+                                                                                  Text(
+                                                                                      _uploadedFileName ??
+                                                                                          ""),
+                                                                                ],
+                                                                              )
+                                                                                  : const Text(''),
+                                                                              const SizedBox(height: 8.0),
+                                                                              Row(
+                                                                                children: [
+                                                                                  const SizedBox(
+                                                                                    width: 0,
+                                                                                  ),
+                                                                                  GestureDetector(
+                                                                                    onTap:
+                                                                                        () async {
+                                                                                      if (unitnum.text.isEmpty ||
+                                                                                          street3
+                                                                                              .text
+                                                                                              .isEmpty ||
+                                                                                          sqft3.text
+                                                                                              .isEmpty ||
+                                                                                          bath3.text
+                                                                                              .isEmpty ||
+                                                                                          bed3.text
+                                                                                              .isEmpty) {
+                                                                                        setState(
+                                                                                                () {
+                                                                                              iserror =
+                                                                                              true;
+                                                                                            });
+                                                                                      } else {
+                                                                                        setState(
+                                                                                                () {
+                                                                                              isLoading =
+                                                                                              true;
+                                                                                              iserror =
+                                                                                              false;
+                                                                                            });
+                                                                                        SharedPreferences
+                                                                                        prefs =
+                                                                                        await SharedPreferences
+                                                                                            .getInstance();
+
+                                                                                        String? id =
+                                                                                        prefs.getString(
+                                                                                            "adminId");
+                                                                                        Properies_summery_Repo()
+                                                                                            .Editunit(
+                                                                                            rentalunit: unitnum
+                                                                                                .text,
+                                                                                            rentalsqft: sqft3
+                                                                                                .text,
+                                                                                            rentalunitadress: street3
+                                                                                                .text,
+                                                                                            rentalbath: bath3
+                                                                                                .text,
+                                                                                            rentalbed: bed3
+                                                                                                .text,
+                                                                                            unitId:_tableDatamulti.first.unitId!,
+                                                                                            adminId:
+                                                                                            id,
+                                                                                            rentalId:_tableDatamulti.first.rentalId!)
+                                                                                            .then(
+                                                                                                (value) {
+                                                                                              setState(
+                                                                                                      () {
+
+
+                                                                                                    isLoading =
+                                                                                                    false;
+                                                                                                  });
+
+                                                                                              Navigator.of(
+                                                                                                  context)
+                                                                                                  .pop(
+                                                                                                  true);
+                                                                                              reload_Screen();
+                                                                                            }).catchError(
+                                                                                                (e) {
+                                                                                              setState(
+                                                                                                      () {
+                                                                                                    isLoading =
+                                                                                                    false;
+                                                                                                  });
+                                                                                            });
+                                                                                      }
+                                                                                    },
+                                                                                    child: Material(
+                                                                                      elevation: 3,
+                                                                                      borderRadius:
+                                                                                      const BorderRadius
+                                                                                          .all(
+                                                                                        Radius
+                                                                                            .circular(
+                                                                                            5),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Container(
+                                                                                        height: 30,
+                                                                                        width: 80,
+                                                                                        decoration:
+                                                                                        const BoxDecoration(
+                                                                                          color: Color
+                                                                                              .fromRGBO(
+                                                                                              21,
+                                                                                              43,
+                                                                                              81,
+                                                                                              1),
+                                                                                          borderRadius:
+                                                                                          BorderRadius
+                                                                                              .all(
+                                                                                            Radius.circular(
+                                                                                                5),
+                                                                                          ),
+                                                                                        ),
+                                                                                        child: const Center(
+                                                                                            child: Text(
+                                                                                              "Save",
+                                                                                              style: TextStyle(
+                                                                                                  fontWeight: FontWeight
+                                                                                                      .w500,
+                                                                                                  color:
+                                                                                                  Colors.white),
+                                                                                            )),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                      width: 10),
+                                                                                  GestureDetector(
+                                                                                    onTap: () {
+                                                                                      Navigator.pop(
+                                                                                          context);
+                                                                                    },
+                                                                                    child: Material(
+                                                                                      elevation: 3,
+                                                                                      borderRadius:
+                                                                                      const BorderRadius
+                                                                                          .all(
+                                                                                        Radius
+                                                                                            .circular(
+                                                                                            5),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Container(
+                                                                                        height: 30,
+                                                                                        width: 80,
+                                                                                        decoration:
+                                                                                        const BoxDecoration(
+                                                                                          color: Colors
+                                                                                              .white,
+                                                                                          borderRadius:
+                                                                                          BorderRadius
+                                                                                              .all(
+                                                                                            Radius.circular(
+                                                                                                5),
+                                                                                          ),
+                                                                                        ),
+                                                                                        child: const Center(
+                                                                                            child: Text(
+                                                                                              "Cancel",
+                                                                                              style: TextStyle(
+                                                                                                  fontWeight: FontWeight
+                                                                                                      .w500,
+                                                                                                  color: Color.fromRGBO(
+                                                                                                      21,
+                                                                                                      43,
+                                                                                                      81,
+                                                                                                      1)),
+                                                                                            )),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(height: 8.0),
+                                                                              if (iserror)
+                                                                                const Text(
+                                                                                  "Please fill in all fields correctly.",
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .redAccent),
+                                                                                ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                },
+                                                              );
+                                                            }
+                                                            if (widget.properties.propertyTypeData!
+                                                                .isMultiunit! &&
+                                                                widget.properties.propertyTypeData!
+                                                                    .propertyType ==
+                                                                    'Commercial') {
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (BuildContext context) {
+                                                                  bool isChecked =
+                                                                  false; // Moved isChecked inside the StatefulBuilder
+                                                                  return StatefulBuilder(
+                                                                    builder: (BuildContext context,
+                                                                        StateSetter setState) {
+                                                                      return AlertDialog(
+                                                                        backgroundColor:
+                                                                        Colors.white,
+                                                                        surfaceTintColor:
+                                                                        Colors.white,
+                                                                        content:
+                                                                        SingleChildScrollView(
+                                                                          child: Column(
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  const Text(
+                                                                                    "Edit Unit Details",
+                                                                                    style:
+                                                                                    TextStyle(
+                                                                                      color: Color
+                                                                                          .fromRGBO(
+                                                                                          21,
+                                                                                          43,
+                                                                                          81,
+                                                                                          1),
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .bold,
+                                                                                    ),
+                                                                                  ),
+                                                                                  const Spacer(),
+                                                                                  Align(
+                                                                                    alignment: Alignment
+                                                                                        .centerRight,
+                                                                                    child: InkWell(
+                                                                                      onTap: () {
+                                                                                        Navigator.pop(
+                                                                                            context);
+                                                                                      },
+                                                                                      child: const Icon(
+                                                                                          Icons
+                                                                                              .close,
+                                                                                          color: Colors
+                                                                                              .black),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "Unit Number",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    unitnum,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "Street Address",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    street3,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "SQFT",
+                                                                                    style: TextStyle(
+                                                                                        color: Color(
+                                                                                            0xFF8A95A8),
+                                                                                        fontWeight:
+                                                                                        FontWeight
+                                                                                            .bold),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Padding(
+                                                                                padding:
+                                                                                const EdgeInsets
+                                                                                    .symmetric(
+                                                                                    vertical:
+                                                                                    1),
+                                                                                child: Material(
+                                                                                  elevation: 3,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      3),
+                                                                                  child:
+                                                                                  TextFormField(
+                                                                                    controller:
+                                                                                    sqft3,
+                                                                                    cursorColor:
+                                                                                    Colors
+                                                                                        .black,
+                                                                                    decoration:
+                                                                                    InputDecoration(
+                                                                                      //  hintText: label,
+                                                                                      // labelText: label,
+                                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                                      filled: true,
+                                                                                      fillColor:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      border:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        BorderSide
+                                                                                            .none,
+                                                                                      ),
+                                                                                      enabledBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide:
+                                                                                        const BorderSide(
+                                                                                            color:
+                                                                                            Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      focusedBorder:
+                                                                                      OutlineInputBorder(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(3),
+                                                                                        borderSide: const BorderSide(
+                                                                                            color: Color(
+                                                                                                0xFF8A95A8),
+                                                                                            width:
+                                                                                            2),
+                                                                                      ),
+                                                                                      contentPadding: const EdgeInsets.symmetric(
+                                                                                          vertical:
+                                                                                          10.0,
+                                                                                          horizontal:
+                                                                                          10.0),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                height: 10,
+                                                                              ),
+                                                                              const Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    'Photo',
+                                                                                    style: TextStyle(
+                                                                                        color: Colors
+                                                                                            .black),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(height: 8.0),
+                                                                              Row(
+                                                                                children: [
+                                                                                  GestureDetector(
+                                                                                    onTap: () {
+                                                                                      _pickImage()
+                                                                                          .then(
+                                                                                              (_) {
+                                                                                            setState(
+                                                                                                    () {}); // Rebuild the widget after selecting the image
+                                                                                          });
+                                                                                    },
+                                                                                    child: const Text(
+                                                                                      '+ Add',
+                                                                                      style: TextStyle(
+                                                                                          color: Colors
+                                                                                              .green),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(height: 8.0),
+                                                                              _image != null
+                                                                                  ? Column(
+                                                                                children: [
+                                                                                  Image.file(
+                                                                                    _image!,
+                                                                                    height:
+                                                                                    80,
+                                                                                    width: 80,
+                                                                                    fit: BoxFit
+                                                                                        .cover,
+                                                                                  ),
+                                                                                  Text(
+                                                                                      _uploadedFileName ??
+                                                                                          ""),
+                                                                                ],
+                                                                              )
+                                                                                  : const Text(''),
+                                                                              const SizedBox(height: 8.0),
+                                                                              Row(
+                                                                                children: [
+                                                                                  const SizedBox(
+                                                                                    width: 0,
+                                                                                  ),
+                                                                                  GestureDetector(
+                                                                                    onTap:
+                                                                                        () async {
+                                                                                      if (unitnum.text.isEmpty ||
+                                                                                          street3
+                                                                                              .text
+                                                                                              .isEmpty ||
+                                                                                          sqft3.text
+                                                                                              .isEmpty) {
+                                                                                        setState(
+                                                                                                () {
+                                                                                              iserror =
+                                                                                              true;
+                                                                                            });
+                                                                                      } else {
+                                                                                        setState(
+                                                                                                () {
+                                                                                              isLoading =
+                                                                                              true;
+                                                                                              iserror =
+                                                                                              false;
+                                                                                            });
+                                                                                        SharedPreferences
+                                                                                        prefs =
+                                                                                        await SharedPreferences
+                                                                                            .getInstance();
+                                                                                        String? id =
+                                                                                        prefs.getString(
+                                                                                            "adminId");
+                                                                                        Properies_summery_Repo()
+                                                                                            .Editunit(
+                                                                                          rentalunit:
+                                                                                          unitnum
+                                                                                              .text,
+                                                                                          rentalsqft:
+                                                                                          sqft3
+                                                                                              .text,
+                                                                                          rentalunitadress:
+                                                                                          street3
+                                                                                              .text,
+                                                                                          unitId: _tableDatamulti.first.unitId!,
+                                                                                        )
+                                                                                            .then(
+                                                                                                (value) {
+                                                                                              setState(
+                                                                                                      () {
+
+                                                                                                    isLoading =
+                                                                                                    false;
+                                                                                                  });
+                                                                                              Navigator.of(
+                                                                                                  context)
+                                                                                                  .pop(
+                                                                                                  true);
+                                                                                            }).catchError(
+                                                                                                (e) {
+                                                                                              setState(
+                                                                                                      () {
+                                                                                                    isLoading =
+                                                                                                    false;
+                                                                                                  });
+                                                                                            });
+                                                                                      }
+                                                                                    },
+                                                                                    child: Material(
+                                                                                      elevation: 3,
+                                                                                      borderRadius:
+                                                                                      const BorderRadius
+                                                                                          .all(
+                                                                                        Radius
+                                                                                            .circular(
+                                                                                            5),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Container(
+                                                                                        height: 30,
+                                                                                        width: 80,
+                                                                                        decoration:
+                                                                                        const BoxDecoration(
+                                                                                          color: Color
+                                                                                              .fromRGBO(
+                                                                                              21,
+                                                                                              43,
+                                                                                              81,
+                                                                                              1),
+                                                                                          borderRadius:
+                                                                                          BorderRadius
+                                                                                              .all(
+                                                                                            Radius.circular(
+                                                                                                5),
+                                                                                          ),
+                                                                                        ),
+                                                                                        child: const Center(
+                                                                                            child: Text(
+                                                                                              "Save",
+                                                                                              style: TextStyle(
+                                                                                                  fontWeight: FontWeight
+                                                                                                      .w500,
+                                                                                                  color:
+                                                                                                  Colors.white),
+                                                                                            )),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                      width: 10),
+                                                                                  GestureDetector(
+                                                                                    onTap: () {
+                                                                                      Navigator.pop(
+                                                                                          context);
+                                                                                    },
+                                                                                    child: Material(
+                                                                                      elevation: 3,
+                                                                                      borderRadius:
+                                                                                      const BorderRadius
+                                                                                          .all(
+                                                                                        Radius
+                                                                                            .circular(
+                                                                                            5),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Container(
+                                                                                        height: 30,
+                                                                                        width: 80,
+                                                                                        decoration:
+                                                                                        const BoxDecoration(
+                                                                                          color: Colors
+                                                                                              .white,
+                                                                                          borderRadius:
+                                                                                          BorderRadius
+                                                                                              .all(
+                                                                                            Radius.circular(
+                                                                                                5),
+                                                                                          ),
+                                                                                        ),
+                                                                                        child: const Center(
+                                                                                            child: Text(
+                                                                                              "Cancel",
+                                                                                              style: TextStyle(
+                                                                                                  fontWeight: FontWeight
+                                                                                                      .w500,
+                                                                                                  color: Color.fromRGBO(
+                                                                                                      21,
+                                                                                                      43,
+                                                                                                      81,
+                                                                                                      1)),
+                                                                                            )),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(height: 8.0),
+                                                                              if (iserror)
+                                                                                const Text(
+                                                                                  "Please fill in all fields correctly.",
+                                                                                  style: TextStyle(
+                                                                                      color: Colors
+                                                                                          .redAccent),
+                                                                                ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                },
+                                                              );
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .edit,
+                                                              size: 20,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                  21,
+                                                                  43,
+                                                                  83,
+                                                                  1),
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 25),
+                                _buildPaginationControlsmulti(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),
@@ -5551,8 +8853,13 @@ class _Summery_pageState extends State<Summery_page>
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          height: 36,
-                          width: 76,
+                          height:
+                            MediaQuery.of(context).size.width < 500
+                            ? 36
+                            : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 76
+                              : 80,
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -5560,10 +8867,13 @@ class _Summery_pageState extends State<Summery_page>
                               });
                               // Navigator.pop(context);
                             },
-                            child: const Text(
+                            child:  Text(
                               'Back',
                               style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
+                                  TextStyle(fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20, color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
@@ -5576,8 +8886,12 @@ class _Summery_pageState extends State<Summery_page>
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          height: 36,
-                          width: 126,
+                          height: MediaQuery.of(context).size.width < 500
+                              ? 36
+                              : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 136
+                              : 150,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
@@ -5594,10 +8908,13 @@ class _Summery_pageState extends State<Summery_page>
                               });
                               Navigator.pop(context);
                             },
-                            child: const Text(
+                            child:  Text(
                               'Delete unit',
                               style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
+                                  TextStyle(fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20, color: Colors.white),
                             ),
                           ),
                         ),
@@ -5631,7 +8948,10 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text(
                               'ADDRESS',
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.grey[800]),
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                  ? 12
+                                  : 20, color: Colors.grey[800],fontWeight: FontWeight.bold),
                             ),
                           ),
                           Padding(
@@ -5639,7 +8959,10 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text(
                               '${widget.properties?.rentalAddress}',
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.grey[800]),
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 12
+                                      : 18, color: Colors.grey[800]),
                             ),
                           ),
                           Padding(
@@ -5647,7 +8970,10 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text(
                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.grey[800]),
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 12
+                                      : 18, color: Colors.grey[800]),
                             ),
                           ),
                           Padding(
@@ -5655,7 +8981,10 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text(
                               '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.grey[800]),
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 12
+                                      : 18, color: Colors.grey[800]),
                             ),
                           ),
                         ],
@@ -5663,7 +8992,7 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(15.0),
                     child: Container(
                       // height: screenHeight * 0.26,
                       width: double.infinity,
@@ -5677,14 +9006,18 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                       child: Column(
                         children: [
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.all(8.0),
                             child: SizedBox(
                               width: double.infinity,
                               child: Text(
                                 'Add Lease',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 14
+                                        : 18,
+                                  fontWeight: FontWeight.bold,
                                   color: Color.fromRGBO(21, 43, 83, 1),
                                 ),
                               ),
@@ -5693,14 +9026,19 @@ class _Summery_pageState extends State<Summery_page>
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
-                              height: 36,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 36
+                                  : 48,
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {},
-                                child: const Text(
+                                child:  Text(
                                   'Add Lease',
                                   style: TextStyle(
-                                      fontSize: 12, color: Colors.white),
+                                      fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18,color: Colors.white,fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor:
@@ -5711,14 +9049,18 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                             ),
                           ),
-                          const Padding(
+                          Padding(
                             padding: EdgeInsets.all(8.0),
                             child: SizedBox(
                               width: double.infinity,
                               child: Text(
                                 'Rental Applicant',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 14
+                                        : 18,
+                                  fontWeight: FontWeight.bold,
                                   color: Color.fromRGBO(21, 43, 83, 1),
                                 ),
                               ),
@@ -5727,14 +9069,19 @@ class _Summery_pageState extends State<Summery_page>
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
-                              height: 36,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 36
+                                  : 48,
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {},
-                                child: const Text(
+                                child:  Text(
                                   'Create Applicant',
                                   style: TextStyle(
-                                      fontSize: 12, color: Colors.white),
+                                      fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18, color: Colors.white,fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor:
@@ -5744,6 +9091,9 @@ class _Summery_pageState extends State<Summery_page>
                                             BorderRadius.circular(10.0))),
                               ),
                             ),
+                          ),
+                          SizedBox(
+                            height: 20,
                           ),
                         ],
                       ),
@@ -5758,7 +9108,7 @@ class _Summery_pageState extends State<Summery_page>
           ),
           // LeasesTable1(context,unit!),
           // LeasesTable(context),
-          AppliancesPart(unit: unit),
+          AppliancesPart(unit: unit, ),
         ],
       ),
     );
@@ -6054,8 +9404,8 @@ class _Summery_pageState extends State<Summery_page>
                         workorder.status
                         ! == selectedValue)
                             .toList();
-                        // count = data.where((workorder) => workorder.status != 'Completed').length;
-                        // complete_count = data.where((workorder) => workorder.status == 'Completed').length;
+                        count = data.where((workorder) => workorder.status != 'Completed').length;
+                        complete_count = data.where((workorder) => workorder.status == 'Completed').length;
                       }
                       if (isChecked) {
                         data = data.where((workorder) => workorder.status == 'Completed').toList();
@@ -6680,5 +10030,3083 @@ class _Summery_pageState extends State<Summery_page>
 
   reload_Screen() {
     setState(() {});
+  }
+}
+
+class LeasesTable extends StatefulWidget {
+  unit_properties? unit;
+  LeasesTable({
+    super.key,
+    this.unit,
+  });
+  //LeasesTable({Key? key}) : super(key: key);
+
+  @override
+  State<LeasesTable> createState() => _LeasesTableState();
+}
+
+class _LeasesTableState extends State<LeasesTable> {
+  final UnitData leaseRepository = UnitData();
+
+  List<unit_lease> leases = [];
+
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLeases();
+    futureLease = UnitData().fetchUnitLeases(widget.unit?.unitId ??"");
+  }
+
+  Future<void> fetchLeases() async {
+    //  try {
+    final fetchedLeases =
+    await leaseRepository.fetchUnitLeases(widget.unit!.unitId!);
+    print(widget.unit!.unitId!);
+    print('hello');
+    setState(() {
+      print(widget.unit!.unitId!);
+      print('hello');
+      leases = fetchedLeases;
+      isLoading = false;
+    });
+    //} catch (e) {
+    setState(() {
+      isLoading = false;
+    });
+    //print('Failed to load leases: $e');
+    //}
+  }
+
+  String getStatus(String startDate, String endDate) {
+    final now = DateTime.now();
+    final start = DateTime.parse(startDate);
+    final end = DateTime.parse(endDate);
+    return (now.isAfter(start) && now.isBefore(end)) ? 'Active' : 'Inactive';
+  }
+
+  //for table
+
+  Widget _buildHeader<T>(String text, int columnIndex,
+      Comparable<T> Function(unit_lease d)? getField) {
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+          _sort(getField, columnIndex, !_sortAscending);
+        }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16,bottom: 20),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
+      ),
+    );
+  }
+
+  Widget _buildActionsCell(unit_lease data) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+              ),
+              InkWell(
+                onTap: () {
+                  handleEdit(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  handleDelete(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.trashCan,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    int numorpages = 1;
+    numorpages = (totalrecords / _rowsPerPage).ceil();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // Text('Rows per page: '),
+        // SizedBox(width: 10),
+        Material(
+          elevation: 2,
+          color: Colors.white,
+          child: Container(
+            height: 55,
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _rowsPerPage,
+                items: [10, 2, 5, 1].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  if (newValue != null) {
+                    _changeRowsPerPage(newValue);
+                  }
+                },
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  size: 40,
+                ),
+                style: TextStyle(color: Colors.black, fontSize: 17),
+                dropdownColor: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        IconButton(
+          icon: FaIcon(
+            size: 30,
+            FontAwesomeIcons.circleChevronLeft,
+            color:
+            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+          ),
+          onPressed: _currentPage == 0
+              ? null
+              : () {
+            setState(() {
+              _currentPage--;
+            });
+          },
+        ),
+        Text(
+          'Page ${_currentPage + 1} of $numorpages',
+          style: TextStyle(fontSize: 18),
+        ),
+        IconButton(
+          icon: FaIcon(
+            size: 30,
+            FontAwesomeIcons.circleChevronRight,
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+                ? Colors.grey
+                : Color.fromRGBO(
+                21, 43, 83, 1), // Change color based on availability
+          ),
+          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+              ? null
+              : () {
+            setState(() {
+              _currentPage++;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  //
+
+  List<unit_lease> _tableData = [];
+  int totalrecords = 0;
+  int _rowsPerPage = 10;
+  int _currentPage = 0;
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
+
+  List<unit_lease> get _pagedData {
+    int startIndex = _currentPage * _rowsPerPage;
+    int endIndex = startIndex + _rowsPerPage;
+    return _tableData.sublist(startIndex,
+        endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void _changeRowsPerPage(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPage = selectedRowsPerPage;
+      _currentPage = 0; // Reset to the first page when changing rows per page
+    });
+  }
+
+  void _sort<T>(Comparable<T> Function(unit_lease d) getField,
+      int columnIndex, bool ascending) {
+    setState(() {
+      _sortColumnIndex = columnIndex;
+      _sortAscending = ascending;
+      _tableData.sort((a, b) {
+        final aValue = getField(a);
+        final bValue = getField(b);
+
+        int result;
+        if (aValue is String && bValue is String) {
+          result = aValue
+              .toString()
+              .toLowerCase()
+              .compareTo(bValue.toString().toLowerCase());
+        } else {
+          result = aValue.compareTo(bValue as T);
+        }
+
+        return _sortAscending ? result : -result;
+      });
+    });
+  }
+
+  void handleEdit(unit_lease rentalOwner) async {
+    // Handle edit action
+    // print('Edit ${rentalOwner.rentalownerId}');
+    // var check = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_rentalowners(
+    //           rentalOwner: rentalOwner,
+    //         )));
+    // if (check == true) {
+    //   setState(() {});
+    // }
+    // final result = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_rentalowners(rentalOwner: rentalOwner,)));
+    /* if (result == true) {
+      setState(() {
+        futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+      });
+    }*/
+  }
+
+  void _showDeleteAlert(BuildContext context, String id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this RentalOwner!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            //  await RentalOwnerService().DeleteRentalOwners(rentalownerId: id);
+            setState(() {
+              // futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
+
+  void handleDelete(unit_lease rental) {
+    _showDeleteAlert(context, rental.leaseId!);
+    // Handle delete action
+    print('Delete ${rental.leaseId}');
+  }
+
+  late Future<List<unit_lease>> futureLease;
+  int rowsPerPage = 5;
+  int sortColumnIndex = 0;
+  bool sortAscending = true;
+  final List<String> roles = ['Manager', 'Employee', 'All'];
+  String? selectedRole;
+  String searchValue = "";
+  int currentPage = 0;
+  int itemsPerPage = 10;
+  int? expandedIndex;
+  Set<int> expandedIndices = {};
+
+  List<int> itemsPerPageOptions = [
+    10,
+    25,
+    50,
+    100,
+  ]; // Options for items per page
+  late bool isExpanded;
+  bool sorting1 = false;
+  bool sorting2 = false;
+  bool sorting3 = false;
+  bool ascending1 = false;
+  bool ascending2 = false;
+  bool ascending3 = false;
+
+  Widget _buildHeaders() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+        color: blueColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Status", style: TextStyle(color: Colors.white))
+                        : Text("Status", style: TextStyle(color: Colors.white)),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 3),
+                    ascending1
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 5),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Tenants", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("   Type", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    return
+      Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+             Padding(
+              padding: EdgeInsets.all(8),
+              child:
+              Row(
+                children: [
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 10,),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 20,),
+                  Text(
+                    'Leases',
+                    style: TextStyle(
+                        fontSize:
+                        MediaQuery.of(context).size.width < 500
+                            ? 17
+                            : 20,
+                        color: Color.fromRGBO(21, 43, 83, 1),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
+                padding: const EdgeInsets.only(left: 10,right: 10,bottom: 10),
+                child: FutureBuilder<List<unit_lease>>(
+                  future: futureLease,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                          child: SpinKitFadingCircle(
+                            color: Colors.black,
+                            size: 40.0,
+                          ));
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('You don\'t have any lease for this unit right now ..'));
+                    } else {
+                      var data = snapshot.data!;
+                      // if (searchValue == null || searchValue!.isEmpty) {
+                      //   data = snapshot.data!;
+                      // } else if (searchValue == "All") {
+                      //   data = snapshot.data!;
+                      // } else if (searchValue!.isNotEmpty) {
+                      //   data = snapshot.data!
+                      //       .where((rentals) => rentals.!
+                      //       .toLowerCase()
+                      //       .contains(searchValue!.toLowerCase()))
+                      //       .toList();
+                      // } else {
+                      //   data = snapshot.data!
+                      //       .where((rentals) =>
+                      //   rentals.applianceName == searchValue)
+                      //       .toList();
+                      // }
+                     // sortData(data);
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10),
+                            _buildHeaders(),
+                            SizedBox(height: 20),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: blueColor)),
+                              child: Column(
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded = expandedIndex == index;
+                                  unit_lease rentals = entry.value;
+                                  //return CustomExpansionTile(data: Propertytype, index: index);
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                    ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    // setState(() {
+                                                    //    isExpanded = !isExpanded;
+                                                    // //  expandedIndex = !expandedIndex;
+                                                    //
+                                                    // });
+                                                    // setState(() {
+                                                    //   if (isExpanded) {
+                                                    //     expandedIndex = null;
+                                                    //     isExpanded = !isExpanded;
+                                                    //   } else {
+                                                    //     expandedIndex = index;
+                                                    //   }
+                                                    // });
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex = null;
+                                                      } else {
+                                                        expandedIndex = index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5),
+                                                    padding: !isExpanded
+                                                        ? EdgeInsets.only(
+                                                        bottom: 10)
+                                                        : EdgeInsets.only(
+                                                        top: 10),
+                                                    child: FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                          .sortUp
+                                                          : FontAwesomeIcons
+                                                          .sortDown,
+                                                      size: 20,
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 4,
+                                                ),
+                                                Expanded(
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      // Navigator.push(
+                                                      //     context,
+                                                      //     MaterialPageRoute(
+                                                      //         builder: (context) =>
+                                                      //             Rentalowners_summery(
+                                                      //               rentalOwnersid: rentals.rentalownerId!,)));
+                                                    },
+                                                    child: Text((getStatus(
+                                                  rentals.startDate!, rentals.endDate!)),
+
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .08),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${rentals.tenantFirstName} ${rentals.tenantLastName}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .08),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${rentals.leaseType}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .02),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            margin: EdgeInsets.only(bottom: 20),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                            .sortUp
+                                                            : FontAwesomeIcons
+                                                            .sortDown,
+                                                        size: 50,
+                                                        color:
+                                                        Colors.transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Start-End : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    '${rentals.startDate} - ${rentals.endDate}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: Colors
+                                                                            .grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                  context)
+                                                                  .size
+                                                                  .height *
+                                                                  .01,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Rent : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    '${rentals.amount}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: Colors
+                                                                            .grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        //SizedBox(height: 13,),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Text('Rows per page:'),
+                                    SizedBox(width: 10),
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                          Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                itemsPerPage = newValue!;
+                                                currentPage =
+                                                0; // Reset to first page when items per page change
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronLeft,
+                                        color: currentPage == 0
+                                            ? Colors.grey
+                                            : Color.fromRGBO(21, 43, 83, 1),
+                                      ),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
+                                    ),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_back),
+                                    //   onPressed: currentPage > 0
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage--;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    Text(
+                                        'Page ${currentPage + 1} of $totalPages'),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_forward),
+                                    //   onPressed: currentPage < totalPages - 1
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage++;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronRight,
+                                        color: currentPage < totalPages - 1
+                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: currentPage < totalPages - 1
+                                          ? () {
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
+                                          : null,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<List<unit_lease>>(
+                future: futureLease,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                        child: SpinKitFadingCircle(
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('You don\'t have any lease for this unit right now ..'));
+                  } else {
+                    List<unit_lease>? filteredData = [];
+                    _tableData = snapshot.data!;
+                    if (selectedRole == null && searchValue == "") {
+                      filteredData = snapshot.data;
+                    } else if (selectedRole == "All") {
+                      filteredData = snapshot.data;
+                    } else if (searchValue.isNotEmpty) {
+                      filteredData = snapshot.data!
+                          .where((staff) =>
+                      staff.tenantFirstName!
+                          .toLowerCase()
+                          .contains(searchValue.toLowerCase()) ||
+                          staff.leaseType!
+                              .toLowerCase()
+                              .contains(searchValue.toLowerCase()))
+                          .toList();
+                    }
+
+                    _tableData = filteredData!;
+                    totalrecords = _tableData.length;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
+                      child: Column(
+                        children: [
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * .91,
+                              child: Table(
+                                defaultColumnWidth: IntrinsicColumnWidth(),
+                                children: [
+                                  TableRow(
+                                    decoration:
+                                    BoxDecoration(border: Border.all()),
+                                    children: [
+                                      // TableCell(child: Text('yash')),
+                                      // TableCell(child: Text('yash')),
+                                      // TableCell(child: Text('yash')),
+                                      // TableCell(child: Text('yash')),
+                                      _buildHeader('Status', 0,
+                                              (rental) => rental.startDate!),
+                                      _buildHeader(
+                                          'Start-End',
+                                          1,
+                                              (rental) =>
+                                          rental.endDate!),
+                                      _buildHeader(
+                                          'Tenant',
+                                          2,
+                                              (rental) =>
+                                          rental.tenantFirstName!),
+                                      _buildHeader(
+                                          'Type',
+                                          3,
+                                              (rental) =>
+                                          rental.leaseType!),
+                                      _buildHeader(
+                                          'Type',
+                                          4,
+                                              (rental) =>
+                                          rental.amount!),
+
+                                    ],
+                                  ),
+                                  TableRow(
+                                    decoration: BoxDecoration(
+                                      border: Border.symmetric(
+                                          horizontal: BorderSide.none),
+                                    ),
+                                    children: List.generate(
+                                        5,
+                                            (index) => TableCell(
+                                            child: Container(height: 20))),
+                                  ),
+                                  for (var i = 0; i < _pagedData.length; i++)
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          right: BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          top: BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          bottom: i == _pagedData.length - 1
+                                              ? BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1))
+                                              : BorderSide.none,
+                                        ),
+                                      ),
+                                      children: [
+                                        _buildDataCell(
+                                            (getStatus(
+                                                _pagedData[i].startDate!, _pagedData[i].endDate!)),
+                                        ),
+                                        // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
+                                        _buildDataCell(
+                                            '${_pagedData[i].startDate} - ${_pagedData[i].endDate}'),
+                                        _buildDataCell(
+                                            '${_pagedData[i].tenantFirstName} - ${_pagedData[i].tenantLastName}'
+                                            ),
+                                        _buildDataCell(
+                                            '${_pagedData[i].leaseType}'
+                                        ),
+                                        _buildDataCell(
+                                            '${_pagedData[i].amount}'
+                                        ),
+
+                                      ],
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (_tableData.isEmpty)
+                            Text("No Search Records Found"),
+                          SizedBox(height: 25),
+                          _buildPaginationControls(),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+          ],
+        ),
+      );
+  }
+}
+
+class Lease {
+  final String status;
+  final String startEndDate;
+  final String tenant;
+  final String type;
+  final String rent;
+
+  Lease({
+    required this.status,
+    required this.startEndDate,
+    required this.tenant,
+    required this.type,
+    required this.rent,
+  });
+}
+
+List<Lease> leases = [
+  Lease(
+    status: 'Active',
+    startEndDate: '05-15-2024-06-15-2024',
+    tenant: 'Alex Wilkins',
+    type: 'Fixed',
+    rent: '30',
+  ),
+  Lease(
+    status: 'Active',
+    startEndDate: '05-15-2024-06-15-2024',
+    tenant: 'Alex Wilkins',
+    type: 'Fixed',
+    rent: '30',
+  ),
+  // Add more leases as needed
+];
+
+class AppliancesPart extends StatefulWidget {
+  Rentals? properties;
+  unit_properties? unit;
+
+  AppliancesPart({
+    this.unit,this.properties ,
+  });
+  @override
+  _AppliancesPartState createState() => _AppliancesPartState();
+}
+
+class _AppliancesPartState extends State<AppliancesPart> {
+  final _formKey = GlobalKey<FormState>();
+  final _name = TextEditingController();
+  final _description = TextEditingController();
+  final _installedDate = TextEditingController();
+  final UnitData leaseRepository = UnitData();
+  List<unit_appliance> leases = [];
+
+
+
+  bool isLoading = false;  Future<void> fetchLeases() async {
+    //  try {
+    final fetchedLeases =
+    await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
+    print(widget.unit!.unitId!);
+    print('hello');
+    setState(() {
+      print(widget.unit!.unitId!);
+      print('hello');
+      leases = fetchedLeases;
+      isLoading = false;
+    });
+    //} catch (e) {
+    setState(() {
+      isLoading = false;
+    });
+    //print('Failed to load leases: $e');
+    //}
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchLeases();
+    futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+  }
+  reload_screen(){
+    setState(() {
+    });
+  }
+  DateTime? _selectedDate;
+  //bool isLoading = false;
+  bool iserror = false;
+
+  //for table
+
+  Widget _buildHeader<T>(String text, int columnIndex,
+      Comparable<T> Function(unit_appliance d)? getField) {
+    return TableCell(
+      child: InkWell(
+        onTap: getField != null
+            ? () {
+          _sort(getField, columnIndex, !_sortAscending);
+        }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16,bottom: 10),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
+      ),
+    );
+  }
+
+  Widget _buildActionsCell(unit_appliance data) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          height: 50,
+          // color: Colors.blue,
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+              ),
+              InkWell(
+                onTap: () {
+                  handleEdit(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  handleDelete(data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.trashCan,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    int numorpages = 1;
+    numorpages = (totalrecords / _rowsPerPage).ceil();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // Text('Rows per page: '),
+        // SizedBox(width: 10),
+        Material(
+          elevation: 2,
+          color: Colors.white,
+          child: Container(
+            height: 55,
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _rowsPerPage,
+                items: [10, 2, 5, 1].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  if (newValue != null) {
+                    _changeRowsPerPage(newValue);
+                  }
+                },
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  size: 40,
+                ),
+                style: TextStyle(color: Colors.black, fontSize: 17),
+                dropdownColor: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        IconButton(
+          icon: FaIcon(
+            size: 30,
+            FontAwesomeIcons.circleChevronLeft,
+            color:
+            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+          ),
+          onPressed: _currentPage == 0
+              ? null
+              : () {
+            setState(() {
+              _currentPage--;
+            });
+          },
+        ),
+        Text(
+          'Page ${_currentPage + 1} of $numorpages',
+          style: TextStyle(fontSize: 18),
+        ),
+        IconButton(
+          icon: FaIcon(
+            size: 30,
+            FontAwesomeIcons.circleChevronRight,
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+                ? Colors.grey
+                : Color.fromRGBO(
+                21, 43, 83, 1), // Change color based on availability
+          ),
+          onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+              ? null
+              : () {
+            setState(() {
+              _currentPage++;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  //
+
+  List<unit_appliance> _tableData = [];
+  int totalrecords = 0;
+  int _rowsPerPage = 10;
+  int _currentPage = 0;
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
+
+  List<unit_appliance> get _pagedData {
+    int startIndex = _currentPage * _rowsPerPage;
+    int endIndex = startIndex + _rowsPerPage;
+    return _tableData.sublist(startIndex,
+        endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void _changeRowsPerPage(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPage = selectedRowsPerPage;
+      _currentPage = 0; // Reset to the first page when changing rows per page
+    });
+  }
+
+  void _sort<T>(Comparable<T> Function(unit_appliance d) getField,
+      int columnIndex, bool ascending) {
+    setState(() {
+      _sortColumnIndex = columnIndex;
+      _sortAscending = ascending;
+      _tableData.sort((a, b) {
+        final aValue = getField(a);
+        final bValue = getField(b);
+
+        int result;
+        if (aValue is String && bValue is String) {
+          result = aValue
+              .toString()
+              .toLowerCase()
+              .compareTo(bValue.toString().toLowerCase());
+        } else {
+          result = aValue.compareTo(bValue as T);
+        }
+
+        return _sortAscending ? result : -result;
+      });
+    });
+  }
+
+  void handleEdit(unit_appliance rentalOwner) async {
+    // Handle edit action
+    // print('Edit ${rentalOwner.rentalownerId}');
+    // var check = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_rentalowners(
+    //           rentalOwner: rentalOwner,
+    //         )));
+    // if (check == true) {
+    //   setState(() {});
+    // }
+    // final result = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Edit_rentalowners(rentalOwner: rentalOwner,)));
+    /* if (result == true) {
+      setState(() {
+        futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+      });
+    }*/
+  }
+
+  void _showDeleteAlert(BuildContext context, String id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this RentalOwner!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+
+           await Properies_summery_Repo().Deleteapplences(appliance_id: id);
+            setState(() {
+              futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
+
+  void handleDelete(unit_appliance rental) {
+    _showDeleteAlert(context, rental.applianceId!);
+    // Handle delete action
+    print('Delete ${rental.applianceId}');
+  }
+
+  String? rentalOwnersid;
+  int rentalownerCount = 0;
+  int rentalOwnerCountLimit = 0;
+  Future<void> fetchRentalOwneradded() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response =
+    await http.get(Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+      print(rentalownerCount);
+      print(rentalOwnerCountLimit);
+      setState(() {
+        rentalownerCount = jsonData['rentalownerCount'];
+        print(rentalownerCount);
+        rentalOwnerCountLimit = jsonData['rentalOwnerCountLimit'];
+        print(rentalOwnerCountLimit);
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  late Future<List<unit_appliance>> futureAppliences;
+  int rowsPerPage = 5;
+  int sortColumnIndex = 0;
+  bool sortAscending = true;
+  final List<String> roles = ['Manager', 'Employee', 'All'];
+  String? selectedRole;
+  String searchValue = "";
+  int currentPage = 0;
+  int itemsPerPage = 10;
+  int? expandedIndex;
+  Set<int> expandedIndices = {};
+
+  List<int> itemsPerPageOptions = [
+    10,
+    25,
+    50,
+    100,
+  ]; // Options for items per page
+  late bool isExpanded;
+  bool sorting1 = false;
+  bool sorting2 = false;
+  bool sorting3 = false;
+  bool ascending1 = false;
+  bool ascending2 = false;
+  bool ascending3 = false;
+
+  void sortData(List<unit_appliance> data) {
+    if (sorting1) {
+      data.sort((a, b) => ascending1
+          ? a.applianceName!.compareTo(b.applianceName!)
+          : b.applianceName!.compareTo(a.applianceName!));
+    } else if (sorting2) {
+      data.sort((a, b) => ascending2
+          ? a.applianceDescription!.compareTo(b.applianceDescription!)
+          : b.applianceDescription!.compareTo(a.applianceDescription!));
+    }
+  }
+
+  Widget _buildHeaders() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+        color: blueColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Name", style: TextStyle(color: Colors.white))
+                        : Text("Name", style: TextStyle(color: Colors.white)),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 3),
+                    ascending1
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Description", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("   Action", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Padding(
+      padding:  EdgeInsets.all(8.0),
+      child: Container(
+        child: Padding(
+          padding:  EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  if (MediaQuery.of(context).size.width < 500)
+                  SizedBox(width: 10,),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 20,),
+                   Text(
+                    'Appliances',
+                    style: TextStyle(
+                        fontSize:
+                        MediaQuery.of(context).size.width < 500
+                            ? 17
+                            : 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(21, 43, 83, 1),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return
+                              StatefulBuilder(
+                                builder: (BuildContext context,
+                                    StateSetter setState) {
+                                  return
+                                    AlertDialog(
+                                      backgroundColor: Colors.white,
+                                      surfaceTintColor: Colors.white,
+                                      title: const Text('Add Appliances'),
+                                      content: Form(
+                                        key: _formKey,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CustomTextFormField(
+                                              labelText: 'Name',
+                                              hintText: 'Enter Name',
+                                              keyboardType: TextInputType.text,
+                                              controller: _name,
+                                              // validator: (value) {
+                                              //   if (value == null || value.isEmpty) {
+                                              //     return 'Please enter name';
+                                              //   }
+                                              //   return null;
+                                              // },
+                                            ),
+                                            CustomTextFormField(
+                                              labelText: 'Description',
+                                              hintText: 'Enter description',
+                                              keyboardType: TextInputType.text,
+                                              controller: _description,
+                                              // validator: (value) {
+                                              //   if (value == null || value.isEmpty) {
+                                              //     return 'Please enter description';
+                                              //   }
+                                              //   return null;
+                                              // },
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(2000),
+                                                  lastDate: DateTime(2100),
+                                                  builder: (BuildContext context, Widget? child) {
+                                                    return Theme(
+                                                      data: ThemeData.light().copyWith(
+                                                        // primaryColor: Color.fromRGBO(21, 43, 83, 1),
+                                                        //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                        colorScheme: ColorScheme.light(
+                                                          primary: Color.fromRGBO(21, 43, 83, 1),
+                                                          // onPrimary:Color.fromRGBO(21, 43, 83, 1),
+                                                          //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                          onSurface: Colors.black,
+                                                        ),
+                                                        buttonTheme: ButtonThemeData(
+                                                          textTheme: ButtonTextTheme.primary,
+                                                        ),
+                                                      ),
+                                                      child: child!,
+                                                    );
+                                                  },
+                                                ).then((date) {
+                                                  if (date != null) {
+                                                    setState(() {
+                                                      _selectedDate = date;
+                                                      _installedDate.text =
+                                                          formatDate(date.toString());
+                                                    });
+                                                  }
+                                                });
+                                              },
+                                              child: AbsorbPointer(
+                                                child: CustomTextFormField(
+                                                  labelText: 'Date',
+                                                  hintText: 'Select Date',
+                                                  keyboardType: TextInputType.datetime,
+                                                  controller: _installedDate,
+                                                  // validator: (value) {
+                                                  //   if (value == null ||
+                                                  //       value.isEmpty) {
+                                                  //     return 'Please select date';
+                                                  //   }
+                                                  //   return null;
+                                                  // },
+                                                ),
+                                              ),
+                                            ),
+
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Container(
+                                                    height: 42,
+                                                    width: 80,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                          const Color.fromRGBO(
+                                                              21, 43, 83, 1),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8.0))),
+                                                      // onPressed: () async {
+                                                      //   if (_formKey.currentState?.validate() ?? false) {
+                                                      //     setState(() {
+                                                      //       isLoading = true;
+                                                      //       iserror = false;
+                                                      //     });
+                                                      //     SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                      //     String? id = prefs.getString("adminId");
+                                                      //
+                                                      //     Properies_summery_Repo()
+                                                      //         .addappliances(
+                                                      //       appliancename: _name.text,
+                                                      //       appliancedescription: _description.text,
+                                                      //       installeddate: _installedDate.text,
+                                                      //     )
+                                                      //         .then((value) {
+                                                      //       setState(() {
+                                                      //         isLoading = false;
+                                                      //       });
+                                                      //       Navigator.pop(context, true);
+                                                      //     })
+                                                      //         .catchError((e) {
+                                                      //       setState(() {
+                                                      //         isLoading = false;
+                                                      //       });
+                                                      //     });
+                                                      //   } else {
+                                                      //     setState(() {
+                                                      //       iserror = true;
+                                                      //     });
+                                                      //   }
+                                                      // },
+                                                      onPressed: () async {
+                                                        if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty ) {
+                                                          setState(() {
+                                                            iserror = true;
+                                                          });
+                                                        } else {
+                                                          setState(() {
+                                                            isLoading = true;
+                                                            iserror = false;
+                                                          });
+                                                          SharedPreferences prefs =
+                                                          await SharedPreferences.getInstance();
+                                                          String? id = prefs.getString("adminId");
+                                                          print("calling");
+                                                          Properies_summery_Repo()
+                                                              .addappliances(
+                                                            adminId: id,
+                                                            unitId: widget.unit?.unitId,
+                                                            appliancename: _name.text,
+                                                            appliancedescription: _description.text,
+                                                            installeddate: _installedDate.text,
+                                                          ).then((value) {
+                                                            print(widget.properties?.adminId);
+                                                            print(widget.unit?.unitId);
+                                                            setState(() {
+                                                              isLoading = false;
+
+                                                              leases.add(
+                                                                  unit_appliance(
+                                                                    applianceName:_name.text,
+                                                                    applianceDescription: _description.text,
+                                                                    installedDate: _installedDate.text,
+                                                                    adminId: id,
+                                                                    unitId: widget.unit?.unitId,
+                                                                  )
+                                                              );
+                                                            });
+                                                            reload_screen();
+
+                                                            Navigator.pop(context,true);
+                                                          }).catchError((e) {
+                                                            setState(() {
+                                                              isLoading = false;
+                                                            });
+                                                          });
+                                                        }
+
+                                                      },
+                                                      child: const Text(
+                                                        'Save',
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                      BorderRadius.circular(8),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black
+                                                              .withOpacity(0.25),
+                                                          spreadRadius: 0,
+                                                          blurRadius: 15,
+                                                          offset: const Offset(0.5,
+                                                              0.5), // Shadow moved to the right and bottom
+                                                        )
+                                                      ],
+                                                    ),
+                                                    height: 40,
+                                                    width: 70,
+                                                    child: Center(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: const Text('Cancel'),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            if(iserror)
+                                              Text(
+                                                "Please fill in all fields correctly.",
+                                                style: TextStyle(color: Colors.redAccent),
+                                              )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                },
+                              );
+                          },
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color:  Color.fromRGBO(21, 43, 83, 1),
+                            width: 1,
+                          ),
+                        ),
+                        height: MediaQuery.of(context).size.width < 500
+                            ? 40
+                            : 50,
+                        width: MediaQuery.of(context).size.width < 500
+                            ? 70
+                            : 80,
+                        child:  Center(
+                          child: Text('Add',style: TextStyle(fontWeight: FontWeight.bold, fontSize:
+                          MediaQuery.of(context).size.width < 500
+                              ? 14
+                              : 20,color: blueColor),),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+              if (MediaQuery.of(context).size.width < 500)
+              SizedBox(
+                height: 1,
+              ),
+              if (MediaQuery.of(context).size.width > 500)
+                SizedBox(
+                  height: 5,
+                ),
+              if (MediaQuery.of(context).size.width < 500)
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: FutureBuilder<List<unit_appliance>>(
+                    future: futureAppliences,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 40.0,
+                            ));
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('You don\'t have any applience for this unit right now ..'));
+                      } else {
+                        var data = snapshot.data!;
+                        if (searchValue == null || searchValue!.isEmpty) {
+                          data = snapshot.data!;
+                        } else if (searchValue == "All") {
+                          data = snapshot.data!;
+                        } else if (searchValue!.isNotEmpty) {
+                          data = snapshot.data!
+                              .where((rentals) => rentals.applianceName!
+                              .toLowerCase()
+                              .contains(searchValue!.toLowerCase()))
+                              .toList();
+                        } else {
+                          data = snapshot.data!
+                              .where((rentals) =>
+                          rentals.applianceName == searchValue)
+                              .toList();
+                        }
+                        sortData(data);
+                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final currentPageData = data
+                            .skip(currentPage * itemsPerPage)
+                            .take(itemsPerPage)
+                            .toList();
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 5),
+                              _buildHeaders(),
+                              SizedBox(height: 20),
+                              Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: blueColor)),
+                                child: Column(
+                                  children: currentPageData
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                    int index = entry.key;
+                                    bool isExpanded = expandedIndex == index;
+                                    unit_appliance rentals = entry.value;
+                                    //return CustomExpansionTile(data: Propertytype, index: index);
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: blueColor),
+                                      ),
+                                      child: Column(
+                                        children: <Widget>[
+                                          ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Padding(
+                                              padding: const EdgeInsets.all(2.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  InkWell(
+                                                    onTap: () {
+                                                      // setState(() {
+                                                      //    isExpanded = !isExpanded;
+                                                      // //  expandedIndex = !expandedIndex;
+                                                      //
+                                                      // });
+                                                      // setState(() {
+                                                      //   if (isExpanded) {
+                                                      //     expandedIndex = null;
+                                                      //     isExpanded = !isExpanded;
+                                                      //   } else {
+                                                      //     expandedIndex = index;
+                                                      //   }
+                                                      // });
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 5),
+                                                      padding: !isExpanded
+                                                          ? EdgeInsets.only(
+                                                          bottom: 10)
+                                                          : EdgeInsets.only(
+                                                          top: 10),
+                                                      child: FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                            .sortUp
+                                                            : FontAwesomeIcons
+                                                            .sortDown,
+                                                        size: 20,
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 83, 1),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        // Navigator.push(
+                                                        //     context,
+                                                        //     MaterialPageRoute(
+                                                        //         builder: (context) =>
+                                                        //             Rentalowners_summery(
+                                                        //               rentalOwnersid: rentals.rentalownerId!,)));
+                                                      },
+                                                      child: Text(
+                                                        '   ${rentals.applianceName}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          .08),
+                                                  Expanded(
+                                                    child: Text(
+                                                      '${rentals.applianceDescription}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          .08),
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          InkWell(
+                                                            onTap: () async{
+                                                              _name.text = rentals.applianceName!;
+                                                              _description.text = rentals.applianceDescription!;
+                                                              _installedDate.text = rentals.installedDate!;
+                                                                showDialog(
+                                                                  context: context,
+                                                                  builder: (BuildContext context) {
+                                                                    return
+                                                                      StatefulBuilder(
+                                                                        builder: (BuildContext context,
+                                                                            StateSetter setState) {
+                                                                          return
+                                                                            AlertDialog(
+                                                                              backgroundColor: Colors.white,
+                                                                              surfaceTintColor: Colors.white,
+                                                                              title: const Text('Edit Appliances'),
+                                                                              content: Form(
+                                                                                key: _formKey,
+                                                                                child: Column(
+                                                                                  mainAxisSize: MainAxisSize.min,
+                                                                                  children: [
+                                                                                    CustomTextFormField(
+                                                                                      labelText: 'Name',
+                                                                                      hintText: 'Enter Name',
+                                                                                      keyboardType: TextInputType.text,
+                                                                                      controller: _name,
+                                                                                      // validator: (value) {
+                                                                                      //   if (value == null || value.isEmpty) {
+                                                                                      //     return 'Please enter name';
+                                                                                      //   }
+                                                                                      //   return null;
+                                                                                      // },
+                                                                                    ),
+                                                                                    CustomTextFormField(
+                                                                                      labelText: 'Description',
+                                                                                      hintText: 'Enter description',
+                                                                                      keyboardType: TextInputType.text,
+                                                                                      controller: _description,
+                                                                                      // validator: (value) {
+                                                                                      //   if (value == null || value.isEmpty) {
+                                                                                      //     return 'Please enter description';
+                                                                                      //   }
+                                                                                      //   return null;
+                                                                                      // },
+                                                                                    ),
+                                                                                    GestureDetector(
+                                                                                      onTap: () {
+                                                                                        showDatePicker(
+                                                                                          context: context,
+                                                                                          initialDate: DateTime.now(),
+                                                                                          firstDate: DateTime(2000),
+                                                                                          lastDate: DateTime(2100),
+                                                                                          builder: (BuildContext context, Widget? child) {
+                                                                                            return Theme(
+                                                                                              data: ThemeData.light().copyWith(
+                                                                                                // primaryColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                                //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                                colorScheme: ColorScheme.light(
+                                                                                                  primary: Color.fromRGBO(21, 43, 83, 1),
+                                                                                                  // onPrimary:Color.fromRGBO(21, 43, 83, 1),
+                                                                                                  //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                                                                  onSurface: Colors.black,
+                                                                                                ),
+                                                                                                buttonTheme: ButtonThemeData(
+                                                                                                  textTheme: ButtonTextTheme.primary,
+                                                                                                ),
+                                                                                              ),
+                                                                                              child: child!,
+                                                                                            );
+                                                                                          },
+                                                                                        ).then((date) {
+                                                                                          if (date != null) {
+                                                                                            setState(() {
+                                                                                              _selectedDate = date;
+                                                                                              _installedDate.text =
+                                                                                                  formatDate(date.toString());
+                                                                                            });
+                                                                                          }
+                                                                                        });
+                                                                                      },
+                                                                                      child: AbsorbPointer(
+                                                                                        child: CustomTextFormField(
+                                                                                          labelText: 'Date',
+                                                                                          hintText: 'Select Date',
+                                                                                          keyboardType: TextInputType.datetime,
+                                                                                          controller: _installedDate,
+                                                                                          // validator: (value) {
+                                                                                          //   if (value == null ||
+                                                                                          //       value.isEmpty) {
+                                                                                          //     return 'Please select date';
+                                                                                          //   }
+                                                                                          //   return null;
+                                                                                          // },
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+
+                                                                                    Row(
+                                                                                      mainAxisAlignment:
+                                                                                      MainAxisAlignment.center,
+                                                                                      children: [
+                                                                                        Padding(
+                                                                                          padding: const EdgeInsets.all(8.0),
+                                                                                          child: Container(
+                                                                                            height: 42,
+                                                                                            width: 80,
+                                                                                            child: ElevatedButton(
+                                                                                              style: ElevatedButton.styleFrom(
+                                                                                                  backgroundColor:
+                                                                                                  const Color.fromRGBO(
+                                                                                                      21, 43, 83, 1),
+                                                                                                  shape: RoundedRectangleBorder(
+                                                                                                      borderRadius:
+                                                                                                      BorderRadius.circular(
+                                                                                                          8.0))),
+                                                                                              onPressed: () async {
+                                                                                                if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty ) {
+                                                                                                  setState(() {
+                                                                                                    iserror = true;
+                                                                                                  });
+                                                                                                } else {
+                                                                                                  setState(() {
+                                                                                                    isLoading = true;
+                                                                                                    iserror = false;
+                                                                                                  });
+                                                                                                  SharedPreferences prefs =
+                                                                                                  await SharedPreferences.getInstance();
+                                                                                                  String? id = prefs.getString("adminId");
+                                                                                                  print("calling");
+                                                                                                  Properies_summery_Repo()
+                                                                                                      .Editappliances(
+                                                                                                    applianceid: rentals.applianceId,
+                                                                                                    adminId: id,
+                                                                                                    unitId: widget.unit?.unitId,
+                                                                                                    appliancename: _name.text,
+                                                                                                    appliancedescription: _description.text,
+                                                                                                    installeddate: _installedDate.text,
+                                                                                                  ).then((value) {
+                                                                                                    print(widget.properties?.adminId);
+                                                                                                    print(widget.unit?.unitId);
+                                                                                                    setState(() {
+                                                                                                      isLoading = false;
+
+                                                                                                    });
+                                                                                                    reload_screen();
+
+                                                                                                    Navigator.pop(context,true);
+                                                                                                  }).catchError((e) {
+                                                                                                    setState(() {
+                                                                                                      isLoading = false;
+                                                                                                    });
+                                                                                                  });
+                                                                                                }
+                                                                                                },
+                                                                                              child: const Text(
+                                                                                                'Save',
+                                                                                                style: TextStyle(
+                                                                                                    fontSize: 14,
+                                                                                                    color: Colors.white),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Padding(
+                                                                                          padding: const EdgeInsets.all(8.0),
+                                                                                          child: Container(
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: Colors.white,
+                                                                                              borderRadius:
+                                                                                              BorderRadius.circular(8),
+                                                                                              boxShadow: [
+                                                                                                BoxShadow(
+                                                                                                  color: Colors.black
+                                                                                                      .withOpacity(0.25),
+                                                                                                  spreadRadius: 0,
+                                                                                                  blurRadius: 15,
+                                                                                                  offset: const Offset(0.5,
+                                                                                                      0.5), // Shadow moved to the right and bottom
+                                                                                                )
+                                                                                              ],
+                                                                                            ),
+                                                                                            height: 40,
+                                                                                            width: 70,
+                                                                                            child: Center(
+                                                                                              child: GestureDetector(
+                                                                                                onTap: () {
+                                                                                                  Navigator.of(context).pop();
+                                                                                                },
+                                                                                                child: const Text('Cancel'),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                    if(iserror)
+                                                                                      Text(
+                                                                                        "Please fill in all fields correctly.",
+                                                                                        style: TextStyle(color: Colors.redAccent),
+                                                                                      )
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            );
+                                                                        },
+                                                                      );
+                                                                  },
+                                                                );
+                                                              },
+
+                                                            child: Container(
+                                                              child: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 20,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          InkWell(
+                                                            onTap: () {
+                                                              _showDeleteAlert(
+                                                                  context,
+                                                                  rentals
+                                                                      .applianceId!);
+                                                            },
+                                                            child: Container(
+                                                              child: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .trashCan,
+                                                                size: 20,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          .02),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          if (isExpanded)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0),
+                                              margin: EdgeInsets.only(bottom: 20),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                      children: [
+                                                        FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                              .sortUp
+                                                              : FontAwesomeIcons
+                                                              .sortDown,
+                                                          size: 50,
+                                                          color:
+                                                          Colors.transparent,
+                                                        ),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                            children: <Widget>[
+                                                              Text.rich(
+                                                                TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                      'Install Date: ',
+                                                                      style: TextStyle(
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                          blueColor), // Bold and black
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                      formatDate('${rentals.installedDate}'),
+                                                                      style: TextStyle(
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                          color: Colors
+                                                                              .grey), // Light and grey
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: MediaQuery.of(
+                                                                    context)
+                                                                    .size
+                                                                    .height *
+                                                                    .01,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          //SizedBox(height: 13,),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Text('Rows per page:'),
+                                      SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                            Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                  0; // Reset to first page when items per page change
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : Color.fromRGBO(21, 43, 83, 1),
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                          setState(() {
+                                            currentPage--;
+                                          });
+                                        },
+                                      ),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_back),
+                                      //   onPressed: currentPage > 0
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage--;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_forward),
+                                      //   onPressed: currentPage < totalPages - 1
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage++;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? Color.fromRGBO(21, 43, 83, 1)
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                          setState(() {
+                                            currentPage++;
+                                          });
+                                        }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              if (MediaQuery.of(context).size.width > 500)
+                FutureBuilder<List<unit_appliance>>(
+                  future: futureAppliences,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                          child: SpinKitFadingCircle(
+                            color: Colors.black,
+                            size: 40.0,
+                          ));
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('You don\'t have any applience for this unit right now ..'));
+                    } else {
+                      List<unit_appliance>? filteredData = [];
+                      _tableData = snapshot.data!;
+                      if (selectedRole == null && searchValue == "") {
+                        filteredData = snapshot.data;
+                      } else if (selectedRole == "All") {
+                        filteredData = snapshot.data;
+                      } else if (searchValue.isNotEmpty) {
+                        filteredData = snapshot.data!
+                            .where((staff) =>
+                        staff.applianceName!
+                            .toLowerCase()
+                            .contains(searchValue.toLowerCase()) ||
+                            staff.applianceDescription!
+                                .toLowerCase()
+                                .contains(searchValue.toLowerCase()))
+                            .toList();
+                      }
+
+                      _tableData = filteredData!;
+                      totalrecords = _tableData.length;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Column(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * .91,
+                                child: Table(
+                                  defaultColumnWidth: IntrinsicColumnWidth(),
+                                  children: [
+                                    TableRow(
+                                      decoration:
+                                      BoxDecoration(border: Border.all()),
+                                      children: [
+                                        // TableCell(child: Text('yash')),
+                                        // TableCell(child: Text('yash')),
+                                        // TableCell(child: Text('yash')),
+                                        // TableCell(child: Text('yash')),
+                                        _buildHeader('Name', 0,
+                                                (rental) => rental.applianceName!),
+                                        _buildHeader(
+                                            'Description',
+                                            1,
+                                                (rental) =>
+                                            rental.applianceDescription!),
+                                        _buildHeader(
+                                            'InstalledDate',
+                                            2,
+                                                (rental) =>
+                                            rental.installedDate!),
+                                        _buildHeader('Actions', 3, null),
+                                      ],
+                                    ),
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide.none),
+                                      ),
+                                      children: List.generate(
+                                          4,
+                                              (index) => TableCell(
+                                              child: Container(height: 20))),
+                                    ),
+                                    for (var i = 0; i < _pagedData.length; i++)
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1)),
+                                            right: BorderSide(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1)),
+                                            top: BorderSide(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1)),
+                                            bottom: i == _pagedData.length - 1
+                                                ? BorderSide(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1))
+                                                : BorderSide.none,
+                                          ),
+                                        ),
+                                        children: [
+                                          _buildDataCell(
+                                              _pagedData[i].applianceName!),
+                                          // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
+                                          _buildDataCell(
+                                              _pagedData[i]
+                                                  .applianceDescription!),
+                                          _buildDataCell(
+                                              _pagedData[i]
+                                                  .installedDate!),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                height: 14,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 25,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () async{
+                                                      _name.text = _tableData.first.applianceName!;
+                                                      _description.text = _tableData.first.applianceDescription!;
+                                                      _installedDate.text = _tableData.first.installedDate!;
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return
+                                                            StatefulBuilder(
+                                                              builder: (BuildContext context,
+                                                                  StateSetter setState) {
+                                                                return
+                                                                  AlertDialog(
+                                                                    backgroundColor: Colors.white,
+                                                                    surfaceTintColor: Colors.white,
+                                                                    title: const Text('Edit Appliances'),
+                                                                    content: Form(
+                                                                      key: _formKey,
+                                                                      child: Column(
+                                                                        mainAxisSize: MainAxisSize.min,
+                                                                        children: [
+                                                                          CustomTextFormField(
+                                                                            labelText: 'Name',
+                                                                            hintText: 'Enter Name',
+                                                                            keyboardType: TextInputType.text,
+                                                                            controller: _name,
+                                                                            // validator: (value) {
+                                                                            //   if (value == null || value.isEmpty) {
+                                                                            //     return 'Please enter name';
+                                                                            //   }
+                                                                            //   return null;
+                                                                            // },
+                                                                          ),
+                                                                          CustomTextFormField(
+                                                                            labelText: 'Description',
+                                                                            hintText: 'Enter description',
+                                                                            keyboardType: TextInputType.text,
+                                                                            controller: _description,
+                                                                            // validator: (value) {
+                                                                            //   if (value == null || value.isEmpty) {
+                                                                            //     return 'Please enter description';
+                                                                            //   }
+                                                                            //   return null;
+                                                                            // },
+                                                                          ),
+                                                                          GestureDetector(
+                                                                            onTap: () {
+                                                                              showDatePicker(
+                                                                                context: context,
+                                                                                initialDate: DateTime.now(),
+                                                                                firstDate: DateTime(2000),
+                                                                                lastDate: DateTime(2100),
+                                                                                builder: (BuildContext context, Widget? child) {
+                                                                                  return Theme(
+                                                                                    data: ThemeData.light().copyWith(
+                                                                                      // primaryColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                      //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                      colorScheme: ColorScheme.light(
+                                                                                        primary: Color.fromRGBO(21, 43, 83, 1),
+                                                                                        // onPrimary:Color.fromRGBO(21, 43, 83, 1),
+                                                                                        //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                                                        onSurface: Colors.black,
+                                                                                      ),
+                                                                                      buttonTheme: ButtonThemeData(
+                                                                                        textTheme: ButtonTextTheme.primary,
+                                                                                      ),
+                                                                                    ),
+                                                                                    child: child!,
+                                                                                  );
+                                                                                },
+                                                                              ).then((date) {
+                                                                                if (date != null) {
+                                                                                  setState(() {
+                                                                                    _selectedDate = date;
+                                                                                    _installedDate.text =
+                                                                                        formatDate(date.toString());
+                                                                                  });
+                                                                                }
+                                                                              });
+                                                                            },
+                                                                            child: AbsorbPointer(
+                                                                              child: CustomTextFormField(
+                                                                                labelText: 'Date',
+                                                                                hintText: 'Select Date',
+                                                                                keyboardType: TextInputType.datetime,
+                                                                                controller: _installedDate,
+                                                                                // validator: (value) {
+                                                                                //   if (value == null ||
+                                                                                //       value.isEmpty) {
+                                                                                //     return 'Please select date';
+                                                                                //   }
+                                                                                //   return null;
+                                                                                // },
+                                                                              ),
+                                                                            ),
+                                                                          ),
+
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                            children: [
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: Container(
+                                                                                  height: 42,
+                                                                                  width: 80,
+                                                                                  child: ElevatedButton(
+                                                                                    style: ElevatedButton.styleFrom(
+                                                                                        backgroundColor:
+                                                                                        const Color.fromRGBO(
+                                                                                            21, 43, 83, 1),
+                                                                                        shape: RoundedRectangleBorder(
+                                                                                            borderRadius:
+                                                                                            BorderRadius.circular(
+                                                                                                8.0))),
+                                                                                    onPressed: () async {
+                                                                                      if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty ) {
+                                                                                        setState(() {
+                                                                                          iserror = true;
+                                                                                        });
+                                                                                      } else {
+                                                                                        setState(() {
+                                                                                          isLoading = true;
+                                                                                          iserror = false;
+                                                                                        });
+                                                                                        SharedPreferences prefs =
+                                                                                        await SharedPreferences.getInstance();
+                                                                                        String? id = prefs.getString("adminId");
+                                                                                        print("calling");
+                                                                                        Properies_summery_Repo()
+                                                                                            .Editappliances(
+                                                                                          applianceid: _tableData.first.applianceId,
+                                                                                          adminId: id,
+                                                                                          unitId: widget.unit?.unitId,
+                                                                                          appliancename: _name.text,
+                                                                                          appliancedescription: _description.text,
+                                                                                          installeddate: _installedDate.text,
+                                                                                        ).then((value) {
+                                                                                          print(widget.properties?.adminId);
+                                                                                          print(widget.unit?.unitId);
+                                                                                          setState(() {
+                                                                                            isLoading = false;
+
+                                                                                          });
+                                                                                          reload_screen();
+
+                                                                                          Navigator.pop(context,true);
+                                                                                        }).catchError((e) {
+                                                                                          setState(() {
+                                                                                            isLoading = false;
+                                                                                          });
+                                                                                        });
+                                                                                      }
+                                                                                    },
+                                                                                    child: const Text(
+                                                                                      'Save',
+                                                                                      style: TextStyle(
+                                                                                          fontSize: 14,
+                                                                                          color: Colors.white),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: Container(
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: Colors.white,
+                                                                                    borderRadius:
+                                                                                    BorderRadius.circular(8),
+                                                                                    boxShadow: [
+                                                                                      BoxShadow(
+                                                                                        color: Colors.black
+                                                                                            .withOpacity(0.25),
+                                                                                        spreadRadius: 0,
+                                                                                        blurRadius: 15,
+                                                                                        offset: const Offset(0.5,
+                                                                                            0.5), // Shadow moved to the right and bottom
+                                                                                      )
+                                                                                    ],
+                                                                                  ),
+                                                                                  height: 40,
+                                                                                  width: 70,
+                                                                                  child: Center(
+                                                                                    child: GestureDetector(
+                                                                                      onTap: () {
+                                                                                        Navigator.of(context).pop();
+                                                                                      },
+                                                                                      child: const Text('Cancel'),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          if(iserror)
+                                                                            Text(
+                                                                              "Please fill in all fields correctly.",
+                                                                              style: TextStyle(color: Colors.redAccent),
+                                                                            )
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                              },
+                                                            );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      child: FaIcon(
+                                                        FontAwesomeIcons
+                                                            .edit,
+                                                        size: 20,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () async{
+                                                      _showDeleteAlert(context,_tableData.first.applianceId!);
+                                                    },
+                                                    child: Container(
+                                                      child: FaIcon(
+                                                        FontAwesomeIcons
+                                                            .trashCan,
+                                                        size: 20,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (_tableData.isEmpty)
+                              Text("No Search Records Found"),
+                            SizedBox(height: 25),
+                            _buildPaginationControls(),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomTextFormField extends StatefulWidget {
+  final String labelText;
+  final String hintText;
+  final TextInputType keyboardType;
+  final TextEditingController controller;
+  //final FormFieldValidator<String> validator;
+
+  CustomTextFormField({
+    required this.labelText,
+    required this.hintText,
+    required this.keyboardType,
+    required this.controller,
+    // required this.validator,
+  });
+
+  @override
+  _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
+}
+
+class _CustomTextFormFieldState extends State<CustomTextFormField> {
+  bool _isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: widget.controller,
+        //validator: widget.validator,
+        decoration: InputDecoration(
+          labelText: widget.labelText,
+          hintText: widget.hintText,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: const BorderSide(color: Colors.blue),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
+        ),
+        style: const TextStyle(fontSize: 16.0),
+        keyboardType: widget.keyboardType,
+        autofocus: _isFocused,
+      ),
+    );
   }
 }
