@@ -53,6 +53,7 @@ class RentalOwnerService {
   //   }
   // }
 
+
   Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
     final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
     SharedPreferences prefs = await SharedPreferences.getInstance();

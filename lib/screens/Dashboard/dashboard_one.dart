@@ -303,7 +303,8 @@ class _DashboardState extends State<Dashboard> {
                       builder: (context, constraints) {
                         if (constraints.maxWidth > 600) {
                           // Tablet layout - horizontal
-                          return Padding(
+                          return
+                            Padding(
                             padding: const EdgeInsets.only(
                                 left: 35, right: 80, top: 20),
                             child: Wrap(

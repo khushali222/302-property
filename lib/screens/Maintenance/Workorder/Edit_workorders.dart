@@ -111,7 +111,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       renderId = fetchedDetails.rentalId!;
       _selectedUnitId = fetchedDetails.unitId;
       isChecked = fetchedDetails.isBillable!;
-     _selectedvendorsId = fetchedDetails.vendorId!.isEmpty ? null : fetchedDetails.tenantId ?? null;
+     _selectedvendorsId = fetchedDetails.vendorId!.isEmpty ? null : fetchedDetails.vendorId ?? null;
       _selectedstaffId = fetchedDetails.staffmemberId ?? null;
       _selectedtenantId = fetchedDetails.tenantId ?? null;
       _selectedEntry = entryAllowedString;
