@@ -1016,6 +1016,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             .toList();
                       }
                       sortData(data);
+                      data = data.reversed.toList();
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
@@ -1503,6 +1504,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   .contains(searchvalue.toLowerCase()))
                           .toList();
                     }
+                    _tableData = _tableData.reversed.toList();
                     _tableData = filteredData!;
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(

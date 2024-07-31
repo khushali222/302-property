@@ -1589,9 +1589,9 @@ class _Edit_leaseState extends State<Edit_lease>
                               .selectedTenants
                               .isNotEmpty)
                             Padding(
-                              padding: const EdgeInsets.only(left: 13),
+                              padding: const EdgeInsets.only(left: 5),
                               child: Text(
-                                'Tenants:',
+                                'Tenants :',
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
                               ),
@@ -1606,111 +1606,308 @@ class _Edit_leaseState extends State<Edit_lease>
                               .selectedTenants
                               .isNotEmpty)
                             Padding(
-                              padding: const EdgeInsets.only(left: 13),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: blueColor)),
-                                      child: DataTable(
-                                        columnSpacing: 25,
-                                        headingRowHeight: 30,
-                                        dataRowHeight: 30,
-                                        headingRowColor: MaterialStateColor
-                                            .resolveWith((states) =>
-                                                Color.fromRGBO(21, 43, 83, 1)),
-                                        headingTextStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                        columns: [
-                                          DataColumn(
-                                              label: Text('First Name',
-                                                  style:
-                                                      TextStyle(fontSize: 13))),
-                                          DataColumn(
-                                              label: Text('Rent share',
-                                                  style:
-                                                      TextStyle(fontSize: 13))),
-                                          DataColumn(
-                                              label: Text('Action',
-                                                  style:
-                                                      TextStyle(fontSize: 13))),
-                                        ],
-                                        rows: Provider.of<
-                                                    SelectedTenantsProvider>(
-                                                context)
-                                            .selectedTenants
-                                            .map((tenant) {
-                                          return DataRow(
-                                            cells: [
-                                              DataCell(
-                                                Text(
-                                                    '${tenant.tenantFirstName} ${tenant.tenantLastName}',
-                                                    style: TextStyle(
-                                                        fontSize: 12)),
+                              padding: const EdgeInsets.only(left: 4, right: 4),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Table(
+                                    border: TableBorder.all(
+                                      width: 1,
+                                      color:
+                                          const Color.fromRGBO(21, 43, 83, 1),
+                                    ),
+                                    columnWidths: const {
+                                      0: FlexColumnWidth(2),
+                                      1: FlexColumnWidth(2),
+                                      2: FlexColumnWidth(1.3),
+                                    },
+                                    children: [
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(21, 43, 83, 1),
+                                        ),
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'First Name',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 14
+                                                    : 20,
                                               ),
-                                              DataCell(
-                                                Center(
-                                                  child: Material(
-                                                    elevation: 3,
-                                                    child: Container(
-                                                      height: 30,
-                                                      width: 60,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        // border: Border.all(color: blueColor),
-                                                      ),
-                                                      child: Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: TextField(
-                                                            controller:
-                                                                rentShareControllers,
-                                                            style: TextStyle(
-                                                                fontSize: 8),
-                                                            keyboardType:
-                                                                TextInputType
-                                                                    .number,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText: "0",
-                                                              border:
-                                                                  InputBorder
-                                                                      .none,
-                                                            ),
-                                                          ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Rent share',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 14
+                                                    : 20,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Action',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 14
+                                                    : 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      ...Provider.of<SelectedTenantsProvider>(
+                                              context)
+                                          .selectedTenants
+                                          .map((tenant) {
+                                        return TableRow(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10, top: 15),
+                                              child: Text(
+                                                '${tenant.tenantFirstName} ${tenant.tenantLastName}',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 18,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 83, 1),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Material(
+                                                elevation: 3,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Container(
+                                                  height: 40,
+                                                  width: MediaQuery.of(context)
+                                                              .size
+                                                              .width <
+                                                          500
+                                                      ? 70
+                                                      : 400,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    border: Border.all(
+                                                      color: Colors.grey[300]!,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10,
+                                                              bottom: 7),
+                                                      child: TextField(
+                                                        controller:
+                                                            rentShareControllers,
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                          hintText: "0",
+                                                          border:
+                                                              InputBorder.none,
+                                                          contentPadding:
+                                                              EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          10),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                              DataCell(
-                                                InkWell(
-                                                  onTap: () {
-                                                    Provider.of<SelectedTenantsProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .removeTenant(tenant);
-                                                  },
-                                                  child: Icon(Icons.delete,
-                                                      size: 15),
-                                                ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 15),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Provider.of<SelectedTenantsProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .removeTenant(tenant);
+                                                    },
+                                                    child: Icon(
+                                                      Icons.delete,
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                      size:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 18
+                                                              : 25,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                            ),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(left: 13,right: 13),
+                          //   child: SingleChildScrollView(
+                          //     scrollDirection: Axis.horizontal,
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         Container(
+                          //           decoration: BoxDecoration(
+                          //               border: Border.all(color: blueColor)),
+                          //           child: DataTable(
+                          //             columnSpacing: 25,
+                          //             headingRowHeight: 30,
+                          //             dataRowHeight: 30,
+                          //             headingRowColor: MaterialStateColor
+                          //                 .resolveWith((states) =>
+                          //                     Color.fromRGBO(21, 43, 83, 1)),
+                          //             headingTextStyle: TextStyle(
+                          //                 color: Colors.white,
+                          //                 fontWeight: FontWeight.bold),
+                          //             columns: [
+                          //               DataColumn(
+                          //                   label: Text('First Name',
+                          //                       style:
+                          //                           TextStyle(fontSize: 13))),
+                          //               DataColumn(
+                          //                   label: Text('Rent share',
+                          //                       style:
+                          //                           TextStyle(fontSize: 13))),
+                          //               DataColumn(
+                          //                   label: Text('Action',
+                          //                       style:
+                          //                           TextStyle(fontSize: 13))),
+                          //             ],
+                          //             rows: Provider.of<
+                          //                         SelectedTenantsProvider>(
+                          //                     context)
+                          //                 .selectedTenants
+                          //                 .map((tenant) {
+                          //               return DataRow(
+                          //                 cells: [
+                          //                   DataCell(
+                          //                     Text(
+                          //                         '${tenant.tenantFirstName} ${tenant.tenantLastName}',
+                          //                         style: TextStyle(
+                          //                             fontSize: 12)),
+                          //                   ),
+                          //                   DataCell(
+                          //                     Center(
+                          //                       child: Material(
+                          //                         elevation: 3,
+                          //                         child: Container(
+                          //                           height: 30,
+                          //                           width: 60,
+                          //                           decoration: BoxDecoration(
+                          //                             color: Colors.white,
+                          //                             // border: Border.all(color: blueColor),
+                          //                           ),
+                          //                           child: Center(
+                          //                             child: Padding(
+                          //                               padding:
+                          //                                   const EdgeInsets
+                          //                                       .all(8.0),
+                          //                               child: TextField(
+                          //                                 controller:
+                          //                                     rentShareControllers,
+                          //                                 style: TextStyle(
+                          //                                     fontSize: 8),
+                          //                                 keyboardType:
+                          //                                     TextInputType
+                          //                                         .number,
+                          //                                 decoration:
+                          //                                     InputDecoration(
+                          //                                   hintText: "0",
+                          //                                   border:
+                          //                                       InputBorder
+                          //                                           .none,
+                          //                                 ),
+                          //                               ),
+                          //                             ),
+                          //                           ),
+                          //                         ),
+                          //                       ),
+                          //                     ),
+                          //                   ),
+                          //                   DataCell(
+                          //                     InkWell(
+                          //                       onTap: () {
+                          //                         Provider.of<SelectedTenantsProvider>(
+                          //                                 context,
+                          //                                 listen: false)
+                          //                             .removeTenant(tenant);
+                          //                       },
+                          //                       child: Icon(Icons.delete,
+                          //                           size: 15),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               );
+                          //             }).toList(),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
@@ -1722,7 +1919,9 @@ class _Edit_leaseState extends State<Edit_lease>
                               .cosigners
                               .isNotEmpty)
                             Padding(
-                              padding: const EdgeInsets.only(left: 13),
+                              padding: const EdgeInsets.only(
+                                left: 7,
+                              ),
                               child: Text(
                                 'Consigner:',
                                 style: TextStyle(
@@ -1738,195 +1937,291 @@ class _Edit_leaseState extends State<Edit_lease>
                           if (Provider.of<SelectedCosignersProvider>(context)
                               .cosigners
                               .isNotEmpty)
-                            // Padding(
-                            //   padding: const EdgeInsets.only(left: 13),
-                            //   child: SingleChildScrollView(
-                            //     scrollDirection: Axis.horizontal,
-                            //     child: Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.start,
-                            //       children: [
-                            //         Container(
-                            //           decoration: BoxDecoration(
-                            //               border: Border.all(color: blueColor)),
-                            //           child: DataTable(
-                            //             columnSpacing: 25,
-                            //             headingRowHeight: 30,
-                            //             dataRowHeight: 30,
-                            //             headingRowColor: MaterialStateColor
-                            //                 .resolveWith((states) =>
-                            //                     Color.fromRGBO(21, 43, 83, 1)),
-                            //             headingTextStyle: TextStyle(
-                            //                 color: Colors.white,
-                            //                 fontWeight: FontWeight.bold),
-                            //             columns: [
-                            //               DataColumn(
-                            //                   label: Text('Name',
-                            //                       style:
-                            //                           TextStyle(fontSize: 13))),
-                            //               DataColumn(
-                            //                   label: Text('Phone number',
-                            //                       style:
-                            //                           TextStyle(fontSize: 13))),
-                            //               DataColumn(
-                            //                   label: Text('Action',
-                            //                       style:
-                            //                           TextStyle(fontSize: 13))),
-                            //             ],
-                            //             rows: Provider.of<
-                            //                         SelectedCosignersProvider>(
-                            //                     context)
-                            //                 .cosigners
-                            //                 .map((cosigner) {
-                            //
-                            //               return DataRow(
-                            //                 cells: [
-                            //                   DataCell(
-                            //                     Text(
-                            //                         '${cosigner.firstName} ${cosigner.lastName}',
-                            //                         style: TextStyle(
-                            //                             fontSize: 12)),
-                            //                   ),
-                            //                   DataCell(
-                            //                     Text('${cosigner.phoneNumber}',
-                            //                         style: TextStyle(
-                            //                             fontSize: 12)),
-                            //                   ),
-                            //                   DataCell(
-                            //                     Row(
-                            //                       children: [
-                            //                         InkWell(
-                            //                           onTap: () {
-                            //                             setState(() {
-                            //                               isTenantSelected ==
-                            //                                   true;
-                            //                               tenent_popup( cosigner);
-                            //                             });
-                            //                           },
-                            //                           child: Icon(Icons.edit,
-                            //                               size: 15),
-                            //                         ),
-                            //                         SizedBox(
-                            //                           width: 5,
-                            //                         ),
-                            //                         InkWell(
-                            //                           onTap: () {
-                            //                             Provider.of<SelectedCosignersProvider>(
-                            //                                     context,
-                            //                                     listen: false)
-                            //                                 .removeConsigner(
-                            //                                     cosigner);
-                            //                           },
-                            //                           child: Icon(Icons.delete,
-                            //                               size: 15),
-                            //                         ),
-                            //                       ],
-                            //                     ),
-                            //                   ),
-                            //                 ],
-                            //               );
-                            //             }).toList(),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 13),
+                              padding: const EdgeInsets.only(left: 5,right: 5),
                               child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
+                                // scrollDirection: Axis.horizontal,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                          border: Border.all(color: blueColor)),
-                                      child: DataTable(
-                                        columnSpacing: 25,
-                                        headingRowHeight: 30,
-                                        dataRowHeight: 30,
-                                        headingRowColor: MaterialStateColor
-                                            .resolveWith((states) =>
-                                                Color.fromRGBO(21, 43, 83, 1)),
-                                        headingTextStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                        columns: [
-                                          DataColumn(
-                                              label: Text('Name',
-                                                  style:
-                                                      TextStyle(fontSize: 13))),
-                                          DataColumn(
-                                              label: Text('Phone number',
-                                                  style:
-                                                      TextStyle(fontSize: 13))),
-                                          DataColumn(
-                                              label: Text('Action',
-                                                  style:
-                                                      TextStyle(fontSize: 13))),
-                                        ],
-                                        rows: Provider.of<
-                                                    SelectedCosignersProvider>(
-                                                context)
-                                            .cosigners
-                                            .asMap()
-                                            .entries
-                                            .map((entry) {
-                                          int index = entry.key;
-                                          Cosigner cosigner = entry.value;
-                                          print(cosigner.firstName);
-                                          print(index);
-                                          return DataRow(
-                                            cells: [
-                                              DataCell(
-                                                Text(
-                                                    '${cosigner.firstName} ${cosigner.lastName}',
-                                                    style: TextStyle(
-                                                        fontSize: 12)),
+                                        border: Border.all(color: blueColor),
+                                      ),
+                                      child: Table(
+                                        border: TableBorder.all(
+                                          width: 1,
+                                          color: const Color.fromRGBO(
+                                              21, 43, 83, 1),
+                                        ),
+                                        columnWidths: const {
+                                          0: FlexColumnWidth(2),
+                                          1: FlexColumnWidth(2),
+                                          2: FlexColumnWidth(1.3),
+                                        },
+                                        children: [
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              color:
+                                              Color.fromRGBO(21, 43, 83, 1),
+                                            ),
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  'Name',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 13
+                                                        : 20,
+                                                  ),
+                                                ),
                                               ),
-                                              DataCell(
-                                                Text('${cosigner.phoneNumber}',
-                                                    style: TextStyle(
-                                                        fontSize: 12)),
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  'Phone number',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 13
+                                                        : 20,
+                                                  ),
+                                                ),
                                               ),
-                                              DataCell(
-                                                Row(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          isTenantSelected ==
-                                                              true;
-                                                          // tenent_popup(cosigner,index);
-                                                        });
-                                                      },
-                                                      child: Icon(Icons.edit,
-                                                          size: 15),
-                                                    ),
-                                                    SizedBox(width: 5),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        Provider.of<SelectedCosignersProvider>(
-                                                                context,
-                                                                listen: false)
-                                                            .removeConsigner(
-                                                                cosigner);
-                                                      },
-                                                      child: Icon(Icons.delete,
-                                                          size: 15),
-                                                    ),
-                                                  ],
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  'Action',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 13
+                                                        : 20,
+                                                  ),
                                                 ),
                                               ),
                                             ],
-                                          );
-                                        }).toList(),
+                                          ),
+                                          ...Provider.of<
+                                              SelectedCosignersProvider>(
+                                              context)
+                                              .cosigners
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                            int index = entry.key;
+                                            Cosigner cosigner = entry.value;
+                                            return TableRow(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    '${cosigner.firstName} ${cosigner.lastName}',
+                                                    style:  TextStyle(
+                                                      fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 13
+                                                          : 20,
+                                                      fontWeight:
+                                                      FontWeight.w700,
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    '${cosigner.phoneNumber}',
+                                                    style: TextStyle(
+                                                      fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 13
+                                                          : 20,
+                                                      fontWeight:
+                                                      FontWeight.w500,
+                                                      color: Colors.grey[500],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.only(left: 20,top: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            isTenantSelected ==
+                                                                true;
+                                                            tenent_popup(cosigner,index);
+                                                          });
+                                                        },
+                                                        child:  Icon(
+                                                          Icons.edit,
+                                                          size: MediaQuery.of(context)
+                                                              .size
+                                                              .width <
+                                                              500
+                                                              ? 15
+                                                              : 20,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Provider.of<SelectedCosignersProvider>(
+                                                              context,
+                                                              listen: false)
+                                                              .removeConsigner(
+                                                              cosigner);
+                                                        },
+                                                        child:  Icon(
+                                                          Icons.delete,
+                                                          size: MediaQuery.of(context)
+                                                              .size
+                                                              .width <
+                                                              500
+                                                              ? 15
+                                                              : 20,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
+
+                          // Padding(
+                          //   padding: const EdgeInsets.only(left: 13),
+                          //   child: SingleChildScrollView(
+                          //     scrollDirection: Axis.horizontal,
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         Container(
+                          //           decoration: BoxDecoration(
+                          //               border: Border.all(color: blueColor)),
+                          //           child: DataTable(
+                          //             columnSpacing: 25,
+                          //             headingRowHeight: 30,
+                          //             dataRowHeight: 30,
+                          //             headingRowColor: MaterialStateColor
+                          //                 .resolveWith((states) =>
+                          //                     Color.fromRGBO(21, 43, 83, 1)),
+                          //             headingTextStyle: TextStyle(
+                          //                 color: Colors.white,
+                          //                 fontWeight: FontWeight.bold),
+                          //             columns: [
+                          //               DataColumn(
+                          //                   label: Text('Name',
+                          //                       style:
+                          //                           TextStyle(fontSize: 13))),
+                          //               DataColumn(
+                          //                   label: Text('Phone number',
+                          //                       style:
+                          //                           TextStyle(fontSize: 13))),
+                          //               DataColumn(
+                          //                   label: Text('Action',
+                          //                       style:
+                          //                           TextStyle(fontSize: 13))),
+                          //             ],
+                          //             rows: Provider.of<
+                          //                         SelectedCosignersProvider>(
+                          //                     context)
+                          //                 .cosigners
+                          //                 .asMap()
+                          //                 .entries
+                          //                 .map((entry) {
+                          //               int index = entry.key;
+                          //               Cosigner cosigner = entry.value;
+                          //               print(cosigner.firstName);
+                          //               print(index);
+                          //               return DataRow(
+                          //                 cells: [
+                          //                   DataCell(
+                          //                     Text(
+                          //                         '${cosigner.firstName} ${cosigner.lastName}',
+                          //                         style: TextStyle(
+                          //                             fontSize: 12)),
+                          //                   ),
+                          //                   DataCell(
+                          //                     Text('${cosigner.phoneNumber}',
+                          //                         style: TextStyle(
+                          //                             fontSize: 12)),
+                          //                   ),
+                          //                   DataCell(
+                          //                     Row(
+                          //                       children: [
+                          //                         InkWell(
+                          //                           onTap: () {
+                          //                             setState(() {
+                          //                               isTenantSelected ==
+                          //                                   true;
+                          //                               // tenent_popup(cosigner,index);
+                          //                             });
+                          //                           },
+                          //                           child: Icon(Icons.edit,
+                          //                               size: 15),
+                          //                         ),
+                          //                         SizedBox(width: 5),
+                          //                         InkWell(
+                          //                           onTap: () {
+                          //                             Provider.of<SelectedCosignersProvider>(
+                          //                                     context,
+                          //                                     listen: false)
+                          //                                 .removeConsigner(
+                          //                                     cosigner);
+                          //                           },
+                          //                           child: Icon(Icons.delete,
+                          //                               size: 15),
+                          //                         ),
+                          //                       ],
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               );
+                          //             }).toList(),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

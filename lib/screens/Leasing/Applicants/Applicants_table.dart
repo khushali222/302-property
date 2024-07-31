@@ -896,7 +896,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                 applicant.applicantFirstName == selectedValue)
                             .toList();
                       }
-
+                      data = data.reversed.toList();
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -1304,6 +1304,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                               applicant.applicantFirstName == selectedValue)
                           .toList();
                     }
+                    _tableData = _tableData.reversed.toList();
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Column(

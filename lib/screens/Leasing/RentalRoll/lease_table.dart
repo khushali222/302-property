@@ -768,12 +768,14 @@ class _Lease_tableState extends State<Lease_table> {
                             .where((lease) => lease.tenantNames == searchValue)
                             .toList();
                       }
+                      data = data.reversed.toList();
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
                           .toList();
+
                       return SingleChildScrollView(
                         child: Column(
                           children: [
@@ -1382,6 +1384,7 @@ class _Lease_tableState extends State<Lease_table> {
                                   .contains(searchValue.toLowerCase()))
                           .toList();
                     }
+                    filteredData = filteredData?.reversed.toList();
                     _tableData = filteredData!;
                     totalrecords = _tableData.length;
                     return Padding(
