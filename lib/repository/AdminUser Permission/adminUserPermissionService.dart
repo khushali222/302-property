@@ -33,11 +33,9 @@ class PermissionService {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final Uri url = Uri.parse('$Api_url/api/permission/permission/');
-
     try {
       final response = await http.post(
-        url,
+        Uri.parse('$Api_url/api/permission/permission/'),
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
@@ -45,7 +43,7 @@ class PermissionService {
         },
         body: json.encode(data.toJson()),
       );
-
+      print(response.body);
       return response.statusCode;
     } catch (e) {
       print('Error: $e');

@@ -731,7 +731,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302.App_Bar(context: context, isPlanPageActive: true),
       drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,

@@ -14,6 +14,10 @@ class widget_302 {
   static App_Bar({
     var suffixIcon,
     var leading,
+    bool? isPlanPageActive = false,
+    bool? isProfilePageActive = false,
+    bool? isUserPermitePageActive = false,
+    bool? isSettingPageActive = false,
     var fontweight,
     List<Widget>? actions,
     var arrowNearText,
@@ -56,8 +60,10 @@ class widget_302 {
       actions: [
         InkWell(
           onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => getPlanDetailScreen()));
+            if (isPlanPageActive != true) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => getPlanDetailScreen()));
+            }
           },
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
@@ -156,8 +162,10 @@ class widget_302 {
                           ],
                         ),
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const Profile_screen()));
+                          if (isProfilePageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const Profile_screen()));
+                          }
                         },
                       ),
                       PopupMenuItem(
@@ -176,9 +184,11 @@ class widget_302 {
                           ],
                         ),
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const UserPermissionScreen()));
+                          if (isUserPermitePageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserPermissionScreen()));
+                          }
                         },
                       ),
                       PopupMenuItem(
@@ -196,8 +206,10 @@ class widget_302 {
                           ],
                         ),
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => TabBarExample()));
+                          if (isSettingPageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => TabBarExample()));
+                          }
                         },
                       ),
                       PopupMenuItem(

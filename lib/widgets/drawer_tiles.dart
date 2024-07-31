@@ -43,16 +43,16 @@ Widget buildListTile(
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ListTile(
       onTap: () {
-        if (title == "Dashboard") {
+        if (title == "Dashboard" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Dashboard()));
-        } else if (title == "Add Property Type") {
+        } else if (title == "Add Property Type" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => PropertyTable()));
-        } else if (title == "Add Staff Member") {
+        } else if (title == "Add Staff Member" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => StaffTable()));
-        } else if (title == "Reports") {
+        } else if (title == "Reports" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => ReportsMainScreen()));
         }
@@ -68,10 +68,7 @@ Widget buildListTile(
   );
 }
 
-void navigateToOption(
-  BuildContext context,
-  String option,
-) {
+void navigateToOption(BuildContext context, String option, bool isActive) {
   int index = 0;
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
@@ -86,10 +83,13 @@ void navigateToOption(
           leaseId: '',
         ),
   };
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: routes[option]!),
-  );
+
+  if (isActive != true) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: routes[option]!),
+    );
+  }
 }
 
 Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
@@ -128,7 +128,7 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
               ),
               onTap: () {
                 Navigator.pop(context);
-                navigateToOption(context, subTopic);
+                navigateToOption(context, subTopic, active);
               },
             ),
           ),

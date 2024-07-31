@@ -7,7 +7,9 @@ class adminUserPermissionModel {
 
   adminUserPermissionModel.fromJson(Map<String, dynamic> json) {
     statusCode = json['statusCode'];
-    data = json['data'] != null ? new UserPermissionData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? new UserPermissionData.fromJson(json['data'])
+        : null;
     message = json['message'];
   }
 
@@ -67,10 +69,9 @@ class UserPermissionData {
     if (this.vendorPermission != null) {
       data['vendor_permission'] = this.vendorPermission!.toJson();
     }
-    data['_id'] = this.sId;
+
     data['admin_id'] = this.adminId;
-    data['is_delete'] = this.isDelete;
-    data['__v'] = this.iV;
+
     return data;
   }
 }

@@ -148,7 +148,8 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar:
+          widget_302.App_Bar(context: context, isUserPermitePageActive: true),
       drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
@@ -241,549 +242,145 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Tenant Permissions',
-                          style: TextStyle(
-                              color: blueColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600)),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Property',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: tenantPropertyView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        tenantPropertyView =
-                                                            !tenantPropertyView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
+                      Text(
+                        'Tenant Permissions',
+                        style: TextStyle(
+                          color: blueColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Divider(
-                        color: blueColor,
+                      SizedBox(height: 8),
+                      _buildPermissionTable(
+                        'Property',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            tenantPropertyView,
+                            (value) {
+                              setState(() {
+                                tenantPropertyView = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      Center(
-                        child: Table(
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Financial',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: tenantFinancialView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        tenantFinancialView =
-                                                            !tenantFinancialView;
-                                                      });
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              tenantFinancialAdd,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              tenantFinancialAdd =
-                                                                  !tenantFinancialAdd;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'ADD',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: tenantFinancialEdit,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        tenantFinancialEdit =
-                                                            !tenantFinancialEdit;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'EDIT',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
+                      Divider(color: blueColor),
+                      _buildPermissionTable(
+                        'Financial',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            tenantFinancialView,
+                            (value) {
+                              setState(() {
+                                tenantFinancialView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            tenantFinancialAdd,
+                            (value) {
+                              setState(() {
+                                tenantFinancialAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            tenantFinancialEdit,
+                            (value) {
+                              setState(() {
+                                tenantFinancialEdit = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      Divider(
-                        color: blueColor,
+                      Divider(color: blueColor),
+                      _buildPermissionTable(
+                        'Work Order',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            tenantWorkorderView,
+                            (value) {
+                              setState(() {
+                                tenantWorkorderView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            tenantWorkorderAdd,
+                            (value) {
+                              setState(() {
+                                tenantWorkorderAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            tenantWorkorderEdit,
+                            (value) {
+                              setState(() {
+                                tenantWorkorderEdit = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DELETE',
+                            tenantWorkorderDelete,
+                            (value) {
+                              setState(() {
+                                tenantWorkorderDelete = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Work Order',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: tenantWorkorderView,
-                                                    onChanged: (value) {
-                                                      print('');
-                                                      setState(() {
-                                                        tenantWorkorderView =
-                                                            !tenantWorkorderView;
-                                                      });
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              tenantWorkorderAdd,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              tenantWorkorderAdd =
-                                                                  !tenantWorkorderAdd;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'ADD',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: tenantWorkorderEdit,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        tenantWorkorderEdit =
-                                                            !tenantWorkorderEdit;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'EDIT',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              tenantWorkorderDelete,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              tenantWorkorderDelete =
-                                                                  !tenantWorkorderDelete;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'DELETE',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        color: blueColor,
-                      ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Documents',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: tenantDocumentsView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        tenantDocumentsView =
-                                                            !tenantDocumentsView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              tenantDocumentsAdd,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              tenantDocumentsAdd =
-                                                                  !tenantDocumentsAdd;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'ADD',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: tenantDocumentsEdit,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        tenantDocumentsEdit =
-                                                            !tenantDocumentsEdit;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'EDIT',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              tenantDocumentsDelete,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              tenantDocumentsDelete =
-                                                                  !tenantDocumentsDelete;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'DELETE',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
+                      Divider(color: blueColor),
+                      _buildPermissionTable(
+                        'Documents',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            tenantDocumentsView,
+                            (value) {
+                              setState(() {
+                                tenantDocumentsView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            tenantDocumentsAdd,
+                            (value) {
+                              setState(() {
+                                tenantDocumentsAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            tenantDocumentsEdit,
+                            (value) {
+                              setState(() {
+                                tenantDocumentsEdit = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DELETE',
+                            tenantDocumentsDelete,
+                            (value) {
+                              setState(() {
+                                tenantDocumentsDelete = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -803,697 +400,250 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Staff Permissions',
-                          style: TextStyle(
-                              color: blueColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600)),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Property',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffPropertyView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffPropertyView =
-                                                            !staffPropertyView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              staffPropertyAdd,
-                                                          onChanged: (value) {
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'ADD',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffPropertyEdit,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffPropertyEdit =
-                                                            !staffPropertyEdit;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'EDIT',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffPropertyDelete,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffPropertyDelete =
-                                                            !staffPropertyDelete;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'DELETE',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
+                      Text(
+                        'Staff Permissions',
+                        style: TextStyle(
+                          color: blueColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Divider(
-                        color: blueColor,
+                      SizedBox(height: 8),
+                      _buildPermissionTable(
+                        'Property',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            staffPropertyView,
+                            (value) {
+                              setState(() {
+                                staffPropertyView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            staffPropertyAdd,
+                            (value) {
+                              setState(() {
+                                staffPropertyAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            staffPropertyEdit,
+                            (value) {
+                              setState(() {
+                                staffPropertyEdit = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DELETE',
+                            staffPropertyDelete,
+                            (value) {
+                              setState(() {
+                                staffPropertyDelete = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DETAIL VIEW',
+                            staffPropertydetailView,
+                            (value) {
+                              setState(() {
+                                staffPropertydetailView = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Lease',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffLeaseView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffLeaseView =
-                                                            !staffLeaseView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value: staffLeaseAdd,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              staffLeaseAdd =
-                                                                  !staffLeaseAdd;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'ADD',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffLeaseEdit,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffLeaseEdit =
-                                                            !staffLeaseEdit;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'EDIT',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffLeaseDelete,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffLeaseDelete =
-                                                            !staffLeaseDelete;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'DELETE',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffLeasedetailView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffLeasedetailView =
-                                                            !staffLeasedetailView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'DETAIL VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
+                      Divider(color: blueColor),
+                      _buildPermissionTable(
+                        'Lease',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            staffLeaseView,
+                            (value) {
+                              setState(() {
+                                staffLeaseView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            staffLeaseAdd,
+                            (value) {
+                              setState(() {
+                                staffLeaseAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            staffLeaseEdit,
+                            (value) {
+                              setState(() {
+                                staffLeaseEdit = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DELETE',
+                            staffLeaseDelete,
+                            (value) {
+                              setState(() {
+                                staffLeaseDelete = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DETAIL VIEW',
+                            staffLeasedetailView,
+                            (value) {
+                              setState(() {
+                                staffLeasedetailView = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      Divider(
-                        color: blueColor,
+                      Divider(color: blueColor),
+                      _buildPermissionTable(
+                        'Payment',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            staffPaymentView,
+                            (value) {
+                              setState(() {
+                                staffPaymentView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            staffPaymentAdd,
+                            (value) {
+                              setState(() {
+                                staffPaymentAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            staffPaymentEdit,
+                            (value) {
+                              setState(() {
+                                staffPaymentEdit = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DELETE',
+                            staffPaymentDelete,
+                            (value) {
+                              setState(() {
+                                staffPaymentDelete = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Tenant',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffTenantView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffTenantView =
-                                                            !staffTenantView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value: staffTenantAdd,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              staffTenantAdd =
-                                                                  !staffTenantAdd;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'ADD',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffTenantEdit,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffTenantEdit =
-                                                            !staffTenantEdit;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'EDIT',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              staffTenantDelete,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              staffTenantDelete =
-                                                                  !staffTenantDelete;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'DELETE',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
+                      Divider(color: blueColor),
+                      _buildPermissionTable(
+                        'Tenant',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            staffTenantView,
+                            (value) {
+                              setState(() {
+                                staffTenantView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            staffTenantAdd,
+                            (value) {
+                              setState(() {
+                                staffTenantAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            staffTenantEdit,
+                            (value) {
+                              setState(() {
+                                staffTenantEdit = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DELETE',
+                            staffTenantDelete,
+                            (value) {
+                              setState(() {
+                                staffTenantDelete = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      Divider(
-                        color: blueColor,
-                      ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Work Order',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffWorkorderView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffWorkorderView =
-                                                            !staffWorkorderView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              staffWorkorderView,
-                                                          onChanged: (value) {
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'VIEW',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: staffWorkorderView,
-                                                    onChanged: (value) {
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'Edit',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          TableCell(
-                                              child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                          value:
-                                                              staffWorkorderDelete,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              staffWorkorderDelete =
-                                                                  !staffWorkorderDelete;
-                                                            });
-                                                            print('');
-                                                          }),
-                                                      Text(
-                                                        'DELETE',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ],
-                                                  ))),
-                                        ]),
-                                      ],
-                                    ),
-                                    Table(
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value:
-                                                        staffWorkorderdetailView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        staffWorkorderdetailView =
-                                                            !staffWorkorderdetailView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'DETAIL VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
+                      Divider(color: blueColor),
+                      _buildPermissionTable(
+                        'Work Order',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            staffWorkorderView,
+                            (value) {
+                              setState(() {
+                                staffWorkorderView = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'ADD',
+                            staffWorkorderAdd,
+                            (value) {
+                              setState(() {
+                                staffWorkorderAdd = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'EDIT',
+                            staffWorkorderEdit,
+                            (value) {
+                              setState(() {
+                                staffWorkorderEdit = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DELETE',
+                            staffWorkorderDelete,
+                            (value) {
+                              setState(() {
+                                staffWorkorderDelete = value!;
+                              });
+                            },
+                          ),
+                          _buildCheckboxRow(
+                            'DETAIL VIEW',
+                            staffWorkorderdetailView,
+                            (value) {
+                              setState(() {
+                                staffWorkorderdetailView = value!;
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1513,113 +663,33 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Vendor Permissions',
-                          style: TextStyle(
-                              color: blueColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600)),
+                      Text(
+                        'Vendor Permissions',
+                        style: TextStyle(
+                          color: blueColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       SizedBox(
                         height: 8,
                       ),
-                      Center(
-                        child: Table(
-                          // border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(1.1),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(2),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TableCell(
-                                // verticalAlignment:
-                                //     TableCellVerticalAlignment.middle,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Work Order',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor),
-                                    ),
-                                    // Text(''), // Add this line to repeat "Property"
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(1.4),
-                                        1: FlexColumnWidth(2),
-                                      },
-                                      // border: TableBorder.all(),
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: vendorWorkorderView,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        vendorWorkorderView =
-                                                            !vendorWorkorderView;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'VIEW',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 8.0),
-                                            child: TableCell(
-                                                child: Row(
-                                              children: [
-                                                Checkbox(
-                                                    value: vendorWorkorderEdit,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        vendorWorkorderEdit =
-                                                            !vendorWorkorderEdit;
-                                                      });
-                                                      print('');
-                                                    }),
-                                                Text(
-                                                  'EDIT',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              ],
-                                            )),
-                                          ),
-                                        ]),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
+                      _buildPermissionTable(
+                        'Work Order',
+                        [
+                          _buildCheckboxRow('VIEW', vendorWorkorderView,
+                              (value) {
+                            setState(() {
+                              vendorWorkorderView = value!;
+                            });
+                          }),
+                          _buildCheckboxRow('EDIT', vendorWorkorderEdit,
+                              (value) {
+                            setState(() {
+                              vendorWorkorderEdit = value!;
+                            });
+                          }),
+                        ],
                       ),
                     ],
                   ),
@@ -1695,6 +765,8 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           });
                           Fluttertoast.showToast(
                               msg: 'Permissions updated successfully');
+                          Navigator.pop(context);
+
                           print('Permissions updated successfully.');
                         } else {
                           setState(() {
@@ -1737,6 +809,89 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPermissionTable(String title, List<Widget> checkboxes) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenWidth = constraints.maxWidth;
+        int columns = 2;
+
+        if (screenWidth > 600) {
+          columns = 5;
+        }
+        if (screenWidth > 900) {
+          columns = 6;
+        }
+
+        List<TableRow> rows = [];
+        for (int i = 0; i < checkboxes.length; i += columns) {
+          List<Widget> cells = [];
+          for (int j = 0; j < columns; j++) {
+            cells.add(
+              TableCell(
+                child:
+                    i + j < checkboxes.length ? checkboxes[i + j] : Container(),
+              ),
+            );
+          }
+          rows.add(TableRow(children: cells));
+        }
+
+        return Center(
+          child: Table(
+            columnWidths: {
+              for (int i = 0; i < columns; i++) i: FlexColumnWidth(1.0),
+            },
+            children: [
+              TableRow(
+                children: [
+                  TableCell(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  for (int i = 1; i < columns; i++)
+                    TableCell(child: Container()),
+                ],
+              ),
+              ...rows,
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCheckboxRow(
+    String label,
+    bool value,
+    ValueChanged<bool?> onChanged,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0.0),
+      child: Row(
+        children: [
+          Checkbox(value: value, onChanged: onChanged),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: blueColor,
+            ),
+          ),
+        ],
       ),
     );
   }
