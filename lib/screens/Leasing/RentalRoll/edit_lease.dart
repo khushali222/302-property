@@ -91,15 +91,15 @@ class _Edit_leaseState extends State<Edit_lease>
     print('rental id ${fetchedDetails.rental.rentalId}');
     print('property id ${fetchedDetails.rental.propertyId}');
     print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+        'Rent amount ${fetchedDetails.rentCharges!.first.amount.toString()}');
     print('Rent lease type ${fetchedDetails.lease.leaseType}');
     print('Rent start ${fetchedDetails.lease.startDate}');
     print('Rent end ${fetchedDetails.lease.endDate}');
-    print('Rent cycle ${fetchedDetails.rentCharges!.first!.rentCycle}');
-    print('Rent memo ${fetchedDetails.rentCharges!.first!.memo}');
-    print('Rent date ${fetchedDetails.rentCharges!.first!.date}');
+    print('Rent cycle ${fetchedDetails.rentCharges!.first.rentCycle}');
+    print('Rent memo ${fetchedDetails.rentCharges!.first.memo}');
+    print('Rent date ${fetchedDetails.rentCharges!.first.date}');
     print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+        'Rent amount ${fetchedDetails.rentCharges!.first.amount.toString()}');
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -111,15 +111,15 @@ class _Edit_leaseState extends State<Edit_lease>
       startDateController.text = fetchedDetails.lease.startDate;
       endDateController.text = fetchedDetails.lease.endDate;
 
-      _selectedRent = fetchedDetails.rentCharges!.first!.rentCycle;
-      rentMemo.text = fetchedDetails.rentCharges!.first!.memo;
-      print(fetchedDetails.rentCharges!.first!.memo);
-      rentNextDueDate.text = fetchedDetails.rentCharges!.first!.date;
-      rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
+      _selectedRent = fetchedDetails.rentCharges!.first.rentCycle;
+      rentMemo.text = fetchedDetails.rentCharges!.first.memo;
+      print(fetchedDetails.rentCharges!.first.memo);
+      rentNextDueDate.text = fetchedDetails.rentCharges!.first.date;
+      rentAmount.text = fetchedDetails.rentCharges!.first.amount.toString();
       securityDepositeAmount.text =
-          fetchedDetails.securityCharges!.first!.chargeType ==
+          fetchedDetails.securityCharges!.first.chargeType ==
                   'Security Deposite'
-              ? fetchedDetails.securityCharges!.first!.amount.toString()
+              ? fetchedDetails.securityCharges!.first.amount.toString()
               : '';
 
       for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
@@ -353,7 +353,7 @@ class _Edit_leaseState extends State<Edit_lease>
         child: TableCell(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
+            child: Center(child: Text(text, style: const TextStyle(fontSize: 18))),
           ),
         ),
       ),
@@ -378,11 +378,11 @@ class _Edit_leaseState extends State<Edit_lease>
   DateTime calculateNextDueDate(DateTime startDate, String rentCycle) {
     switch (rentCycle) {
       case 'Daily':
-        return startDate.add(Duration(days: 1));
+        return startDate.add(const Duration(days: 1));
       case 'Weekly':
-        return startDate.add(Duration(days: 7));
+        return startDate.add(const Duration(days: 7));
       case 'Every two weeks':
-        return startDate.add(Duration(days: 14));
+        return startDate.add(const Duration(days: 14));
       case 'Monthly':
         return DateTime(startDate.year, startDate.month + 1, startDate.day);
       case 'Every two months':
@@ -788,7 +788,7 @@ class _Edit_leaseState extends State<Edit_lease>
                   //       LeaseRepository().fetchLeaseDetails(widget.lease.leaseId!);
                   //     },
                   //     child: Text('Summary')),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Padding(
@@ -804,8 +804,8 @@ class _Edit_leaseState extends State<Edit_lease>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
                           color: const Color.fromRGBO(21, 43, 81, 1),
-                          boxShadow: [
-                            const BoxShadow(
+                          boxShadow: const [
+                            BoxShadow(
                               color: Colors.grey,
                               offset: Offset(0.0, 1.0), //(x,y)
                               blurRadius: 6.0,
@@ -822,7 +822,7 @@ class _Edit_leaseState extends State<Edit_lease>
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Container(
@@ -857,7 +857,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                   children: [
                                     DropdownButtonHideUnderline(
                                       child: DropdownButtonFormField2<String>(
-                                        decoration: InputDecoration(
+                                        decoration: const InputDecoration(
                                             border: InputBorder.none),
                                         isExpanded: true,
                                         hint: const Row(
@@ -963,7 +963,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         ? DropdownButtonHideUnderline(
                                             child: DropdownButtonFormField2<
                                                 String>(
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                   border: InputBorder.none),
                                               isExpanded: true,
                                               hint: const Row(
@@ -1584,12 +1584,12 @@ class _Edit_leaseState extends State<Edit_lease>
                           const SizedBox(
                             height: 10,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 13),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 13),
                               child: Text(
                                 'Tenants:',
                                 style: TextStyle(
@@ -1599,7 +1599,7 @@ class _Edit_leaseState extends State<Edit_lease>
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           if (Provider.of<SelectedTenantsProvider>(context)
@@ -1621,11 +1621,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                         dataRowHeight: 30,
                                         headingRowColor: MaterialStateColor
                                             .resolveWith((states) =>
-                                                Color.fromRGBO(21, 43, 83, 1)),
-                                        headingTextStyle: TextStyle(
+                                                const Color.fromRGBO(21, 43, 83, 1)),
+                                        headingTextStyle: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
-                                        columns: [
+                                        columns: const [
                                           DataColumn(
                                               label: Text('First Name',
                                                   style:
@@ -1649,7 +1649,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                               DataCell(
                                                 Text(
                                                     '${tenant.tenantFirstName} ${tenant.tenantLastName}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12)),
                                               ),
                                               DataCell(
@@ -1659,7 +1659,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     child: Container(
                                                       height: 30,
                                                       width: 60,
-                                                      decoration: BoxDecoration(
+                                                      decoration: const BoxDecoration(
                                                         color: Colors.white,
                                                         // border: Border.all(color: blueColor),
                                                       ),
@@ -1671,13 +1671,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                                           child: TextField(
                                                             controller:
                                                                 rentShareControllers,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 8),
                                                             keyboardType:
                                                                 TextInputType
                                                                     .number,
                                                             decoration:
-                                                                InputDecoration(
+                                                                const InputDecoration(
                                                               hintText: "0",
                                                               border:
                                                                   InputBorder
@@ -1698,7 +1698,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             listen: false)
                                                         .removeTenant(tenant);
                                                   },
-                                                  child: Icon(Icons.delete,
+                                                  child: const Icon(Icons.delete,
                                                       size: 15),
                                                 ),
                                               ),
@@ -1714,15 +1714,15 @@ class _Edit_leaseState extends State<Edit_lease>
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
-                            SizedBox(
+                            const SizedBox(
                               height: 8,
                             ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           if (Provider.of<SelectedCosignersProvider>(context)
                               .cosigners
                               .isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 13),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 13),
                               child: Text(
                                 'Consigner:',
                                 style: TextStyle(
@@ -1732,7 +1732,7 @@ class _Edit_leaseState extends State<Edit_lease>
                           if (Provider.of<SelectedCosignersProvider>(context)
                               .cosigners
                               .isNotEmpty)
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           if (Provider.of<SelectedCosignersProvider>(context)
@@ -1847,11 +1847,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                         dataRowHeight: 30,
                                         headingRowColor: MaterialStateColor
                                             .resolveWith((states) =>
-                                                Color.fromRGBO(21, 43, 83, 1)),
-                                        headingTextStyle: TextStyle(
+                                                const Color.fromRGBO(21, 43, 83, 1)),
+                                        headingTextStyle: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
-                                        columns: [
+                                        columns: const [
                                           DataColumn(
                                               label: Text('Name',
                                                   style:
@@ -1881,12 +1881,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                               DataCell(
                                                 Text(
                                                     '${cosigner.firstName} ${cosigner.lastName}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12)),
                                               ),
                                               DataCell(
                                                 Text('${cosigner.phoneNumber}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12)),
                                               ),
                                               DataCell(
@@ -1900,10 +1900,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                           // tenent_popup(cosigner,index);
                                                         });
                                                       },
-                                                      child: Icon(Icons.edit,
+                                                      child: const Icon(Icons.edit,
                                                           size: 15),
                                                     ),
-                                                    SizedBox(width: 5),
+                                                    const SizedBox(width: 5),
                                                     InkWell(
                                                       onTap: () {
                                                         Provider.of<SelectedCosignersProvider>(
@@ -1912,7 +1912,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             .removeConsigner(
                                                                 cosigner);
                                                       },
-                                                      child: Icon(Icons.delete,
+                                                      child: const Icon(Icons.delete,
                                                           size: 15),
                                                     ),
                                                   ],
@@ -2201,10 +2201,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                     width: 1,
                                     color: const Color.fromRGBO(21, 43, 83, 1),
                                   ),
-                                  columnWidths: {
-                                    0: const FlexColumnWidth(2),
-                                    1: const FlexColumnWidth(2),
-                                    2: const FlexColumnWidth(1.3),
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(2),
+                                    1: FlexColumnWidth(2),
+                                    2: FlexColumnWidth(1.3),
                                   },
                                   children: [
                                     if (formDataRecurringList.isNotEmpty)
@@ -2688,11 +2688,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               ),
                               onPressed: _pickPdfFiles,
-                              child: Text('Upload'),
+                              child: const Text('Upload'),
                             ),
                           ),
 
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           const SizedBox(height: 10),
                           Flexible(
                             fit: FlexFit.loose,
@@ -5321,7 +5321,7 @@ class _AddTenantState extends State<AddTenant> {
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             //checked
@@ -5338,19 +5338,19 @@ class _AddTenantState extends State<AddTenant> {
                       });
                     },
                     activeColor: isChecked
-                        ? Color.fromRGBO(21, 43, 81, 1)
+                        ? const Color.fromRGBO(21, 43, 81, 1)
                         : Colors.black,
                   ),
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             isChecked
                 ? Column(
                     children: [
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       // Row(
                       //   children: [
                       //     Expanded(
@@ -5417,14 +5417,14 @@ class _AddTenantState extends State<AddTenant> {
                       //     ),
                       //   ],
                       // ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: Colors.grey),
                         ),
                         child: DataTable(
-                          columns: [
+                          columns: const [
                             DataColumn(label: Text('Tenant Name')),
                             DataColumn(label: Text('Select')),
                           ],
@@ -5470,7 +5470,7 @@ class _AddTenantState extends State<AddTenant> {
                                     }*/
                                       },
                                       activeColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                          const Color.fromRGBO(21, 43, 81, 1),
                                     ),
                                   ),
                                 ),
@@ -5479,7 +5479,7 @@ class _AddTenantState extends State<AddTenant> {
                           }).toList(),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -5492,8 +5492,8 @@ class _AddTenantState extends State<AddTenant> {
                                 width: 50,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  boxShadow: [
+                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -5503,11 +5503,11 @@ class _AddTenantState extends State<AddTenant> {
                                 ),
                                 child: Center(
                                   child: isLoading
-                                      ? SpinKitFadingCircle(
+                                      ? const SpinKitFadingCircle(
                                           color: Colors.white,
                                           size: 25.0,
                                         )
-                                      : Text(
+                                      : const Text(
                                           "Add",
                                           style: TextStyle(
                                               color: Colors.white,
@@ -5532,7 +5532,7 @@ class _AddTenantState extends State<AddTenant> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Colors.white,
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -5542,11 +5542,11 @@ class _AddTenantState extends State<AddTenant> {
                                 ),
                                 child: Center(
                                   child: isLoading
-                                      ? SpinKitFadingCircle(
+                                      ? const SpinKitFadingCircle(
                                           color: Colors.white,
                                           size: 25.0,
                                         )
-                                      : Text(
+                                      : const Text(
                                           "Cancel",
                                           style: TextStyle(
                                               color:
@@ -5807,8 +5807,8 @@ class _AddTenantState extends State<AddTenant> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    boxShadow: [
-                                      const BoxShadow(
+                                    boxShadow: const [
+                                      BoxShadow(
                                         color: Colors.black26,
                                         offset: Offset(1.0, 1.0),
                                         blurRadius: 8.0,
@@ -5874,8 +5874,8 @@ class _AddTenantState extends State<AddTenant> {
                                         horizontal: 12.0, vertical: 0),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        boxShadow: [
-                                          const BoxShadow(
+                                        boxShadow: const [
+                                          BoxShadow(
                                             color: Colors.black26,
                                             offset: Offset(1.0,
                                                 1.0), // Shadow offset to the bottom right
@@ -5950,8 +5950,8 @@ class _AddTenantState extends State<AddTenant> {
                                         horizontal: 12.0, vertical: 0),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        boxShadow: [
-                                          const BoxShadow(
+                                        boxShadow: const [
+                                          BoxShadow(
                                             color: Colors.black26,
                                             offset: Offset(1.0,
                                                 1.0), // Shadow offset to the bottom right
@@ -6118,7 +6118,7 @@ class _AddTenantState extends State<AddTenant> {
                         .addTenant(tenant);
                   }
                 },
-                child: Text("Add")),
+                child: const Text("Add")),
           ],
         ),
       ),
@@ -6598,7 +6598,7 @@ class _AddCosignerState extends State<AddCosigner> {
                       }
                     }
                   },
-                  child: Text("add"),
+                  child: const Text("add"),
                 )
               ],
             ),

@@ -174,7 +174,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 
   void fetchApplicantInForm() {
     // Delayed execution to set the values after 1 second
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _applicantFirstNameController.text =
             widget.applicantDetail.applicantFirstName ?? '';
@@ -662,7 +662,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   ),
                                 ),
 
-                                SizedBox(
+                                const SizedBox(
                                   height: 16,
                                 ),
                                 Text(
@@ -673,7 +673,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     color: blueColor,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Container(
@@ -699,14 +699,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Rental Address',
                                           controller: _rentalAddressController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -717,14 +717,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'City',
                                           controller: _rentalCityController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -735,14 +735,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'State',
                                           controller: _rentalStateController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -753,14 +753,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Country',
                                           controller: _rentalCountryController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -771,14 +771,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Postcode',
                                           controller: _rentalPostcodeController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -789,14 +789,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Start Date',
                                           controller: _startDateController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -807,14 +807,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'End Date',
                                           controller: _endDateController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -825,14 +825,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Rent Amount',
                                           controller: _rentController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -843,19 +843,19 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Reason for Leaving',
                                           controller: _leavingReasonController,
                                         ),
-                                        SizedBox(height: 16),
+                                        const SizedBox(height: 16),
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 16,
                                 ),
                                 Text(
@@ -866,7 +866,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     color: blueColor,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Container(
@@ -892,7 +892,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -900,7 +900,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _rentalOwnerFirstNameController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -911,7 +911,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -919,7 +919,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _rentalOwnerLastNameController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -930,7 +930,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -938,7 +938,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _rentalOwnerEmailController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -949,7 +949,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -957,12 +957,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _rentalOwnerPhoneNumberController,
                                         ),
-                                        SizedBox(height: 16),
+                                        const SizedBox(height: 16),
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 16,
                                 ),
                                 Text(
@@ -973,7 +973,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     color: blueColor,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Container(
@@ -999,14 +999,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'Company Name',
                                           controller: _employmentNameController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1017,7 +1017,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1025,7 +1025,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _employmentStreetAddressController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1036,14 +1036,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
                                           hintText: 'City',
                                           controller: _employmentCityController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1054,7 +1054,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1062,7 +1062,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _employmentStateController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1073,7 +1073,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1081,7 +1081,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _employmentCountryController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1092,7 +1092,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1100,7 +1100,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _employmentPostalCodeController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1111,7 +1111,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1119,7 +1119,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _employmentPrimaryEmailController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1130,7 +1130,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1138,7 +1138,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _employmentPhoneNumberController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1149,7 +1149,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1157,7 +1157,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _employmentPositionController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1168,7 +1168,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1176,7 +1176,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _supervisorFirstNameController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1187,7 +1187,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1195,7 +1195,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _supervisorLastNameController,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 12,
                                         ),
                                         Text(
@@ -1206,7 +1206,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.grey[500],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         NewCustomTextField(
@@ -1214,7 +1214,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           controller:
                                               _supervisorTitleController,
                                         ),
-                                        SizedBox(height: 16),
+                                        const SizedBox(height: 16),
                                       ],
                                     ),
                                   ),
@@ -1278,7 +1278,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600)),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 NewCustomTextField(
@@ -2367,7 +2367,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               ),
                                             ),
 
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 16,
                                             ),
                                             Text(
@@ -2378,7 +2378,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 color: blueColor,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 5,
                                             ),
                                             Container(
@@ -2407,7 +2407,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2416,7 +2416,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalAddressController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2428,7 +2428,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2436,7 +2436,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalCityController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2448,7 +2448,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2456,7 +2456,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalStateController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2468,7 +2468,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2476,7 +2476,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalCountryController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2488,7 +2488,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2496,7 +2496,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalPostcodeController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2508,7 +2508,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2516,7 +2516,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _startDateController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2528,7 +2528,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2536,7 +2536,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _endDateController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2548,7 +2548,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2556,7 +2556,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2568,7 +2568,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2577,12 +2577,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _leavingReasonController,
                                                     ),
-                                                    SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
                                                   ],
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 16,
                                             ),
                                             Text(
@@ -2593,7 +2593,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 color: blueColor,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 5,
                                             ),
                                             Container(
@@ -2622,7 +2622,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2630,7 +2630,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalOwnerFirstNameController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2642,7 +2642,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2650,7 +2650,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalOwnerLastNameController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2662,7 +2662,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2670,7 +2670,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalOwnerEmailController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2682,7 +2682,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2690,12 +2690,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _rentalOwnerPhoneNumberController,
                                                     ),
-                                                    SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
                                                   ],
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 16,
                                             ),
                                             Text(
@@ -2706,7 +2706,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 color: blueColor,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 5,
                                             ),
                                             Container(
@@ -2735,7 +2735,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2743,7 +2743,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentNameController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2755,7 +2755,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2764,7 +2764,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentStreetAddressController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2776,7 +2776,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2784,7 +2784,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentCityController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2796,7 +2796,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2804,7 +2804,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentStateController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2816,7 +2816,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2824,7 +2824,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentCountryController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2836,7 +2836,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2844,7 +2844,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentPostalCodeController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2856,7 +2856,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2864,7 +2864,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentPrimaryEmailController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2876,7 +2876,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2884,7 +2884,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentPhoneNumberController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2896,7 +2896,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2904,7 +2904,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _employmentPositionController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2916,7 +2916,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2925,7 +2925,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _supervisorFirstNameController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2937,7 +2937,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2946,7 +2946,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _supervisorLastNameController,
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 12,
                                                     ),
                                                     Text(
@@ -2958,7 +2958,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         color: Colors.grey[500],
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
@@ -2967,7 +2967,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       controller:
                                                           _supervisorTitleController,
                                                     ),
-                                                    SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
                                                   ],
                                                 ),
                                               ),
@@ -3041,7 +3041,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       fontWeight:
                                                           FontWeight.w600)),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 10,
                                             ),
                                             NewCustomTextField(

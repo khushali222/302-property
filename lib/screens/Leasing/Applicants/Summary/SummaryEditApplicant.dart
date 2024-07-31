@@ -686,7 +686,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               ),
             ),
 
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Text(
@@ -697,7 +697,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                 color: blueColor,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Container(
@@ -721,14 +721,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Rental Address',
                       controller: _rentalAddressController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -739,14 +739,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'City',
                       controller: _rentalCityController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -757,14 +757,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'State',
                       controller: _rentalStateController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -775,14 +775,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Country',
                       controller: _rentalCountryController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -793,14 +793,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Postcode',
                       controller: _rentalPostcodeController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -811,14 +811,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Start Date',
                       controller: _startDateController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -829,14 +829,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'End Date',
                       controller: _endDateController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -847,14 +847,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Rent Amount',
                       controller: _rentController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -865,19 +865,19 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Reason for Leaving',
                       controller: _leavingReasonController,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Text(
@@ -888,7 +888,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                 color: blueColor,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Container(
@@ -912,14 +912,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'First Name',
                       controller: _rentalOwnerFirstNameController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -930,14 +930,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Last Name',
                       controller: _rentalOwnerLastNameController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -948,14 +948,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Email',
                       controller: _rentalOwnerEmailController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -966,19 +966,19 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Phone Number',
                       controller: _rentalOwnerPhoneNumberController,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Text(
@@ -989,7 +989,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                 color: blueColor,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Container(
@@ -1013,14 +1013,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Company Name',
                       controller: _employmentNameController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1031,14 +1031,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Street Address',
                       controller: _employmentStreetAddressController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1049,14 +1049,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'City',
                       controller: _employmentCityController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1067,14 +1067,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'State',
                       controller: _employmentStateController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1085,14 +1085,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Country',
                       controller: _employmentCountryController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1103,14 +1103,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Postal Code',
                       controller: _employmentPostalCodeController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1121,14 +1121,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Primary Email',
                       controller: _employmentPrimaryEmailController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1139,14 +1139,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Phone Number',
                       controller: _employmentPhoneNumberController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1157,14 +1157,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Position',
                       controller: _employmentPositionController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1175,14 +1175,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Supervisor First Name',
                       controller: _supervisorFirstNameController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1193,14 +1193,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Supervisor Last Name',
                       controller: _supervisorLastNameController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Text(
@@ -1211,14 +1211,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     NewCustomTextField(
                       hintText: 'Supervisor Title',
                       controller: _supervisorTitleController,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -1281,7 +1281,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600)),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             NewCustomTextField(

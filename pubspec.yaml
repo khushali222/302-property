@@ -75,6 +75,7 @@ dependencies:
   syncfusion_flutter_xlsio: ^25.2.7
   csv: ^6.0.0
   permission_handler: ^11.3.1
+  credit_card_type_detector: ^3.0.0
 
 dev_dependencies:
   flutter_test:

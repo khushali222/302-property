@@ -727,13 +727,13 @@ class _EditApplicantState extends State<EditApplicant> {
                           }
                         },
                         child: isLoading
-                            ? Center(
+                            ? const Center(
                                 child: SpinKitFadingCircle(
                                   color: Colors.white,
                                   size: 55.0,
                                 ),
                               )
-                            : Text(
+                            : const Text(
                                 'Update Applicant',
                                 style: TextStyle(color: Color(0xFFf7f8f9)),
                               ),

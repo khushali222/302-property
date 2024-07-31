@@ -49,7 +49,7 @@ class _ApprovedContentState extends State<ApprovedContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? Center(
+          ? const Center(
               child: SpinKitFadingCircle(
               color: Colors.black,
               size: 40.0,
@@ -94,13 +94,13 @@ class _ApprovedContentState extends State<ApprovedContent> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    SizedBox(width: 2),
+                                    const SizedBox(width: 2),
                                     Text(
                                       '${widget.applicantDetail.applicantFirstName ?? 'N/A'} ${widget.applicantDetail.applicantLastName ?? 'N/A'}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -108,7 +108,7 @@ class _ApprovedContentState extends State<ApprovedContent> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                               ],
                             ),
                             const Spacer(),
@@ -118,16 +118,16 @@ class _ApprovedContentState extends State<ApprovedContent> {
                         const SizedBox(height: 20),
                         Row(
                           children: [
-                            SizedBox(width: 65),
-                            FaIcon(
+                            const SizedBox(width: 65),
+                            const FaIcon(
                               FontAwesomeIcons.phone,
                               size: 15,
                               color: Color.fromRGBO(21, 43, 81, 1),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             Text(
                               '${widget.applicantDetail.applicantPhoneNumber ?? 'N/A'}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.w500,
@@ -138,16 +138,16 @@ class _ApprovedContentState extends State<ApprovedContent> {
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            SizedBox(width: 65),
-                            FaIcon(
+                            const SizedBox(width: 65),
+                            const FaIcon(
                               FontAwesomeIcons.home,
                               size: 15,
                               color: Color.fromRGBO(21, 43, 81, 1),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             Text(
                               '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Color.fromRGBO(21, 43, 81, 1),
                                 fontWeight: FontWeight.w500,
@@ -173,7 +173,7 @@ class _ApprovedContentState extends State<ApprovedContent> {
                     ),
                   ),
                 )
-              : Center(child: Text('No details found')),
+              : const Center(child: Text('No details found')),
     );
   }
 }

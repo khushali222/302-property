@@ -440,22 +440,22 @@ class _AddCardState extends State<AddCard> {
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 50.0,
-                          padding: EdgeInsets.only(top: 14, left: 10),
+                          padding: const EdgeInsets.only(top: 14, left: 10),
                           width: MediaQuery.of(context).size.width * .91,
                           margin: const EdgeInsets.only(bottom: 6.0),
                           //Same as `blurRadius` i guess
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: Color.fromRGBO(21, 43, 81, 1),
+                            color: const Color.fromRGBO(21, 43, 81, 1),
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0), //(x,y)
                                 blurRadius: 6.0,
                               ),
                             ],
                           ),
-                          child: Text(
+                          child: const Text(
                             "Add Card",
                             style: TextStyle(
                                 color: Colors.white,
@@ -467,7 +467,7 @@ class _AddCardState extends State<AddCard> {
                     ),
                     showmessage
                         ? Text('${errorMessageDropdown.toString()}',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red))
@@ -481,7 +481,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     tenants.isEmpty
-                        ? Center(
+                        ? const Center(
                             child: SpinKitFadingCircle(
                               color: Colors.black,
                               size: 55.0,
@@ -490,7 +490,7 @@ class _AddCardState extends State<AddCard> {
                         : DropdownButtonHideUnderline(
                             child: DropdownButtonFormField2<String>(
                               decoration:
-                                  InputDecoration(border: InputBorder.none),
+                                  const InputDecoration(border: InputBorder.none),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please select resident';
@@ -559,6 +559,9 @@ class _AddCardState extends State<AddCard> {
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
+
+
+                            
                     CustomTextField(
                       validator: (value) {
                         if (value == null ||
@@ -744,15 +747,15 @@ class _AddCardState extends State<AddCard> {
               ),
               selectedTenantId == null
                   ? Container()
-                  : Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: const Text('Cards',
+                  : const Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text('Cards',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF152b51))),
                     ),
-              selectedTenantId == null ? Container() : SizedBox(height: 8),
+              selectedTenantId == null ? Container() : const SizedBox(height: 8),
               selectedTenantId == null
                   ? Container()
                   : Padding(
@@ -771,7 +774,7 @@ class _AddCardState extends State<AddCard> {
                                 )
                               : ListView.builder(
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemCount: cardDetails.length,
                                   itemBuilder: (context, index) {
                                     return Row(
@@ -781,10 +784,10 @@ class _AddCardState extends State<AddCard> {
                                               cardDetails[index],
                                               customervaultid.toString()),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                       ],
@@ -1013,7 +1016,7 @@ class _AddCardState extends State<AddCard> {
     print('card type :' + billingData.ccType.toString());
     return Slidable(
       endActionPane: ActionPane(
-        motion: ScrollMotion(),
+        motion: const ScrollMotion(),
         children: [
           SlidableAction(
             borderRadius: BorderRadius.circular(10.0),
@@ -1052,7 +1055,7 @@ class _AddCardState extends State<AddCard> {
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Text(
                   _formatCardNumber(billingData.ccNumber ?? ''),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 21,
                   ),
@@ -1090,7 +1093,7 @@ Row _buildLogosBlock(String cardType, String ccType) {
         height: 40,
         width: 40,
         errorBuilder: (context, error, stackTrace) {
-          return Icon(
+          return const Icon(
             Icons.credit_card,
             color: Colors.white,
             size: 30,
@@ -1099,7 +1102,7 @@ Row _buildLogosBlock(String cardType, String ccType) {
       ),
       Text(
         cardType,
-        style: TextStyle(
+        style: const TextStyle(
             color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),
       ),
     ],
@@ -1112,15 +1115,15 @@ Widget _buildDetailsBlock({required String label, required String value}) {
     children: [
       Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white70,
           fontSize: 12,
         ),
       ),
-      SizedBox(height: 4),
+      const SizedBox(height: 4),
       Text(
         value,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 16,
         ),
@@ -1133,20 +1136,20 @@ LinearGradient _getCardGradient(String cardType) {
   print(cardType);
   if (cardType.toLowerCase() == "mastercard" ||
       cardType.toLowerCase() == "discover") {
-    return LinearGradient(
+    return const LinearGradient(
       colors: [Color(0xFF121E2E), Color(0xFF3A6194)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
   } else if (cardType.toLowerCase() == "visa" ||
       cardType.toLowerCase() == "jcb") {
-    return LinearGradient(
+    return const LinearGradient(
       colors: [Color(0xFF000000), Color(0xFF666666)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
   } else {
-    return LinearGradient(
+    return const LinearGradient(
       colors: [Color(0xFF949BA5), Color(0xFF393B3F)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,

@@ -293,12 +293,12 @@ class _Applicants_tableState extends State<Applicants_table> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this applicant!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Cancel",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -306,7 +306,7 @@ class _Applicants_tableState extends State<Applicants_table> {
           color: Colors.grey,
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -598,19 +598,19 @@ class _Applicants_tableState extends State<Applicants_table> {
       title: "Plan Limitation",
       desc:
           "The limit for adding applicant according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(21, 43, 83, 1),
+          color: const Color.fromRGBO(21, 43, 83, 1),
         ),
         /* DialogButton(
           child: Text(
@@ -730,7 +730,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                       if (applicantCount < applicantCountLimit) {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => AddApplicant()));
+                                builder: (context) => const AddApplicant()));
                         if (result == true) {
                           setState(() {
                             futureApplicantdata =

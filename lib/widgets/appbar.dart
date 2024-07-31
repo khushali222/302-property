@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
+import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
-import 'package:three_zero_two_property/screens/Login/login_screen.dart';
+
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
-import 'package:three_zero_two_property/widgets/test.dart';
 
 class widget_302 {
   static App_Bar({
@@ -20,7 +20,7 @@ class widget_302 {
     required BuildContext context,
   }) {
     return AppBar(
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: const IconThemeData(color: Colors.black),
       elevation: 0,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
@@ -56,27 +56,43 @@ class widget_302 {
       actions: [
         InkWell(
           onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => Plan_screen()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => getPlanDetailScreen()));
           },
           child: Container(
-            margin: EdgeInsets.symmetric(vertical: 12),
-            width: 50,
+            margin: const EdgeInsets.symmetric(vertical: 12),
+            // width: 50,
             decoration: BoxDecoration(
-              color: Color.fromRGBO(21, 43, 81, 1),
+              color: const Color.fromRGBO(21, 43, 81, 1),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: Center(
-                child: Text(
-              "Buy",
-              style: TextStyle(color: Colors.white),
-            )),
+            child: Consumer<checkPlanPurchaseProiver>(
+              builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return CircularProgressIndicator(); // or some other loading indicator
+                } else {
+                  String planName = provider
+                          .checkplanpurchaseModel?.data?.planDetail?.planName ??
+                      'No Plan';
+                  if (planName == 'Free Plan') {
+                    planName = 'Buy Now';
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Center(
+                      child: Text(planName,
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
-        Icon(
+        const Icon(
           Icons.notifications_outlined,
           color: Color.fromRGBO(21, 43, 81, 1),
         ),
@@ -85,7 +101,7 @@ class widget_302 {
         //     size: 20,
         //     color: Color.fromRGBO(21, 43, 81, 1),
         //   ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         FutureBuilder<String>(
@@ -93,10 +109,10 @@ class widget_302 {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Container(
-                  margin: EdgeInsets.symmetric(vertical: 12),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
                   width: 30,
                   decoration: BoxDecoration(
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: const Color.fromRGBO(21, 43, 81, 1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: PopupMenuButton(
@@ -106,11 +122,11 @@ class widget_302 {
                     child: Center(
                       child: Text(
                         snapshot.data!,
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     // offset: Offset(0.0, appBarHeight),
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(8.0),
                         bottomRight: Radius.circular(8.0),
@@ -119,13 +135,13 @@ class widget_302 {
                       ),
                     ),
                     itemBuilder: (ctx) => [
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         child: Text(
                           "WELCOME",
                         ),
                       ),
                       PopupMenuItem(
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(Icons.person),
                             //  FaIcon(
@@ -141,11 +157,32 @@ class widget_302 {
                         ),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Profile_screen()));
+                              builder: (context) => const Profile_screen()));
                         },
                       ),
                       PopupMenuItem(
-                        child: Row(
+                        child: const Row(
+                          children: [
+                            Icon(Icons.person),
+                            //  FaIcon(
+                            //    FontAwesomeIcons.user,
+                            //    size: 20,
+                            //    color: Colors.black,
+                            //  ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("User Permission"),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const UserPermissionScreen()));
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: const Row(
                           children: [
                             FaIcon(
                               FontAwesomeIcons.cog,
@@ -164,7 +201,7 @@ class widget_302 {
                         },
                       ),
                       PopupMenuItem(
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(Icons.directions_run_rounded),
                             //  FaIcon(
@@ -185,7 +222,7 @@ class widget_302 {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Login_Screen()),
+                                  builder: (context) => const Login_Screen()),
                               (route) => false);
                         },
                       ),
@@ -197,7 +234,7 @@ class widget_302 {
             }
           },
         ),
-        SizedBox(
+        const SizedBox(
           width: 20,
         ),
       ],
