@@ -27,4 +27,29 @@ class PermissionService {
       throw Exception('Failed to load permissions');
     }
   }
+
+  Future<int> postUserPermissionData(UserPermissionData data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    final Uri url = Uri.parse('$Api_url/api/permission/permission/');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $adminId",
+        },
+        body: json.encode(data.toJson()),
+      );
+
+      return response.statusCode;
+    } catch (e) {
+      print('Error: $e');
+      return 500; // Return 500 as a fallback error code
+    }
+  }
 }
