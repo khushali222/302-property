@@ -3,11 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/TenantsModule/model/workorder_model.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorder_summery.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
@@ -15,10 +18,12 @@ import '../../../constant/constant.dart';
 import '../../model/tenant_financial.dart';
 import '../../model/tenant_property.dart';
 
+import '../../repository/permission_provider.dart';
 import '../../repository/tenant_financial.dart';
 import '../../repository/workorder.dart';
 import '../../widgets/appbar.dart';
 import '../../repository/tenant_repository.dart';
+import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'add_workorder.dart';
 
@@ -122,9 +127,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("     Work Order",
+                        ? Text("        Work Order",
                         style: TextStyle(color: Colors.white))
-                        : Text("     Work Order",
+                        : Text("         Work Order",
                         style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
@@ -223,7 +228,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Status", style: TextStyle(color: Colors.white)),
+                    Text("   Status", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -439,7 +444,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   // }
   Widget _buildDataCell(String text) {
     return TableCell(
-      child: Padding(
+      child: Container(
+        height: 60,
         padding: const EdgeInsets.only(top: 20.0, left: 16),
         child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
@@ -610,98 +616,26 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   }
 
   final _scrollController = ScrollController();
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final permissionProvider = Provider.of<PermissionProvider>(context);
+    final permissions = permissionProvider.permissions;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      key: key,
+      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
+        key.currentState!.openDrawer();
+      },),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person,
-                    color: Colors.black,
-                  ),
-                  "Profile",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.home,
-                    color: Colors.black,
-                  ),
-                  "Properties",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    Icons.bar_chart,
-                    color: Colors.black,
-                  ),
-                  "Financial",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.square_list,
-                    color: Colors.white,
-                  ),
-                  "Work Order",
-                  true),
-              /* buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),*/
-            ],
-          ),
-        ),
-      ),
+      drawer:  CustomDrawer(currentpage: 'Work Order',),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            /*  SizedBox(
+              SizedBox(
               height: 20,
-            ),*/
+            ),
             //add propertytype
+            if(permissions!.workorderAdd)
             Padding(
               padding: const EdgeInsets.only(left: 13, right: 13),
               child: Row(
@@ -726,7 +660,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: (MediaQuery.of(context).size.width > 500)
+                          ? MediaQuery.of(context).size.width * 0.3 :MediaQuery.of(context).size.width * 0.4,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -740,8 +675,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width * 0.034,
+                                fontSize: (MediaQuery.of(context).size.width > 500)
+                                    ? MediaQuery.of(context).size.width * 0.028 :  MediaQuery.of(context).size.width * 0.034,
+
                               ),
                             ),
                           ],
@@ -815,7 +751,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding:
-                                  EdgeInsets.only(left: 5,bottom: 13,top: 14)
+                                  EdgeInsets.only(left: 5,bottom: 10,top: 14)
                               ),
                             ),
                           ),
@@ -948,6 +884,16 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         property.status == selectedValue)
                             .toList();
                       }
+                      if(data.length == 0){
+                        return Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Center(
+                              child: Text("No Work Order Added"),
+                            ),
+                          ],
+                        );
+                      }
                       //sortData(data);
                       print(data);
                       //   print(snapshot.data!.first.totalBalance);
@@ -1039,16 +985,19 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                   flex: 4,
                                                   child: InkWell(
                                                     onTap: (){
-                                                      // Navigator.of(context)
-                                                      //     .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
+                                                      Navigator.of(context)
+                                                          .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
                                                     },
-                                                    child: Text(
-                                                      '   ${workorder.workSubject!}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        fontSize: 13,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      child: Text(
+                                                        '${workorder.workSubject!}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -1545,6 +1494,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                           bottom: i ==
                                               _pagedData.length - 1
                                               ? BorderSide(
+                                            width: 2,
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1))
                                               : BorderSide.none,

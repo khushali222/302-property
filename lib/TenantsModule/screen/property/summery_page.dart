@@ -4,11 +4,13 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
 import '../../../widgets/titleBar.dart';
 import '../../model/sumery_model.dart';
 import '../../widgets/appbar.dart';
+import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 class summery_page extends StatefulWidget {
@@ -25,6 +27,7 @@ class _summery_pageState extends State<summery_page> {
   bool _hasError = false;
   String _errorMessage = '';
   summery_property? profiledata ;
+
   Future<void> fetchProfile() async {
 
     try {
@@ -71,91 +74,16 @@ class _summery_pageState extends State<summery_page> {
     super.initState();
     fetchProfile();
   }
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      key: key,
+      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
+       key.currentState!.openDrawer();
+      },),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person,
-                    color: Colors.black,
-                  ),
-                  "Profile",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.home,
-                    color: Colors.white,
-                  ),
-                  "Properties",
-                  true),
-              buildListTile(
-                  context,
-                  const Icon(
-                    Icons.bar_chart,
-                    color: Colors.black,
-                  ),
-                  "Financial",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.square_list,
-                    color: Colors.black,
-                  ),
-                  "Work Order",
-                  false),
-              /* buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),*/
-            ],
-          ),
-        ),
-      ),
+      drawer:  CustomDrawer(currentpage: 'Properties',),
       body: _isLoading
           ? Center(
         child: SpinKitFadingCircle(
@@ -170,6 +98,7 @@ class _summery_pageState extends State<summery_page> {
           :SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 20,),
             titleBar(
               width: MediaQuery.of(context).size.width * .91,
               title: 'Property Details',

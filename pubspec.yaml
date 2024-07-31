@@ -68,11 +68,12 @@ dependencies:
   file_picker: ^6.2.1
   fl_chart:
   flutter_slidable:
+  cached_network_image:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.13.1"
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
   custom_pop_up_menu: ^1.2.4
 
@@ -108,6 +109,7 @@ flutter:
   assets:
      - assets/
      - assets/images/
+     - assets/images/tenants/
      - assets/icons/
      - assets/images/applogo.png
      - assets/dumb1.json
@@ -129,6 +131,10 @@ flutter:
      - family: mulish
        fonts:
          - asset: assets/font/Mulish-ExtraLight.ttf
+     - family: Poppins
+       fonts:
+         - asset: assets/font/poppins.ttf
+
 
 
   # For details regarding fonts from package dependencies,

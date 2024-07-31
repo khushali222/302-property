@@ -21,6 +21,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/ApplicantModel.dart';
+import 'applicant_summery.dart';
 
 class Applicants_table extends StatefulWidget {
   @override
@@ -1111,18 +1112,23 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10.0),
-                                                    child: Text(
-                                                      '${applicant.applicantFirstName} ${applicant.applicantLastName}',
-                                                      style: const TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap: (){
+                                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>applicant_summery(applicant_id: applicant.applicantId,)));
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10.0),
+                                                      child: Text(
+                                                        '${applicant.applicantFirstName} ${applicant.applicantLastName}',
+                                                        style: const TextStyle(
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 83, 1),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),

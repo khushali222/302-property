@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
+import '../screen/documents/document_dashboard.dart';
 import '../screen/financial/financial_table.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
@@ -41,6 +42,10 @@ Widget buildListTile(
         else if (title == "Work Order") {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => WorkOrderTable()));
+        }
+        else if (title == "Documents") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ReportsMainScreen()));
         }
 
       },

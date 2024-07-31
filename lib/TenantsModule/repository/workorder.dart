@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/TenantsModule/model/workorder_summery_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import '../model/workorder_model.dart';
@@ -21,7 +22,7 @@ class WorkOrderRepository {
         'id': 'CRM $id',
       },
     );
-
+  print(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
 
@@ -97,6 +98,7 @@ class WorkOrderRepository {
     String? tenant,
     String? rentalid,
     String? unitid,
+ List? workOrder_images,
     bool? entry,
   }) async {
     // Constructing the request data
@@ -113,7 +115,7 @@ class WorkOrderRepository {
       'statusUpdatedBy': tenant,
       'rental_id': rentalid,
       'unit_id': unitid,
-      'workOrderImage': [],
+      'workOrder_images': workOrder_images,
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -151,5 +153,47 @@ class WorkOrderRepository {
     }
   }
 
+  static Future<WorkOrderData_summery> getworkorderSummary(String workorderId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("tenant_id");
+    String? admin_id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
 
+    final url = Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
+    print('$Api_url/api/work-order/workorder_details/$workorderId');
+    final response = await http.get(
+        url,
+        headers: {"authorization" : "CRM $token","id":"CRM $id",}
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body)["data"];
+      return WorkOrderData_summery.fromJson(data);
+    } else {
+      throw Exception('Failed to fetch workorder summary: ${response.body}');
+    }
+  }
+  static Future<bool> updateworkorderSummary(Map<String,dynamic> workorder,String workorderId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("tenant_id");
+    String? admin_id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    //http://localhost:4000/api/work-order/work-order/1721286680248
+    final url = Uri.parse('$Api_url/api/work-order/work-order/$workorderId');
+    print('$Api_url/api/work-order/workorder_details/$workorderId');
+    final response = await http.put(
+        url,
+        headers: {"authorization" : "CRM $token","id":"CRM $id", 'Content-Type': 'application/json; charset=UTF-8',},
+        body: jsonEncode({
+          "workOrder": workorder
+        })
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body)["data"];
+      return true;
+    } else {
+      throw Exception('Failed to fetch workorder summary: ${response.body}');
+    }
+  }
 }

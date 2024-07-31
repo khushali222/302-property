@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -14,8 +15,9 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
+import '../../../widgets/appbar.dart';
+import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/drawer_tiles.dart';
 
 import 'CardModel.dart';
 import 'Service.dart';
@@ -350,75 +352,11 @@ class _AddCardState extends State<AddCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
+        Scaffold.of(context).openDrawer();
+      },),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties"),
-            ],
-          ),
-        ),
-      ),
+      drawer:  CustomDrawer(currentpage: 'Financial',),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
-
+import "../screen/Properties/Properties_table.dart";
+import '../screen/dashboard.dart';
+import '../screen/profile.dart';
+import '../screen/Tenants/Tenants_table.dart';
+import '../screen/RentalRoll/lease_table.dart';
+import '../screen/Workorder/Workorder_table.dart';
 
 Widget buildListTile(
   BuildContext context,
@@ -18,15 +23,39 @@ Widget buildListTile(
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ListTile(
       onTap: () {
-      /*  if (title == "Dashboard") {
+        if (title == "Properties") {
+
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Dashboard()));
-        } else if (title == "Add Property Type") {
+              context, MaterialPageRoute(builder: (context) => PropertiesTable()));
+        }/* else if (title == "Add Property Type") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => PropertyTable()));
         } else if (title == "Add Staff Member") {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => StaffTable()));
+        }*/
+        else if (title == "Dashboard") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
+        } else if (title == "Profile") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Profile_screen()));
+        }
+        else if (title == "Tenants") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Tenants_table()));
+        }
+        else if (title == "Rent Roll") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Lease_table()));
+        }
+        else if (title == "Work Order") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Workorder_table()));
+        }
+       /* else if (title == "Documents") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ReportsMainScreen()));
         }*/
       },
       leading: leadingIcon,

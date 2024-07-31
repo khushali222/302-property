@@ -9,6 +9,9 @@ import 'package:three_zero_two_property/provider/property_summery.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
+import 'StaffModule/repository/staffpermission_provider.dart';
+import 'TenantsModule/repository/permission_provider.dart';
+
 // void main() {
 //   runApp(
 //     MultiProvider(providers: [ ChangeNotifierProvider(
@@ -99,6 +102,12 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => LeaseLedgerProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => PermissionProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => StaffPermissionProvider(),
+          ),
         ],
         child: MyApp(),
       ),
@@ -115,6 +124,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // navigatorKey: navigatorKey,
       theme: ThemeData(
+        fontFamily: "Poppins",
         iconTheme: IconThemeData(color: Colors.black),
         colorScheme:
             ColorScheme.fromSeed(seedColor: Color.fromRGBO(21, 43, 83, 1)),

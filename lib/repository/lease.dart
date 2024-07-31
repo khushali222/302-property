@@ -95,7 +95,8 @@ class LeaseRepository {
   Future<List<Lease1>> fetchLease(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     adminId = prefs.getString("adminId");
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     final response =
         await http.get(Uri.parse('$Api_url/api/leases/leases/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
@@ -150,8 +151,9 @@ class LeaseRepository {
 
   Future<String> fetchCompanyName(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
     final String apiUrl =
         '${Api_url}/api/admin/admin_profile/$adminId';
 
@@ -193,8 +195,9 @@ class LeaseRepository {
 
   static Future<Map<String, dynamic>> fetchLeaseData(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
     // Replace with your actual API call
     final response =
         await http.get(Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
@@ -230,8 +233,9 @@ class LeaseRepository {
   // }
   Future<void> updateLease(Lease1 lease) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
     final response = await http.put(
       Uri.parse('$Api_url/api/leases/leases/${lease.leaseId}'),
 
@@ -258,8 +262,9 @@ class LeaseRepository {
 
   Future<LeaseDetails> fetchLeaseDetails(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
     final response = await http.get(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
       headers: {"authorization" : "CRM $token",
         "id":"CRM $id",},); // Update with your actual API URL
@@ -276,8 +281,9 @@ class LeaseRepository {
   }
   static Future<LeaseSummary> fetchLeaseSummary(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
       headers: {"authorization": "CRM $token","id":"CRM $id",},
@@ -291,8 +297,9 @@ class LeaseRepository {
   }
   Future<LeaseLedger?> fetchLeaseLedger(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
     final response = await http.get(
       Uri.parse('$Api_url/api/payment/charges_payments/$leaseId'),
       headers: {"authorization": "CRM $token","id":"CRM $id",},
@@ -309,8 +316,9 @@ class LeaseRepository {
 
   Future<int> postCharge(Charge charge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
     final response = await http.post(
       Uri.parse('$Api_url/api/charge/charge'),
       headers: {

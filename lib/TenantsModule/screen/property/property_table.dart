@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -14,6 +15,7 @@ import '../../model/tenant_property.dart';
 
 import '../../widgets/appbar.dart';
 import '../../repository/tenant_repository.dart';
+import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 
 
@@ -433,7 +435,8 @@ class _PropertyTableState extends State<PropertyTable> {
   // }
   Widget _buildDataCell(String text) {
     return TableCell(
-      child: Padding(
+      child: Container(
+        height: 60,
         padding: const EdgeInsets.only(top: 20.0, left: 16),
         child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
@@ -604,91 +607,16 @@ class _PropertyTableState extends State<PropertyTable> {
   }
 
   final _scrollController = ScrollController();
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      key: key,
+      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
+        key.currentState!.openDrawer();
+      },),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person,
-                    color: Colors.black,
-                  ),
-                  "Profile",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.home,
-                    color: Colors.white,
-                  ),
-                  "Properties",
-                  true),
-              buildListTile(
-                  context,
-                  const Icon(
-                    Icons.bar_chart,
-                    color: Colors.black,
-                  ),
-                  "Financial",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.square_list,
-                    color: Colors.black,
-                  ),
-                  "Work Order",
-                  false),
-              /* buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),*/
-            ],
-          ),
-        ),
-      ),
+      drawer:  CustomDrawer(currentpage: 'Properties',),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -706,7 +634,8 @@ class _PropertyTableState extends State<PropertyTable> {
                     */
             /*  final result = await Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) => Add_property()));*//*
+                              builder: (context) => Add_property()));*/
+            /*
                      *//* if (result == true) {
                         setState(() {
                           futurePropertyTypes =
@@ -810,7 +739,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding:
-                                  EdgeInsets.only(left: 5,bottom: 13,top: 14)
+                                  EdgeInsets.only(left: 5,bottom: 10,top: 14)
                               ),
                             ),
                           ),
@@ -923,7 +852,7 @@ class _PropertyTableState extends State<PropertyTable> {
                       return Center(child: Text('No data available'));
                     } else {
                       var data = snapshot.data!;
-                     /* if (selectedValue == null && searchvalue!.isEmpty) {
+                      if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
 
                       } else if (selectedValue == "All") {
@@ -931,19 +860,21 @@ class _PropertyTableState extends State<PropertyTable> {
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((property) =>
-                        property.propertyType!
+                        property.rentalAdress!
                             .toLowerCase()
-                            .contains(searchvalue!.toLowerCase()) ||
-                            property.propertysubType!
-                                .toLowerCase()
-                                .contains(searchvalue!.toLowerCase()))
+                            .contains(searchvalue!.toLowerCase()))
                             .toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((property) =>
-                        property.propertyType == selectedValue)
-                            .toList();
-                      }*/
+                      }
+                      if(data.length == 0){
+                        return Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Center(
+                              child: Text("No data Found"),
+                            ),
+                          ],
+                        );
+                      }
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -1461,6 +1392,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Container(
+                                      padding:    const EdgeInsets.only(left: 2),
                                       width: MediaQuery.of(context).size.width *
                                           .91,
                                       child: Table(
@@ -1480,7 +1412,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                               // TableCell(child: Text('yash')),
                                               // TableCell(child: Text('yash')),
                                               _buildHeader(
-                                                  'Main Type',
+                                                  'Rental Address',
                                                   0,
                                                       (property) =>
                                                   property.rentalAdress!),
@@ -1489,6 +1421,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   'Start Date', 2, null),
                                               _buildHeader(
                                                   'End Date', 3, null),
+
                                              // _buildHeader('Actions', 4, null),
                                             ],
                                           ),
@@ -1498,7 +1431,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   horizontal: BorderSide.none),
                                             ),
                                             children: List.generate(
-                                                5,
+                                                3,
                                                     (index) => TableCell(
                                                     child:
                                                     Container(height: 20))),
@@ -1544,14 +1477,14 @@ class _PropertyTableState extends State<PropertyTable> {
                                                     .rentalAdress!),
 
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].startDate!),
+
+                                                      _pagedData[i].startDate!,
                                                 ),
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].endDate!),
-                                                ),
 
+                                                      _pagedData[i].endDate!,
+                                                ),
+                                               /* _buildActionsCell(_pagedData[i]),*/
                                               ],
                                             ),
                                         ],
