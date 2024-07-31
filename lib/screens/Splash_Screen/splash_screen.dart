@@ -20,40 +20,42 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _navigateToCorrectScreen() async {
-    if (!mounted) return;
-
-    await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
-        .fetchPlanPurchaseDetail();
-
-    // Access the expiration date
-    var provider =
-        Provider.of<checkPlanPurchaseProiver>(context, listen: false);
-    var expirationDateString =
-        provider.checkplanpurchaseModel?.data?.expirationDate;
-
-    DateTime? expirationDate;
-    if (expirationDateString != null) {
-      expirationDate = DateFormat('yyyy-MM-dd').parse(expirationDateString);
-    }
-
-    print('Expiration Date: $expirationDate');
-
-    DateTime now = DateTime.now();
-    String currentDate = DateFormat('yyyy-MM-dd').format(now);
-    print(currentDate);
-
-    bool isPlanActive = expirationDate != null && expirationDate.isAfter(now);
-
-    if (isPlanActive) {
-      print('The plan is active.');
-    } else {
-      print('The plan is not active.');
-    }
-
     await Future.delayed(Duration(seconds: 3)); // Simulate splash screen delay
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     print(isAuthenticated);
+
+    bool? isPlanActive = false;
+    if (isAuthenticated) {
+      if (!mounted) return;
+      await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
+          .fetchPlanPurchaseDetail();
+
+      // Access the expiration date
+      var provider =
+          Provider.of<checkPlanPurchaseProiver>(context, listen: false);
+      var expirationDateString =
+          provider.checkplanpurchaseModel?.data?.expirationDate;
+
+      DateTime? expirationDate;
+      if (expirationDateString != null) {
+        expirationDate = DateFormat('yyyy-MM-dd').parse(expirationDateString);
+      }
+
+      print('Expiration Date: $expirationDate');
+
+      DateTime now = DateTime.now();
+      String currentDate = DateFormat('yyyy-MM-dd').format(now);
+      print(currentDate);
+
+      isPlanActive = expirationDate != null && expirationDate.isAfter(now);
+
+      if (isPlanActive) {
+        print('The plan is active.');
+      } else {
+        print('The plan is not active.');
+      }
+    }
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -65,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => isAuthenticated == true
-            ? isPlanActive
+            ? isPlanActive!
                 ? Dashboard()
                 : PlanPurchaseCard()
             : Login_Screen(),

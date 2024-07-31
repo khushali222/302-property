@@ -10,9 +10,12 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String Api_url = "http://192.168.1.15:4000";
 //String Api_url = "http://192.168.1.14:4000";
 // String Api_url = "http://192.168.1.7:4000";
-String Api_url = "http://192.168.1.34:4000";
+String Api_url = "http://192.168.1.22:4000";
 
 // String Api_url = "https://saas.cloudrentalmanager.com";
+
+
+String image_upload_url = "https://saas.cloudrentalmanager.com";
 
 String formatDate(String dateTime) {
   return DateFormat('dd/MM/yyyy').format(DateTime.parse(dateTime));
@@ -21,6 +24,16 @@ String formatDate(String dateTime) {
 String formatDate2(String dateStr) {
   DateTime dateTime = DateTime.parse(dateStr);
   return DateFormat('dd/MM/yyyy').format(dateTime);
+}
+
+String formatDate3(String dateStr) {
+  DateTime dateTime = DateTime.parse(dateStr);
+  return DateFormat('dd-MM-yyyy').format(dateTime);
+}
+
+String reverseFormatDate(String formattedDate) {
+  DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
+  return dateTime.toIso8601String();
 }
 
 Color blueColor = Color.fromRGBO(21, 43, 83, 1);

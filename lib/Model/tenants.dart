@@ -77,19 +77,19 @@ class Tenant {
     json.forEach((key, value) {
       print('$key: $value');
     });
-    id = json['_id'] ?? "";
+
     tenantId = json['tenant_id'] ?? "";
     tenant_residentStatus:
     json[tenant_residentStatus] ?? '';
     adminId = json['admin_id'] ?? "";
     tenantFirstName = json['tenant_firstName'] ?? "";
     tenantLastName = json['tenant_lastName'] ?? "";
-    tenantPhoneNumber = json['tenant_phoneNumber'] ?? "";
-    tenantAlternativeNumber = json['tenant_alternativeNumber'] ?? "";
+    tenantPhoneNumber = json['tenant_phoneNumber'].toString();
+    tenantAlternativeNumber = json['tenant_alternativeNumber'].toString();
     tenantEmail = json['tenant_email'] ?? "";
     tenantAlternativeEmail = json['tenant_alternativeEmail'] ?? "";
     tenantPassword = json['tenant_password'] ?? "";
-    tenantBirthDate = json['tenant_birthDate'] ?? "";
+    tenantBirthDate = json['tenant_birthDate'].toString();
     taxPayerId = json['taxPayer_id'] ?? "";
     comments = json['comments'] ?? "";
     emergencyContact = json['emergency_contact'] != null
@@ -97,8 +97,6 @@ class Tenant {
         : null;
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
-    isDelete = json['is_delete'] ?? "";
-    v = json['__v'] ?? "";
     rentalAddress = json['rental_adress'] ?? "";
     rentalUnit = json['rental_unit'] ?? "";
   }
@@ -141,7 +139,7 @@ class EmergencyContact {
     name = json['name'] ?? "";
     relation = json['relation'] ?? "";
     email = json['email'] ?? "";
-    phoneNumber = json['phoneNumber'] ?? "";
+    phoneNumber = json['phoneNumber'].toString();
   }
 
   Map<String, dynamic> toJson() {
