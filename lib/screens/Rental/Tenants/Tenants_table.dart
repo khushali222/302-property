@@ -7,11 +7,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
+import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/AdminTenantInsuranceTable.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import '../../../Model/tenants.dart';
 import '../../../constant/constant.dart';
-import '../../../model/tenants.dart';
+
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 
@@ -616,8 +618,13 @@ class _Tenants_tableState extends State<Tenants_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/tenant/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/tenant/limitation/$id'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -764,6 +771,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                   "Maintenance",
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "Tenants"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -799,10 +814,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
+                          : MediaQuery.of(context).size.width * 0.05,
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.30
+                          : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -817,7 +834,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.034,
+                                MediaQuery.of(context).size.width < 500
+                                    ? 14
+                                    : 20,
                               ),
                             ),
                           ],
@@ -882,7 +901,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 24),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -1012,6 +1031,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             .toList();
                       }
                       sortData(data);
+                      data = data.reversed.toList();
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
@@ -1114,7 +1134,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                           const EdgeInsets.all(
                                                               10.0),
                                                       child: Text(
-                                                        '${tenants.tenantFirstName} ${tenants.tenantLastName}',
+                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1151,8 +1171,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 Expanded(
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${tenants.createdAt}'),
+
+                                                    '${tenants.createdAt ?? ''}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1500,6 +1520,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   .contains(searchvalue.toLowerCase()))
                           .toList();
                     }
+                    _tableData = _tableData.reversed.toList();
                     _tableData = filteredData!;
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
@@ -1618,8 +1639,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   _buildDataCell(_pagedData[i]
                                                       .tenantAlternativeEmail!),
                                                   _buildDataCell(
-                                                    formatDate(_pagedData[i]
-                                                        .createdAt!),
+                                                    _pagedData[i]
+                                                        .createdAt!,
                                                   ),
                                                   _buildActionsCell(
                                                       _pagedData[i]),
@@ -1649,5 +1670,3 @@ class _Tenants_tableState extends State<Tenants_table> {
     );
   }
 }
-
-void main() => runApp(MaterialApp(home: Tenants_table()));

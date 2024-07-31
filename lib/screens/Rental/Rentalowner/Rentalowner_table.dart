@@ -394,8 +394,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -521,6 +526,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   "Maintenance",
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "RentalOwner"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -555,7 +568,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
                           : MediaQuery.of(context).size.width * 0.065,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      width:  (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -566,7 +581,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.034,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 14
+                                : 20,
                           ),
                         ),
                       ),
@@ -624,7 +641,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 19),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -825,8 +842,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           MaterialPageRoute(
                                                               builder: (context) =>
                                                                   Rentalowners_summery(
-                                                                    rentalOwnersid: rentals.rentalownerId!,)));
-                                                      },
+                                                                    rentalOwnersid:
+                                                                        rentals
+                                                                            .rentalownerId!,
+                                                                  )));
+                                                    },
                                                     child: Text(
                                                       '   ${rentals.rentalOwnername}',
                                                       style: TextStyle(
@@ -1171,7 +1191,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                       // TableCell(child: Text('yash')),
                                       // TableCell(child: Text('yash')),
                                       // TableCell(child: Text('yash')),
-
                                       _buildHeader('Name', 0,
                                           (rental) => rental.rentalOwnername!),
                                       _buildHeader(

@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
@@ -15,6 +16,7 @@ class Staffmember_table extends StatefulWidget {
   @override
   State<Staffmember_table> createState() => _Staffmember_tableState();
 }
+
 class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
   // The set of indices of selected dessert rows
   Set<int> _dessertSelections = {};
@@ -56,9 +58,12 @@ class _RestorableDessertSelections extends RestorableProperty<Set<int>> {
   @override
   Object toPrimitives() => _dessertSelections.toList();
 }
-class _Staffmember_tableState extends State<Staffmember_table> with RestorationMixin {
+
+class _Staffmember_tableState extends State<Staffmember_table>
+    with RestorationMixin {
   final RestorableInt _rowIndex = RestorableInt(0);
-  final RestorableInt _rowsPerPage = RestorableInt(PaginatedDataTable.defaultRowsPerPage);
+  final RestorableInt _rowsPerPage =
+      RestorableInt(PaginatedDataTable.defaultRowsPerPage);
   final RestorableBool _sortAscending = RestorableBool(true);
   final RestorableIntN _sortColumnIndex = RestorableIntN(null);
 
@@ -70,6 +75,7 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
     super.initState();
     _dataSource = _DataSource(context);
   }
+
   @override
   String get restorationId => 'data_table_demo';
 
@@ -121,10 +127,10 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
   }
 
   void _sort<T>(
-      Comparable<T> Function(_Details d) getField,
-      int columnIndex,
-      bool ascending,
-      ) {
+    Comparable<T> Function(_Details d) getField,
+    int columnIndex,
+    bool ascending,
+  ) {
     _dataSource._sort<T>(getField, ascending);
     setState(() {
       _sortColumnIndex.value = columnIndex;
@@ -141,11 +147,8 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
     _dataSource.dispose();
     super.dispose();
   }
-  final List<String> items = [
-    'Residential',
-    "Commercial",
-    "All"
-  ];
+
+  final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String? selectedOption;
   @override
@@ -165,17 +168,48 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
                 child: Image.asset("assets/images/logo.png"),
               ),
               SizedBox(height: 40),
-              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
-              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
-              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.white,), "Add Staff Member",true),
-              buildDropdownListTile(context,
-                  Icon(Icons.key), "Rental", ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(context,Icon(Icons.thumb_up_alt_outlined), "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(context,
-                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.circle_grid_3x3,
+                    color: Colors.black,
+                  ),
+                  "Dashboard",
+                  false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.house,
+                    color: Colors.black,
+                  ),
+                  "Add Property Type",
+                  false),
+              buildListTile(
+                  context,
+                  Icon(
+                    CupertinoIcons.person_add,
+                    color: Colors.white,
+                  ),
+                  "Add Staff Member",
+                  true),
+              buildDropdownListTile(context, Icon(Icons.key), "Rental",
+                  ["Properties", "RentalOwner", "Tenants"]),
+              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
+                  "Leasing", ["Rent Roll", "Applicants"]),
+              buildDropdownListTile(
+                  context,
+                  Image.asset("assets/icons/maintence.png",
+                      height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -190,8 +224,9 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>StaffTable()));
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => StaffTable()));
                   },
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.034,
@@ -209,7 +244,8 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width * 0.034,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.034,
                             ),
                           ),
                         ],
@@ -291,8 +327,10 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
             Theme(
               data: ThemeData(
                 scaffoldBackgroundColor: Colors.white,
-                cardTheme: CardTheme( // Apply custom style to the Card wrapping the DataTable
-                  shape: RoundedRectangleBorder( // Remove border radius
+                cardTheme: CardTheme(
+                  // Apply custom style to the Card wrapping the DataTable
+                  shape: RoundedRectangleBorder(
+                    // Remove border radius
                     borderRadius: BorderRadius.zero,
                   ),
                 ),
@@ -317,20 +355,36 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
                 headingRowHeight: 60,
                 columns: [
                   DataColumn(
-                    label: Text('Name', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
-                    onSort: (columnIndex, ascending) => _sort<String>((d) => d.name, columnIndex, ascending),
+                    label: Text('Name',
+                        style: TextStyle(
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                            fontWeight: FontWeight.bold)),
+                    onSort: (columnIndex, ascending) =>
+                        _sort<String>((d) => d.name, columnIndex, ascending),
                   ),
                   DataColumn(
-                    label: Text('Designation', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
-                    onSort: (columnIndex, ascending) => _sort<String>((d) => d.designation, columnIndex, ascending),
+                    label: Text('Designation',
+                        style: TextStyle(
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                            fontWeight: FontWeight.bold)),
+                    onSort: (columnIndex, ascending) => _sort<String>(
+                        (d) => d.designation, columnIndex, ascending),
                   ),
                   DataColumn(
-                    label: Text('Contact', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
-                    onSort: (columnIndex, ascending) => _sort<String>((d) => d.contact, columnIndex, ascending),
+                    label: Text('Contact',
+                        style: TextStyle(
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                            fontWeight: FontWeight.bold)),
+                    onSort: (columnIndex, ascending) =>
+                        _sort<String>((d) => d.contact, columnIndex, ascending),
                   ),
                   DataColumn(
-                    label: Text('Mail ID', style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1), fontWeight: FontWeight.bold)),
-                    onSort: (columnIndex, ascending) => _sort<String>((d) => d.email, columnIndex, ascending),
+                    label: Text('Mail ID',
+                        style: TextStyle(
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                            fontWeight: FontWeight.bold)),
+                    onSort: (columnIndex, ascending) =>
+                        _sort<String>((d) => d.email, columnIndex, ascending),
                   ),
                 ],
                 source: _dataSource,
@@ -342,13 +396,14 @@ class _Staffmember_tableState extends State<Staffmember_table> with RestorationM
     );
   }
 }
+
 class _Details {
   _Details(
-      this.name,
-      this.designation,
-      this.contact,
-      this.email,
-      );
+    this.name,
+    this.designation,
+    this.contact,
+    this.email,
+  );
 
   final String name;
   final String designation;
@@ -356,9 +411,9 @@ class _Details {
   final String email;
   bool selected = false;
 }
+
 class _DataSource extends DataTableSource {
-  _DataSource(this.context)
-  {
+  _DataSource(this.context) {
     _details = <_Details>[
       _Details('John Doe', 'Manager', '1234567890', 'john@example.com'),
       _Details('Jane Smith', 'Supervisor', '9876543210', 'jane@example.com'),
@@ -371,11 +426,14 @@ class _DataSource extends DataTableSource {
     _details.add(newStaffMember);
     notifyListeners();
   }
+
   void _sort<T>(Comparable<T> Function(_Details d) getField, bool ascending) {
     _details.sort((a, b) {
       final aValue = getField(a);
       final bValue = getField(b);
-      return ascending ? Comparable.compare(aValue, bValue) : Comparable.compare(bValue, aValue);
+      return ascending
+          ? Comparable.compare(aValue, bValue)
+          : Comparable.compare(bValue, aValue);
     });
     notifyListeners();
   }
@@ -384,14 +442,14 @@ class _DataSource extends DataTableSource {
   DataRow? getRow(int index) {
     assert(index >= 0);
     if (index >= _details.length) return null;
-    final  staffMember = _details[index];
+    final staffMember = _details[index];
     return DataRow.byIndex(
       index: index,
       cells: [
-        DataCell(Text( staffMember.name)),
-        DataCell(Text( staffMember.designation)),
-        DataCell(Text( staffMember.contact)),
-        DataCell(Text( staffMember.email)),
+        DataCell(Text(staffMember.name)),
+        DataCell(Text(staffMember.designation)),
+        DataCell(Text(staffMember.contact)),
+        DataCell(Text(staffMember.email)),
       ],
     );
   }

@@ -23,7 +23,7 @@ class ApplicantRepository {
     final response = await http.post(
       Uri.parse('$Api_url/api/applicant/applicant'),
       headers: <String, String>{
-        "id":"CRM $id",
+        "id": "CRM $id",
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -44,8 +44,11 @@ class ApplicantRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('$Api_url/api/applicant/applicant/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+    final response = await http
+        .get(Uri.parse('$Api_url/api/applicant/applicant/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final List<dynamic> applicantJson = data['data'];
@@ -69,7 +72,7 @@ class ApplicantRepository {
     final response = await http.put(
       Uri.parse('$Api_url/api/applicant/applicant/$applicantId'),
       headers: <String, String>{
-        "id":"CRM $id",
+        "id": "CRM $id",
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -86,17 +89,18 @@ class ApplicantRepository {
     }
   }
 
-  Future<Map<String, dynamic>> DeleteApplicant({required String? id}) async {
+  Future<Map<String, dynamic>> DeleteApplicant(
+      {required String? Applicantid}) async {
+    print('id is $Applicantid');
     // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-       String? id = prefs.getString("adminId");
+    String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final http.Response response = await http.delete(
-      Uri.parse('$Api_url/api/applicant/applicant/$id'),
+      Uri.parse('$Api_url/api/applicant/applicant/$Applicantid'),
       headers: <String, String>{
-       "authorization" : "CRM $token",
-        "id":"CRM $id",
-        'Content-Type': 'application/json; charset=UTF-8',
+        "authorization": "CRM $token",
+        "id": "CRM $id",
       },
     );
     var responseData = json.decode(response.body);

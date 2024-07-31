@@ -92,6 +92,14 @@ class _Add_propertyState extends State<Add_property> {
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.white,
+                  ),
+                  "Reports",
+                  true),
             ],
           ),
         ),

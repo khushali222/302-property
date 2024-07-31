@@ -392,11 +392,11 @@ class _StaffTableState extends State<StaffTable> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'),headers: {
-          "authorization": "CRM $token",
-          "id":"CRM $id",
-        });
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -505,6 +505,14 @@ class _StaffTableState extends State<StaffTable> {
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -548,8 +556,10 @@ class _StaffTableState extends State<StaffTable> {
                       // height: 40,
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                          : MediaQuery.of(context).size.width * 0.062,
+                      width:  (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -560,7 +570,9 @@ class _StaffTableState extends State<StaffTable> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.034,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 14
+                                : 20,
                           ),
                         ),
                       ),
@@ -621,7 +633,7 @@ class _StaffTableState extends State<StaffTable> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 19),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -651,7 +663,11 @@ class _StaffTableState extends State<StaffTable> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Search here...",
-                          hintStyle: TextStyle(color: Color(0xFF8A95A8),fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ),
+                          hintStyle: TextStyle(
+                              color: Color(0xFF8A95A8),
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 14
+                                  : 18),
                           contentPadding:
                               (EdgeInsets.only(left: 5, bottom: 13, top: 14)),
                         ),
@@ -1209,7 +1225,7 @@ class _StaffTableState extends State<StaffTable> {
                     totalrecords = _tableData.length;
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 5),
+                          horizontal: 25.0, vertical: 5),
                       child: Column(
                         children: [
                           SingleChildScrollView(

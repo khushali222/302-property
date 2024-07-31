@@ -24,7 +24,6 @@ import 'package:http/http.dart' as http;
 
 import 'EditProperties.dart';
 
-
 class _Dessert {
   _Dessert(
     this.name,
@@ -302,7 +301,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
         context,
         MaterialPageRoute(
             builder: (context) => Edit_properties(
-                  properties: properties, rentalId: properties.rentalId!,
+                  properties: properties,
+                  rentalId: properties.rentalId!,
                 )));
     if (check == true) {
       setState(() {});
@@ -446,8 +446,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/rentals/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/rentals/limitation/$id'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -529,6 +534,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "Properties",
                   initvalue: false),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -564,9 +577,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     child: Container(
                       // height: 40,
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                          ? 35
+                          : 45,
+                      width: (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -581,7 +596,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.034,
+                                MediaQuery.of(context).size.width < 500
+                                    ? 14
+                                    : 20,
                               ),
                             ),
                           ],
@@ -604,7 +621,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(
-                left: 13,
+                left: 15,
                 right: 20,
               ),
               child: Row(
@@ -767,7 +784,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF8A95A8),
                         fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                            MediaQuery.of(context).size.width < 500 ? 13 : 18,
                       ),
                     ),
                     SizedBox(
@@ -780,7 +797,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF8A95A8),
                         fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                            MediaQuery.of(context).size.width < 500 ? 13 : 18,
                       ),
                     ),
                   ],
@@ -788,7 +805,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 if (MediaQuery.of(context).size.width < 500)
                   SizedBox(width: 22),
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(width: 22),
+                  SizedBox(width: 39),
               ],
             ),
             if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
@@ -919,8 +936,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                              Summery_page(properties: rentals,)));
-                                                      },
+                                                                  Summery_page(
+                                                                    properties:
+                                                                        rentals,
+                                                                  )));
+                                                    },
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -1258,12 +1278,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               onPressed:
                                                                   () async {
                                                                 // handleEdit(Propertytype);
-                                                                    var check = await Navigator.push(
+                                                                var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => Edit_properties(
-                                                                              properties: rentals, rentalId: rentals.rentalId!
-                                                                            )));
+                                                                            properties:
+                                                                                rentals,
+                                                                            rentalId:
+                                                                                rentals.rentalId!)));
                                                                 if (check ==
                                                                     true) {
                                                                   setState(
@@ -1664,7 +1686,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
   //     ),
   //   );
   // }
-
 
   Widget _buildDataCell(String text, Rentals inkText) {
     return TableCell(

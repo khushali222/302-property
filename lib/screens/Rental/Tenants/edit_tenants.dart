@@ -14,7 +14,8 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
-import '../../../model/tenants.dart';
+import '../../../Model/tenants.dart';
+
 import '../../../repository/tenants.dart';
 
 class EditTenants extends StatefulWidget {

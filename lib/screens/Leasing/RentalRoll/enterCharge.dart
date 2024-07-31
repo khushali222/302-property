@@ -55,7 +55,10 @@ class _enterChargeState extends State<enterCharge> {
     String? id = prefs.getString("adminId");
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
-      headers: {"authorization": "CRM $token","id":"CRM $id",},
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
     );
 
     if (response.statusCode == 200) {
@@ -89,7 +92,10 @@ class _enterChargeState extends State<enterCharge> {
       String? id = prefs.getString("adminId");
       final response = await http.get(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
-        headers: {"authorization": "CRM $token","id":"CRM $id",},
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
       );
 
       if (response.statusCode == 200) {
@@ -477,7 +483,6 @@ class _enterChargeState extends State<enterCharge> {
                                 );
                               },
                             );
-
                             if (pickedDate != null) {
                               String formattedDate =
                                   "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
@@ -785,7 +790,7 @@ class _enterChargeState extends State<enterCharge> {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Text(
                         validationMessage!,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -831,10 +836,10 @@ class _enterChargeState extends State<enterCharge> {
                                 ),
                               ),
                               onPressed: _pickPdfFiles,
-                              child: Text('Upload'),
+                              child: const Text('Upload'),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           const SizedBox(height: 10),
                           Flexible(
                             fit: FlexFit.loose,

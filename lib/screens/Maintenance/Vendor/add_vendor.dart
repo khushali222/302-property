@@ -497,43 +497,39 @@ class CustomTextFieldState extends State<CustomTextField> {
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
-                Material(
-                  elevation:3,
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      //border: Border.all(color: blueColor),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.black.withOpacity(0.2),
-                      //     offset: Offset(4, 4),
-                      //     blurRadius: 3,
-                      //   ),
-                      // ],
-                    ),
-                    child: TextFormField(
-                      onTap: widget.onTap,
-                      obscureText: widget.obscureText,
-                      readOnly: widget.readOnnly,
-                      keyboardType: widget.keyboardType,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          state.validate();
-                        }
-                        return null;
-                      },
-                      controller: widget.controller,
-                      decoration: InputDecoration(
-                        suffixIcon: widget.suffixIcon,
-                        hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
-                        border: InputBorder.none,
-                        hintText: widget.hintText,
+                Container(
+                  height: 50,
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
+                    //border: Border.all(color: blueColor),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        offset: Offset(4, 4),
+                        blurRadius: 3,
                       ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    onTap: widget.onTap,
+                    obscureText: widget.obscureText,
+                    readOnly: widget.readOnnly,
+                    keyboardType: widget.keyboardType,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        state.validate();
+                      }
+                      return null;
+                    },
+                    controller: widget.controller,
+                    decoration: InputDecoration(
+                      suffixIcon: widget.suffixIcon,
+                      hintStyle:
+                      TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                      border: InputBorder.none,
+                      hintText: widget.hintText,
                     ),
                   ),
                 ),

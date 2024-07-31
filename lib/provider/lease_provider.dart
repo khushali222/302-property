@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
-import 'package:three_zero_two_property/model/tenants.dart';
+
+import '../Model/tenants.dart';
 import '../model/LeaseLedgerModel.dart';
 import '../model/cosigner.dart';
 import '../repository/lease.dart';

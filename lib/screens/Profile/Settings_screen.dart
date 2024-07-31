@@ -10,8 +10,6 @@ import 'package:three_zero_two_property/repository/setting.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 
-
-
 import '../../constant/constant.dart';
 import '../../model/setting.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -45,24 +43,26 @@ class _TabBarExampleState extends State<TabBarExample> {
   final SurchargeRepository surchargeRepository =
       SurchargeRepository(baseUrl: '${Api_url}');
   final latefeeRepository latefeerepository =
-  latefeeRepository(baseUrl: '${Api_url}');
+      latefeeRepository(baseUrl: '${Api_url}');
 
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     try {
-      Setting1 surcharges =
-      await surchargeRepository.fetchSurchargeData('$id');
+      Setting1 surcharges = await surchargeRepository.fetchSurchargeData('$id');
 
-      if (surcharges !=  null) {
-
+      if (surcharges != null) {
         setState(() {
           isupdate = true;
 
-              credit.text = surcharges.surchargePercent.toString();
+          credit.text = surcharges.surchargePercent.toString();
           debit.text = surcharges.surchargePercentDebit.toString();
-          percent.text = surcharges.surchargePercentACH != 0.0 ? surcharges.surchargePercentACH.toString():"";
-          flat.text = surcharges.surchargeFlatACH != 0.0 ? surcharges.surchargeFlatACH.toString() : "";
+          percent.text = surcharges.surchargePercentACH != 0.0
+              ? surcharges.surchargePercentACH.toString()
+              : "";
+          flat.text = surcharges.surchargeFlatACH != 0.0
+              ? surcharges.surchargeFlatACH.toString()
+              : "";
           surge_id = surcharges.surchargeId.toString();
         });
       }
@@ -70,14 +70,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('Failed to load surcharge data: $e');
     }
   }
+
   Future<void> fetchlatefeeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     try {
-      Setting2 latefee =
-      await latefeerepository.fetchLatefeesData('$id');
-      if (latefee !=  null) {
-
+      Setting2 latefee = await latefeerepository.fetchLatefeesData('$id');
+      if (latefee != null) {
         setState(() {
           islatefeeupdate = true;
           late_fee.text = latefee.late_fee;
@@ -89,110 +88,139 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('Failed to load surcharge data: $e');
     }
   }
+
   Future<void> updateSurcharge() async {
     print("calling");
 
-
     try {
       Map<String, dynamic> data = {
-        "admin_id":"1714649182536",
-        "surcharge_percent": credit.text.isNotEmpty ? int.parse(credit.text) : null,
-        "surcharge_percent_debit": debit.text.isNotEmpty ? int.parse(debit.text) : null,
-        "surcharge_percent_ACH": percent.text.isNotEmpty ? int.parse(percent.text) : null , // Add your logic to get this value
-        "surcharge_flat_ACH": flat.text.isNotEmpty ? int.parse(flat.text) : null , // Add your logic to get this value
+        "admin_id": "1714649182536",
+        "surcharge_percent":
+            credit.text.isNotEmpty ? int.parse(credit.text) : null,
+        "surcharge_percent_debit":
+            debit.text.isNotEmpty ? int.parse(debit.text) : null,
+        "surcharge_percent_ACH": percent.text.isNotEmpty
+            ? int.parse(percent.text)
+            : null, // Add your logic to get this value
+        "surcharge_flat_ACH": flat.text.isNotEmpty
+            ? int.parse(flat.text)
+            : null, // Add your logic to get this value
       };
 
-      bool success = await surchargeRepository.updateSurchargeData('$surge_id', data);
+      bool success =
+          await surchargeRepository.updateSurchargeData('$surge_id', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Surcharge Updated Successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Surcharge Updated Successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to Update Surcharge')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to Update Surcharge')));
       }
     } catch (e) {
       print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
+
   Future<void> AddSurgedata() async {
     print("calling");
 
-
     try {
       Map<String, dynamic> data = {
-        "admin_id":"1714649182536",
-        "surcharge_percent": credit.text.isNotEmpty ? int.parse(credit.text) : null,
-        "surcharge_percent_debit": debit.text.isNotEmpty ? int.parse(debit.text) : null,
-        "surcharge_percent_ACH": percent.text.isNotEmpty ? int.parse(percent.text) : null , // Add your logic to get this value
-        "surcharge_flat_ACH": flat.text.isNotEmpty ? int.parse(flat.text) : null , // Add your logic to get this value
+        "admin_id": "1714649182536",
+        "surcharge_percent":
+            credit.text.isNotEmpty ? int.parse(credit.text) : null,
+        "surcharge_percent_debit":
+            debit.text.isNotEmpty ? int.parse(debit.text) : null,
+        "surcharge_percent_ACH": percent.text.isNotEmpty
+            ? int.parse(percent.text)
+            : null, // Add your logic to get this value
+        "surcharge_flat_ACH": flat.text.isNotEmpty
+            ? int.parse(flat.text)
+            : null, // Add your logic to get this value
       };
 
-      bool success = await surchargeRepository.AddSurgeData('1714649182536', data);
+      bool success =
+          await surchargeRepository.AddSurgeData('1714649182536', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Surcharge Updated Successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Surcharge Updated Successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to Update Surcharge')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to Update Surcharge')));
       }
     } catch (e) {
       print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
   Future<void> updateLatefee() async {
     print("calling");
 
-
     try {
       Map<String, dynamic> data = {
-        "admin_id":"1714649182536",
-        "duration": duration.text.isNotEmpty ? double.parse(duration.text) : null,
-        "late_fee": late_fee.text.isNotEmpty ? double.parse(late_fee.text) : null,
-
+        "admin_id": "1714649182536",
+        "duration":
+            duration.text.isNotEmpty ? double.parse(duration.text) : null,
+        "late_fee":
+            late_fee.text.isNotEmpty ? double.parse(late_fee.text) : null,
       };
 
-      bool success = await latefeerepository.updateLatefeesData('$latefee_id', data);
+      bool success =
+          await latefeerepository.updateLatefeesData('$latefee_id', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Latefee Updated Successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Latefee Updated Successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
       }
     } catch (e) {
       print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
+
   Future<void> AddLatefeedata() async {
     print("calling");
 
-
     try {
       Map<String, dynamic> data = {
-        "admin_id":"1714649182536",
+        "admin_id": "1714649182536",
         "duration": duration.text.isNotEmpty ? int.parse(duration.text) : null,
         "late_fee": late_fee.text.isNotEmpty ? int.parse(late_fee.text) : null,
       };
 
-      bool success = await latefeerepository.AddLatefeesData('1714649182536', data);
+      bool success =
+          await latefeerepository.AddLatefeesData('1714649182536', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('late_fee Updated Successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('late_fee Updated Successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to Update Surcharge')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to Update Surcharge')));
       }
     } catch (e) {
       print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2, // Number of tabs
       child: Scaffold(
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302.App_Bar(context: context, isSettingPageActive: true),
         backgroundColor: Colors.white,
         drawer: Drawer(
           backgroundColor: Colors.white,
@@ -304,50 +332,50 @@ class _TabBarExampleState extends State<TabBarExample> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
                       left: 25, right: 25, top: 20, bottom: 30),
                   child: Column(
                     children: [
-
                       SizedBox(
-                        height:40,
-                        width: MediaQuery.of(context).size.width *.8,
+                        height: 40,
+                        width: MediaQuery.of(context).size.width * .8,
                         child: Row(
                           children: [
                             Expanded(
                               child: InkWell(
-                                onTap:(){
+                                onTap: () {
                                   setState(() {
                                     issurge = true;
                                   });
                                 },
                                 child: Container(
-                                  height:40,
+                                  height: 40,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: Color.fromRGBO(21, 43, 81, 1)
-                                    ),
-                                    color:!issurge?  Colors.white:Color.fromRGBO(21, 43, 81, 1),
+                                        color: Color.fromRGBO(21, 43, 81, 1)),
+                                    color: !issurge
+                                        ? Colors.white
+                                        : Color.fromRGBO(21, 43, 81, 1),
                                   ),
                                   child: Center(
-                                    child: Text("Surcharge",
+                                    child: Text(
+                                      "Surcharge",
                                       style: TextStyle(
-                                          color: issurge?  Colors.white:Color.fromRGBO(21, 43, 81, 1),
-                                          fontSize: 16
-                                      ),
+                                          color: issurge
+                                              ? Colors.white
+                                              : Color.fromRGBO(21, 43, 81, 1),
+                                          fontSize: 16),
                                     ),
                                   ),
                                 ),
                               ),
-
                             ),
                             Expanded(
                               child: InkWell(
-                                onTap:(){
+                                onTap: () {
                                   setState(() {
                                     issurge = false;
                                   });
@@ -355,30 +383,33 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: Color.fromRGBO(21, 43, 81, 1)
-                                    ),
-                                    color:issurge?  Colors.white:Color.fromRGBO(21, 43, 81, 1),
+                                        color: Color.fromRGBO(21, 43, 81, 1)),
+                                    color: issurge
+                                        ? Colors.white
+                                        : Color.fromRGBO(21, 43, 81, 1),
                                   ),
                                   child: Center(
-                                    child: Text("Late Fee",
+                                    child: Text(
+                                      "Late Fee",
                                       style: TextStyle(
-                                          color: !issurge?  Colors.white:Color.fromRGBO(21, 43, 81, 1),
-                                          fontSize: 16
-                                      ),
+                                          color: !issurge
+                                              ? Colors.white
+                                              : Color.fromRGBO(21, 43, 81, 1),
+                                          fontSize: 16),
                                     ),
                                   ),
-
                                 ),
                               ),
                             ),
-
                           ],
                         ),
                       ),
-                      if(issurge)
+                      if (issurge)
                         Column(
                           children: [
-                            SizedBox(height: 10,),
+                            SizedBox(
+                              height: 10,
+                            ),
                             Row(
                               children: [
                                 Text(
@@ -387,8 +418,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                     fontWeight: FontWeight.bold,
                                     fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        .045,
+                                        MediaQuery.of(context).size.width *
+                                            .045,
                                   ),
                                 ),
                               ],
@@ -400,8 +431,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               "You can set default surcharge percentage from here",
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width *
-                                      .035,
+                                      MediaQuery.of(context).size.width * .035,
                                   color: Color(0xFF8A95A8),
                                   fontWeight: FontWeight.bold),
                             ),
@@ -416,10 +446,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Text(
                                   "Credit Card Surcharge Percent",
                                   style: TextStyle(
-                                      fontSize: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          .035,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035,
                                       color: Color(0xFF8A95A8),
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -437,14 +466,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       height: 50,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
+                                      width: MediaQuery.of(context).size.width *
                                           .6,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Stack(
                                         children: [
@@ -456,16 +482,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 });
                                               },
                                               controller: credit,
-                                              cursorColor: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              cursorColor:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               decoration: InputDecoration(
                                                 // hintText: "Enter password",
                                                 hintStyle: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .037,
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .037,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                                 // enabledBorder: passworderror
@@ -479,7 +505,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 //     : InputBorder.none,
                                                 border: InputBorder.none,
                                                 contentPadding:
-                                                EdgeInsets.all(13),
+                                                    EdgeInsets.all(13),
                                                 suffixIcon: Icon(
                                                   Icons.percent,
                                                   color: Color.fromRGBO(
@@ -506,10 +532,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Text(
                                   "Debit Card Surcharge Percent",
                                   style: TextStyle(
-                                      fontSize: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          .035,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035,
                                       color: Color(0xFF8A95A8),
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -527,14 +552,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       height: 50,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
+                                      width: MediaQuery.of(context).size.width *
                                           .6,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Stack(
                                         children: [
@@ -546,16 +568,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 });
                                               },
                                               controller: debit,
-                                              cursorColor: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              cursorColor:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               decoration: InputDecoration(
                                                 // hintText: "Enter password",
                                                 hintStyle: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .037,
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .037,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                                 // enabledBorder: passworderror
@@ -569,7 +591,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 //     : InputBorder.none,
                                                 border: InputBorder.none,
                                                 contentPadding:
-                                                EdgeInsets.all(13),
+                                                    EdgeInsets.all(13),
                                                 suffixIcon: Icon(
                                                   Icons.percent,
                                                   color: Color.fromRGBO(
@@ -597,8 +619,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               "You can set default ACH percentage or ACH flat fee or both from here",
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width *
-                                      .035,
+                                      MediaQuery.of(context).size.width * .035,
                                   color: Color(0xFF8A95A8),
                                   fontWeight: FontWeight.bold),
                             ),
@@ -608,8 +629,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 'Add ACH surcharge percentage',
                                 style: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        .035,
+                                        MediaQuery.of(context).size.width *
+                                            .035,
                                     color: Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold),
                               ),
@@ -627,8 +648,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 'Add ACH flat fee',
                                 style: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        .035,
+                                        MediaQuery.of(context).size.width *
+                                            .035,
                                     color: Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold),
                               ),
@@ -646,8 +667,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 'Add both ACH surcharge percentage and flat fee',
                                 style: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        .035,
+                                        MediaQuery.of(context).size.width *
+                                            .035,
                                     color: Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold),
                               ),
@@ -659,8 +680,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 });
                               },
                             ),
-                            if (_selectedRadio == 1 ||
-                                _selectedRadio == 3) ...[
+                            if (_selectedRadio == 1 || _selectedRadio == 3) ...[
                               SizedBox(height: 20),
                               Row(
                                 children: [
@@ -670,10 +690,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   Text(
                                     'Add ACH Surcharge Percentage',
                                     style: TextStyle(
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .035,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .035,
                                         color: Color(0xFF8A95A8),
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -693,18 +712,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   Expanded(
                                     child: Material(
                                       elevation: 4,
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(10),
                                       child: Container(
                                         height: 50,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .6,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .6,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Stack(
                                           children: [
@@ -721,13 +738,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
-                                                    fontSize: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .037,
-                                                    color:
-                                                    Color(0xFF8A95A8),
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                    color: Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -740,7 +756,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   //     : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                  EdgeInsets.all(13),
+                                                      EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
                                                     color: Color.fromRGBO(
@@ -759,8 +775,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ],
                               ),
                             ],
-                            if (_selectedRadio == 2 ||
-                                _selectedRadio == 3) ...[
+                            if (_selectedRadio == 2 || _selectedRadio == 3) ...[
                               SizedBox(height: 20),
                               Row(
                                 children: [
@@ -768,10 +783,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   Text(
                                     'Add ACH Flat Fee',
                                     style: TextStyle(
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .035,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .035,
                                         color: Color(0xFF8A95A8),
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -790,18 +804,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   Expanded(
                                     child: Material(
                                       elevation: 4,
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(10),
                                       child: Container(
                                         height: 50,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .6,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .6,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Stack(
                                           children: [
@@ -818,13 +830,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
-                                                    fontSize: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .037,
-                                                    color:
-                                                    Color(0xFF8A95A8),
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                    color: Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -837,7 +848,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   //     : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                  EdgeInsets.all(13),
+                                                      EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
                                                     color: Color.fromRGBO(
@@ -863,34 +874,28 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   width: 5,
                                 ),
                                 GestureDetector(
-                                  onTap: () async{
-                                    if(isupdate)
+                                  onTap: () async {
+                                    if (isupdate)
                                       await updateSurcharge();
                                     else
                                       await AddSurgedata();
                                   },
                                   child: ClipRRect(
-                                    borderRadius:
-                                    BorderRadius.circular(5.0),
+                                    borderRadius: BorderRadius.circular(5.0),
                                     child: Container(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .height *
-                                          .05,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .05,
+                                      width: MediaQuery.of(context).size.width *
                                           .25,
                                       decoration: BoxDecoration(
                                         borderRadius:
-                                        BorderRadius.circular(5.0),
-                                        color:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                            BorderRadius.circular(5.0),
+                                        color: Color.fromRGBO(21, 43, 81, 1),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey,
-                                            offset:
-                                            Offset(0.0, 1.0), //(x,y)
+                                            offset: Offset(0.0, 1.0), //(x,y)
                                             blurRadius: 6.0,
                                           ),
                                         ],
@@ -901,10 +906,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
                                                   .035),
                                         ),
                                       ),
@@ -915,50 +919,48 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   width: 15,
                                 ),
                                 GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     Navigator.pop(context);
                                   },
                                   child: Container(
                                       height:
-                                      MediaQuery.of(context).size.height *
-                                          .05,
-                                      width:
-                                      MediaQuery.of(context).size.width *
+                                          MediaQuery.of(context).size.height *
+                                              .05,
+                                      width: MediaQuery.of(context).size.width *
                                           .2,
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                          color:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                          color: Color.fromRGBO(21, 43, 81, 1),
                                         ),
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Center(
                                           child: Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ))),
+                                        "Cancel",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ))),
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      if(!issurge)
+                      if (!issurge)
                         Column(
                           children: [
-                            SizedBox(height: 10,),
+                            SizedBox(
+                              height: 10,
+                            ),
                             Row(
                               children: [
-
                                 Text(
                                   "Late Fee Charge",
                                   style: TextStyle(
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                     fontWeight: FontWeight.bold,
                                     fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        .045,
+                                        MediaQuery.of(context).size.width *
+                                            .045,
                                   ),
                                 ),
                               ],
@@ -970,8 +972,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               "You can set default Late fee charge from here",
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width *
-                                      .035,
+                                      MediaQuery.of(context).size.width * .035,
                                   color: Color(0xFF8A95A8),
                                   fontWeight: FontWeight.bold),
                             ),
@@ -986,10 +987,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Text(
                                   "Percentage",
                                   style: TextStyle(
-                                      fontSize: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          .035,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035,
                                       color: Color(0xFF8A95A8),
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -1007,14 +1007,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       height: 50,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
+                                      width: MediaQuery.of(context).size.width *
                                           .6,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Stack(
                                         children: [
@@ -1022,22 +1019,21 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             child: TextFormField(
                                               controller: late_fee,
                                               onChanged: (value) {
-
                                                 setState(() {
                                                   //  passworderror = false;
                                                 });
                                               },
                                               //  controller: password,
-                                              cursorColor: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              cursorColor:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               decoration: InputDecoration(
                                                 // hintText: "Enter password",
                                                 hintStyle: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .037,
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .037,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                                 // enabledBorder: passworderror
@@ -1051,7 +1047,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 //     : InputBorder.none,
                                                 border: InputBorder.none,
                                                 contentPadding:
-                                                EdgeInsets.all(13),
+                                                    EdgeInsets.all(13),
                                                 suffixIcon: Icon(
                                                   Icons.percent,
                                                   color: Color.fromRGBO(
@@ -1080,10 +1076,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Text(
                                   "Duration",
                                   style: TextStyle(
-                                      fontSize: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          .035,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .035,
                                       color: Color(0xFF8A95A8),
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -1101,14 +1096,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       height: 50,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
+                                      width: MediaQuery.of(context).size.width *
                                           .6,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Stack(
                                         children: [
@@ -1121,16 +1113,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 });
                                               },
                                               //  controller: password,
-                                              cursorColor: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              cursorColor:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               decoration: InputDecoration(
                                                 // hintText: "Enter password",
                                                 hintStyle: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .037,
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .037,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                                 // enabledBorder: passworderror
@@ -1144,7 +1136,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 //     : InputBorder.none,
                                                 border: InputBorder.none,
                                                 contentPadding:
-                                                EdgeInsets.all(13),
+                                                    EdgeInsets.all(13),
                                                 suffixIcon: Icon(
                                                   Icons.percent,
                                                   color: Color.fromRGBO(
@@ -1166,38 +1158,31 @@ class _TabBarExampleState extends State<TabBarExample> {
                             Row(
                               children: [
                                 SizedBox(
-                                    width:
-                                    MediaQuery.of(context).size.width *
+                                    width: MediaQuery.of(context).size.width *
                                         0.02),
                                 GestureDetector(
-                                  onTap: () async{
-                                    if(islatefeeupdate)
+                                  onTap: () async {
+                                    if (islatefeeupdate)
                                       await updateLatefee();
                                     else
                                       await AddLatefeedata();
                                   },
                                   child: ClipRRect(
-                                    borderRadius:
-                                    BorderRadius.circular(5.0),
+                                    borderRadius: BorderRadius.circular(5.0),
                                     child: Container(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .height *
-                                          .05,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .05,
+                                      width: MediaQuery.of(context).size.width *
                                           .25,
                                       decoration: BoxDecoration(
                                         borderRadius:
-                                        BorderRadius.circular(5.0),
-                                        color:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                            BorderRadius.circular(5.0),
+                                        color: Color.fromRGBO(21, 43, 81, 1),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey,
-                                            offset:
-                                            Offset(0.0, 1.0), //(x,y)
+                                            offset: Offset(0.0, 1.0), //(x,y)
                                             blurRadius: 6.0,
                                           ),
                                         ],
@@ -1208,10 +1193,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize:
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
                                                   .035),
                                         ),
                                       ),
@@ -1222,36 +1206,32 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   width: 15,
                                 ),
                                 GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     Navigator.pop(context);
                                   },
                                   child: Container(
                                       height:
-                                      MediaQuery.of(context).size.height *
-                                          .05,
-                                      width:
-                                      MediaQuery.of(context).size.width *
+                                          MediaQuery.of(context).size.height *
+                                              .05,
+                                      width: MediaQuery.of(context).size.width *
                                           .2,
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                          color:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                          color: Color.fromRGBO(21, 43, 81, 1),
                                         ),
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Center(
                                           child: Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ))),
+                                        "Cancel",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ))),
                                 ),
                               ],
                             ),
                           ],
                         )
-
                     ],
                   ),
                 ),

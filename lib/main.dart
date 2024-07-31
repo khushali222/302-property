@@ -1,20 +1,20 @@
-//import 'package:device_preview/device_preview.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 import 'package:three_zero_two_property/provider/add_property.dart';
+import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/provider/lease_provider.dart';
+import 'package:three_zero_two_property/provider/properties_workorders.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
-
+import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/SummaryEditApplicant.dart';
+import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
-
-import 'StaffModule/repository/staffpermission_provider.dart';
-import 'TenantsModule/repository/permission_provider.dart';
 
 // void main() {
 //   runApp(
-//     MultiProvider(providers: [ ChangeNotifierProvider(
+//     MultiProvider(providers: [
+// ChangeNotifierProvider(
 //       create: (context) => OwnerDetailsProvider(),
 //       // child: MyApp(),
 //     ),
@@ -103,10 +103,13 @@ void main() {
             create: (context) => LeaseLedgerProvider(),
           ),
           ChangeNotifierProvider(
-            create: (context) => PermissionProvider(),
+            create: (context) => EditFormState(),
           ),
           ChangeNotifierProvider(
-            create: (context) => StaffPermissionProvider(),
+            create: (context) => ApplicantDetailsProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => checkPlanPurchaseProiver(),
           ),
         ],
         child: MyApp(),
@@ -124,10 +127,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // navigatorKey: navigatorKey,
       theme: ThemeData(
-        fontFamily: "Poppins",
-        iconTheme: IconThemeData(color: Colors.black),
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromRGBO(21, 43, 83, 1)),
+        iconTheme: const IconThemeData(color: Colors.black),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromRGBO(21, 43, 83, 1)),
         useMaterial3: false,
       ),
       home: SplashScreen(),

@@ -8,7 +8,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,20 +20,24 @@ import 'package:three_zero_two_property/model/properties.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/repository/properties.dart';
 
-
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
 
+import '../../../Model/tenants.dart';
 import '../../../model/cosigner.dart';
 import '../../../model/lease.dart';
-import '../../../model/tenants.dart';
+
 import '../../../provider/lease_provider.dart';
 import '../../../repository/tenants.dart';
 
 class addLease3 extends StatefulWidget {
-  addLease3({super.key});
+  final String? applicantId;
+  final String? rentalId;
+  final String? unitId;
+
+  const addLease3({Key? key, this.applicantId, this.rentalId, this.unitId})
+      : super(key: key);
 
   @override
   State<addLease3> createState() => _addLease3State();
@@ -46,7 +50,25 @@ class _addLease3State extends State<addLease3>
   @override
   void initState() {
     super.initState();
-    // print(widget.cosigner?.firstName);
+    print(widget.rentalId);
+    print(widget.unitId);
+
+    // Delay execution of setting values and loading units
+    Future.delayed(Duration(seconds: 1), () {
+      // Ensure that renderId is properly set before proceeding
+      if (widget.rentalId != null && widget.rentalId!.isNotEmpty) {
+        setState(() {
+          _selectedProperty = widget.rentalId!;
+        });
+
+        _loadUnits(widget.rentalId!);
+
+        setState(() {
+          _selectedUnit = widget.unitId;
+        });
+      }
+    });
+
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
     _tabController = TabController(length: 2, vsync: this);
@@ -66,8 +88,10 @@ class _addLease3State extends State<addLease3>
   String? _selectedProperty;
   String? _selectedUnit;
   String? _selectedLeaseType;
-  final TextEditingController _startDate = TextEditingController();
-  final TextEditingController _endDate = TextEditingController();
+
+  final TextEditingController startDateController = TextEditingController();
+  DateTime? _startDate;
+  final TextEditingController endDateController = TextEditingController();
 
   //second container variables
   String? _selectedRent;
@@ -79,14 +103,18 @@ class _addLease3State extends State<addLease3>
   Future<void> _loadProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final response =
-      await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
       print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {
@@ -119,14 +147,20 @@ class _addLease3State extends State<addLease3>
     setState(() {
       _isLoading = true;
     });
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     try {
-      final response =
-      await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'));
+      final response = await http
+          .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
+
         List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
           return {
             'unit_id': data['unit_id'].toString(),
@@ -155,9 +189,13 @@ class _addLease3State extends State<addLease3>
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
-    final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    String? id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -245,6 +283,39 @@ class _addLease3State extends State<addLease3>
     'Quarterly',
     'Yearly',
   ];
+  DateTime calculateNextDueDate(DateTime startDate, String rentCycle) {
+    switch (rentCycle) {
+      case 'Daily':
+        return startDate.add(Duration(days: 1));
+      case 'Weekly':
+        return startDate.add(Duration(days: 7));
+      case 'Every two weeks':
+        return startDate.add(Duration(days: 14));
+      case 'Monthly':
+        return DateTime(startDate.year, startDate.month + 1, startDate.day);
+      case 'Every two months':
+        return DateTime(startDate.year, startDate.month + 2, startDate.day);
+      case 'Quarterly':
+        return DateTime(startDate.year, startDate.month + 3, startDate.day);
+      case 'Yearly':
+        return DateTime(startDate.year + 1, startDate.month, startDate.day);
+      default:
+        return startDate;
+    }
+  }
+
+  void _updateNextDueDate() {
+    if (_startDate != null && _selectedRent != null) {
+      DateTime nextDueDate = calculateNextDueDate(_startDate!, _selectedRent!);
+      String formattedNextDueDate =
+          "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
+
+      setState(() {
+        rentNextDueDate.text = formattedNextDueDate;
+      });
+    }
+  }
+
   String? selectedValue;
 
   late TabController _tabController;
@@ -507,15 +578,25 @@ class _addLease3State extends State<addLease3>
         Provider.of<SelectedTenantsProvider>(context).selectedTenants;
     Map<int, Map<String, String>> tenantsMap =
     tenants.asMap().map((index, tenant) {
+
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
+        'tenant_residentStatus': tenant.tenant_residentStatus.toString(),
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
+        'passWord': tenant.tenantPassword ?? '',
         'phoneNumber': tenant.tenantPhoneNumber ?? "",
         'workNumber': tenant.tenantAlternativeNumber ?? "",
         'email': tenant.tenantEmail ?? "",
         'alterEmail': tenant.tenantAlternativeEmail ?? "",
         'streetAddress': tenant.rentalAddress ?? "",
+        'comments': tenant.comments ?? '',
+        'dob': tenant.tenantBirthDate ?? '',
+        'taxPayerId': tenant.taxPayerId ?? '',
+        'emergencyContactName': tenant.emergencyContact!.name ?? '',
+        'emergencyRelation': tenant.emergencyContact!.relation ?? '',
+        'emergencyEmail': tenant.emergencyContact!.email ?? '',
+        'emergencyPhoneNumber': tenant.emergencyContact!.phoneNumber ?? '',
         'city': '', // Add city if available
         'country': '', // Add country if available
         'postalCode': '', // Add postal code if available
@@ -724,7 +805,7 @@ class _addLease3State extends State<addLease3>
                                       _selectedProperty = value;
 
                                       renderId = value.toString();
-
+                                      print('Hello Yash:${renderId}');
                                       _loadUnits(
                                           value!); // Fetch units for the selected property
                                     });
@@ -969,17 +1050,24 @@ class _addLease3State extends State<addLease3>
                               );
 
                               if (pickedDate != null) {
-                                String formattedDate =
-                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                String formattedStartDate =
+                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                DateTime endDate = DateTime(pickedDate.year,
+                                    pickedDate.month + 1, pickedDate.day);
+                                String formattedEndDate =
+                                    "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
                                 setState(() {
-                                  _startDate.text = formattedDate;
+                                  startDateController.text = formattedStartDate;
+                                  _startDate = pickedDate;
+                                  endDateController.text = formattedEndDate;
                                 });
                               }
                             },
                             readOnnly: true,
                             suffixIcon: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.date_range_rounded)),
+                              onPressed: () {},
+                              icon: const Icon(Icons.date_range_rounded),
+                            ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please select start date';
@@ -987,8 +1075,8 @@ class _addLease3State extends State<addLease3>
                               return null;
                             },
                             keyboardType: TextInputType.text,
-                            hintText: 'dd-mm-yyyy',
-                            controller: _startDate,
+                            hintText: 'yyyy-mm-dd',
+                            controller: startDateController,
                           ),
                           const SizedBox(
                             height: 8,
@@ -1038,16 +1126,17 @@ class _addLease3State extends State<addLease3>
 
                               if (pickedDate != null) {
                                 String formattedDate =
-                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                 setState(() {
-                                  _endDate.text = formattedDate;
+                                  endDateController.text = formattedDate;
                                 });
                               }
                             },
                             readOnnly: true,
                             suffixIcon: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.date_range_rounded)),
+                              onPressed: () {},
+                              icon: const Icon(Icons.date_range_rounded),
+                            ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please select end date';
@@ -1056,7 +1145,7 @@ class _addLease3State extends State<addLease3>
                             },
                             keyboardType: TextInputType.text,
                             hintText: 'dd-mm-yyyy',
-                            controller: _endDate,
+                            controller: endDateController,
                           ),
                         ],
                       ),
@@ -1788,17 +1877,19 @@ class _addLease3State extends State<addLease3>
                           CustomDropdown(
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please select a rent';
+                                return 'Please select a rent cycle';
                               }
                               return null;
                             },
-                            labelText: 'Select Rent',
+                            labelText: 'Select Rent Cycle',
                             items: rentCycleitems,
                             selectedValue: _selectedRent,
                             onChanged: (String? value) {
                               setState(() {
                                 _selectedRent = value;
                               });
+
+                              _updateNextDueDate();
                             },
                           ),
                           const SizedBox(
@@ -1868,19 +1959,28 @@ class _addLease3State extends State<addLease3>
                                   );
                                 },
                               );
-
                               if (pickedDate != null) {
                                 String formattedDate =
-                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+
+                                DateTime nextDueDate = calculateNextDueDate(
+                                    pickedDate, _selectedRent ?? 'Daily');
+                                String formattedNextDueDate =
+                                    "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
+
                                 setState(() {
+                                  rentNextDueDate.text = formattedNextDueDate;
                                   rentNextDueDate.text = formattedDate;
                                 });
+
+                                print(rentNextDueDate.text);
                               }
                             },
                             readOnnly: true,
                             suffixIcon: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.date_range_rounded)),
+                              onPressed: () {},
+                              icon: const Icon(Icons.date_range_rounded),
+                            ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please select Next Due Date';
@@ -2512,7 +2612,8 @@ class _addLease3State extends State<addLease3>
                           SingleChildScrollView(
                             child: Column(
                               children: _uploadedFileNames.map((fileName) {
-                                int index = _uploadedFileNames.indexOf(fileName);
+                                int index =
+                                _uploadedFileNames.indexOf(fileName);
                                 return ListTile(
                                   title: Text(
                                     fileName,
@@ -2538,7 +2639,6 @@ class _addLease3State extends State<addLease3>
                             ),
                           ),
 
-
                           // _uploadedFileNames.isNotEmpty
                           //     ? Text('Uploaded PDFs:')
                           //     : Container(),
@@ -2553,294 +2653,294 @@ class _addLease3State extends State<addLease3>
                   const SizedBox(
                     height: 10,
                   ),
-                  Container(
-                    height: 400,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color.fromRGBO(21, 43, 83, 1),
-                      ),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            'E-Signature',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF152b51),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            height: 330, // Set a fixed height for TabBarView
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            isEnjoyNowSelected = true;
-                                          });
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: isEnjoyNowSelected
-                                                ? null
-                                                : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
-                                            gradient: isEnjoyNowSelected
-                                                ? const LinearGradient(
-                                              colors: [
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                              ],
-                                            )
-                                                : null,
-                                            borderRadius:
-                                            const BorderRadius.only(
-                                              topLeft: Radius.circular(4),
-                                              bottomLeft: Radius.circular(4),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          padding: isEnjoyNowSelected
-                                              ? const EdgeInsets.symmetric(
-                                              vertical: 13)
-                                              : const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          child: isEnjoyNowSelected
-                                              ? Text(
-                                            "Draw Signature",
-                                            style: TextStyle(
-                                              color: !isEnjoyNowSelected
-                                                  ? Colors.transparent
-                                                  : Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                              : ShaderMask(
-                                            shaderCallback: (bounds) {
-                                              return const LinearGradient(
-                                                colors: [
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                ],
-                                              ).createShader(bounds);
-                                            },
-                                            child: Text(
-                                              "Draw Signature",
-                                              style: TextStyle(
-                                                color: isEnjoyNowSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            isEnjoyNowSelected = false;
-                                          });
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: isEnjoyNowSelected == false
-                                                ? null
-                                                : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
-                                            gradient:
-                                            isEnjoyNowSelected == false
-                                                ? const LinearGradient(
-                                              colors: [
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                              ],
-                                            )
-                                                : null,
-                                            borderRadius:
-                                            const BorderRadius.only(
-                                              topRight: Radius.circular(4),
-                                              bottomRight: Radius.circular(4),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          padding: isEnjoyNowSelected
-                                              ? const EdgeInsets.symmetric(
-                                              vertical: 12)
-                                              : const EdgeInsets.symmetric(
-                                              vertical: 13),
-                                          child: !isEnjoyNowSelected
-                                              ? Text(
-                                            "Type Signature",
-                                            style: TextStyle(
-                                              color: isEnjoyNowSelected
-                                                  ? Colors.transparent
-                                                  : Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                              : ShaderMask(
-                                            shaderCallback: (bounds) {
-                                              return const LinearGradient(
-                                                colors: [
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                ],
-                                              ).createShader(bounds);
-                                            },
-                                            child: Text(
-                                              "Type Signature",
-                                              style: TextStyle(
-                                                color: !isEnjoyNowSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                isEnjoyNowSelected
-                                    ? Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.end,
-                                  children: [
-                                    const SizedBox(height: 5),
-                                    Container(
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(10.0),
-                                        border: Border.all(width: 1),
-                                      ),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                          ),
-                                          backgroundColor: Colors.white,
-                                        ),
-                                        onPressed: () {
-                                          _signaturePadKey.currentState!
-                                              .clear();
-                                        },
-                                        child: const Text('Clear'),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Container(
-                                      child: SfSignaturePad(
-                                        key: _signaturePadKey,
-                                        strokeColor: Colors.black,
-                                        backgroundColor: Colors.grey[200],
-                                      ),
-                                      height: 200,
-                                      width: 300,
-                                    ),
-                                  ],
-                                )
-                                    : Padding(
-                                  padding:
-                                  const EdgeInsets.only(top: 16.0),
-                                  child: Container(
-                                    height: 250,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(10.0),
-                                      border: Border.all(width: 1),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 10.0),
-                                          child: TextFormField(
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'please enter signature';
-                                              }
-                                              return null;
-                                            },
-                                            maxLength: 30,
-                                            decoration: InputDecoration(
-                                              hintText: 'Type Signature',
-                                              hintStyle: TextStyle(
-                                                color: Colors.grey[400],
-                                                fontSize: 16,
-                                                fontWeight:
-                                                FontWeight.w500,
-                                              ),
-                                            ),
-                                            controller:
-                                            signatureController,
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                signatureController.text =
-                                                    newValue;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        Container(
-                                          child: Text(
-                                            '${signatureController.text}',
-                                            style:
-                                            GoogleFonts.dancingScript(
-                                              fontSize: 38,
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  // Container(
+                  //   height: 400,
+                  //   width: double.infinity,
+                  //   decoration: BoxDecoration(
+                  //     border: Border.all(
+                  //       color: const Color.fromRGBO(21, 43, 83, 1),
+                  //     ),
+                  //     borderRadius: BorderRadius.circular(10.0),
+                  //   ),
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(12.0),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         const SizedBox(
+                  //           height: 10,
+                  //         ),
+                  //         const Text(
+                  //           'E-Signature',
+                  //           style: TextStyle(
+                  //             fontSize: 16,
+                  //             fontWeight: FontWeight.w500,
+                  //             color: Color(0xFF152b51),
+                  //           ),
+                  //         ),
+                  //         const SizedBox(height: 10),
+                  //         SizedBox(
+                  //           height: 330, // Set a fixed height for TabBarView
+                  //           child: Column(
+                  //             children: [
+                  //               Row(
+                  //                 children: [
+                  //                   Expanded(
+                  //                     child: GestureDetector(
+                  //                       onTap: () {
+                  //                         setState(() {
+                  //                           isEnjoyNowSelected = true;
+                  //                         });
+                  //                       },
+                  //                       child: Container(
+                  //                         decoration: BoxDecoration(
+                  //                           border: isEnjoyNowSelected
+                  //                               ? null
+                  //                               : Border.all(
+                  //                               color: const Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               width: 1),
+                  //                           gradient: isEnjoyNowSelected
+                  //                               ? const LinearGradient(
+                  //                             colors: [
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                             ],
+                  //                           )
+                  //                               : null,
+                  //                           borderRadius:
+                  //                           const BorderRadius.only(
+                  //                             topLeft: Radius.circular(4),
+                  //                             bottomLeft: Radius.circular(4),
+                  //                           ),
+                  //                         ),
+                  //                         alignment: Alignment.center,
+                  //                         padding: isEnjoyNowSelected
+                  //                             ? const EdgeInsets.symmetric(
+                  //                             vertical: 13)
+                  //                             : const EdgeInsets.symmetric(
+                  //                             vertical: 12),
+                  //                         child: isEnjoyNowSelected
+                  //                             ? Text(
+                  //                           "Draw Signature",
+                  //                           style: TextStyle(
+                  //                             color: !isEnjoyNowSelected
+                  //                                 ? Colors.transparent
+                  //                                 : Colors.white,
+                  //                             fontWeight: FontWeight.bold,
+                  //                           ),
+                  //                         )
+                  //                             : ShaderMask(
+                  //                           shaderCallback: (bounds) {
+                  //                             return const LinearGradient(
+                  //                               colors: [
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                               ],
+                  //                             ).createShader(bounds);
+                  //                           },
+                  //                           child: Text(
+                  //                             "Draw Signature",
+                  //                             style: TextStyle(
+                  //                               color: isEnjoyNowSelected
+                  //                                   ? Colors.transparent
+                  //                                   : Colors.white,
+                  //                               fontWeight:
+                  //                               FontWeight.bold,
+                  //                             ),
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                   Expanded(
+                  //                     child: GestureDetector(
+                  //                       onTap: () {
+                  //                         setState(() {
+                  //                           isEnjoyNowSelected = false;
+                  //                         });
+                  //                       },
+                  //                       child: Container(
+                  //                         decoration: BoxDecoration(
+                  //                           border: isEnjoyNowSelected == false
+                  //                               ? null
+                  //                               : Border.all(
+                  //                               color: const Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               width: 1),
+                  //                           gradient:
+                  //                           isEnjoyNowSelected == false
+                  //                               ? const LinearGradient(
+                  //                             colors: [
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                               Color.fromRGBO(
+                  //                                   21, 43, 83, 1),
+                  //                             ],
+                  //                           )
+                  //                               : null,
+                  //                           borderRadius:
+                  //                           const BorderRadius.only(
+                  //                             topRight: Radius.circular(4),
+                  //                             bottomRight: Radius.circular(4),
+                  //                           ),
+                  //                         ),
+                  //                         alignment: Alignment.center,
+                  //                         padding: isEnjoyNowSelected
+                  //                             ? const EdgeInsets.symmetric(
+                  //                             vertical: 12)
+                  //                             : const EdgeInsets.symmetric(
+                  //                             vertical: 13),
+                  //                         child: !isEnjoyNowSelected
+                  //                             ? Text(
+                  //                           "Type Signature",
+                  //                           style: TextStyle(
+                  //                             color: isEnjoyNowSelected
+                  //                                 ? Colors.transparent
+                  //                                 : Colors.white,
+                  //                             fontWeight: FontWeight.bold,
+                  //                           ),
+                  //                         )
+                  //                             : ShaderMask(
+                  //                           shaderCallback: (bounds) {
+                  //                             return const LinearGradient(
+                  //                               colors: [
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                                 Color.fromRGBO(
+                  //                                     21, 43, 83, 1),
+                  //                               ],
+                  //                             ).createShader(bounds);
+                  //                           },
+                  //                           child: Text(
+                  //                             "Type Signature",
+                  //                             style: TextStyle(
+                  //                               color: !isEnjoyNowSelected
+                  //                                   ? Colors.transparent
+                  //                                   : Colors.white,
+                  //                               fontWeight:
+                  //                               FontWeight.bold,
+                  //                             ),
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               isEnjoyNowSelected
+                  //                   ? Column(
+                  //                 crossAxisAlignment:
+                  //                 CrossAxisAlignment.end,
+                  //                 children: [
+                  //                   const SizedBox(height: 5),
+                  //                   Container(
+                  //                     height: 36,
+                  //                     decoration: BoxDecoration(
+                  //                       borderRadius:
+                  //                       BorderRadius.circular(10.0),
+                  //                       border: Border.all(width: 1),
+                  //                     ),
+                  //                     child: ElevatedButton(
+                  //                       style: ElevatedButton.styleFrom(
+                  //                         shape: RoundedRectangleBorder(
+                  //                           borderRadius:
+                  //                           BorderRadius.circular(10),
+                  //                         ),
+                  //                         backgroundColor: Colors.white,
+                  //                       ),
+                  //                       onPressed: () {
+                  //                         _signaturePadKey.currentState!
+                  //                             .clear();
+                  //                       },
+                  //                       child: const Text('Clear'),
+                  //                     ),
+                  //                   ),
+                  //                   const SizedBox(height: 5),
+                  //                   Container(
+                  //                     child: SfSignaturePad(
+                  //                       key: _signaturePadKey,
+                  //                       strokeColor: Colors.black,
+                  //                       backgroundColor: Colors.grey[200],
+                  //                     ),
+                  //                     height: 200,
+                  //                     width: 300,
+                  //                   ),
+                  //                 ],
+                  //               )
+                  //                   : Padding(
+                  //                 padding:
+                  //                 const EdgeInsets.only(top: 16.0),
+                  //                 child: Container(
+                  //                   height: 250,
+                  //                   decoration: BoxDecoration(
+                  //                     borderRadius:
+                  //                     BorderRadius.circular(10.0),
+                  //                     border: Border.all(width: 1),
+                  //                   ),
+                  //                   child: Column(
+                  //                     children: [
+                  //                       Container(
+                  //                         padding:
+                  //                         const EdgeInsets.symmetric(
+                  //                             horizontal: 10.0),
+                  //                         child: TextFormField(
+                  //                           validator: (value) {
+                  //                             if (value == null ||
+                  //                                 value.isEmpty) {
+                  //                               return 'please enter signature';
+                  //                             }
+                  //                             return null;
+                  //                           },
+                  //                           maxLength: 30,
+                  //                           decoration: InputDecoration(
+                  //                             hintText: 'Type Signature',
+                  //                             hintStyle: TextStyle(
+                  //                               color: Colors.grey[400],
+                  //                               fontSize: 16,
+                  //                               fontWeight:
+                  //                               FontWeight.w500,
+                  //                             ),
+                  //                           ),
+                  //                           controller:
+                  //                           signatureController,
+                  //                           onChanged: (newValue) {
+                  //                             setState(() {
+                  //                               signatureController.text =
+                  //                                   newValue;
+                  //                             });
+                  //                           },
+                  //                         ),
+                  //                       ),
+                  //                       const SizedBox(height: 20),
+                  //                       Container(
+                  //                         child: Text(
+                  //                           '${signatureController.text}',
+                  //                           style:
+                  //                           GoogleFonts.dancingScript(
+                  //                             fontSize: 38,
+                  //                             color: Colors.blue,
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 10,
+                  // ),
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -2892,7 +2992,8 @@ class _addLease3State extends State<addLease3>
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 8,top: 16,right: 10,bottom: 16),
+                    padding: const EdgeInsets.only(
+                        left: 8, top: 16, right: 10, bottom: 16),
                     child: Row(
                       children: [
                         Container(
@@ -2925,7 +3026,43 @@ class _addLease3State extends State<addLease3>
                                       ...formDataRecurringList,
                                     ];
 
+                                    String leaseStartDate =
+                                        startDateController.text;
+                                    String leaseEndDate =
+                                        endDateController.text;
+                                    print(
+                                        'ends date : ${endDateController.text}');
+
                                     // Creating Entry objects from the merged list
+                                    // List<Entry> chargeEntries =
+                                    //     mergedFormDataList.map((data) {
+                                    //   print(data['account']);
+                                    //   return Entry(
+                                    //     account: data['account'] ?? '',
+                                    //     amount: double.tryParse(
+                                    //             data['amount'] ?? '0.0') ??
+                                    //         0.0,
+                                    //     chargeType: data['charge_type'] ?? '',
+                                    //     date: rentNextDueDate.text,
+                                    //     isRepeatable: data['is_repeatable']
+                                    //             ?.toLowerCase() ==
+                                    //         'true',
+                                    //     memo: data['memo'] ?? '',
+                                    //     rentCycle: data[
+                                    //         'rent_cycle'], // Assuming this field might be present
+                                    //     tenantId: data[
+                                    //         'tenant_id'], // Assuming this field might be present
+                                    //   );
+                                    // }).toList();
+
+                                    // // Creating ChargeData object
+                                    // ChargeData chargeData = ChargeData(
+                                    //   adminId: adminId,
+                                    //   entry: chargeEntries,
+                                    //   isLeaseAdded: _isLeaseAdded,
+                                    // );
+                                    print(
+                                        'rent next due date ${rentNextDueDate.text}');
                                     List<Entry> chargeEntries =
                                     mergedFormDataList.map((data) {
                                       print(data['account']);
@@ -2935,7 +3072,7 @@ class _addLease3State extends State<addLease3>
                                             data['amount'] ?? '0.0') ??
                                             0.0,
                                         chargeType: data['charge_type'] ?? '',
-                                        date: data['date'] ?? '',
+                                        date: rentNextDueDate.text,
                                         isRepeatable: data['is_repeatable']
                                             ?.toLowerCase() ==
                                             'true',
@@ -2946,13 +3083,42 @@ class _addLease3State extends State<addLease3>
                                         'tenant_id'], // Assuming this field might be present
                                       );
                                     }).toList();
+                                    // print(ne)
 
-                                    // Creating ChargeData object
+                                    chargeEntries.add(Entry(
+                                      account: "Last Month's Rent",
+                                      amount:
+                                      double.tryParse(rentAmount.text) ??
+                                          0.0,
+                                      chargeType: 'Rent',
+                                      date: rentNextDueDate.text,
+                                      isRepeatable:
+                                      false, // Set to false if it's not repeatable, adjust as needed
+                                      memo: rentMemo.text,
+                                      rentCycle:
+                                      _selectedRent, // Set default value or adjust as needed
+                                    ));
+                                    chargeEntries.add(Entry(
+                                      account: "Security Deposite",
+                                      amount: double.tryParse(
+                                          securityDepositeAmount.text) ??
+                                          0.0,
+                                      chargeType: 'Security Deposite',
+                                      date: rentNextDueDate.text,
+                                      isRepeatable:
+                                      false, // Set to false if it's not repeatable, adjust as needed
+                                      memo: 'Last Month\'s Rent',
+                                      rentCycle:
+                                      _selectedRent, // Set default value or adjust as needed
+                                    ));
+
                                     ChargeData chargeData = ChargeData(
                                       adminId: adminId,
                                       entry: chargeEntries,
                                       isLeaseAdded: _isLeaseAdded,
                                     );
+
+                                    print('${chargeEntries}');
 
                                     //Tenant
 
@@ -2961,71 +3127,103 @@ class _addLease3State extends State<addLease3>
                                     cosignersMap.isNotEmpty
                                         ? cosignersMap[0]
                                         : {};
+                                    print(
+                                        'tenant\'s length ${tenantsMap.length}');
+                                    String currentDate =
+                                    DateTime.now().toString();
                                     List<TenantData> tenantDataList =
                                     tenantsMap.entries.map((entry) {
                                       final tenantMap = entry.value;
+                                      print(tenantMap['firstName']);
+                                      print(tenantMap['firstName']);
                                       return TenantData(
-                                        adminId: tenantMap['adminId'] ?? '',
+                                        adminId: adminId,
                                         comments: tenantMap['comments'] ?? '',
-                                        createdAt: tenantMap['createdAt'] ?? '',
                                         emergencyContact: EmergencyContacts(
                                           name: tenantMap[
                                           'emergencyContactName'] ??
                                               '',
-                                          relation: tenantMap[
-                                          'emergencyContactRelation'] ??
+                                          relation:
+                                          tenantMap['emergencyRelation'] ??
                                               '',
-                                          email: tenantMap[
-                                          'emergencyContactEmail'] ??
-                                              '',
+                                          email:
+                                          tenantMap['emergencyEmail'] ?? '',
                                           phoneNumber: tenantMap[
-                                          'emergencyContactPhoneNumber'] ??
+                                          'emergencyPhoneNumber'] ??
                                               '',
                                         ),
                                         isDelete:
                                         tenantMap['isDelete'] == 'true',
-                                        rentalAddress:
-                                        tenantMap['rentalAddress'] ?? '',
-                                        rentalUnit:
-                                        tenantMap['rentalUnit'] ?? '',
                                         taxPayerId:
                                         tenantMap['taxPayerId'] ?? '',
-                                        tenantAlternativeEmail: tenantMap[
-                                        'tenantAlternativeEmail'] ??
-                                            '',
-                                        tenantAlternativeNumber: tenantMap[
-                                        'tenantAlternativeNumber'] ??
-                                            '',
+                                        tenantAlternativeEmail:
+                                        tenantMap['alterEmail'] ?? '',
+                                        tenantAlternativeNumber:
+                                        tenantMap['workNumber'] ?? '',
                                         tenantBirthDate:
-                                        tenantMap['tenantBirthDate'] ?? '',
-                                        tenantEmail:
-                                        tenantMap['tenantEmail'] ?? '',
+                                        tenantMap['dob'].toString() ?? '',
+                                        tenantEmail: tenantMap['email'] ?? '',
                                         tenantFirstName:
-                                        tenantMap['tenantFirstName'] ?? '',
+                                        tenantMap['firstName'] ?? '',
                                         tenantId: tenantMap['tenantId'] ?? '',
                                         tenantLastName:
-                                        tenantMap['tenantLastName'] ?? '',
+                                        tenantMap['lastName'] ?? '',
                                         tenantPassword:
-                                        tenantMap['tenantPassword'] ?? '',
+                                        tenantMap['passWord'] ?? '',
                                         tenantPhoneNumber:
-                                        tenantMap['tenantPhoneNumber'] ??
+                                        tenantMap['phoneNumber'] ?? '',
+                                        updatedAt:
+                                        tenantMap['updatedAt'].toString() ??
                                             '',
-                                        updatedAt: tenantMap['updatedAt'] ?? '',
-                                        v: int.tryParse(
-                                            tenantMap['v'] ?? '0') ??
-                                            0,
-                                        id: tenantMap['id'] ?? '',
                                       );
                                     }).toList();
+                                    print(tenantDataList.length);
                                     // Assuming tenantDataList is a List<TenantData>
                                     List<String> tenantIds = tenantDataList
                                         .map((tenant) => tenant.tenantId ?? '')
                                         .toList();
 
-                                    //print all data
-                                    print(
-                                        ' ${jsonEncode(chargeData.toJson())}');
+                                    print('tenant ids :${tenantIds.length}');
 
+                                    //print all data
+
+                                    print(firstCosigner);
+
+                                    print('Tenant Data List:');
+                                    for (var tenant in tenantDataList) {
+                                      print('admin ID: ${tenant.adminId}');
+                                      print(
+                                          'Tenant First Name: ${tenant.tenantFirstName}');
+                                      print(
+                                          'Tenant Last Name: ${tenant.tenantLastName}');
+                                      print(
+                                          'Tenant Email: ${tenant.tenantEmail}');
+                                      print(
+                                          'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
+                                      print(
+                                          'Tenant Birth Date: ${tenant.tenantBirthDate}');
+                                      print(
+                                          'Rental Address: ${tenant.rentalAddress}');
+                                      print(
+                                          'Rental Unit: ${tenant.rentalUnit}');
+                                      print(
+                                          'Tax Payer ID: ${tenant.taxPayerId}');
+                                      print(
+                                          'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
+                                      print(
+                                          'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
+                                      print('Created At: ${tenant.createdAt}');
+                                      print('Updated At: ${tenant.updatedAt}');
+                                      print('Is Delete: ${tenant.isDelete}');
+                                      print('Comments: ${tenant.comments}');
+                                      print('Admin ID: ${tenant.adminId}');
+
+                                      print('v: ${tenant.v}');
+                                      print('ID: ${tenant.id}');
+                                      print('-----------------------');
+                                    }
+                                    print(_selectedResidentsEmail);
+                                    print('unit id data :${unitId}');
                                     Lease lease = Lease(
                                       chargeData: ChargeData(
                                         adminId: adminId ?? "",
@@ -3033,6 +3231,7 @@ class _addLease3State extends State<addLease3>
                                         isLeaseAdded: true,
                                       ),
                                       cosignerData: CosignerData(
+                                        adminId: adminId,
                                         cosignerFirstName:
                                         firstCosigner?['firstName'] ?? '',
                                         cosignerLastName:
@@ -3056,23 +3255,33 @@ class _addLease3State extends State<addLease3>
                                       leaseData: LeaseData(
                                         adminId: adminId ?? "",
                                         companyName: companyName,
-                                        endDate: _endDate.text,
+                                        endDate: leaseEndDate,
                                         entry: chargeEntries,
-                                        leaseAmount: 0,
+                                        leaseAmount: rentAmount.text,
                                         leaseType: _selectedLeaseType ?? "",
                                         rentalId: renderId,
-                                        startDate: _startDate.text,
+                                        startDate: leaseStartDate,
                                         tenantId: tenantDataList
                                             .map((tenant) =>
                                         tenant.tenantId ?? '')
                                             .toList(),
-                                        tenantResidentStatus: false,
+                                        tenantResidentStatus:
+                                        _selectedResidentsEmail,
                                         unitId: unitId,
                                         uploadedFile: _uploadedFileNames,
                                       ),
                                       tenantData: tenantDataList,
                                     );
-                                    LeaseRepository().postLease(lease);
+                                    addLeaseAndNavigate(lease);
+
+                                    if (widget.applicantId != null &&
+                                        widget.applicantId!.isNotEmpty) {
+                                      print(
+                                          'applicant id is: ${widget.applicantId}');
+                                      ifApplicantMoveIn(widget.applicantId!);
+                                    } else {
+                                      print('No applicant id provided');
+                                    }
 
                                     print('valid');
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -3164,8 +3373,7 @@ class _addLease3State extends State<addLease3>
                                         tenantAlternativeNumber: tenantMap[
                                         'tenantAlternativeNumber'] ??
                                             '',
-                                        tenantBirthDate:
-                                        tenantMap['tenantBirthDate'] ?? '',
+                                        tenantBirthDate: tenantMap['dob'] ?? '',
                                         tenantEmail:
                                         tenantMap['tenantEmail'] ?? '',
                                         tenantFirstName:
@@ -3194,7 +3402,7 @@ class _addLease3State extends State<addLease3>
                                         .map((tenant) => tenant.tenantId ?? '')
                                         .toList());
                                     print(tenants.first.tenantFirstName);
-                                    print(_endDate.text);
+                                    print(endDateController.text);
                                     print(rentAmount);
                                     //print( _selectedRent ??"");
                                     print(_selectedRent);
@@ -3233,6 +3441,27 @@ class _addLease3State extends State<addLease3>
         ),
       ),
     );
+  }
+
+  Future<void> addLeaseAndNavigate(Lease lease) async {
+    bool success = await LeaseRepository().postLease(lease);
+
+    if (success) {
+      Navigator.pop(context); // Replace with the actual navigation logic
+    } else {
+      // Handle the failure case, maybe show a message
+    }
+  }
+
+  Future<void> ifApplicantMoveIn(String applicantId) async {
+    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);
+
+    if (success) {
+      Navigator.pop(context); // Replace with the actual navigation logic
+    } else {
+      // Handle the failure case, maybe show a message
+      print('Failed to update applicant status');
+    }
   }
 
   Future<void> addLease() async {
@@ -3497,6 +3726,7 @@ class _addLease3State extends State<addLease3>
                     width: 90,
                     decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF152b51),
@@ -3637,9 +3867,13 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
-    final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+    String? id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -4111,7 +4345,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.phone,
                           hintText: 'Enter Amount',
                           controller: _amountController,
                         ),
@@ -4225,10 +4459,16 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
       };
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('adminId');
+      String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
         body: json.encode(formData),
       );
 
@@ -4352,9 +4592,14 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString('adminId').toString();
-    final response =
-    await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+
+    String? id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
     print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -4908,10 +5153,16 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
       };
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('adminId');
+      String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
         body: json.encode(formData),
       );
 
@@ -5036,8 +5287,12 @@ class _AddTenantState extends State<AddTenant> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
-      final response =
-      await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'));
+      String? token = prefs.getString('token');
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = json.decode(response.body);
@@ -5668,7 +5923,7 @@ class _AddTenantState extends State<AddTenant> {
                                 color: Color(0xFFb0b6c3)),
                             border: InputBorder.none,
                             // labelText: 'Select Date',
-                            hintText: 'dd-mm-yyyy',
+                            hintText: 'yyyy-mm-dd',
                             suffixIcon: IconButton(
                               icon:
                               const Icon(Icons.calendar_today),

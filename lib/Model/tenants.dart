@@ -1,3 +1,4 @@
+
 class TenantResponse {
   int? statusCode;
   List<Tenant>? data;
@@ -79,8 +80,8 @@ class Tenant {
     adminId = json['admin_id']??"";
     tenantFirstName = json['tenant_firstName']??"";
     tenantLastName = json['tenant_lastName']??"";
-    tenantPhoneNumber = json['tenant_phoneNumber']??"";
-    tenantAlternativeNumber = json['tenant_alternativeNumber']??"";
+    tenantPhoneNumber = json['tenant_phoneNumber'].toString()??"";
+    tenantAlternativeNumber = json['tenant_alternativeNumber'].toString()??"";
     tenantEmail = json['tenant_email']??"";
     tenant_residentStatus = json['tenant_residentStatus']??false;
     tenantAlternativeEmail = json['tenant_alternativeEmail']??"";
@@ -135,7 +136,7 @@ class EmergencyContact {
     name = json['name']??"";
     relation = json['relation']??"";
     email = json['email']??"";
-    phoneNumber = json['phoneNumber']??"";
+    phoneNumber = json['phoneNumber'].toString();
   }
 
   Map<String, dynamic> toJson() {

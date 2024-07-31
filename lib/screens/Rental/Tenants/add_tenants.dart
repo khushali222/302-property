@@ -11,7 +11,8 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
-import '../../../model/tenants.dart';
+import '../../../Model/tenants.dart';
+
 import '../../../repository/tenants.dart';
 
 class AddTenant extends StatefulWidget {
@@ -722,6 +723,8 @@ class _AddTenantState extends State<AddTenant> {
       comments: comments.text,
       emergencyContact: emergencyContact,
     );
+ 
+    
 
     bool success = await TenantsRepository().addTenant(tenant);
 
@@ -865,7 +868,6 @@ class _AddTenantState extends State<AddTenant> {
 //   }
 // }
 
-
 class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
@@ -912,7 +914,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   @override
   void dispose() {
@@ -930,31 +932,28 @@ class CustomTextFieldState extends State<CustomTextField> {
             if (widget.controller!.text.isEmpty) {
               setState(() {
                 if(widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
+                _errorMessage = 'Please ${widget.hintText}';
                 else
                   _errorMessage = 'Please ${widget.label}';
               });
               return '';
             }
             else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
-              {
-                setState(() {
-                  _errorMessage = '${widget.error_mess}';
-                });
-                return '';
-              }
-
+            setState(() {
+              _errorMessage = '${widget.error_mess}';
+            });
             return null;
           },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
                 Material(
-                  elevation:2,
+                  elevation: 2,
                   borderRadius: BorderRadius.circular(8.0),
                   child: Container(
                     height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -968,7 +967,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       ],
                     ),
                     child: TextFormField(
-                      /*    onFieldSubmitted: (value){
+                  /*    onFieldSubmitted: (value){
                         if(value.isNotEmpty){
 
                           if(widget.amount_check != null){
@@ -1013,7 +1012,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),

@@ -102,6 +102,14 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.white,
+                  ),
+                  "Reports",
+                  true),
             ],
           ),
         ),

@@ -656,6 +656,14 @@ class _PropertyTableState extends State<PropertyTable> {
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -686,12 +694,14 @@ class _PropertyTableState extends State<PropertyTable> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
+                          ? 35
+                          : MediaQuery.of(context).size.width * 0.062,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -706,7 +716,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.034,
+                                MediaQuery.of(context).size.width < 500
+                                    ? 14
+                                    : 20,
                               ),
                             ),
                           ],
@@ -722,7 +734,6 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             SizedBox(height: 10),
-
             titleBar(
               width: MediaQuery.of(context).size.width * .91,
               title: 'Property Type',
@@ -736,7 +747,7 @@ class _PropertyTableState extends State<PropertyTable> {
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 24),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -756,9 +767,11 @@ class _PropertyTableState extends State<PropertyTable> {
                         children: [
                           Positioned.fill(
                             child: TextField(
-                              style:TextStyle(
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 12 : 14
-                              ),
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -772,16 +785,18 @@ class _PropertyTableState extends State<PropertyTable> {
                               },
                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
                               decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                contentPadding:
-                                   EdgeInsets.only(left: 5,bottom: 13,top: 14)
-                              ),
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18,
+                                    // fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                  contentPadding: EdgeInsets.only(
+                                      left: 5, bottom: 13, top: 14)),
                             ),
                           ),
                         ],
@@ -895,7 +910,6 @@ class _PropertyTableState extends State<PropertyTable> {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
-
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
@@ -1416,7 +1430,7 @@ class _PropertyTableState extends State<PropertyTable> {
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5),
+                                  horizontal: 24.0, vertical: 5),
                               child: Column(
                                 children: [
                                   SingleChildScrollView(

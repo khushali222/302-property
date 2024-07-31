@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
 import '../screens/Leasing/Applicants/Applicants_table.dart';
 
-
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
+import '../screens/Maintenance/Workorder/Add_workorder.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
 import '../screens/Rental/Rentalowner/Add_RentalOwners.dart';
@@ -43,15 +44,18 @@ Widget buildListTile(
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ListTile(
       onTap: () {
-        if (title == "Dashboard") {
+        if (title == "Dashboard" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Dashboard()));
-        } else if (title == "Add Property Type") {
+        } else if (title == "Add Property Type" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => PropertyTable()));
-        } else if (title == "Add Staff Member") {
+        } else if (title == "Add Staff Member" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => StaffTable()));
+        } else if (title == "Reports" && active != true) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ReportsMainScreen()));
         }
       },
       leading: leadingIcon,
@@ -65,10 +69,7 @@ Widget buildListTile(
   );
 }
 
-void navigateToOption(
-  BuildContext context,
-  String option,
-) {
+void navigateToOption(BuildContext context, String option, bool isActive) {
   int index = 0;
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
@@ -79,12 +80,16 @@ void navigateToOption(
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
+  //  "Work Order": (context) => Cardpayment(leaseId: '',),
 
   };
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: routes[option]!),
-  );
+
+  if (isActive != true) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: routes[option]!),
+    );
+  }
 }
 
 Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
@@ -123,7 +128,7 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
               ),
               onTap: () {
                 Navigator.pop(context);
-                navigateToOption(context, subTopic);
+                navigateToOption(context, subTopic, active);
               },
             ),
           ),

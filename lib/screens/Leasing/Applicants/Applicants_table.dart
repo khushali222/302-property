@@ -13,6 +13,7 @@ import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/applicants.dart';
+import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/applicant_summery2.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/addApplicant.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
@@ -21,7 +22,6 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/ApplicantModel.dart';
-import 'applicant_summery.dart';
 
 class Applicants_table extends StatefulWidget {
   @override
@@ -293,12 +293,12 @@ class _Applicants_tableState extends State<Applicants_table> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this applicant!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Cancel",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -306,12 +306,12 @@ class _Applicants_tableState extends State<Applicants_table> {
           color: Colors.grey,
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await ApplicantRepository().DeleteApplicant(id: id);
+            await ApplicantRepository().DeleteApplicant(Applicantid: id);
             setState(() {
               futureApplicantdata = ApplicantRepository().fetchApplicants();
             });
@@ -348,7 +348,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = ApplicantRepository().DeleteApplicant(id: id);
+            var data = ApplicantRepository().DeleteApplicant(Applicantid: id);
             // Add your delete logic here
             setState(() {
               futureApplicantdata = ApplicantRepository().fetchApplicants();
@@ -569,8 +569,11 @@ class _Applicants_tableState extends State<Applicants_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/applicant/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/applicant/limitation/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 200) {
@@ -595,19 +598,19 @@ class _Applicants_tableState extends State<Applicants_table> {
       title: "Plan Limitation",
       desc:
           "The limit for adding applicant according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(21, 43, 83, 1),
+          color: const Color.fromRGBO(21, 43, 83, 1),
         ),
         /* DialogButton(
           child: Text(
@@ -689,6 +692,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"]),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -719,7 +730,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                       if (applicantCount < applicantCountLimit) {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => AddApplicant()));
+                                builder: (context) => const AddApplicant()));
                         if (result == true) {
                           setState(() {
                             futureApplicantdata =
@@ -733,12 +744,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
+                          ? 35
+                          : MediaQuery.of(context).size.width * 0.063,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width:  (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -753,7 +766,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.034,
+                                MediaQuery.of(context).size.width < 500
+                                    ? 14
+                                    : 20,
                               ),
                             ),
                           ],
@@ -775,148 +790,6 @@ class _Applicants_tableState extends State<Applicants_table> {
               title: 'Applicants',
             ),
             const SizedBox(height: 10),
-            //search
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 13, right: 13),
-            //   child: Row(
-            //     children: [
-            //       if (MediaQuery.of(context).size.width < 500)
-            //         const SizedBox(width: 5),
-            //       if (MediaQuery.of(context).size.width > 500)
-            //         const SizedBox(width: 22),
-            //       Material(
-            //         elevation: 3,
-            //         borderRadius: BorderRadius.circular(2),
-            //         child: Container(
-            //           padding: const EdgeInsets.symmetric(horizontal: 10),
-            //           // height: 40,
-            //           height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-            //           width: MediaQuery.of(context).size.width < 500
-            //               ? MediaQuery.of(context).size.width * .52
-            //               : MediaQuery.of(context).size.width * .49,
-            //           decoration: BoxDecoration(
-            //               color: Colors.white,
-            //               borderRadius: BorderRadius.circular(2),
-            //               // border: Border.all(color: Colors.grey),
-            //               border: Border.all(color: const Color(0xFF8A95A8))),
-            //           child: Stack(
-            //             children: [
-            //               Positioned.fill(
-            //                 child: TextField(
-            //                   // onChanged: (value) {
-            //                   //   setState(() {
-            //                   //     cvverror = false;
-            //                   //   });
-            //                   // },
-            //                   // controller: cvv,
-            //                   onChanged: (value) {
-            //                     setState(() {
-            //                       searchvalue = value;
-            //                     });
-            //                   },
-            //                   cursorColor: const Color.fromRGBO(21, 43, 81, 1),
-            //                   decoration: const InputDecoration(
-            //                     border: InputBorder.none,
-            //                     hintText: "Search here...",
-            //                     hintStyle: TextStyle(
-            //                       // fontWeight: FontWeight.bold,
-            //                       color: Color(0xFF8A95A8),
-            //                     ),
-            //                     // contentPadding:
-            //                     //     EdgeInsets.symmetric(horizontal: 5),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //       const SizedBox(width: 15),
-            //       // DropdownButtonHideUnderline(
-            //       //   child: Material(
-            //       //     elevation: 3,
-            //       //     child: DropdownButton2<String>(
-            //       //       isExpanded: true,
-            //       //       hint: const Row(
-            //       //         children: [
-            //       //           SizedBox(
-            //       //             width: 4,
-            //       //           ),
-            //       //           Expanded(
-            //       //             child: Text(
-            //       //               'Type',
-            //       //               style: TextStyle(
-            //       //                 fontSize: 14,
-            //       //                 // fontWeight: FontWeight.bold,
-            //       //                 color: Color(0xFF8A95A8),
-            //       //               ),
-            //       //               overflow: TextOverflow.ellipsis,
-            //       //             ),
-            //       //           ),
-            //       //         ],
-            //       //       ),
-            //       //       items: items
-            //       //           .map((String item) => DropdownMenuItem<String>(
-            //       //                 value: item,
-            //       //                 child: Text(
-            //       //                   item,
-            //       //                   style: const TextStyle(
-            //       //                     fontSize: 14,
-            //       //                     fontWeight: FontWeight.bold,
-            //       //                     color: Colors.black,
-            //       //                   ),
-            //       //                   overflow: TextOverflow.ellipsis,
-            //       //                 ),
-            //       //               ))
-            //       //           .toList(),
-            //       //       value: selectedValue,
-            //       //       onChanged: (value) {
-            //       //         setState(() {
-            //       //           selectedValue = value;
-            //       //         });
-            //       //       },
-            //       //       buttonStyleData: ButtonStyleData(
-            //       //         height:
-            //       //             MediaQuery.of(context).size.width < 500 ? 40 : 50,
-            //       //         // width: 180,
-            //       //         width: MediaQuery.of(context).size.width < 500
-            //       //             ? MediaQuery.of(context).size.width * .35
-            //       //             : MediaQuery.of(context).size.width * .4,
-            //       //         padding: const EdgeInsets.only(left: 14, right: 14),
-            //       //         decoration: BoxDecoration(
-            //       //           borderRadius: BorderRadius.circular(2),
-            //       //           border: Border.all(
-            //       //             // color: Colors.black26,
-            //       //             color: const Color(0xFF8A95A8),
-            //       //           ),
-            //       //           color: Colors.white,
-            //       //         ),
-            //       //         elevation: 0,
-            //       //       ),
-            //       //       dropdownStyleData: DropdownStyleData(
-            //       //         maxHeight: 200,
-            //       //         width: 200,
-            //       //         decoration: BoxDecoration(
-            //       //           borderRadius: BorderRadius.circular(14),
-            //       //           //color: Colors.redAccent,
-            //       //         ),
-            //       //         offset: const Offset(-20, 0),
-            //       //         scrollbarTheme: ScrollbarThemeData(
-            //       //           radius: const Radius.circular(40),
-            //       //           thickness: MaterialStateProperty.all(6),
-            //       //           thumbVisibility: MaterialStateProperty.all(true),
-            //       //         ),
-            //       //       ),
-            //       //       menuItemStyleData: const MenuItemStyleData(
-            //       //         height: 40,
-            //       //         padding: EdgeInsets.only(left: 14, right: 14),
-            //       //       ),
-            //       //     ),
-            //       //   ),
-            //       // ),
-            //     ],
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.only(left: 19, right: 13),
               child: Row(
@@ -924,7 +797,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                   if (MediaQuery.of(context).size.width < 500)
                     const SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(width: 22),
+                    const SizedBox(width: 19),
                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(2),
@@ -1034,7 +907,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                 applicant.applicantFirstName == selectedValue)
                             .toList();
                       }
-
+                      data = data.reversed.toList();
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -1113,8 +986,16 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 ),
                                                 Expanded(
                                                   child: InkWell(
-                                                    onTap: (){
-                                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>applicant_summery(applicant_id: applicant.applicantId,)));
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  applicant_summery(
+                                                                    applicant_id:
+                                                                        applicant
+                                                                            .applicantId,
+                                                                  )));
                                                     },
                                                     child: Padding(
                                                       padding:
@@ -1296,7 +1177,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 _showDeleteAlert(
                                                                     context,
                                                                     applicant
-                                                                        .applicantId!);
+                                                                        .applicantId
+                                                                        .toString());
                                                               },
                                                             ),
                                                           ],
@@ -1438,6 +1320,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                               applicant.applicantFirstName == selectedValue)
                           .toList();
                     }
+                    _tableData = _tableData.reversed.toList();
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Column(
@@ -1445,7 +1328,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5),
+                                  horizontal: 22.0, vertical: 5),
                               child: Column(
                                 children: [
                                   SingleChildScrollView(

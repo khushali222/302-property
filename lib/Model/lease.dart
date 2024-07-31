@@ -84,13 +84,17 @@ class Entry {
   });
 
   factory Entry.fromJson(Map<String, dynamic> json) {
+    print('\n\nEntry\'s data');
+    json.forEach((key, value) {
+      print('$key: $value');
+    });
     return Entry(
       account: json['account'],
       amount: json['amount'],
       chargeType: json['charge_type'],
       date: json['date'],
-      isRepeatable: json['is_repeatable']??false,
-      memo: json['memo']??"",
+      isRepeatable: json['is_repeatable'] ?? false,
+      memo: json['memo'] ?? "",
       rentCycle: json['rent_cycle'],
       tenantId: json['tenant_id'],
     );
@@ -180,7 +184,7 @@ class LeaseData {
   String? companyName;
   String? endDate;
   List<Entry>? entry;
-  int? leaseAmount;
+  String? leaseAmount;
   String? leaseType;
   String? rentalId;
   String? startDate;
@@ -224,6 +228,8 @@ class LeaseData {
   }
 
   Map<String, dynamic> toJson() {
+    print("start date json:${startDate}");
+    print("end date json:${endDate}");
     return {
       'lease_id': leaseId,
       'admin_id': adminId,
@@ -241,7 +247,6 @@ class LeaseData {
     };
   }
 }
-
 
 // class LeaseData {
 //   String? leaseId;
@@ -316,7 +321,6 @@ class LeaseData {
 //   }
 // }
 
-
 class TenantData {
   String? adminId;
   String? comments;
@@ -331,6 +335,7 @@ class TenantData {
   String? tenantBirthDate;
   String? tenantEmail;
   String? tenantFirstName;
+  String? tenant_residentStatus;
   String? tenantId;
   String? tenantLastName;
   String? tenantPassword;
@@ -351,6 +356,7 @@ class TenantData {
     this.tenantAlternativeEmail,
     this.tenantAlternativeNumber,
     this.tenantBirthDate,
+    this.tenant_residentStatus,
     this.tenantEmail,
     this.tenantFirstName,
     this.tenantId,
@@ -380,6 +386,7 @@ class TenantData {
       tenantId: json['tenant_id'],
       tenantLastName: json['tenant_lastName'],
       tenantPassword: json['tenant_password'],
+      tenant_residentStatus: json['tenant_residentStatus'] ?? '',
       tenantPhoneNumber: json['tenant_phoneNumber'],
       updatedAt: json['updatedAt'],
       v: json['__v'],
@@ -402,13 +409,11 @@ class TenantData {
       'tenant_birthDate': tenantBirthDate,
       'tenant_email': tenantEmail,
       'tenant_firstName': tenantFirstName,
+      'tenant_residentStatus': tenant_residentStatus,
       'tenant_id': tenantId,
       'tenant_lastName': tenantLastName,
       'tenant_password': tenantPassword,
       'tenant_phoneNumber': tenantPhoneNumber,
-      'updatedAt': updatedAt,
-      '__v': v,
-      '_id': id,
     };
   }
 }

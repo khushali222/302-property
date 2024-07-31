@@ -92,7 +92,7 @@ class _BarchartState extends State<Barchart> {
                   },
                   buttonStyleData: ButtonStyleData(
                     height: 50,
-                    width: 110,
+                    width: 160,
                     padding: const EdgeInsets.only(left: 14, right: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
@@ -113,12 +113,12 @@ class _BarchartState extends State<Barchart> {
                   ),
                   dropdownStyleData: DropdownStyleData(
                     maxHeight: 200,
-                    width: 110,
+                    width: 200,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(14),
                       color: Color.fromRGBO(50, 75, 119, 1),
                     ),
-                    offset: const Offset(0, -5),
+                    offset: const Offset(-20, 0),
                     scrollbarTheme: ScrollbarThemeData(
                       radius: const Radius.circular(40),
                       thickness: MaterialStateProperty.all<double>(6),

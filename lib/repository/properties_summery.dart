@@ -8,6 +8,7 @@ import 'package:three_zero_two_property/model/properties.dart';
 import 'package:three_zero_two_property/model/properties_summery.dart';
 
 import '../constant/constant.dart';
+import '../model/properties_workorders.dart';
 import '../model/unitsummery_propeties.dart';
 
 // class Properies_summery_Repo{
@@ -34,15 +35,15 @@ import '../model/unitsummery_propeties.dart';
 // }
 class Properies_summery_Repo{
 
-  Future<List<TenantData>> fetchPropertiessummery(String id) async {
+  Future<List<TenantData>> fetchPropertiessummery(String rentalId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
     String?  id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(id);
-    final response = await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$id'),
-
+    final response = await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$rentalId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => TenantData.fromJson(data)).toList();
@@ -94,16 +95,17 @@ class Properies_summery_Repo{
     }
   }
 
-  Future<List<unit_properties>> fetchunit(String id) async {
+  Future<List<unit_properties>> fetchunit(String rentalId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
     print(id);
     print("obj");
-    final response = await http.get(Uri.parse('${Api_url}/api/unit/rental_unit/$id'),
-
+    final response = await http.get(Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    // print(jsonEncode('data'));
+    print(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => unit_properties.fromJson(data)).toList();
@@ -151,6 +153,49 @@ class Properies_summery_Repo{
     } else {
       Fluttertoast.showToast(msg: "Failed to add appliances");
       throw Exception('Failed to add appliances');
+    }
+  }
+  Future<Map<String, dynamic>> Editappliances({
+    String? adminId,
+    String? unitId,
+    String? applianceid,
+    String? appliancename,
+    String? appliancedescription,
+    String? installeddate,
+
+  }) async {
+    final Map<String, dynamic> data = {
+      'admin_id': adminId,
+      'unit_id': unitId,
+      'appliance_id': applianceid,
+      'appliance_name': appliancename,
+      'appliance_description': appliancedescription,
+      'installed_date': installeddate,
+
+    };
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/appliance/appliance/$applianceid'),
+      headers: <String, String>{
+        "authorization" : "CRM $token",
+        'Content-Type': 'application/json; charset=UTF-8',
+        "id":"CRM $id",
+      },
+      body: jsonEncode(data),
+
+    );
+    print(applianceid);
+    print('hii api${response.body}');
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg:"edit appliances successfully");
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: "Failed to edit appliances");
+      throw Exception('Failed to edit appliances');
     }
   }
 
@@ -204,6 +249,33 @@ class Properies_summery_Repo{
     }
   }
 
+  Future<Map<String, dynamic>> Deleteapplences({
+    required String? appliance_id
+  }) async {
+    // print('$apiUrl/$id');
+    print('hello 123 ${appliance_id}');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final http.Response response = await http.delete(
+      Uri.parse('${Api_url}/api/appliance/appliance/$appliance_id'),
+      headers: <String, String>{
+        "authorization" : "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to delete applences');
+    }
+  }
   Future<Map<String, dynamic>> Deleteunit({
     required String? unitId
   }) async {
@@ -279,18 +351,33 @@ class Properies_summery_Repo{
     }
   }
 
+  Future<List<propertiesworkData>> fetchWorkOrders(String rentalId) async {
+    // Retrieve admin ID and token from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    // Define the URL and headers for the request
+    final response = await http.get(
+      Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+    );
+    // Check the response status
+    print(response.body);
+    print(rentalId);
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      List jsonResponse = json.decode(response.body)['data'];
+      // Map the JSON data to List<Data> and return
+      return jsonResponse.map((data) => propertiesworkData.fromJson(data)).toList();
+    } else {
+      // Throw an exception if the request failed
+      throw Exception('Failed to load work orders');
+    }
+  }
+
 }
 
-// class RentalSummaryRepository {
-// final String baseUrl = 'https://saas.cloudrentalmanager.com/api/rentals/rental_summary';
-//
-// Future<RentalSummary> fetchRentalSummary(String rentalId) async {
-// final response = await http.get(Uri.parse('$baseUrl/$rentalId'));
-//
-// if (response.statusCode == 200) {
-// return RentalSummary.fromJson(json.decode(response.body)['data'][0]);
-// } else {
-// throw Exception('Failed to load rental summary');
-// }
-// }
-// }

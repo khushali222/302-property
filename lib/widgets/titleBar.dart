@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class titleBar extends StatelessWidget {
   final String title;
   final double width;
-  final int? size;
-  titleBar({required this.title, required this.width,this.size});
+  titleBar({required this.title, required this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class titleBar extends StatelessWidget {
         child: Container(
           // height: 50.0,
           height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-          padding: EdgeInsets.only(top: 8, left: 10),
+          padding: EdgeInsets.only(top: 12, left: 10),
           width: width,
           margin: const EdgeInsets.only(bottom: 6.0),
           decoration: BoxDecoration(
@@ -35,8 +34,8 @@ class titleBar extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: MediaQuery.of(context).size.width < 500
-                    ? size!=null ? size!.toDouble() : 22
-                    : MediaQuery.of(context).size.width * 0.03),
+                    ? 22
+                    : MediaQuery.of(context).size.width * 0.035),
           ),
         ),
       ),

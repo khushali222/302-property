@@ -21,6 +21,7 @@ class Rentals {
   String? staffMemberId;
   String? createdAt;
   String? updatedAt;
+  List<String>? rentalImages;
   bool? isDelete;
   RentalOwnerData? rentalOwnerData;
   PropertyTypeData? propertyTypeData;
@@ -42,6 +43,7 @@ class Rentals {
      this.staffMemberId,
      this.createdAt,
      this.updatedAt,
+    this.rentalImages,
      this.isDelete,
      this.rentalOwnerData,
      this.propertyTypeData,
@@ -66,6 +68,9 @@ class Rentals {
       staffMemberId: json['staffmember_id']?? "",
       createdAt: json['createdAt']?? "",
       updatedAt: json['updatedAt']?? "",
+       rentalImages:  (json['rental_images'] as List<dynamic>?)
+            ?.map((e) => e as String)
+            .toList(),
       isDelete: json['is_delete']?? "",
        rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data']?? {}),
        propertyTypeData: PropertyTypeData.fromJson(json['property_type_data']?? {}),

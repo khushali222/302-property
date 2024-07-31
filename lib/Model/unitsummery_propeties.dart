@@ -8,6 +8,7 @@ class unit_properties {
   String? rentalsqft;
   String? rentalbath;
   String? rentalbed;
+  List<String>? rentalImages;
   int? tenantCount;
   String? createdAt;
   String? updatedAt;
@@ -21,6 +22,7 @@ class unit_properties {
         this.rentalunit,
         this.rentalId,
         this.rentalunitadress,
+        this.rentalImages,
         this.rentalsqft,
         this.tenantCount,
         this.rentalbath,
@@ -28,6 +30,7 @@ class unit_properties {
         });
 
   unit_properties.fromJson(Map<String, dynamic> json) {
+
     Id = json['_id']??"";
     adminId = json['admin_id']??"";
     unitId = json['unit_id']??"";
@@ -37,6 +40,9 @@ class unit_properties {
     rentalsqft = json['rental_sqft']??"";
     tenantCount = json['tenantCount']??"";
     rentalbath = json['rental_bath']??"";
+    rentalImages = (json['rental_images'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList();
     rentalbed = json['rental_bed']??"";
     createdAt = json['createdAt']??"";
     updatedAt = json['updatedAt']??"";
@@ -52,6 +58,7 @@ class unit_properties {
     data['rental_unit'] = this.rentalunit;
     data['rental_id'] = this.rentalId;
     data['rental_unit_adress'] = this.rentalunitadress;
+    data['rental_images'] = rentalImages;
     data['rental_sqft'] = this.rentalsqft;
     data['tenantCount'] = this.tenantCount;
     data['__v'] = this.iV;
