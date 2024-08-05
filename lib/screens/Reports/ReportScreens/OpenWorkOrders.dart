@@ -87,14 +87,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   }
 
   Widget _buildPaginationControls() {
-    int numorpages = 1;
-    numorpages = (totalrecords / _rowsPerPage).ceil();
+    int numorpages = (_tableData.length / _rowsPerPage).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // Text('Rows per page: '),
-        // SizedBox(width: 10),
         Material(
           elevation: 2,
           color: Colors.white,
@@ -406,8 +403,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
           : b.workSubject!.compareTo(a.workSubject!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.priority!.compareTo(b.priority!)
-          : b.priority!.compareTo(a.priority!));
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
           ? a.status!.compareTo(b.status!)
@@ -1316,15 +1313,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                         .toList();
                   }
 
-                  // Apply pagination
-                  final int itemsPerPage = 10;
-                  final int totalPages = (data.length / itemsPerPage).ceil();
-                  final int currentPage =
-                      1; // Update this with your pagination logic
-                  final List<WorkOrderReportData> pagedData = data
-                      .skip((currentPage - 1) * itemsPerPage)
-                      .take(itemsPerPage)
-                      .toList();
+                  // Update _tableData with the filtered data
+                  _tableData = data;
+
+                  // Get the paged data
+                  final pagedData = _pagedData;
 
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -1419,7 +1412,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                     ),
                   );
                 },
-              ),
+              )
           ],
         ),
       ),

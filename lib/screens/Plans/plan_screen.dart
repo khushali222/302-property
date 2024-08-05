@@ -924,6 +924,9 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                         ),
                                       ],
                                     ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
                                     Container(
                                       width: 360,
                                       height: 110,
@@ -2219,14 +2222,15 @@ class CardShimmerCurrentPlan extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0),
+      padding:
+          const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 16),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: blueColor),
           color: Colors.white, // Ensure background color is set
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        height: screenWidth > 500 ? 250 : 340,
+        height: screenWidth > 500 ? 250 : 336,
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
