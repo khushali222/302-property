@@ -28,6 +28,7 @@ import '../Password/forgotpassword.dart';
 import '../Password/otp_vrify.dart';
 import '../Plans/PlansPurcharCard.dart';
 
+
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
 
@@ -161,49 +162,49 @@ class _Login_ScreenState extends State<Login_Screen> {
     return Scaffold(
 
       body: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.05,
+          padding: const EdgeInsets.all(0.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
+              ),
+              Image(
+                image: AssetImage('assets/images/logo.png'),
+                height: MediaQuery.of(context).size.height * 0.05,
+                width: MediaQuery.of(context).size.width * 0.9,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.025,
+              ),
+              // Welcome
+              Center(
+                child: Text(
+                  "Welcome to 302 Rentals",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  ),
                 ),
-                Image(
-                  image: AssetImage('assets/images/logo.png'),
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  width: MediaQuery.of(context).size.width * 0.9,
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.025,
-                ),
-                // Welcome
-                Center(
-                  child: Text(
-                    "Welcome to 302 Rentals",
-                    style: TextStyle(
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              // Login text
+              Center(
+                child: Text(
+                  "Please login here...",
+                  style: TextStyle(
                       color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width * 0.05,
-                    ),
-                  ),
+                      fontSize: MediaQuery.of(context).size.width * 0.036),
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                // Login text
-                Center(
-                  child: Text(
-                    "Please login here...",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: MediaQuery.of(context).size.width * 0.036),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.05,
-                ),
-                /*     Row(
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
+              ),
+              /*     Row(
                   children: [
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.099,
@@ -270,146 +271,367 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ],
                 ),*/
 
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.025,
-                ),
-                // Email
-                Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.099,
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromRGBO(196, 196, 196, .3),
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: TextField(
-                                keyboardType: TextInputType.emailAddress,
-                                onChanged: (value) {
-                                  setState(() {
-                                    emailerror = false;
-                                    _isEmailSubmitted = false;
-                                  });
-                                },
-                                controller: email,
-                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                decoration: InputDecoration(
-                                  enabledBorder: emailerror
-                                      ? OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
-                                        color: Colors
-                                            .red), // Set border color here
-                                  )
-                                      : InputBorder.none,
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.all(14),
-                                  prefixIcon: Container(
-                                    height: 20,
-                                    width: 20,
-                                    padding: EdgeInsets.all(13),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.envelope,
-                                      size: 20,
-                                      color: Colors.grey[600],
-                                    ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.025,
+              ),
+              // Email
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.099,
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromRGBO(196, 196, 196, .3),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: TextField(
+                              keyboardType: TextInputType.emailAddress,
+                              onChanged: (value) {
+                                setState(() {
+                                  emailerror = false;
+                                  _isEmailSubmitted = false;
+                                });
+                              },
+                              controller: email,
+                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              decoration: InputDecoration(
+                                enabledBorder: emailerror
+                                    ? OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Colors
+                                          .red), // Set border color here
+                                )
+                                    : InputBorder.none,
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.all(14),
+                                prefixIcon: Container(
+                                  height: 20,
+                                  width: 20,
+                                  padding: EdgeInsets.all(13),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.envelope,
+                                    size: 20,
+                                    color: Colors.grey[600],
                                   ),
-                                  hintText: "Business Email",
-                                  hintStyle: TextStyle(
-                                      color: Colors.grey[600], fontSize: 15),
+                                ),
+                                hintText: "Business Email",
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[600], fontSize: 15),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.095,
+                  ),
+                ],
+              ),
+              emailerror
+                  ? Center(
+                  child: Text(
+                    emailmessage,
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ))
+                  : Container(),
+
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.025,
+              ),
+              if(!isEmailSubmitted)
+                Column(
+                  children: [
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.099,
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.03,
+                              width: MediaQuery.of(context).size.width * 0.05,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: Colors.grey,
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.02,
+                            ),
+                            Text(
+                              "Remember me ",
+                              style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                                  color: Colors.black),
+                            ),
+
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ForgotPassword()));
+                              },
+                              child: Text(
+                                "Forgot password?",
+                                style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width * 0.03,
+                                    color: Colors.blue),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.099,
+                            ),
                           ],
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.025,
+                        ),
+
+                      ],
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.035,
+                    ),
+                    InkWell(
+                      onTap: (){
+                        if (email.text.isEmpty) {
+                          setState(() {
+                            emailerror = true;
+                            emailmessage = "Email is required";
+                          });
+                        } else if (!EmailValidator.validate(email.text)) {
+                          setState(() {
+                            emailerror = true;
+                            emailmessage = "Email is not valid";
+                          });
+                        } else {
+                          setState(() {
+                            emailerror = false;
+                            //firstnamemessage = "Firstname is required";
+                          });
+                          submitEmail();
+                        }
+
+
+                      },
+                      child: Center(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: loading
+                                ? SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 40.0,
+                            )
+                                : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Submit",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                      MediaQuery.of(context).size.width *
+                                          0.045),
+                                ),
+
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.095,
-                    ),
                   ],
                 ),
-                emailerror
-                    ? Center(
-                    child: Text(
-                      emailmessage,
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ))
-                    : Container(),
+              if(isEmailSubmitted)
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    /*  SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.025,
+                    ),*/
 
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.025,
-                ),
-                if(!isEmailSubmitted)
-                  Column(
-                    children: [
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                              Container(
-                                height: MediaQuery.of(context).size.height * 0.03,
-                                width: MediaQuery.of(context).size.width * 0.05,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: Colors.grey,
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.099,
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color.fromRGBO(196, 196, 196, .3),
+                            ),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: TextField(
+                                    keyboardType: TextInputType.text,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        passworderror = false;
+                                      });
+                                    },
+                                    controller: password,
+                                    obscureText: visiable_password,
+                                    cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                    decoration: InputDecoration(
+                                      enabledBorder: passworderror
+                                          ? OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Colors
+                                                .red), // Set border color here
+                                      )
+                                          : InputBorder.none,
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.all(14),
+                                      prefixIcon: Container(
+                                        height: 20,
+                                        width: 20,
+                                        // color: Colors.blue,
+                                        padding: EdgeInsets.all(13),
+                                        child: FaIcon(
+                                          FontAwesomeIcons.lock,
+                                          size: 20,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      hintText: "Password",
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey[600], fontSize: 15),
+                                      suffixIcon: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            visiable_password = !visiable_password;
+                                          });
+                                        },
+                                        child: Icon(
+                                          visiable_password
+                                              ? Icons.remove_red_eye_outlined
+                                              : Icons.visibility_off_outlined,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02,
-                              ),
-                              Text(
-                                "Remember me ",
-                                style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width * 0.03,
-                                    color: Colors.black),
-                              ),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ForgotPassword()));
-                                },
-                                child: Text(
-                                  "Forgot password?",
-                                  style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width * 0.03,
-                                      color: Colors.blue),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),
+                        ),
 
-                        ],
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.099,
+                        ),
+                      ],
+                    ),
+                    passworderror
+                        ? Center(
+                        child: Text(
+                          passwordmessage,
+                          style: TextStyle(color: Colors.red),
+                        ))
+                        : Container(),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.025,
+                    ),
+                    if (hasMultipleCompanies) ...[
+
+                      SingleSelectionButtons(
+                        buttonOptions: companies,
+                        onSelected: (index) {
+                          selectCompany(companies[index]["company"]!,companies[index]["role"]!);
+                        },
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.035,
-                      ),
-                      InkWell(
-                        onTap: (){
+                    ],
+
+
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.015,
+                    ),
+                    // Forgot password
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.11,
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.03,
+                          width: MediaQuery.of(context).size.width * 0.05,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.02,
+                        ),
+                        Text(
+                          "Remember me ",
+                          style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width * 0.03,
+                              color: Colors.black),
+                        ),
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPassword()));
+                          },
+                          child: Text(
+                            "Forgot password?",
+                            style: TextStyle(
+                                fontSize: MediaQuery.of(context).size.width * 0.03,
+                                color: Colors.blue),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.099,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.025,
+                    ),
+                    // Login button
+                    /*SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.16,
+                ),*/
+                    GestureDetector(
+                      onTap: () async {
+                        setState(() {
                           if (email.text.isEmpty) {
                             setState(() {
                               emailerror = true;
@@ -425,367 +647,146 @@ class _Login_ScreenState extends State<Login_Screen> {
                               emailerror = false;
                               //firstnamemessage = "Firstname is required";
                             });
-                            submitEmail();
+                          }
+                          if (password.text.isEmpty) {
+                            setState(() {
+                              passworderror = true;
+                              passwordmessage = "Password is required";
+                            });
+                          } else {
+                            setState(() {
+                              passworderror = false;
+                              //firstnamemessage = "Firstname is required";
+                            });
+                          }
+                          if(selectedrole == null){
+                            setState(() {
+                              roleerror = true;
+                              rolemessage = "Please select the role";
+                            });
+                          }
+                          else{
+                            setState(() {
+                              roleerror = false;
+                              //firstnamemessage = "Firstname is required";
+                            });
+                          }
+                          if(selectedrole != "1" && selectedrole != null && company.text.isEmpty){
+                            setState(() {
+                              companyerror = true;
+                              companymessage = "Company Name is required";
+                            });
+                          }
+                          else{
+                            setState(() {
+                              companyerror = false;
+                              //firstnamemessage = "Firstname is required";
+                            });
                           }
 
 
-                        },
-                        child: Center(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * 0.06,
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Center(
-                              child: loading
-                                  ? SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 40.0,
-                              )
-                                  : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Submit",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.045),
-                                  ),
+                        });
 
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                if(isEmailSubmitted)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      /*  SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),*/
+                        if (emailerror == false && passworderror == false ) {
 
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.099,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Color.fromRGBO(196, 196, 196, .3),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: TextField(
-                                      keyboardType: TextInputType.text,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          passworderror = false;
-                                        });
-                                      },
-                                      controller: password,
-                                      obscureText: visiable_password,
-                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                      decoration: InputDecoration(
-                                        enabledBorder: passworderror
-                                            ? OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                              color: Colors
-                                                  .red), // Set border color here
-                                        )
-                                            : InputBorder.none,
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.all(14),
-                                        prefixIcon: Container(
-                                          height: 20,
-                                          width: 20,
-                                          // color: Colors.blue,
-                                          padding: EdgeInsets.all(13),
-                                          child: FaIcon(
-                                            FontAwesomeIcons.lock,
-                                            size: 20,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                        hintText: "Password",
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey[600], fontSize: 15),
-                                        suffixIcon: InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              visiable_password = !visiable_password;
-                                            });
-                                          },
-                                          child: Icon(
-                                            visiable_password
-                                                ? Icons.remove_red_eye_outlined
-                                                : Icons.visibility_off_outlined,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.099,
-                          ),
-                        ],
-                      ),
-                      passworderror
-                          ? Center(
-                          child: Text(
-                            passwordmessage,
-                            style: TextStyle(color: Colors.red),
-                          ))
-                          : Container(),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.025,
-                      ),
-                      if (hasMultipleCompanies) ...[
-
-                        SingleSelectionButtons(
-                          buttonOptions: companies,
-                          onSelected: (index) {
-                            selectCompany(companies[index]["company"]!,companies[index]["role"]!);
-                          },
-                        ),
-                      ],
-
-
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.015,
-                      ),
-                      // Forgot password
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.11,
-                          ),
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.03,
-                            width: MediaQuery.of(context).size.width * 0.05,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02,
-                          ),
-                          Text(
-                            "Remember me ",
-                            style: TextStyle(
-                                fontSize: MediaQuery.of(context).size.width * 0.03,
-                                color: Colors.black),
-                          ),
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ForgotPassword()));
-                            },
-                            child: Text(
-                              "Forgot password?",
-                              style: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.width * 0.03,
-                                  color: Colors.blue),
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.099,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.025,
-                      ),
-                      // Login button
-                      /*SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.16,
-                ),*/
-                      GestureDetector(
-                        onTap: () async {
-                          setState(() {
-                            if (email.text.isEmpty) {
-                              setState(() {
-                                emailerror = true;
-                                emailmessage = "Email is required";
-                              });
-                            } else if (!EmailValidator.validate(email.text)) {
-                              setState(() {
-                                emailerror = true;
-                                emailmessage = "Email is not valid";
-                              });
-                            } else {
-                              setState(() {
-                                emailerror = false;
-                                //firstnamemessage = "Firstname is required";
-                              });
-                            }
-                            if (password.text.isEmpty) {
-                              setState(() {
-                                passworderror = true;
-                                passwordmessage = "Password is required";
-                              });
-                            } else {
-                              setState(() {
-                                passworderror = false;
-                                //firstnamemessage = "Firstname is required";
-                              });
-                            }
-                            if(selectedrole == null){
-                              setState(() {
-                                roleerror = true;
-                                rolemessage = "Please select the role";
-                              });
-                            }
-                            else{
-                              setState(() {
-                                roleerror = false;
-                                //firstnamemessage = "Firstname is required";
-                              });
-                            }
-                            if(selectedrole != "1" && selectedrole != null && company.text.isEmpty){
-                              setState(() {
-                                companyerror = true;
-                                companymessage = "Company Name is required";
-                              });
-                            }
-                            else{
-                              setState(() {
-                                companyerror = false;
-                                //firstnamemessage = "Firstname is required";
-                              });
-                            }
-
-
-                          });
-
-                          if (emailerror == false && passworderror == false ) {
-
-                            if(selectedrole == "admin")
-                              await loginsubmit();
-                            if(selectedrole != "admin")
-                              await checkCompany(selectedCompany);
-                            // Save authentication status to SharedPreferences
-                            /* // Navigate to the appropriate screen based on authentication status
+                          if(selectedrole == "admin")
+                            await loginsubmit();
+                          if(selectedrole != "admin")
+                            await checkCompany(selectedCompany);
+                          // Save authentication status to SharedPreferences
+                          /* // Navigate to the appropriate screen based on authentication status
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => Dashboard(),
                         ),
                       );*/
-                          }
-                        },
-                        child: Center(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * 0.06,
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Center(
-                              child: loading
-                                  ? SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 40.0,
-                              )
-                                  : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Login",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.045),
-                                  ),
-                                  SizedBox(
-                                    height:
-                                    MediaQuery.of(context).size.width * 0.015,
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward_ios_sharp,
-                                    color: Colors.white,
-                                    size:
-                                    MediaQuery.of(context).size.width * 0.045,
-                                  ),
-                                ],
-                              ),
+                        }
+                      },
+                      child: Center(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: loading
+                                ? SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 40.0,
+                            )
+                                : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Login",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                      MediaQuery.of(context).size.width *
+                                          0.045),
+                                ),
+                                SizedBox(
+                                  height:
+                                  MediaQuery.of(context).size.width * 0.015,
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios_sharp,
+                                  color: Colors.white,
+                                  size:
+                                  MediaQuery.of(context).size.width * 0.045,
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-
-
-
-                // Register now
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.04,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don't have an account ? ",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: MediaQuery.of(context).size.width * 0.04),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Signup()));
-                      },
-                      child: Container(
-                        child: Text(
-                          "Register now",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                              fontSize:
-                              MediaQuery.of(context).size.width * 0.037),
                         ),
                       ),
                     ),
                   ],
                 ),
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height * 0.1,
-                // ),
-              ],
-            )
+
+
+
+
+              // Register now
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.04,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account ? ",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: MediaQuery.of(context).size.width * 0.04),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Signup()));
+                    },
+                    child: Container(
+                      child: Text(
+                        "Register now",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                            fontSize:
+                            MediaQuery.of(context).size.width * 0.037),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.1,
+              // ),
+            ],
+          )
 
 
       ),

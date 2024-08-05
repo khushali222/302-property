@@ -84,7 +84,7 @@ class _Edit_leaseState extends State<Edit_lease>
     //try {
 
     LeaseDetails fetchedDetails =
-        await LeaseRepository().fetchLeaseDetails(leaseId);
+    await LeaseRepository().fetchLeaseDetails(leaseId);
     // print();
 
     // print(fetchedDetails.re);
@@ -118,10 +118,10 @@ class _Edit_leaseState extends State<Edit_lease>
       rentNextDueDate.text = fetchedDetails.rentCharges!.first!.date;
       rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
       securityDepositeAmount.text =
-          fetchedDetails.securityCharges!.first!.chargeType ==
-                  'Security Deposite'
-              ? fetchedDetails.securityCharges!.first!.amount.toString()
-              : '';
+      fetchedDetails.securityCharges!.first!.chargeType ==
+          'Security Deposite'
+          ? fetchedDetails.securityCharges!.first!.amount.toString()
+          : '';
 
       for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
         Provider.of<SelectedTenantsProvider>(context, listen: false)
@@ -137,7 +137,7 @@ class _Edit_leaseState extends State<Edit_lease>
           // Ensure item is a Map and all keys and values are strings
           if (item is Map) {
             return item.map(
-                (key, value) => MapEntry(key.toString(), value.toString()));
+                    (key, value) => MapEntry(key.toString(), value.toString()));
           }
           return <String, String>{};
         }).toList();
@@ -148,7 +148,7 @@ class _Edit_leaseState extends State<Edit_lease>
           // Ensure item is a Map and all keys and values are strings
           if (item is Map) {
             return item.map(
-                (key, value) => MapEntry(key.toString(), value.toString()));
+                    (key, value) => MapEntry(key.toString(), value.toString()));
           }
           return <String, String>{};
         }).toList();
@@ -315,7 +315,7 @@ class _Edit_leaseState extends State<Edit_lease>
     if (adminId != null) {
       try {
         String fetchedCompanyName =
-            await TenantsRepository().fetchCompanyName(adminId);
+        await TenantsRepository().fetchCompanyName(adminId);
         setState(() {
           companyName = fetchedCompanyName;
         });
@@ -651,7 +651,7 @@ class _Edit_leaseState extends State<Edit_lease>
   Widget build(BuildContext context) {
     final cosigners = Provider.of<SelectedCosignersProvider>(context).cosigners;
     Map<int, Map<String, String>> cosignersMap =
-        cosigners.asMap().map((index, cosigner) {
+    cosigners.asMap().map((index, cosigner) {
       return MapEntry(index, {
         'c_id': cosigner.c_id ?? '',
         'firstName': cosigner.firstName,
@@ -670,7 +670,7 @@ class _Edit_leaseState extends State<Edit_lease>
     final tenants =
         Provider.of<SelectedTenantsProvider>(context).selectedTenants;
     Map<int, Map<String, String>> tenantsMap =
-        tenants.asMap().map((index, tenant) {
+    tenants.asMap().map((index, tenant) {
       print('in map ${tenant.tenantFirstName}');
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
@@ -701,7 +701,7 @@ class _Edit_leaseState extends State<Edit_lease>
     });
 
     var selectedTenantsProvider =
-        Provider.of<SelectedTenantsProvider>(context, listen: false);
+    Provider.of<SelectedTenantsProvider>(context, listen: false);
     // var selectedCosignerProvider =
     // Provider.of<SelectedCosignersProvider>(context, listen: false);
     return Scaffold(
@@ -848,53 +848,53 @@ class _Edit_leaseState extends State<Edit_lease>
                           ),
                           _isLoading
                               ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 50.0,
-                                  ),
-                                )
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 50.0,
+                            ),
+                          )
                               : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButtonFormField2<String>(
-                                        decoration: InputDecoration(
-                                            border: InputBorder.none),
-                                        isExpanded: true,
-                                        hint: const Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                'Select Property',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color(0xFFb0b6c3),
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              DropdownButtonHideUnderline(
+                                child: DropdownButtonFormField2<String>(
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none),
+                                  isExpanded: true,
+                                  hint: const Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          'Select Property',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xFFb0b6c3),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        items: properties.map((property) {
-                                          return DropdownMenuItem<String>(
-                                            value: property['rental_id'],
-                                            child: Text(
-                                              property['rental_adress']!,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black87,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        }).toList(),
-                                        value: _selectedProperty,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _selectedUnit = null;
-                                            _selectedProperty = value;
+                                      ),
+                                    ],
+                                  ),
+                                  items: properties.map((property) {
+                                    return DropdownMenuItem<String>(
+                                      value: property['rental_id'],
+                                      child: Text(
+                                        property['rental_adress']!,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black87,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  value: _selectedProperty,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedUnit = null;
+                                      _selectedProperty = value;
 
                                       renderId = value.toString();
                                       print('Hello Yash:${renderId}');
@@ -1121,7 +1121,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         primary: Color.fromRGBO(21, 43, 83,
                                             1), // header background color
                                         onPrimary:
-                                            Colors.white, // header text color
+                                        Colors.white, // header text color
                                         onSurface: Color.fromRGBO(
                                             21, 43, 83, 1), // body text color
                                       ),
@@ -1195,7 +1195,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         primary: Color.fromRGBO(21, 43, 83,
                                             1), // header background color
                                         onPrimary:
-                                            Colors.white, // header text color
+                                        Colors.white, // header text color
                                         onSurface: Color.fromRGBO(
                                             21, 43, 83, 1), // body text color
                                       ),
@@ -1274,48 +1274,48 @@ class _Edit_leaseState extends State<Edit_lease>
                                   builder: (context) {
                                     return StatefulBuilder(
                                         builder: (context, setState) {
-                                      return AlertDialog(
-                                        backgroundColor: Colors.white,
-                                        contentPadding: EdgeInsets.zero,
-                                        title: const Text(
-                                            'Add Tenant or Cosigner',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                                color: Color(0xFF152b51))),
-                                        content: Form(
-                                          key: _addRecurringFormKey,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              color: Colors.white,
-                                              width: double.infinity,
-                                              child: SingleChildScrollView(
-                                                child: Padding(
-                                                  padding:
+                                          return AlertDialog(
+                                            backgroundColor: Colors.white,
+                                            contentPadding: EdgeInsets.zero,
+                                            title: const Text(
+                                                'Add Tenant or Cosigner',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF152b51))),
+                                            content: Form(
+                                              key: _addRecurringFormKey,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Container(
+                                                  color: Colors.white,
+                                                  width: double.infinity,
+                                                  child: SingleChildScrollView(
+                                                    child: Padding(
+                                                      padding:
                                                       const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    crossAxisAlignment:
+                                                      child: Column(
+                                                        crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .start,
-                                                    children: [
-                                                      Row(
                                                         children: [
-                                                          Expanded(
-                                                            child:
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child:
                                                                 GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  isTenantSelected =
+                                                                  onTap: () {
+                                                                    setState(() {
+                                                                      isTenantSelected =
                                                                       true;
-                                                                });
-                                                              },
-                                                              child: Container(
-                                                                decoration:
+                                                                    });
+                                                                  },
+                                                                  child: Container(
+                                                                    decoration:
                                                                     BoxDecoration(
-                                                                  border: isTenantSelected
-                                                                      ? null
-                                                                      : Border.all(
+                                                                      border: isTenantSelected
+                                                                          ? null
+                                                                          : Border.all(
                                                                           color: const Color
                                                                               .fromRGBO(
                                                                               21,
@@ -1323,257 +1323,257 @@ class _Edit_leaseState extends State<Edit_lease>
                                                                               83,
                                                                               1),
                                                                           width:
-                                                                              1),
-                                                                  gradient:
+                                                                          1),
+                                                                      gradient:
                                                                       isTenantSelected
                                                                           ? const LinearGradient(
-                                                                              colors: [
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                              ],
-                                                                            )
+                                                                        colors: [
+                                                                          Color.fromRGBO(21, 43, 83, 1),
+                                                                          Color.fromRGBO(21, 43, 83, 1),
+                                                                        ],
+                                                                      )
                                                                           : null,
-                                                                  borderRadius:
+                                                                      borderRadius:
                                                                       const BorderRadius
                                                                           .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
+                                                                        topLeft: Radius
+                                                                            .circular(
                                                                             4),
-                                                                    bottomLeft:
+                                                                        bottomLeft:
                                                                         Radius.circular(
                                                                             4),
-                                                                  ),
-                                                                ),
-                                                                alignment:
+                                                                      ),
+                                                                    ),
+                                                                    alignment:
                                                                     Alignment
                                                                         .center,
-                                                                padding: isTenantSelected
-                                                                    ? const EdgeInsets
+                                                                    padding: isTenantSelected
+                                                                        ? const EdgeInsets
                                                                         .symmetric(
                                                                         vertical:
-                                                                            13)
-                                                                    : const EdgeInsets
+                                                                        13)
+                                                                        : const EdgeInsets
                                                                         .symmetric(
                                                                         vertical:
-                                                                            12),
-                                                                child: isTenantSelected
-                                                                    ? Text(
+                                                                        12),
+                                                                    child: isTenantSelected
+                                                                        ? Text(
+                                                                      "Tenant",
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: !isTenantSelected
+                                                                            ? Colors.transparent
+                                                                            : Colors.white,
+                                                                        fontWeight:
+                                                                        FontWeight.bold,
+                                                                      ),
+                                                                    )
+                                                                        : ShaderMask(
+                                                                      shaderCallback:
+                                                                          (bounds) {
+                                                                        return const LinearGradient(
+                                                                          colors: [
+                                                                            Color.fromRGBO(21, 43, 83, 1),
+                                                                            Color.fromRGBO(21, 43, 83, 1),
+                                                                          ],
+                                                                        ).createShader(
+                                                                            bounds);
+                                                                      },
+                                                                      child:
+                                                                      Text(
                                                                         "Tenant",
                                                                         style:
-                                                                            TextStyle(
-                                                                          color: !isTenantSelected
-                                                                              ? Colors.transparent
-                                                                              : Colors.white,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      )
-                                                                    : ShaderMask(
-                                                                        shaderCallback:
-                                                                            (bounds) {
-                                                                          return const LinearGradient(
-                                                                            colors: [
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                            ],
-                                                                          ).createShader(
-                                                                              bounds);
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          "Tenant",
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color: isTenantSelected
-                                                                                ? Colors.transparent
-                                                                                : Colors.white,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  isTenantSelected =
-                                                                      false;
-                                                                });
-                                                              },
-                                                              child: Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: isTenantSelected ==
-                                                                          false
-                                                                      ? null
-                                                                      : Border.all(
-                                                                          color: const Color
-                                                                              .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                          width:
-                                                                              1),
-                                                                  gradient: isTenantSelected ==
-                                                                          false
-                                                                      ? const LinearGradient(
-                                                                          colors: [
-                                                                            Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
-                                                                            Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
-                                                                          ],
-                                                                        )
-                                                                      : null,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .only(
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            4),
-                                                                    bottomRight:
-                                                                        Radius.circular(
-                                                                            4),
-                                                                  ),
-                                                                ),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                padding: isTenantSelected
-                                                                    ? const EdgeInsets
-                                                                        .symmetric(
-                                                                        vertical:
-                                                                            12)
-                                                                    : const EdgeInsets
-                                                                        .symmetric(
-                                                                        vertical:
-                                                                            13),
-                                                                child: !isTenantSelected
-                                                                    ? Text(
-                                                                        "Cosigner",
-                                                                        style:
-                                                                            TextStyle(
+                                                                        TextStyle(
                                                                           color: isTenantSelected
                                                                               ? Colors.transparent
                                                                               : Colors.white,
                                                                           fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      )
-                                                                    : ShaderMask(
-                                                                        shaderCallback:
-                                                                            (bounds) {
-                                                                          return const LinearGradient(
-                                                                            colors: [
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                            ],
-                                                                          ).createShader(
-                                                                              bounds);
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          "Cosigner",
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color: !isTenantSelected
-                                                                                ? Colors.transparent
-                                                                                : Colors.white,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
+                                                                          FontWeight.bold,
                                                                         ),
                                                                       ),
+                                                                    ),
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
+                                                              Expanded(
+                                                                child:
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(() {
+                                                                      isTenantSelected =
+                                                                      false;
+                                                                    });
+                                                                  },
+                                                                  child: Container(
+                                                                    decoration:
+                                                                    BoxDecoration(
+                                                                      border: isTenantSelected ==
+                                                                          false
+                                                                          ? null
+                                                                          : Border.all(
+                                                                          color: const Color
+                                                                              .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                          width:
+                                                                          1),
+                                                                      gradient: isTenantSelected ==
+                                                                          false
+                                                                          ? const LinearGradient(
+                                                                        colors: [
+                                                                          Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                          Color.fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                        ],
+                                                                      )
+                                                                          : null,
+                                                                      borderRadius:
+                                                                      const BorderRadius
+                                                                          .only(
+                                                                        topRight: Radius
+                                                                            .circular(
+                                                                            4),
+                                                                        bottomRight:
+                                                                        Radius.circular(
+                                                                            4),
+                                                                      ),
+                                                                    ),
+                                                                    alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                    padding: isTenantSelected
+                                                                        ? const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                        12)
+                                                                        : const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                        13),
+                                                                    child: !isTenantSelected
+                                                                        ? Text(
+                                                                      "Cosigner",
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: isTenantSelected
+                                                                            ? Colors.transparent
+                                                                            : Colors.white,
+                                                                        fontWeight:
+                                                                        FontWeight.bold,
+                                                                      ),
+                                                                    )
+                                                                        : ShaderMask(
+                                                                      shaderCallback:
+                                                                          (bounds) {
+                                                                        return const LinearGradient(
+                                                                          colors: [
+                                                                            Color.fromRGBO(21, 43, 83, 1),
+                                                                            Color.fromRGBO(21, 43, 83, 1),
+                                                                          ],
+                                                                        ).createShader(
+                                                                            bounds);
+                                                                      },
+                                                                      child:
+                                                                      Text(
+                                                                        "Cosigner",
+                                                                        style:
+                                                                        TextStyle(
+                                                                          color: !isTenantSelected
+                                                                              ? Colors.transparent
+                                                                              : Colors.white,
+                                                                          fontWeight:
+                                                                          FontWeight.bold,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
+                                                          isTenantSelected
+                                                              ? const AddTenant()
+                                                              : AddCosigner(),
                                                         ],
                                                       ),
-                                                      isTenantSelected
-                                                          ? const AddTenant()
-                                                          : AddCosigner(),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        // actions: [
-                                        //   Container(
-                                        //       height: 50,
-                                        //       width: 90,
-                                        //       decoration: BoxDecoration(
-                                        //           borderRadius:
-                                        //               BorderRadius.circular(
-                                        //                   8.0)),
-                                        //       child: ElevatedButton(
-                                        //           style: ElevatedButton.styleFrom(
-                                        //               backgroundColor:
-                                        //                   const Color(
-                                        //                       0xFF152b51),
-                                        //               shape:
-                                        //                   RoundedRectangleBorder(
-                                        //                       borderRadius:
-                                        //                           BorderRadius
-                                        //                               .circular(
-                                        //                                   8.0))),
-                                        //           onPressed: () {
-                                        //             if (_addRecurringFormKey
-                                        //                 .currentState!
-                                        //                 .validate()) {
-                                        //               print('object valid');
-                                        //             } else {
-                                        //               print('object invalid');
-                                        //             }
-                                        //           },
-                                        //           child: const Text(
-                                        //             'Add',
-                                        //             style: TextStyle(
-                                        //                 color:
-                                        //                     Color(0xFFf7f8f9)),
-                                        //           ))),
-                                        //   Container(
-                                        //       height: 50,
-                                        //       width: 94,
-                                        //       decoration: BoxDecoration(
-                                        //           borderRadius:
-                                        //               BorderRadius.circular(
-                                        //                   8.0)),
-                                        //       child: ElevatedButton(
-                                        //           style: ElevatedButton.styleFrom(
-                                        //               backgroundColor:
-                                        //                   const Color(
-                                        //                       0xFFffffff),
-                                        //               shape:
-                                        //                   RoundedRectangleBorder(
-                                        //                       borderRadius:
-                                        //                           BorderRadius
-                                        //                               .circular(
-                                        //                                   8.0))),
-                                        //           onPressed: () {
-                                        //             Navigator.pop(context);
-                                        //           },
-                                        //           child: const Text(
-                                        //             'Cancel',
-                                        //             style: TextStyle(
-                                        //                 color:
-                                        //                     Color(0xFF748097)),
-                                        //           )))
-                                        // ],
-                                      );
-                                    });
+                                            // actions: [
+                                            //   Container(
+                                            //       height: 50,
+                                            //       width: 90,
+                                            //       decoration: BoxDecoration(
+                                            //           borderRadius:
+                                            //               BorderRadius.circular(
+                                            //                   8.0)),
+                                            //       child: ElevatedButton(
+                                            //           style: ElevatedButton.styleFrom(
+                                            //               backgroundColor:
+                                            //                   const Color(
+                                            //                       0xFF152b51),
+                                            //               shape:
+                                            //                   RoundedRectangleBorder(
+                                            //                       borderRadius:
+                                            //                           BorderRadius
+                                            //                               .circular(
+                                            //                                   8.0))),
+                                            //           onPressed: () {
+                                            //             if (_addRecurringFormKey
+                                            //                 .currentState!
+                                            //                 .validate()) {
+                                            //               print('object valid');
+                                            //             } else {
+                                            //               print('object invalid');
+                                            //             }
+                                            //           },
+                                            //           child: const Text(
+                                            //             'Add',
+                                            //             style: TextStyle(
+                                            //                 color:
+                                            //                     Color(0xFFf7f8f9)),
+                                            //           ))),
+                                            //   Container(
+                                            //       height: 50,
+                                            //       width: 94,
+                                            //       decoration: BoxDecoration(
+                                            //           borderRadius:
+                                            //               BorderRadius.circular(
+                                            //                   8.0)),
+                                            //       child: ElevatedButton(
+                                            //           style: ElevatedButton.styleFrom(
+                                            //               backgroundColor:
+                                            //                   const Color(
+                                            //                       0xFFffffff),
+                                            //               shape:
+                                            //                   RoundedRectangleBorder(
+                                            //                       borderRadius:
+                                            //                           BorderRadius
+                                            //                               .circular(
+                                            //                                   8.0))),
+                                            //           onPressed: () {
+                                            //             Navigator.pop(context);
+                                            //           },
+                                            //           child: const Text(
+                                            //             'Cancel',
+                                            //             style: TextStyle(
+                                            //                 color:
+                                            //                     Color(0xFF748097)),
+                                            //           )))
+                                            // ],
+                                          );
+                                        });
                                   });
                             },
                             child: const Text('+ Add Tenant or Cosigner',
@@ -1645,7 +1645,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                             context)
                                             .selectedTenants
                                             .map((tenant) {
-                                              return DataRow(
+                                          return DataRow(
                                             cells: [
                                               DataCell(
                                                 Text(
@@ -2031,7 +2031,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         primary: Color.fromRGBO(21, 43, 83,
                                             1), // header background color
                                         onPrimary:
-                                            Colors.white, // header text color
+                                        Colors.white, // header text color
                                         onSurface: Color.fromRGBO(
                                             21, 43, 83, 1), // body text color
                                       ),
@@ -2196,121 +2196,121 @@ class _Edit_leaseState extends State<Edit_lease>
                                   height: 5,
                                 ),
                               if (formDataRecurringList.isNotEmpty)
-                              Table(
-                                border: TableBorder.all(
-                                  width: 1,
-                                  color: const Color.fromRGBO(21, 43, 83, 1),
-                                ),
-                                columnWidths: {
-                                  0: const FlexColumnWidth(2),
-                                  1: const FlexColumnWidth(2),
-                                  2: const FlexColumnWidth(1.3),
-                                },
-                                children: [
-                                  if (formDataRecurringList.isNotEmpty)
-                                    const TableRow(
-                                        decoration: BoxDecoration(
-                                          color: Color.fromRGBO(21, 43, 83, 1),
-                                        ),
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Account',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
+                                Table(
+                                  border: TableBorder.all(
+                                    width: 1,
+                                    color: const Color.fromRGBO(21, 43, 83, 1),
+                                  ),
+                                  columnWidths: {
+                                    0: const FlexColumnWidth(2),
+                                    1: const FlexColumnWidth(2),
+                                    2: const FlexColumnWidth(1.3),
+                                  },
+                                  children: [
+                                    if (formDataRecurringList.isNotEmpty)
+                                      const TableRow(
+                                          decoration: BoxDecoration(
+                                            color: Color.fromRGBO(21, 43, 83, 1),
+                                          ),
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Account',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Amount',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
+                                            Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Amount',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Actions',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
+                                            Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Actions',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ]),
-                                  ...formDataRecurringList
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    int index = entry.key;
-                                    var item = entry.value;
-                                    return TableRow(children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          '${item['account']}',
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w700,
-                                            color:
-                                            Color.fromRGBO(21, 43, 83, 1),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          '${item['amount']}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
+                                          ]),
+                                    ...formDataRecurringList
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      var item = entry.value;
+                                      return TableRow(children: [
+                                        Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Row(children: [
-                                            InkWell(
-                                              onTap: () {
-                                                _showRecurringPopupForm(context,
-                                                    _selectedRent.toString(),
-                                                    initialData: item,
-                                                    index: index);
-                                              },
-                                              child: const Icon(
-                                                Icons.edit,
-                                                color: Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                size: 18,
-                                              ),
+                                          child: Text(
+                                            '${item['account']}',
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w700,
+                                              color:
+                                              Color.fromRGBO(21, 43, 83, 1),
                                             ),
-                                            const SizedBox(width: 10),
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  formDataRecurringList
-                                                      .removeAt(index);
-                                                });
-                                              },
-                                              child: const Icon(
-                                                Icons.delete,
-                                                color: Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                size: 18,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            '${item['amount']}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey[500],
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  _showRecurringPopupForm(context,
+                                                      _selectedRent.toString(),
+                                                      initialData: item,
+                                                      index: index);
+                                                },
+                                                child: const Icon(
+                                                  Icons.edit,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 83, 1),
+                                                  size: 18,
+                                                ),
                                               ),
-                                            )
-                                          ]))
-                                    ]);
-                                  })
-                                ],
-                              ),
+                                              const SizedBox(width: 10),
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    formDataRecurringList
+                                                        .removeAt(index);
+                                                  });
+                                                },
+                                                child: const Icon(
+                                                  Icons.delete,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 83, 1),
+                                                  size: 18,
+                                                ),
+                                              )
+                                            ]))
+                                      ]);
+                                    })
+                                  ],
+                                ),
                               if (formDataOneTimeList.isNotEmpty)
                                 const SizedBox(
                                   height: 10,
@@ -2349,7 +2349,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                       const TableRow(
                                           decoration: BoxDecoration(
                                             color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
                                           ),
                                           children: [
                                             Padding(
@@ -2398,7 +2398,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                               fontSize: 15,
                                               fontWeight: FontWeight.w700,
                                               color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                              Color.fromRGBO(21, 43, 83, 1),
                                             ),
                                           ),
                                         ),
@@ -3084,22 +3084,22 @@ class _Edit_leaseState extends State<Edit_lease>
                                     backgroundColor: const Color(0xFF67758e),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(8.0))),
+                                        BorderRadius.circular(8.0))),
                                 onPressed: () async {
                                   if (_formKey.currentState?.validate() ??
                                       false) {
                                     //charges
                                     SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
+                                    await SharedPreferences.getInstance();
                                     String adminId =
-                                        prefs.getString("adminId")!;
+                                    prefs.getString("adminId")!;
 
                                     bool _isLeaseAdded = false;
 
                                     // // Printing ChargeData object
                                     //Changes
                                     List<Map<String, dynamic>>
-                                        mergedFormDataList = [
+                                    mergedFormDataList = [
                                       ...formDataOneTimeList,
                                       ...formDataRecurringList,
                                     ];
@@ -3107,51 +3107,51 @@ class _Edit_leaseState extends State<Edit_lease>
                                     // Creating Entry objects from the merged list
 
                                     List<Entry> chargeEntries =
-                                        mergedFormDataList.map((data) {
+                                    mergedFormDataList.map((data) {
                                       print(data['account']);
                                       return Entry(
                                         account: data['account'] ?? '',
                                         amount: double.tryParse(
-                                                data['amount'] ?? '0.0') ??
+                                            data['amount'] ?? '0.0') ??
                                             0.0,
                                         chargeType: data['charge_type'] ?? '',
                                         date: data['date'] ?? '',
                                         isRepeatable: data['is_repeatable']
-                                                ?.toLowerCase() ==
+                                            ?.toLowerCase() ==
                                             'true',
                                         memo: data['memo'] ?? '',
                                         rentCycle: data[
-                                            'rent_cycle'], // Assuming this field might be present
+                                        'rent_cycle'], // Assuming this field might be present
                                         tenantId: data[
-                                            'tenant_id'], // Assuming this field might be present
+                                        'tenant_id'], // Assuming this field might be present
                                       );
                                     }).toList();
 
                                     chargeEntries.add(Entry(
                                       account: "Last Month's Rent",
                                       amount:
-                                          double.tryParse(rentAmount.text) ??
-                                              0.0,
+                                      double.tryParse(rentAmount.text) ??
+                                          0.0,
                                       chargeType: 'Rent',
                                       date: rentNextDueDate.text,
                                       isRepeatable:
-                                          false, // Set to false if it's not repeatable, adjust as needed
+                                      false, // Set to false if it's not repeatable, adjust as needed
                                       memo: 'Last Month\'s Rent',
                                       rentCycle:
-                                          _selectedRent, // Set default value or adjust as needed
+                                      _selectedRent, // Set default value or adjust as needed
                                     ));
                                     chargeEntries.add(Entry(
                                       account: "Security Deposite",
                                       amount: double.tryParse(
-                                              securityDepositeAmount.text) ??
+                                          securityDepositeAmount.text) ??
                                           0.0,
                                       chargeType: 'Security Deposite',
                                       date: rentNextDueDate.text,
                                       isRepeatable:
-                                          false, // Set to false if it's not repeatable, adjust as needed
+                                      false, // Set to false if it's not repeatable, adjust as needed
                                       memo: 'Last Month\'s Rent',
                                       rentCycle:
-                                          _selectedRent, // Set default value or adjust as needed
+                                      _selectedRent, // Set default value or adjust as needed
                                     ));
 
                                     // Creating ChargeData object
@@ -3165,11 +3165,11 @@ class _Edit_leaseState extends State<Edit_lease>
 
                                     List<TenantData> tenants = [];
                                     Map<String, String>? firstCosigner =
-                                        cosignersMap.isNotEmpty
-                                            ? cosignersMap[0]
-                                            : {};
+                                    cosignersMap.isNotEmpty
+                                        ? cosignersMap[0]
+                                        : {};
                                     List<TenantData> tenantDataList =
-                                        tenantsMap.entries.map((entry) {
+                                    tenantsMap.entries.map((entry) {
                                       final tenantMap = entry.value;
                                       print(tenantMap['firstName']);
                                       print(tenantMap['firstName']);
@@ -3178,41 +3178,41 @@ class _Edit_leaseState extends State<Edit_lease>
                                         comments: tenantMap['comments'] ?? '',
                                         emergencyContact: EmergencyContacts(
                                           name: tenantMap[
-                                                  'emergencyContactName'] ??
+                                          'emergencyContactName'] ??
                                               '',
                                           relation:
-                                              tenantMap['emergencyRelation'] ??
-                                                  '',
+                                          tenantMap['emergencyRelation'] ??
+                                              '',
                                           email:
-                                              tenantMap['emergencyEmail'] ?? '',
+                                          tenantMap['emergencyEmail'] ?? '',
                                           phoneNumber: tenantMap[
-                                                  'emergencyPhoneNumber'] ??
+                                          'emergencyPhoneNumber'] ??
                                               '',
                                         ),
                                         isDelete:
-                                            tenantMap['isDelete'] == 'true',
+                                        tenantMap['isDelete'] == 'true',
                                         taxPayerId:
-                                            tenantMap['taxPayerId'] ?? '',
+                                        tenantMap['taxPayerId'] ?? '',
                                         rentalAddress:
-                                            tenantMap['rental_adress'],
+                                        tenantMap['rental_adress'],
                                         rentalUnit: tenantMap['rental_unit'],
                                         tenantAlternativeEmail:
-                                            tenantMap['alterEmail'] ?? '',
+                                        tenantMap['alterEmail'] ?? '',
                                         tenantAlternativeNumber:
-                                            tenantMap['workNumber'] ?? '',
+                                        tenantMap['workNumber'] ?? '',
                                         tenantBirthDate:
-                                            tenantMap['dob'].toString() ?? '',
+                                        tenantMap['dob'].toString() ?? '',
                                         tenantEmail: tenantMap['email'] ?? '',
                                         createdAt: tenantMap['createdAt'],
                                         tenantFirstName:
-                                            tenantMap['firstName'] ?? '',
+                                        tenantMap['firstName'] ?? '',
                                         tenantId: tenantMap['tenantId'] ?? '',
                                         tenantLastName:
-                                            tenantMap['lastName'] ?? '',
+                                        tenantMap['lastName'] ?? '',
                                         tenantPassword:
-                                            tenantMap['passWord'] ?? '',
+                                        tenantMap['passWord'] ?? '',
                                         tenantPhoneNumber:
-                                            tenantMap['phoneNumber'] ?? '',
+                                        tenantMap['phoneNumber'] ?? '',
                                       );
                                     }).toList();
                                     // Assuming tenantDataList is a List<TenantData>
@@ -3236,27 +3236,27 @@ class _Edit_leaseState extends State<Edit_lease>
                                       cosignerData: CosignerData(
                                           cosignerId: firstCosigner?['c_id'],
                                           cosignerFirstName:
-                                              firstCosigner?['firstName'] ?? '',
+                                          firstCosigner?['firstName'] ?? '',
                                           cosignerLastName:
-                                              firstCosigner?['lastName'] ?? '',
+                                          firstCosigner?['lastName'] ?? '',
                                           cosignerPhoneNumber:
-                                              firstCosigner?['phoneNumber'] ??
-                                                  '',
+                                          firstCosigner?['phoneNumber'] ??
+                                              '',
                                           cosignerEmail:
-                                              firstCosigner?['email'] ?? '',
+                                          firstCosigner?['email'] ?? '',
                                           cosignerAlternativeEmail:
-                                              firstCosigner?['alterEmail'] ??
-                                                  '',
+                                          firstCosigner?['alterEmail'] ??
+                                              '',
                                           cosignerAddress:
-                                              firstCosigner?['streetAddress'] ??
-                                                  '',
+                                          firstCosigner?['streetAddress'] ??
+                                              '',
                                           cosignerCity:
-                                              firstCosigner?['city'] ?? '',
+                                          firstCosigner?['city'] ?? '',
                                           cosignerCountry:
-                                              firstCosigner?['country'] ?? '',
+                                          firstCosigner?['country'] ?? '',
                                           cosignerPostalcode:
-                                              firstCosigner?['postalCode'] ??
-                                                  '',
+                                          firstCosigner?['postalCode'] ??
+                                              '',
                                           adminId: adminId),
                                       leaseData: LeaseData(
                                         leaseId: widget.leaseId,
@@ -3270,7 +3270,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         startDate: startDateController.text,
                                         tenantId: tenantDataList
                                             .map((tenant) =>
-                                                tenant.tenantId ?? '')
+                                        tenant.tenantId ?? '')
                                             .toList(),
                                         tenantResidentStatus: false,
                                         unitId: unitId,
@@ -3287,39 +3287,39 @@ class _Edit_leaseState extends State<Edit_lease>
                                     );
                                   } else {
                                     SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
+                                    await SharedPreferences.getInstance();
                                     String adminId =
-                                        prefs.getString("adminId")!;
+                                    prefs.getString("adminId")!;
 
                                     bool _isLeaseAdded = false;
 
                                     // // Printing ChargeData object
                                     //Changes
                                     List<Map<String, dynamic>>
-                                        mergedFormDataList = [
+                                    mergedFormDataList = [
                                       ...formDataOneTimeList,
                                       ...formDataRecurringList,
                                     ];
 
                                     // Creating Entry objects from the merged list
                                     List<Entry> chargeEntries =
-                                        mergedFormDataList.map((data) {
+                                    mergedFormDataList.map((data) {
                                       print(data['account']);
                                       return Entry(
                                         account: data['account'] ?? '',
                                         amount: double.tryParse(
-                                                data['amount'] ?? '0.0') ??
+                                            data['amount'] ?? '0.0') ??
                                             0.0,
                                         chargeType: data['charge_type'] ?? '',
                                         date: data['date'] ?? '',
                                         isRepeatable: data['is_repeatable']
-                                                ?.toLowerCase() ==
+                                            ?.toLowerCase() ==
                                             'true',
                                         memo: data['memo'] ?? '',
                                         rentCycle: data[
-                                            'rent_cycle'], // Assuming this field might be present
+                                        'rent_cycle'], // Assuming this field might be present
                                         tenantId: data[
-                                            'tenant_id'], // Assuming this field might be present
+                                        'tenant_id'], // Assuming this field might be present
                                       );
                                     }).toList();
                                     // Creating ChargeData object
@@ -3335,11 +3335,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                     //consiger
 
                                     Map<String, String>? firstCosigner =
-                                        cosignersMap.isNotEmpty
-                                            ? cosignersMap[0]
-                                            : {};
+                                    cosignersMap.isNotEmpty
+                                        ? cosignersMap[0]
+                                        : {};
                                     List<TenantData> tenantDataList =
-                                        tenantsMap.entries.map((entry) {
+                                    tenantsMap.entries.map((entry) {
                                       final tenantMap = entry.value;
                                       print(tenantMap['firstName']);
                                       print(tenantMap['firstName']);
@@ -3348,40 +3348,40 @@ class _Edit_leaseState extends State<Edit_lease>
                                         comments: tenantMap['comments'] ?? '',
                                         emergencyContact: EmergencyContacts(
                                           name: tenantMap[
-                                                  'emergencyContactName'] ??
+                                          'emergencyContactName'] ??
                                               '',
                                           relation:
-                                              tenantMap['emergencyRelation'] ??
-                                                  '',
+                                          tenantMap['emergencyRelation'] ??
+                                              '',
                                           email:
-                                              tenantMap['emergencyEmail'] ?? '',
+                                          tenantMap['emergencyEmail'] ?? '',
                                           phoneNumber: tenantMap[
-                                                  'emergencyPhoneNumber'] ??
+                                          'emergencyPhoneNumber'] ??
                                               '',
                                         ),
                                         isDelete:
-                                            tenantMap['isDelete'] == 'true',
+                                        tenantMap['isDelete'] == 'true',
                                         taxPayerId:
-                                            tenantMap['taxPayerId'] ?? '',
+                                        tenantMap['taxPayerId'] ?? '',
                                         tenantAlternativeEmail:
-                                            tenantMap['alterEmail'] ?? '',
+                                        tenantMap['alterEmail'] ?? '',
                                         tenantAlternativeNumber:
-                                            tenantMap['workNumber'] ?? '',
+                                        tenantMap['workNumber'] ?? '',
                                         tenantBirthDate:
-                                            tenantMap['dob'].toString() ?? '',
+                                        tenantMap['dob'].toString() ?? '',
                                         tenantEmail: tenantMap['email'] ?? '',
                                         tenantFirstName:
-                                            tenantMap['firstName'] ?? '',
+                                        tenantMap['firstName'] ?? '',
                                         tenantId: tenantMap['tenantId'] ?? '',
                                         tenantLastName:
-                                            tenantMap['lastName'] ?? '',
+                                        tenantMap['lastName'] ?? '',
                                         tenantPassword:
-                                            tenantMap['passWord'] ?? '',
+                                        tenantMap['passWord'] ?? '',
                                         tenantPhoneNumber:
-                                            tenantMap['phoneNumber'] ?? '',
+                                        tenantMap['phoneNumber'] ?? '',
                                         updatedAt:
-                                            tenantMap['updatedAt'].toString() ??
-                                                '',
+                                        tenantMap['updatedAt'].toString() ??
+                                            '',
                                       );
                                     }).toList();
                                     print('invalid');
@@ -3416,7 +3416,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     backgroundColor: const Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(8.0))),
+                                        BorderRadius.circular(8.0))),
                                 onPressed: () {},
                                 child: const Text(
                                   'Cancel',
@@ -3561,16 +3561,16 @@ class _Edit_leaseState extends State<Edit_lease>
                                         border: isTenantSelected
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
+                                            color: const Color.fromRGBO(
+                                                21, 43, 83, 1),
+                                            width: 1),
                                         gradient: isTenantSelected
                                             ? const LinearGradient(
-                                                colors: [
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                ],
-                                              )
+                                          colors: [
+                                            Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
+                                          ],
+                                        )
                                             : null,
                                         borderRadius: const BorderRadius.only(
                                           topLeft: Radius.circular(4),
@@ -3580,40 +3580,40 @@ class _Edit_leaseState extends State<Edit_lease>
                                       alignment: Alignment.center,
                                       padding: isTenantSelected
                                           ? const EdgeInsets.symmetric(
-                                              vertical: 13)
+                                          vertical: 13)
                                           : const EdgeInsets.symmetric(
-                                              vertical: 12),
+                                          vertical: 12),
                                       child: isTenantSelected
                                           ? Text(
-                                              "Tenant",
-                                              style: TextStyle(
-                                                color: !isTenantSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
+                                        "Tenant",
+                                        style: TextStyle(
+                                          color: !isTenantSelected
+                                              ? Colors.transparent
+                                              : Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
                                           : ShaderMask(
-                                              shaderCallback: (bounds) {
-                                                return const LinearGradient(
-                                                  colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                  ],
-                                                ).createShader(bounds);
-                                              },
-                                              child: Text(
-                                                "Tenant",
-                                                style: TextStyle(
-                                                  color: isTenantSelected
-                                                      ? Colors.transparent
-                                                      : Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
+                                        shaderCallback: (bounds) {
+                                          return const LinearGradient(
+                                            colors: [
+                                              Color.fromRGBO(
+                                                  21, 43, 83, 1),
+                                              Color.fromRGBO(
+                                                  21, 43, 83, 1),
+                                            ],
+                                          ).createShader(bounds);
+                                        },
+                                        child: Text(
+                                          "Tenant",
+                                          style: TextStyle(
+                                            color: isTenantSelected
+                                                ? Colors.transparent
+                                                : Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -3629,16 +3629,16 @@ class _Edit_leaseState extends State<Edit_lease>
                                         border: isTenantSelected == false
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
+                                            color: const Color.fromRGBO(
+                                                21, 43, 83, 1),
+                                            width: 1),
                                         gradient: isTenantSelected == false
                                             ? const LinearGradient(
-                                                colors: [
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                ],
-                                              )
+                                          colors: [
+                                            Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
+                                          ],
+                                        )
                                             : null,
                                         borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(4),
@@ -3648,40 +3648,40 @@ class _Edit_leaseState extends State<Edit_lease>
                                       alignment: Alignment.center,
                                       padding: isTenantSelected
                                           ? const EdgeInsets.symmetric(
-                                              vertical: 12)
+                                          vertical: 12)
                                           : const EdgeInsets.symmetric(
-                                              vertical: 13),
+                                          vertical: 13),
                                       child: !isTenantSelected
                                           ? Text(
-                                              "Cosigner",
-                                              style: TextStyle(
-                                                color: isTenantSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
+                                        "Cosigner",
+                                        style: TextStyle(
+                                          color: isTenantSelected
+                                              ? Colors.transparent
+                                              : Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
                                           : ShaderMask(
-                                              shaderCallback: (bounds) {
-                                                return const LinearGradient(
-                                                  colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                  ],
-                                                ).createShader(bounds);
-                                              },
-                                              child: Text(
-                                                "Cosigner",
-                                                style: TextStyle(
-                                                  color: !isTenantSelected
-                                                      ? Colors.transparent
-                                                      : Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
+                                        shaderCallback: (bounds) {
+                                          return const LinearGradient(
+                                            colors: [
+                                              Color.fromRGBO(
+                                                  21, 43, 83, 1),
+                                              Color.fromRGBO(
+                                                  21, 43, 83, 1),
+                                            ],
+                                          ).createShader(bounds);
+                                        },
+                                        child: Text(
+                                          "Cosigner",
+                                          style: TextStyle(
+                                            color: !isTenantSelected
+                                                ? Colors.transparent
+                                                : Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -3690,9 +3690,9 @@ class _Edit_leaseState extends State<Edit_lease>
                             isTenantSelected
                                 ? const AddTenant()
                                 : AddCosigner(
-                                    cosigner: person,
-                                    index: index,
-                                  ),
+                              cosigner: person,
+                              index: index,
+                            ),
                           ],
                         ),
                       ),
@@ -3705,7 +3705,7 @@ class _Edit_leaseState extends State<Edit_lease>
                     height: 50,
                     width: 90,
                     decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                    BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF152b51),
@@ -3726,7 +3726,7 @@ class _Edit_leaseState extends State<Edit_lease>
                     height: 50,
                     width: 94,
                     decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                    BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFffffff),
@@ -3897,417 +3897,417 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                         const SizedBox(height: 8),
                         _isLoading
                             ? const Center(
-                                child: SpinKitFadingCircle(
-                                color: Colors.black,
-                                size: 50.0,
-                              ))
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 50.0,
+                            ))
                             : DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: const Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'Select',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color(0xFFb0b6c3),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: const Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Select',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xFFb0b6c3),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  items: [
-                                    ...items.map((String item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.black87,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        )),
-                                    //updated
+                                ),
+                              ],
+                            ),
+                            items: [
+                              ...items.map((String item) =>
+                                  DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black87,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )),
+                              //updated
 
-                                    DropdownMenuItem<String>(
-                                      value: 'button_item',
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(0)),
-                                            elevation: 0,
-                                            backgroundColor: Colors.white),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return StatefulBuilder(
-                                                  builder: (context, setState) {
-                                                return AlertDialog(
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  backgroundColor: Colors.white,
-                                                  title: const Text(
-                                                    'Add Account',
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
-                                                    ),
+                              DropdownMenuItem<String>(
+                                value: 'button_item',
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(0)),
+                                      elevation: 0,
+                                      backgroundColor: Colors.white),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                            builder: (context, setState) {
+                                              return AlertDialog(
+                                                contentPadding:
+                                                EdgeInsets.zero,
+                                                backgroundColor: Colors.white,
+                                                title: const Text(
+                                                  'Add Account',
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                    FontWeight.w500,
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 83, 1),
                                                   ),
-                                                  content: Container(
-                                                    height: 450,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              16.0),
-                                                      child: Form(
-                                                        key: _subFormKey,
-                                                        child: ListView(
-                                                          children: [
-                                                            const Text(
-                                                              'Account Name *',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
+                                                ),
+                                                content: Container(
+                                                  height: 450,
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets.all(
+                                                        16.0),
+                                                    child: Form(
+                                                      key: _subFormKey,
+                                                      child: ListView(
+                                                        children: [
+                                                          const Text(
+                                                            'Account Name *',
+                                                            style: TextStyle(
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color:
+                                                              Colors.grey,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 5),
+                                                          CustomTextField(
+                                                            validator:
+                                                                (value) {
+                                                              if (value ==
+                                                                  null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter Account Name';
+                                                              }
+                                                              return null;
+                                                            },
+                                                            keyboardType:
+                                                            TextInputType
+                                                                .text,
+                                                            hintText:
+                                                            'Enter Account Name',
+                                                            controller:
+                                                            _accountNameController,
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8),
+                                                          const Text(
+                                                            'Account Type',
+                                                            style: TextStyle(
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color:
+                                                              Colors.grey,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 5),
+                                                          CustomDropdown(
+                                                            validator:
+                                                                (value) {
+                                                              if (value ==
+                                                                  null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please select a Account Type';
+                                                              }
+                                                              return null;
+                                                            },
+                                                            labelText:
+                                                            'Select Account Type',
+                                                            items:
+                                                            accountTypeItems,
+                                                            selectedValue:
+                                                            _selectedAccountType,
+                                                            onChanged:
+                                                                (String?
+                                                            value) {
+                                                              setState(() {
+                                                                _selectedAccountType =
+                                                                    value;
+                                                              });
+                                                            },
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8),
+                                                          const Text(
+                                                            'Fund Type',
+                                                            style: TextStyle(
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color:
+                                                              Colors.grey,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 5),
+                                                          CustomDropdown(
+                                                            validator:
+                                                                (value) {
+                                                              if (value ==
+                                                                  null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please select a Fund Type';
+                                                              }
+                                                              return null;
+                                                            },
+                                                            labelText:
+                                                            'Select Fund Type',
+                                                            items:
+                                                            fundTypeItems,
+                                                            selectedValue:
+                                                            _selectedFundType,
+                                                            onChanged:
+                                                                (String?
+                                                            value) {
+                                                              setState(() {
+                                                                _selectedFundType =
+                                                                    value;
+                                                              });
+                                                            },
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8),
+                                                          const Text(
+                                                            'Notes',
+                                                            style: TextStyle(
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color:
+                                                              Colors.grey,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 5),
+                                                          CustomTextField(
+                                                            validator:
+                                                                (value) {
+                                                              if (value ==
+                                                                  null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter Notes';
+                                                              }
+                                                              return null;
+                                                            },
+                                                            keyboardType:
+                                                            TextInputType
+                                                                .text,
+                                                            hintText:
+                                                            'Enter Notes',
+                                                            controller:
+                                                            _notesController,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          RichText(
+                                                            text:
+                                                            const TextSpan(
+                                                              children: <TextSpan>[
+                                                                TextSpan(
+                                                                  text:
+                                                                  'We stores this information ',
+                                                                  style:
+                                                                  TextStyle(
+                                                                    fontSize:
+                                                                    11,
+                                                                    fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomTextField(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please enter Account Name';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              hintText:
-                                                                  'Enter Account Name',
-                                                              controller:
-                                                                  _accountNameController,
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 8),
-                                                            const Text(
-                                                              'Account Type',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomDropdown(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please select a Account Type';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              labelText:
-                                                                  'Select Account Type',
-                                                              items:
-                                                                  accountTypeItems,
-                                                              selectedValue:
-                                                                  _selectedAccountType,
-                                                              onChanged:
-                                                                  (String?
-                                                                      value) {
-                                                                setState(() {
-                                                                  _selectedAccountType =
-                                                                      value;
-                                                                });
-                                                              },
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 8),
-                                                            const Text(
-                                                              'Fund Type',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomDropdown(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please select a Fund Type';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              labelText:
-                                                                  'Select Fund Type',
-                                                              items:
-                                                                  fundTypeItems,
-                                                              selectedValue:
-                                                                  _selectedFundType,
-                                                              onChanged:
-                                                                  (String?
-                                                                      value) {
-                                                                setState(() {
-                                                                  _selectedFundType =
-                                                                      value;
-                                                                });
-                                                              },
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 8),
-                                                            const Text(
-                                                              'Notes',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomTextField(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please enter Notes';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              hintText:
-                                                                  'Enter Notes',
-                                                              controller:
-                                                                  _notesController,
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            RichText(
-                                                              text:
-                                                                  const TextSpan(
-                                                                children: <TextSpan>[
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'We stores this information ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
+                                                                    color: Colors
+                                                                        .grey,
                                                                   ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Privately',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        ' and ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Securely',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                Container(
-                                                                    height: 50,
-                                                                    width: 90,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8.0)),
-                                                                    child: ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF152b51), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                        onPressed: () {
-                                                                          _submitSubForm();
-                                                                        },
-                                                                        child: const Text(
-                                                                          'Add',
-                                                                          style:
-                                                                              TextStyle(color: Color(0xFFf7f8f9)),
-                                                                        ))),
-                                                                const SizedBox(
-                                                                  width: 10,
                                                                 ),
-                                                                Container(
-                                                                    height: 50,
-                                                                    width: 94,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8.0)),
-                                                                    child: ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                        onPressed: () {
-                                                                          Navigator.pop(
-                                                                              context);
-                                                                        },
-                                                                        child: const Text(
-                                                                          'Cancel',
-                                                                          style:
-                                                                              TextStyle(color: Color(0xFF748097)),
-                                                                        )))
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Privately',
+                                                                  style:
+                                                                  TextStyle(
+                                                                    fontSize:
+                                                                    11,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                  ' and ',
+                                                                  style:
+                                                                  TextStyle(
+                                                                    fontSize:
+                                                                    11,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Securely',
+                                                                  style:
+                                                                  TextStyle(
+                                                                    fontSize:
+                                                                    11,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
+                                                                  ),
+                                                                ),
                                                               ],
                                                             ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                            children: [
+                                                              Container(
+                                                                  height: 50,
+                                                                  width: 90,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                      BorderRadius.circular(8.0)),
+                                                                  child: ElevatedButton(
+                                                                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF152b51), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                      onPressed: () {
+                                                                        _submitSubForm();
+                                                                      },
+                                                                      child: const Text(
+                                                                        'Add',
+                                                                        style:
+                                                                        TextStyle(color: Color(0xFFf7f8f9)),
+                                                                      ))),
+                                                              const SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              Container(
+                                                                  height: 50,
+                                                                  width: 94,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                      BorderRadius.circular(8.0)),
+                                                                  child: ElevatedButton(
+                                                                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                      onPressed: () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Text(
+                                                                        'Cancel',
+                                                                        style:
+                                                                        TextStyle(color: Color(0xFF748097)),
+                                                                      )))
+                                                            ],
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                );
-                                              });
-                                            },
-                                          );
-                                        },
-                                        child: const Text(
-                                          'Add New Account',
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                  value: _selectedProperty,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedProperty = value;
-                                    });
-                                    // widget.onChanged(value);
-                                    // state.didChange(value);
+                                                ),
+                                              );
+                                            });
+                                      },
+                                    );
                                   },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 160,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 2,
-                                  ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                    ),
-                                    iconSize: 24,
-                                    iconEnabledColor: Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
-                                  ),
-                                  dropdownStyleData: DropdownStyleData(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    scrollbarTheme: ScrollbarThemeData(
-                                      radius: const Radius.circular(6),
-                                      thickness: MaterialStateProperty.all(6),
-                                      thumbVisibility:
-                                          MaterialStateProperty.all(true),
-                                    ),
-                                  ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                    height: 40,
-                                    padding:
-                                        EdgeInsets.only(left: 14, right: 14),
+                                  child: const Text(
+                                    'Add New Account',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ),
                               ),
+                            ],
+                            value: _selectedProperty,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedProperty = value;
+                              });
+                              // widget.onChanged(value);
+                              // state.didChange(value);
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 45,
+                              width: 160,
+                              padding: const EdgeInsets.only(
+                                  left: 14, right: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              elevation: 2,
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                              ),
+                              iconSize: 24,
+                              iconEnabledColor: Color(0xFFb0b6c3),
+                              iconDisabledColor: Colors.grey,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(6),
+                                thickness: MaterialStateProperty.all(6),
+                                thumbVisibility:
+                                MaterialStateProperty.all(true),
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                              padding:
+                              EdgeInsets.only(left: 14, right: 14),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         const Text(
                           'Amount *',
@@ -4364,17 +4364,17 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                            const Color(0xFF152b51),
+                                        const Color(0xFF152b51),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                     onPressed: () {
                                       _submitForm();
                                     },
                                     child: const Text(
                                       'Add',
                                       style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
+                                      TextStyle(color: Color(0xFFf7f8f9)),
                                     ))),
                             const SizedBox(
                               width: 10,
@@ -4387,17 +4387,17 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                            const Color(0xFFffffff),
+                                        const Color(0xFFffffff),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
                                       'Cancel',
                                       style:
-                                          TextStyle(color: Color(0xFF748097)),
+                                      TextStyle(color: Color(0xFF748097)),
                                     )))
                           ],
                         ),
@@ -4622,387 +4622,387 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                 const SizedBox(height: 8),
                 _isLoading
                     ? const Center(
-                        child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 50.0,
-                      ))
+                    child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 50.0,
+                    ))
                     : DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Select',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFFb0b6c3),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: const Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Select',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFb0b6c3),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          items: [
-                            ...items
-                                .map((String item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        item,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black87,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                            //updated
+                        ),
+                      ],
+                    ),
+                    items: [
+                      ...items
+                          .map((String item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )),
+                      //updated
 
-                            DropdownMenuItem<String>(
-                              value: 'button_item',
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(0)),
-                                    elevation: 0,
-                                    backgroundColor: Colors.white),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(
-                                          builder: (context, setState) {
-                                        return AlertDialog(
-                                          contentPadding: EdgeInsets.zero,
-                                          backgroundColor: Colors.white,
-                                          title: const Text(
-                                            'Add Account',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                            ),
+                      DropdownMenuItem<String>(
+                        value: 'button_item',
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0)),
+                              elevation: 0,
+                              backgroundColor: Colors.white),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return AlertDialog(
+                                        contentPadding: EdgeInsets.zero,
+                                        backgroundColor: Colors.white,
+                                        title: const Text(
+                                          'Add Account',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color:
+                                            Color.fromRGBO(21, 43, 83, 1),
                                           ),
-                                          content: Container(
-                                            height: 450,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: Form(
-                                                key: _subFormKey,
-                                                child: ListView(
-                                                  children: [
-                                                    const Text(
-                                                      'Account Name *',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
+                                        ),
+                                        content: Container(
+                                          height: 450,
+                                          child: Padding(
+                                            padding:
+                                            const EdgeInsets.all(16.0),
+                                            child: Form(
+                                              key: _subFormKey,
+                                              child: ListView(
+                                                children: [
+                                                  const Text(
+                                                    'Account Name *',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.grey,
                                                     ),
-                                                    const SizedBox(height: 5),
-                                                    CustomTextField(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please enter Account Name';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                      hintText:
-                                                          'Enter Account Name',
-                                                      controller:
-                                                          _accountNameController,
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  CustomTextField(
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please enter Account Name';
+                                                      }
+                                                      return null;
+                                                    },
+                                                    keyboardType:
+                                                    TextInputType.text,
+                                                    hintText:
+                                                    'Enter Account Name',
+                                                    controller:
+                                                    _accountNameController,
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  const Text(
+                                                    'Account Type',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.grey,
                                                     ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Account Type',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  CustomDropdown(
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please select a Account Type';
+                                                      }
+                                                      return null;
+                                                    },
+                                                    labelText:
+                                                    'Select Account Type',
+                                                    items: accountTypeItems,
+                                                    selectedValue:
+                                                    _selectedAccountType,
+                                                    onChanged:
+                                                        (String? value) {
+                                                      setState(() {
+                                                        _selectedAccountType =
+                                                            value;
+                                                      });
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  const Text(
+                                                    'Fund Type',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.grey,
                                                     ),
-                                                    const SizedBox(height: 5),
-                                                    CustomDropdown(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please select a Account Type';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      labelText:
-                                                          'Select Account Type',
-                                                      items: accountTypeItems,
-                                                      selectedValue:
-                                                          _selectedAccountType,
-                                                      onChanged:
-                                                          (String? value) {
-                                                        setState(() {
-                                                          _selectedAccountType =
-                                                              value;
-                                                        });
-                                                      },
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  CustomDropdown(
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please select a Fund Type';
+                                                      }
+                                                      return null;
+                                                    },
+                                                    labelText:
+                                                    'Select Fund Type',
+                                                    items: fundTypeItems,
+                                                    selectedValue:
+                                                    _selectedFundType,
+                                                    onChanged:
+                                                        (String? value) {
+                                                      setState(() {
+                                                        _selectedFundType =
+                                                            value;
+                                                      });
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  const Text(
+                                                    'Notes',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.grey,
                                                     ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Fund Type',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomDropdown(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please select a Fund Type';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      labelText:
-                                                          'Select Fund Type',
-                                                      items: fundTypeItems,
-                                                      selectedValue:
-                                                          _selectedFundType,
-                                                      onChanged:
-                                                          (String? value) {
-                                                        setState(() {
-                                                          _selectedFundType =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Notes',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomTextField(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please enter Notes';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                      hintText: 'Enter Notes',
-                                                      controller:
-                                                          _notesController,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    RichText(
-                                                      text: const TextSpan(
-                                                        children: <TextSpan>[
-                                                          TextSpan(
-                                                            text:
-                                                                'We stores this information ',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  CustomTextField(
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please enter Notes';
+                                                      }
+                                                      return null;
+                                                    },
+                                                    keyboardType:
+                                                    TextInputType.text,
+                                                    hintText: 'Enter Notes',
+                                                    controller:
+                                                    _notesController,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  RichText(
+                                                    text: const TextSpan(
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                          text:
+                                                          'We stores this information ',
+                                                          style: TextStyle(
+                                                            fontSize: 11,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color:
+                                                            Colors.grey,
                                                           ),
-                                                          TextSpan(
-                                                            text: 'Privately',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: ' and ',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: 'Securely',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Container(
-                                                            height: 50,
-                                                            width: 90,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0)),
-                                                            child:
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            const Color(
-                                                                                0xFF152b51),
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                8.0))),
-                                                                    onPressed:
-                                                                        () {
-                                                                      _submitSubForm();
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Add',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Color(0xFFf7f8f9)),
-                                                                    ))),
-                                                        const SizedBox(
-                                                          width: 10,
                                                         ),
-                                                        Container(
-                                                            height: 50,
-                                                            width: 94,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0)),
-                                                            child:
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            const Color(
-                                                                                0xFFffffff),
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                8.0))),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Cancel',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Color(0xFF748097)),
-                                                                    )))
+                                                        TextSpan(
+                                                          text: 'Privately',
+                                                          style: TextStyle(
+                                                            fontSize: 11,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: Color
+                                                                .fromRGBO(
+                                                                21,
+                                                                43,
+                                                                83,
+                                                                1),
+                                                          ),
+                                                        ),
+                                                        TextSpan(
+                                                          text: ' and ',
+                                                          style: TextStyle(
+                                                            fontSize: 11,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .normal,
+                                                            color:
+                                                            Colors.grey,
+                                                          ),
+                                                        ),
+                                                        TextSpan(
+                                                          text: 'Securely',
+                                                          style: TextStyle(
+                                                            fontSize: 11,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: Color
+                                                                .fromRGBO(
+                                                                21,
+                                                                43,
+                                                                83,
+                                                                1),
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                    children: [
+                                                      Container(
+                                                          height: 50,
+                                                          width: 90,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8.0)),
+                                                          child:
+                                                          ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                  backgroundColor:
+                                                                  const Color(
+                                                                      0xFF152b51),
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(
+                                                                          8.0))),
+                                                              onPressed:
+                                                                  () {
+                                                                _submitSubForm();
+                                                              },
+                                                              child:
+                                                              const Text(
+                                                                'Add',
+                                                                style: TextStyle(
+                                                                    color:
+                                                                    Color(0xFFf7f8f9)),
+                                                              ))),
+                                                      const SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Container(
+                                                          height: 50,
+                                                          width: 94,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8.0)),
+                                                          child:
+                                                          ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                  backgroundColor:
+                                                                  const Color(
+                                                                      0xFFffffff),
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(
+                                                                          8.0))),
+                                                              onPressed:
+                                                                  () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child:
+                                                              const Text(
+                                                                'Cancel',
+                                                                style: TextStyle(
+                                                                    color:
+                                                                    Color(0xFF748097)),
+                                                              )))
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
-                                        );
-                                      });
-                                    },
-                                  );
-                                },
-                                child: const Text(
-                                  'Add New Account',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ),
-                          ],
-                          value: _selectedProperty,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedProperty = value;
-                            });
-                            // widget.onChanged(value);
-                            // state.didChange(value);
+                                        ),
+                                      );
+                                    });
+                              },
+                            );
                           },
-                          buttonStyleData: ButtonStyleData(
-                            height: 45,
-                            width: 160,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            elevation: 2,
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                            ),
-                            iconSize: 24,
-                            iconEnabledColor: Color(0xFFb0b6c3),
-                            iconDisabledColor: Colors.grey,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(6),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility: MaterialStateProperty.all(true),
-                            ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                            padding: EdgeInsets.only(left: 14, right: 14),
+                          child: const Text(
+                            'Add New Account',
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
                       ),
+                    ],
+                    value: _selectedProperty,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedProperty = value;
+                      });
+                      // widget.onChanged(value);
+                      // state.didChange(value);
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      height: 45,
+                      width: 160,
+                      padding: const EdgeInsets.only(left: 14, right: 14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      elevation: 2,
+                    ),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                      ),
+                      iconSize: 24,
+                      iconEnabledColor: Color(0xFFb0b6c3),
+                      iconDisabledColor: Colors.grey,
+                    ),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(6),
+                        thickness: MaterialStateProperty.all(6),
+                        thumbVisibility: MaterialStateProperty.all(true),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                      padding: EdgeInsets.only(left: 14, right: 14),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 8),
                 const Text(
                   'Amount *',
@@ -5312,7 +5312,7 @@ class _AddTenantState extends State<AddTenant> {
   @override
   Widget build(BuildContext context) {
     var selectedTenantsProvider =
-        Provider.of<SelectedTenantsProvider>(context, listen: false);
+    Provider.of<SelectedTenantsProvider>(context, listen: false);
     return Container(
       child: Form(
         key: _formKey,
@@ -5430,38 +5430,38 @@ class _AddTenantState extends State<AddTenant> {
                       /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
                                 .selectedTenants
                                 .contains(tenant);*/
-                            final matchingTenants =
-                                Provider.of<SelectedTenantsProvider>(context)
-                                    .selectedTenants
-                                    .where((test) =>
-                                        test.tenantFirstName ==
-                                        tenant.tenantFirstName)
-                                    .toList();
-                            print(matchingTenants);
-                            final isSelected =
-                                matchingTenants.length > 0 ? true : false;
-                            return DataRow(
-                              cells: [
-                                DataCell(
-                                  Text(
-                                      '${tenant.tenantFirstName} ${tenant.tenantLastName}'),
-                                ),
-                                DataCell(
-                                  SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      value: isSelected,
-                                      onChanged: (bool? value) {
-                                        if (value!) {
-                                          selectedTenantsProvider
-                                              .addTenant(tenant);
-                                        } else {
-                                          selectedTenantsProvider
-                                              .removeTenant(tenant);
-                                        }
-                                        setState(() {});
-                                        /* if (value) {
+                      final matchingTenants =
+                      Provider.of<SelectedTenantsProvider>(context)
+                          .selectedTenants
+                          .where((test) =>
+                      test.tenantFirstName ==
+                          tenant.tenantFirstName)
+                          .toList();
+                      print(matchingTenants);
+                      final isSelected =
+                      matchingTenants.length > 0 ? true : false;
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Text(
+                                '${tenant.tenantFirstName} ${tenant.tenantLastName}'),
+                          ),
+                          DataCell(
+                            SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: Checkbox(
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  if (value!) {
+                                    selectedTenantsProvider
+                                        .addTenant(tenant);
+                                  } else {
+                                    selectedTenantsProvider
+                                        .removeTenant(tenant);
+                                  }
+                                  setState(() {});
+                                  /* if (value) {
                                       selectedTenantsProvider.addTenant(tenant);
                                     } else {
                                       selectedTenantsProvider.removeTenant(tenant);
@@ -6282,28 +6282,28 @@ class _AddCosignerState extends State<AddCosigner> {
                   ),
                   _showalterNumber
                       ? Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text('Work Number',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.number,
-                                hintText: 'Enter work number',
-                                controller: workNumber,
-                              ),
-                            ],
-                          ),
-                        )
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text('Work Number',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey)),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextField(
+                          keyboardType: TextInputType.number,
+                          hintText: 'Enter work number',
+                          controller: workNumber,
+                        ),
+                      ],
+                    ),
+                  )
                       : Container(),
                   const SizedBox(
                     height: 10,
@@ -6344,28 +6344,28 @@ class _AddCosignerState extends State<AddCosigner> {
                   ),
                   _showalterEmail
                       ? Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text('Alternative Email',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.emailAddress,
-                                hintText: 'Enter alternative email',
-                                controller: alterEmail,
-                              ),
-                            ],
-                          ),
-                        )
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text('Alternative Email',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey)),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextField(
+                          keyboardType: TextInputType.emailAddress,
+                          hintText: 'Enter alternative email',
+                          controller: alterEmail,
+                        ),
+                      ],
+                    ),
+                  )
                       : Container(),
                   const SizedBox(
                     height: 10,
@@ -6568,7 +6568,7 @@ class _AddCosignerState extends State<AddCosigner> {
                           postalCode: postalCode.text,
                         );
                         Provider.of<SelectedCosignersProvider>(context,
-                                listen: false)
+                            listen: false)
                             .addCosigner(cosigner);
                       } else {
                         final cosigner = Cosigner(
@@ -6585,7 +6585,7 @@ class _AddCosignerState extends State<AddCosigner> {
                           postalCode: postalCode.text,
                         );
                         Provider.of<SelectedCosignersProvider>(context,
-                                listen: false)
+                            listen: false)
                             .updateCosigner(cosigner, widget.index!);
                         // Navigator.push(
                         //   context,
@@ -6656,17 +6656,17 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 ),
                 items: widget.items
                     .map((String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black87,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ))
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black87,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ))
                     .toList(),
                 value: widget.selectedValue,
                 onChanged: (value) {

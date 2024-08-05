@@ -78,6 +78,8 @@ dependencies:
   credit_card_type_detector: ^3.0.0
   cached_network_image: ^3.3.1
   fl_chart:
+  shimmer:
+
 
 dev_dependencies:
   flutter_test:

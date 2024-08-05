@@ -404,7 +404,7 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   final _scrollController = ScrollController();
-  void handleTap(RentalOwnerSummey rentalownersummery) async {
+ /* void handleTap(RentalOwnerSummey rentalownersummery) async {
     // Handle edit action
     print('Edit ${rentalownersummery.rentalownerId}');
     final result = await Navigator.push(
@@ -413,12 +413,12 @@ class _Lease_tableState extends State<Lease_table> {
             builder: (context) => Rentalowners_summery(
                   rentalOwnersid: '',
                 )));
-    /* if (result == true) {
+    *//* if (result == true) {
       setState(() {
         futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
       });
-    }*/
-  }
+    }*//*
+  }*/
 
   String? rentalOwnersid;
   int leaseCount = 0;

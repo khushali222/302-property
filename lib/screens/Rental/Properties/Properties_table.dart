@@ -10,6 +10,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/add_new_property.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/summery_page.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/propertytype.dart';
@@ -816,11 +817,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   future: futureRentalOwners,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                      return ColabShimmerLoadingWidget();
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1440,11 +1437,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 future: futureRentalOwners,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 55.0,
-                    ));
+                    return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1452,29 +1445,19 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   } else {
                     List<Rentals>? filteredData = [];
                     _tableData = snapshot.data!;
-                    /*  if (selectedRole == null && searchValue == "") {
-                    filteredData = snapshot.data;
-                  } else if (selectedRole == "All") {
-                    filteredData = snapshot.data;
-                  } else if (searchValue.isNotEmpty) {
-                    filteredData = snapshot.data!
-                        .where((staff) =>
-                    staff.rentalOwnerFirstName!.toLowerCase().contains(searchValue.toLowerCase()) ||
-                        staff.rentalOwnerLastName!.toLowerCase().contains(searchValue.toLowerCase()))
-                        .toList();
-                  }*/
-                    // _tableData = filteredData!;
+
                     totalrecords = _tableData.length;
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 5),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Padding(
                               padding:
-                                  const EdgeInsets.only(left: 22, right: 22),
+                                  const EdgeInsets.only(left: 16, right: 16),
                               child: Table(
                                 defaultColumnWidth: IntrinsicColumnWidth(),
                                 children: [

@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'make_payment.dart';
 
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
@@ -645,12 +646,7 @@ class _FinancialTableState extends State<FinancialTable> {
                     future: _leaseLedgerFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 55.0,
-                          ),
-                        );
+                        return ColabShimmerLoadingWidget();
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData) {

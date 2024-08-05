@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -975,6 +976,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 16),
             titleBar(
               title: 'Renters Insurance',
               width: MediaQuery.of(context).size.width * .91,
@@ -986,11 +988,9 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 future: _futureRentersInsurance,
                 builder: (context, snapshot) {
                   if (isLoading) {
-                    return const Center(
-                      child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ),
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ColabShimmerLoadingWidget(),
                     );
                   } else if (snapshot.hasError) {
                     return Center(child: Text(errorMessage ?? 'Unknown error'));
@@ -1659,12 +1659,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 future: _futureRentersInsurance,
                 builder: (context, snapshot) {
                   if (isLoading) {
-                    return const Center(
-                      child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ),
-                    );
+                    return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
                     return Center(child: Text(errorMessage ?? 'Unknown error'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
