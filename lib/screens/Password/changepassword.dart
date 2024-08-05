@@ -10,7 +10,9 @@ import '../../constant/constant.dart';
 
 class Changepassword extends StatefulWidget {
   final String email;
-  const Changepassword({super.key, required this.email});
+  final String admin_id;
+  final String role;
+  const Changepassword({super.key, required this.email,required this.admin_id, required this.role});
 
   @override
   State<Changepassword> createState() => _ChangepasswordState();
@@ -26,6 +28,7 @@ class _ChangepasswordState extends State<Changepassword> {
   String passwordmessage = "";
   String confirmpasswordmessage = "";
   bool visiable_password = true;
+  bool visiable_password_confirm = true;
 
   final formKey = GlobalKey<FormState>();
   void changePassword() async {
@@ -41,8 +44,11 @@ class _ChangepasswordState extends State<Changepassword> {
       body: jsonEncode(<String, dynamic>{
         'email': widget.email,
         'password': password.text,
+        'admin_id':widget.admin_id,
+        'role':widget.role
       }),
     );
+    print("${widget.role}");
     setState(() {
       loading = false; // Set loading to false after receiving response
     });
@@ -140,7 +146,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                       passworderror = false;
                                     });
                                   },
-                                  obscureText: true,
+                                  obscureText: visiable_password,
                                   controller: password,
                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                   decoration: InputDecoration(
@@ -226,7 +232,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                       confirmpassworderror = false;
                                     });
                                   },
-                                  obscureText: true,
+                                  obscureText: visiable_password_confirm,
                                   controller: confirmpassword,
                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                   decoration: InputDecoration(
@@ -250,12 +256,12 @@ class _ChangepasswordState extends State<Changepassword> {
                                     suffixIcon: InkWell(
                                       onTap: () {
                                         setState(() {
-                                          visiable_password =
-                                              !visiable_password;
+                                          visiable_password_confirm =
+                                              !visiable_password_confirm;
                                         });
                                       },
                                       child: Icon(
-                                        visiable_password
+                                        visiable_password_confirm
                                             ? Icons.remove_red_eye_outlined
                                             : Icons.visibility_off_outlined,
                                         color: Colors.grey,

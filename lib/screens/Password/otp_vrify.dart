@@ -10,8 +10,11 @@ import '../../constant/constant.dart';
 import 'changepassword.dart';
 
 class otp_verify extends StatefulWidget {
+  final String admin_id;
+  final String role;
+
   final String email;
-  const otp_verify({super.key,required this.email});
+  const otp_verify({super.key,required this.email,required this.admin_id, required this.role});
 
   @override
   State<otp_verify> createState() => _otp_verifyState();
@@ -45,7 +48,7 @@ class _otp_verifyState extends State<otp_verify> {
       print(jsonData);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Changepassword(email: widget.email)),
+        MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,)),
       );
     Fluttertoast.showToast(msg: "OTP sent successfully");
     } else {
@@ -84,10 +87,10 @@ class _otp_verifyState extends State<otp_verify> {
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       print(jsonData);
-      Navigator.push(
+     /* Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => otp_verify(email: email,)),
-      );
+      );*/
       Fluttertoast.showToast(msg: "OTP sent successfully");
       setState(() {
         loading = false;

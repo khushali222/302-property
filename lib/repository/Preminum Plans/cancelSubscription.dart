@@ -8,7 +8,7 @@ class SubscriptionService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    String? superadmin_id = prefs.getString('superadminId');
     try {
       final response = await http.post(
         Uri.parse('$Api_url/api/nmipayment/custom-delete-subscription'),
@@ -19,6 +19,7 @@ class SubscriptionService {
         },
         body: json.encode({
           'subscription_id': subscriptionId,
+          'admin_id':superadmin_id
         }),
       );
 
@@ -48,7 +49,7 @@ class SubscriptionService {
           'admin_id': adminId,
         }),
       );
-
+      print(response.body);
       // Return only the response code
       return response.statusCode;
     } catch (e) {

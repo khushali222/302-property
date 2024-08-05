@@ -11,6 +11,9 @@ import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/Summa
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
+import 'StaffModule/repository/staffpermission_provider.dart';
+import 'TenantsModule/repository/permission_provider.dart';
+
 // void main() {
 //   runApp(
 //     MultiProvider(providers: [
@@ -111,6 +114,12 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => checkPlanPurchaseProiver(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => PermissionProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => StaffPermissionProvider(),
+          ),
         ],
         child: MyApp(),
       ),
@@ -124,9 +133,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
       // navigatorKey: navigatorKey,
       theme: ThemeData(
+        fontFamily: "Poppins",
         iconTheme: const IconThemeData(color: Colors.black),
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromRGBO(21, 43, 83, 1)),

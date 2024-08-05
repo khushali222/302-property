@@ -101,14 +101,16 @@ class _DashboardState extends State<Dashboard> {
           loading = false;
         });
       } else {
+        setState(() {
+          loading = false;
+        });
         throw Exception('Failed to load data');
       }
     } catch (e) {
       print('Error fetching data: $e');
+
     } finally {
-      setState(() {
-        loading = false;
-      });
+
     }
   }
 
@@ -1628,10 +1630,15 @@ class _DashboardState extends State<Dashboard> {
                                       left: 10, right: 10),
                                   child: PieCharts(dataMap: {
                                     "Properties": countList[0].toDouble(),
+                                    "Gap1": 0.2,
                                     "Tenants": countList[1].toDouble(),
+                                    "Gap2": 0.2,
                                     "Applicants": countList[2].toDouble(),
+                                    "Gap3": 0.2,
                                     "Vendors": countList[3].toDouble(),
+                                    "Gap4": 0.2,
                                     "Work Orders": countList[4].toDouble(),
+                                    "Gap5": 0.2,
                                   }),
                                 ), // Vertical layout for phone
                                 SizedBox(

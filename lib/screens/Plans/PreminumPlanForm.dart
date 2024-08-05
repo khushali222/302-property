@@ -1024,11 +1024,12 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                 // String? firstName =
                                 //     prefs.getString('first_name');
                                 String? email = prefs.getString('email');
+                                String? superadmin_id = prefs.getString('superadminId');
 
                                 customAddSubscriptionModel
                                     customaddSubscription =
                                     customAddSubscriptionModel(
-                                  adminId: adminId,
+                                  adminId: superadmin_id,
                                   planId: widget.plan.planId,
                                   ccnumber: cardNumberController.text,
                                   ccexp:

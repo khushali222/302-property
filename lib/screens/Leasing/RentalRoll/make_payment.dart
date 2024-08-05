@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -112,7 +113,7 @@ class _MakePaymentState extends State<MakePayment> {
       totalAmount = chargeAmount + surchargeIncluded;
     });
   }
-
+  String processor_id = "";
   List<Map<String, String>> tenants = [];
   String? selectedTenantId;
   List<TextEditingController> controllers = [];
@@ -142,17 +143,27 @@ class _MakePaymentState extends State<MakePayment> {
               '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
           'first_name': '${tenant['tenant_firstName']}',
           'last_name': '${tenant['tenant_lastName']}',
-          'email': '${tenant['tenant_email']}'
+          'email': '${tenant['tenant_email']}',
+          'overridefee' : '${tenant['override_fee']}',
+
         });
       }
       setState(() {
         tenants = fetchedTenants;
+        processor_id = data["processor_id"]??"";
       });
     } else {
       throw Exception('Failed to load tenants');
     }
   }
-
+  String? getOverrideFee(String tenantId) {
+    for (var tenant in tenants) {
+      if (tenant['tenant_id'] == tenantId) {
+        return tenant['overridefee'];
+      }
+    }
+    return null; // or you could return an empty string or any default value
+  }
   Future<void> fetchDropdownData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -175,7 +186,7 @@ class _MakePaymentState extends State<MakePayment> {
         fetchedData["Liability Account"] = [
           "Last Month's Rent",
           "Pre-payments",
-          "Security Deposite"
+          "Security Deposit"
         ];
         for (var item in jsonResponse) {
           String chargeType = item['charge_type'];
@@ -698,7 +709,12 @@ class _MakePaymentState extends State<MakePayment> {
           });
         } else {
           setState(() {
-            surCharge = surchargeData['surcharge_percent_debit'] ?? 0;
+            String? overrideFee = getOverrideFee(selectedTenantId!);
+            print("overrideFee   ${overrideFee}");
+            if(overrideFee == null || overrideFee == "null")
+              surCharge =   surchargeData['surcharge_percent_debit'] ?? 0;
+            else
+              surCharge =   int.parse(overrideFee) ?? 0;
           });
         }
       }
@@ -719,6 +735,28 @@ class _MakePaymentState extends State<MakePayment> {
     /* } catch (e) {
       print('Error: $e');
     }*/
+  }
+  void showFailedPaymentAlert(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Failed!",
+      desc: "Processor ID is not selected for this property!\n\n" +
+          "1. To select the Processor ID, go to the properties table.\n" +
+          "2. Click on the edit icon for the desired property.\n" +
+          "3. Click on the edit icon from Rental Owner Information.\n" +
+          "4. If no Processor ID exists, add one and check the checkbox, then save your changes.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        )
+      ],
+    ).show();
   }
   String? _errorText;
   @override
@@ -899,7 +937,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         },
                                         buttonStyleData: ButtonStyleData(
                                           height: 45,
-                                          width: 170,
+                                          width: 250,
                                           padding: const EdgeInsets.only(
                                               left: 14, right: 14),
                                           decoration: BoxDecoration(
@@ -933,7 +971,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         ),
                                         menuItemStyleData:
                                             const MenuItemStyleData(
-                                          height: 40,
+                                          height: 45,
                                           padding: EdgeInsets.only(
                                               left: 14, right: 14),
                                         ),
@@ -2348,54 +2386,63 @@ class _MakePaymentState extends State<MakePayment> {
                                   print("adminId ${id}");
                                   print(
                                       "adminId ${cardDetails[selectedcardindex!].company}");
-                                  List<Map<String, String>> filteredTenants =
-                                      tenants.where((tenant) {
-                                    return tenant['tenant_id'] ==
-                                        selectedTenantId;
-                                  }).toList();
-                                  Map<String, String> selectedTenant =
-                                      filteredTenants.first;
-                                  await PaymentService()
-                                      .makePaymentforcard(
-                                          adminId: id ?? "",
-                                          firstName:
-                                              selectedTenant["first_name"]!,
-                                          lastName:
-                                              selectedTenant["last_name"]!,
-                                          emailName: selectedTenant["email"]!,
-                                          customerVaultId:
-                                              cardDetails[selectedcardindex!]
-                                                  .customerVaultId!,
-                                          billingId:
-                                              cardDetails[selectedcardindex!]
-                                                  .billingId!,
-                                          surcharge:
-                                              "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
-                                          amount:
-                                              "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
-                                          tenantId: selectedTenantId!,
-                                          date: _startDate.text,
-                                          address1:
-                                              cardDetails[selectedcardindex!]
-                                                  .address_1!,
-                                          processorId: "",
-                                          leaseid: widget.leaseId,
-                                          company_name: companyName,
-                                          entries: rows,
-                                          future_Date: futuredate!)
-                                      .then((value) {
-                                    Fluttertoast.showToast(msg: "$value");
+                                  if(processor_id == ""){
+                                    showFailedPaymentAlert(context);
                                     setState(() {
                                       _isLoading = false;
                                     });
-                                    Navigator.pop(context, true);
-                                  }).catchError((e) {
-                                    setState(() {
-                                      _isLoading = false;
+                                  }
+                                  else{
+                                    List<Map<String, String>> filteredTenants =
+                                    tenants.where((tenant) {
+                                      return tenant['tenant_id'] ==
+                                          selectedTenantId;
+                                    }).toList();
+                                    Map<String, String> selectedTenant =
+                                        filteredTenants.first;
+                                    await PaymentService()
+                                        .makePaymentforcard(
+                                        adminId: id ?? "",
+                                        firstName:
+                                        selectedTenant["first_name"]!,
+                                        lastName:
+                                        selectedTenant["last_name"]!,
+                                        emailName: selectedTenant["email"]!,
+                                        customerVaultId:
+                                        cardDetails[selectedcardindex!]
+                                            .customerVaultId!,
+                                        billingId:
+                                        cardDetails[selectedcardindex!]
+                                            .billingId!,
+                                        surcharge:
+                                        "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                        amount:
+                                        "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                        tenantId: selectedTenantId!,
+                                        date: _startDate.text,
+                                        address1:
+                                        cardDetails[selectedcardindex!]
+                                            .address_1!,
+                                        processorId: "",
+                                        leaseid: widget.leaseId,
+                                        company_name: companyName,
+                                        entries: rows,
+                                        future_Date: futuredate!)
+                                        .then((value) {
+                                      Fluttertoast.showToast(msg: "$value");
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Navigator.pop(context, true);
+                                    }).catchError((e) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                          msg: "Payment failed $e");
                                     });
-                                    Fluttertoast.showToast(
-                                        msg: "Payment failed $e");
-                                  });
+                                  }
+
                                 } else if (_selectedPaymentMethod == "ACH") {
                                   List<Map<String, String>> filteredTenants =
                                       tenants.where((tenant) {
