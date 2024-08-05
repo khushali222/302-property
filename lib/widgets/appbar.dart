@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,7 +76,12 @@ class widget_302 {
             child: Consumer<checkPlanPurchaseProiver>(
               builder: (context, provider, child) {
                 if (provider.isLoading) {
-                  return CircularProgressIndicator(); // or some other loading indicator
+                  return const Center(
+                    child: SpinKitFadingCircle(
+                      color: Colors.white,
+                      size: 20.0,
+                    ),
+                  );
                 } else {
                   String planName = provider
                           .checkplanpurchaseModel?.data?.planDetail?.planName ??
@@ -87,7 +93,7 @@ class widget_302 {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Center(
                       child: Text(planName,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   );
                 }

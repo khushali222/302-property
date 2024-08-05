@@ -21,32 +21,22 @@ class AddTenant extends StatefulWidget {
 
 class _AddTenantState extends State<AddTenant> {
   final TextEditingController firstName = TextEditingController();
-
   final TextEditingController lastName = TextEditingController();
-
   final TextEditingController phoneNumber = TextEditingController();
   bool obsecure = true;
   final TextEditingController workNumber = TextEditingController();
-
   final TextEditingController email = TextEditingController();
-
   final TextEditingController alterEmail = TextEditingController();
-
   final TextEditingController passWord = TextEditingController();
-
   final TextEditingController dob = TextEditingController();
-
   final TextEditingController taxPayerId = TextEditingController();
-
   final TextEditingController comments = TextEditingController();
-
   final TextEditingController contactName = TextEditingController();
-
   final TextEditingController relationToTenant = TextEditingController();
-
   final TextEditingController emergencyEmail = TextEditingController();
-
   final TextEditingController emergencyPhoneNumber = TextEditingController();
+  bool enableOverrideFee = false;
+  final TextEditingController overrideFee = TextEditingController();
 
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
@@ -83,6 +73,35 @@ class _AddTenantState extends State<AddTenant> {
         _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
       });
     }
+  }
+
+  String overRideFeeError = '';
+  void _validateInput() {
+    setState(() {
+      String input = overrideFee.text.trim();
+      if (input.isEmpty) {
+        overRideFeeError = 'This field cannot be empty';
+      } else if (!RegExp(r'^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$')
+          .hasMatch(input)) {
+        overRideFeeError =
+            'Enter a valid number up to 100 with up to 2 decimal places';
+      } else {
+        overRideFeeError = '';
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    overrideFee.addListener(_validateInput);
+  }
+
+  @override
+  void dispose() {
+    overrideFee.removeListener(_validateInput);
+    overrideFee.dispose();
+    super.dispose();
   }
 
   @override
@@ -615,6 +634,118 @@ class _AddTenantState extends State<AddTenant> {
                     ),
                   ),
                   Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      // height: form_valid ? 520 : 430,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Color.fromRGBO(21, 43, 103, 1),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Override Debit Card Fee',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Checkbox(
+                                    activeColor: blueColor,
+                                    value: enableOverrideFee,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        enableOverrideFee = value!;
+                                        if (!enableOverrideFee) {
+                                          overrideFee.clear();
+                                          overRideFeeError = '';
+                                        }
+                                      });
+                                    }),
+                                Text('Enable Debit Card Fee',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
+                              ],
+                            ),
+                            enableOverrideFee
+                                ? Material(
+                                    elevation: 2,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Container(
+                                      height: 50,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.0, vertical: 0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            offset: Offset(4, 4),
+                                            blurRadius: 3,
+                                          ),
+                                        ],
+                                      ),
+                                      child: TextField(
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                decimal: true),
+                                        decoration: InputDecoration(
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          border: InputBorder.none,
+                                          hintText: "Enter number...*",
+                                          suffix: Text(
+                                            '%',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        onChanged: (value) {
+                                          _validateInput();
+                                        },
+                                        controller: overrideFee,
+                                        cursorColor:
+                                            const Color.fromRGBO(21, 43, 81, 1),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            overRideFeeError != null
+                                ? Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Text(
+                                      overRideFeeError!,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
@@ -721,9 +852,9 @@ class _AddTenantState extends State<AddTenant> {
       taxPayerId: taxPayerId.text,
       comments: comments.text,
       emergencyContact: emergencyContact,
+      enableoverrideFee: enableOverrideFee,
+      overRideFee: double.parse(overrideFee.text),
     );
- 
-    
 
     bool success = await TenantsRepository().addTenant(tenant);
 

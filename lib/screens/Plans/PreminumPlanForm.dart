@@ -166,6 +166,8 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
       String input = cardNumberController.text.trim();
       if (input.isEmpty) {
         carderrorMessage = 'This field cannot be empty';
+      } else if (input.length > 16) {
+        carderrorMessage = 'Card number cannot be more than 16 digits';
       } else if (!isValidLuhn(input)) {
         carderrorMessage = 'Invalid card number';
       } else {
@@ -225,70 +227,25 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
-        backgroundColor: Colors.white,
-        drawer: Drawer(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Image.asset("assets/images/logo.png"),
-                ),
-                const SizedBox(height: 40),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.circle_grid_3x3,
-                      color: Colors.white,
-                    ),
-                    "Dashboard",
-                    true),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.house,
-                      color: Colors.black,
-                    ),
-                    "Add Property Type",
-                    false),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.person_add,
-                      color: Colors.black,
-                    ),
-                    "Add Staff Member",
-                    false),
-                buildDropdownListTile(
-                    context,
-                    const FaIcon(
-                      FontAwesomeIcons.key,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Rental",
-                    ["Properties", "RentalOwner", "Tenants"]),
-                buildDropdownListTile(
-                    context,
-                    const FaIcon(
-                      FontAwesomeIcons.thumbsUp,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Leasing",
-                    ["Rent Roll", "Applicants"]),
-                buildDropdownListTile(
-                    context,
-                    Image.asset("assets/icons/maintence.png",
-                        height: 20, width: 20),
-                    "Maintenance",
-                    ["Vendor", "Work Order"]),
-              ],
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                child: Icon(Icons.arrow_back, color: blueColor),
+              ),
             ),
+          ),
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          title: Text(
+            'Plan Purcharse Form',
+            style: TextStyle(color: blueColor, fontSize: 18),
           ),
         ),
         body: SingleChildScrollView(
@@ -635,7 +592,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                             fontSize: 13),
                                       ),
                                       Text(
-                                        "${widget.plan.annualDiscount ?? '0'}",
+                                        "${widget.plan.annualDiscount == 'null' ? '0' : widget.plan.annualDiscount}",
                                         style: const TextStyle(
                                             color: Colors.grey,
                                             fontWeight: FontWeight.bold,
@@ -787,7 +744,6 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(8.0),
-                                                        //border: Border.all(color: blueColor),
                                                         boxShadow: [
                                                           BoxShadow(
                                                             color: Colors.black
@@ -821,9 +777,24 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                                               ),
                                                               onChanged:
                                                                   (value) {
-                                                                _validateInput();
-                                                                setCardNumber(
-                                                                    value);
+                                                                if (value
+                                                                        .length >
+                                                                    16) {
+                                                                  cardNumberController
+                                                                          .text =
+                                                                      value.substring(
+                                                                          0,
+                                                                          16);
+                                                                  cardNumberController
+                                                                          .selection =
+                                                                      TextSelection.fromPosition(TextPosition(
+                                                                          offset:
+                                                                              16));
+                                                                } else {
+                                                                  _validateInput();
+                                                                  setCardNumber(
+                                                                      value);
+                                                                }
                                                               },
                                                               controller:
                                                                   cardNumberController,
@@ -866,7 +837,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                                 ? Padding(
                                                     padding:
                                                         const EdgeInsets.all(
-                                                            8.0),
+                                                            0.0),
                                                     child: Text(
                                                       carderrorMessage!,
                                                       style: TextStyle(
@@ -908,6 +879,9 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                           },
                                         ),
                                       ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
@@ -932,6 +906,9 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                             return null;
                                           },
                                         ),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
                                       ),
                                       Padding(
                                         padding:
@@ -963,6 +940,9 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                             return null;
                                           },
                                         ),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
                                       ),
                                       Padding(
                                         padding:
@@ -1024,11 +1004,13 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                 // String? firstName =
                                 //     prefs.getString('first_name');
                                 String? email = prefs.getString('email');
+                                String? superadmin_id =
+                                    prefs.getString('superadminId');
 
                                 customAddSubscriptionModel
                                     customaddSubscription =
                                     customAddSubscriptionModel(
-                                  adminId: adminId,
+                                  adminId: superadmin_id,
                                   planId: widget.plan.planId,
                                   ccnumber: cardNumberController.text,
                                   ccexp:

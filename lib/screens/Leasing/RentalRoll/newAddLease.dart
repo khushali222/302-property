@@ -580,7 +580,7 @@ class _addLease3State extends State<addLease3>
       print('in map ${tenant.tenantFirstName}');
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
-        'tenant_residentStatus': tenant.tenant_residentStatus.toString(),
+        'tenant_residentStatus': tenant.tenantResidentStatus.toString(),
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
         'passWord': tenant.tenantPassword ?? '',
@@ -3725,7 +3725,6 @@ class _addLease3State extends State<addLease3>
                     width: 90,
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                        
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF152b51),

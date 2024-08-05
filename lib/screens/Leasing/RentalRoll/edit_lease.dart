@@ -90,16 +90,14 @@ class _Edit_leaseState extends State<Edit_lease>
     print(leaseId);
     print('rental id ${fetchedDetails.rental.rentalId}');
     print('property id ${fetchedDetails.rental.propertyId}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first.amount.toString()}');
+    print('Rent amount ${fetchedDetails.rentCharges!.first.amount.toString()}');
     print('Rent lease type ${fetchedDetails.lease.leaseType}');
     print('Rent start ${fetchedDetails.lease.startDate}');
     print('Rent end ${fetchedDetails.lease.endDate}');
     print('Rent cycle ${fetchedDetails.rentCharges!.first.rentCycle}');
     print('Rent memo ${fetchedDetails.rentCharges!.first.memo}');
     print('Rent date ${fetchedDetails.rentCharges!.first.date}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first.amount.toString()}');
+    print('Rent amount ${fetchedDetails.rentCharges!.first.amount.toString()}');
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -353,7 +351,8 @@ class _Edit_leaseState extends State<Edit_lease>
         child: TableCell(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: const TextStyle(fontSize: 18))),
+            child:
+                Center(child: Text(text, style: const TextStyle(fontSize: 18))),
           ),
         ),
       ),
@@ -673,7 +672,7 @@ class _Edit_leaseState extends State<Edit_lease>
       print('in map ${tenant.tenantFirstName}');
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
-        'tenant_residentStatus': tenant.tenant_residentStatus.toString(),
+        'tenant_residentStatus': tenant.tenantResidentStatus.toString(),
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
         'passWord': tenant.tenantPassword ?? '',
@@ -1619,9 +1618,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                         columnSpacing: 25,
                                         headingRowHeight: 30,
                                         dataRowHeight: 30,
-                                        headingRowColor: MaterialStateColor
-                                            .resolveWith((states) =>
-                                                const Color.fromRGBO(21, 43, 83, 1)),
+                                        headingRowColor:
+                                            MaterialStateColor.resolveWith(
+                                                (states) =>
+                                                    const Color.fromRGBO(
+                                                        21, 43, 83, 1)),
                                         headingTextStyle: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
@@ -1659,7 +1660,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     child: Container(
                                                       height: 30,
                                                       width: 60,
-                                                      decoration: const BoxDecoration(
+                                                      decoration:
+                                                          const BoxDecoration(
                                                         color: Colors.white,
                                                         // border: Border.all(color: blueColor),
                                                       ),
@@ -1671,8 +1673,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                           child: TextField(
                                                             controller:
                                                                 rentShareControllers,
-                                                            style: const TextStyle(
-                                                                fontSize: 8),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        8),
                                                             keyboardType:
                                                                 TextInputType
                                                                     .number,
@@ -1698,7 +1702,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             listen: false)
                                                         .removeTenant(tenant);
                                                   },
-                                                  child: const Icon(Icons.delete,
+                                                  child: const Icon(
+                                                      Icons.delete,
                                                       size: 15),
                                                 ),
                                               ),
@@ -1845,9 +1850,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                         columnSpacing: 25,
                                         headingRowHeight: 30,
                                         dataRowHeight: 30,
-                                        headingRowColor: MaterialStateColor
-                                            .resolveWith((states) =>
-                                                const Color.fromRGBO(21, 43, 83, 1)),
+                                        headingRowColor:
+                                            MaterialStateColor.resolveWith(
+                                                (states) =>
+                                                    const Color.fromRGBO(
+                                                        21, 43, 83, 1)),
                                         headingTextStyle: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
@@ -1900,7 +1907,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                           // tenent_popup(cosigner,index);
                                                         });
                                                       },
-                                                      child: const Icon(Icons.edit,
+                                                      child: const Icon(
+                                                          Icons.edit,
                                                           size: 15),
                                                     ),
                                                     const SizedBox(width: 5),
@@ -1912,7 +1920,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             .removeConsigner(
                                                                 cosigner);
                                                       },
-                                                      child: const Icon(Icons.delete,
+                                                      child: const Icon(
+                                                          Icons.delete,
                                                           size: 15),
                                                     ),
                                                   ],
@@ -6096,6 +6105,7 @@ class _AddTenantState extends State<AddTenant> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     final tenant = Tenant(
+                      
                       tenantFirstName: firstName.text,
                       tenantLastName: lastName.text,
                       tenantPhoneNumber: phoneNumber.text,

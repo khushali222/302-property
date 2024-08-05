@@ -458,6 +458,7 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       prefs.setString('last_name', jsonData['data']['last_name']);
       prefs.setString('email', jsonData['data']['email']);
+      prefs.setString('superadminId', jsonData['data']['superadmin_id']);
       if (!mounted) return;
 
       await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
