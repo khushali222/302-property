@@ -446,7 +446,7 @@ class NarrowScreenLayout extends StatelessWidget {
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            childAspectRatio: .85, // Adjust the aspect ratio as needed
+            childAspectRatio: 1.0, // Adjust the aspect ratio as needed
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),

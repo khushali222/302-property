@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/Model/CompletedWorkOrdersModel.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/CompletedWorkData.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -708,6 +709,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
       ),
       body: Column(
         children: [
+          const SizedBox(height: 16),
           titleBar(
             title: 'Completed Work Orders',
             width: MediaQuery.of(context).size.width * .91,
@@ -723,11 +725,9 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   future: _futureReport,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 40.0,
-                        ),
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ColabShimmerLoadingWidget(),
                       );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
@@ -1187,12 +1187,14 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
               ),
             ),
           if (MediaQuery.of(context).size.width > 500)
+            const SizedBox(height: 16),
+          if (MediaQuery.of(context).size.width > 500)
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
               child: Expanded(
                   flex: 0,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                    padding: const EdgeInsets.only(left: 21.0, right: 21.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1277,18 +1279,13 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   )),
             ),
           if (MediaQuery.of(context).size.width > 500)
-            const SizedBox(height: 25),
+            const SizedBox(height: 16),
           if (MediaQuery.of(context).size.width > 500)
             FutureBuilder<List<CompletedWorkData>>(
               future: _futureReport,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ),
-                  );
+                  return ShimmerTabletTable();
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1334,7 +1331,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.95,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(18.0),
                       child: Column(
                         children: [
                           Table(

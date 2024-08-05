@@ -9,6 +9,7 @@ class SubscriptionService {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? superadmin_id = prefs.getString('superadminId');
+
     try {
       final response = await http.post(
         Uri.parse('$Api_url/api/nmipayment/custom-delete-subscription'),
@@ -17,10 +18,8 @@ class SubscriptionService {
           "authorization": "CRM $token",
           "id": "CRM $adminId",
         },
-        body: json.encode({
-          'subscription_id': subscriptionId,
-          'admin_id':superadmin_id
-        }),
+        body: json.encode(
+            {'subscription_id': subscriptionId, 'admin_id': superadmin_id}),
       );
 
       // Return only the response code
@@ -49,7 +48,7 @@ class SubscriptionService {
           'admin_id': adminId,
         }),
       );
-      print(response.body);
+
       // Return only the response code
       return response.statusCode;
     } catch (e) {

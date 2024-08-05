@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -91,13 +90,16 @@ class _EditTenantsState extends State<EditTenants> {
       });
     }
   }
+
   bool isValidEmail(String email) {
     String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
     RegExp regex = RegExp(pattern);
     return regex.hasMatch(email);
   }
+
   @override
   void initState() {
+    overrideFee.addListener(_validateInput);
     // TODO: implement initState
     firstName.text = widget.tenants.tenantFirstName!;
     lastName.text = widget.tenants.tenantLastName!;
@@ -115,7 +117,12 @@ class _EditTenantsState extends State<EditTenants> {
         widget.tenants.emergencyContact!.phoneNumber ?? "";
     emergencyEmail.text = widget.tenants.emergencyContact!.email ?? "";
     _dateController.text = widget.tenants.tenantBirthDate!;
+
+    // enableOverrideFee = widget.tenants.enableoverrideFee!;
+    // overrideFee.text = widget.tenants.overRideFee?.toString() ?? '';
+
     fetchCompany();
+    fetchTenantOverrideFee(widget.tenants.tenantId!);
     super.initState();
   }
 
@@ -123,7 +130,7 @@ class _EditTenantsState extends State<EditTenants> {
   String? errorMessage;
   bool formValid = false;
   String companyName = '';
- // String errorMessage = '';
+  // String errorMessage = '';
   Future<void> fetchCompany() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -139,6 +146,59 @@ class _EditTenantsState extends State<EditTenants> {
         print('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
+    }
+  }
+
+  bool enableOverrideFee = false;
+  final TextEditingController overrideFee = TextEditingController();
+  String overRideFeeError = '';
+  void _validateInput() {
+    setState(() {
+      String input = overrideFee.text.trim();
+      if (input.isEmpty) {
+        overRideFeeError = 'This field cannot be empty';
+      } else if (!RegExp(r'^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$')
+          .hasMatch(input)) {
+        overRideFeeError =
+            'Enter a valid number up to 100 with up to 2 decimal places';
+      } else {
+        overRideFeeError = '';
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    overrideFee.removeListener(_validateInput);
+    overrideFee.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchTenantOverrideFee(String tenantId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print('reponse ${response.body}');
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final tenantData = jsonResponse['data'][0];
+
+      setState(() {
+        enableOverrideFee = tenantData['enable_override_fee'] ?? false;
+        overrideFee.text = tenantData['override_fee'] != null
+            ? tenantData['override_fee'].toString()
+            : '';
+      });
+    } else {
+      throw Exception('Failed to load tenant override fee data');
     }
   }
 
@@ -693,6 +753,118 @@ class _EditTenantsState extends State<EditTenants> {
                     ),
                   ),
                   Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      // height: form_valid ? 520 : 430,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Color.fromRGBO(21, 43, 103, 1),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Override Debit Card Fee',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Checkbox(
+                                    activeColor: blueColor,
+                                    value: enableOverrideFee,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        enableOverrideFee = value!;
+                                        if (!enableOverrideFee) {
+                                          overrideFee.clear();
+                                          overRideFeeError = '';
+                                        }
+                                      });
+                                    }),
+                                Text('Enable Debit Card Fee',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
+                              ],
+                            ),
+                            enableOverrideFee
+                                ? Material(
+                                    elevation: 2,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Container(
+                                      height: 50,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.0, vertical: 0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            offset: Offset(4, 4),
+                                            blurRadius: 3,
+                                          ),
+                                        ],
+                                      ),
+                                      child: TextField(
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                decimal: true),
+                                        decoration: InputDecoration(
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          border: InputBorder.none,
+                                          hintText: "Enter number...*",
+                                          suffix: Text(
+                                            '%',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        onChanged: (value) {
+                                          _validateInput();
+                                        },
+                                        controller: overrideFee,
+                                        cursorColor:
+                                            const Color.fromRGBO(21, 43, 81, 1),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            overRideFeeError != null
+                                ? Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Text(
+                                      overRideFeeError!,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
@@ -749,6 +921,9 @@ class _EditTenantsState extends State<EditTenants> {
                                       emergencyContactPhoneNumber:
                                           emergencyPhoneNumber.text,
                                       companyName: companyName,
+                                      overRideFee: overrideFee.text,
+                                      enableOverRideFee:
+                                          enableOverrideFee.toString(),
                                     );
                                     Fluttertoast.showToast(
                                         msg: "Tenant updated successfully");

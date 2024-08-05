@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
 import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
+import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
+import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
+
 
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
@@ -18,12 +23,17 @@ class widget_302 {
     bool? isProfilePageActive = false,
     bool? isUserPermitePageActive = false,
     bool? isSettingPageActive = false,
+    bool? isPlanPageActive = false,
+    bool? isProfilePageActive = false,
+    bool? isUserPermitePageActive = false,
+    bool? isSettingPageActive = false,
     var fontweight,
     List<Widget>? actions,
     var arrowNearText,
     required BuildContext context,
   }) {
     return AppBar(
+      iconTheme: const IconThemeData(color: Colors.black),
       iconTheme: const IconThemeData(color: Colors.black),
       elevation: 0,
       backgroundColor: Colors.white,
@@ -64,11 +74,18 @@ class widget_302 {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => getPlanDetailScreen()));
             }
+            if (isPlanPageActive != true) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => getPlanDetailScreen()));
+            }
           },
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
             // width: 50,
+            margin: const EdgeInsets.symmetric(vertical: 12),
+            // width: 50,
             decoration: BoxDecoration(
+              color: const Color.fromRGBO(21, 43, 81, 1),
               color: const Color.fromRGBO(21, 43, 81, 1),
               borderRadius: BorderRadius.circular(5),
             ),
@@ -96,8 +113,10 @@ class widget_302 {
           ),
         ),
         const SizedBox(
+        const SizedBox(
           width: 10,
         ),
+        const Icon(
         const Icon(
           Icons.notifications_outlined,
           color: Color.fromRGBO(21, 43, 81, 1),
@@ -108,6 +127,7 @@ class widget_302 {
         //     color: Color.fromRGBO(21, 43, 81, 1),
         //   ),
         const SizedBox(
+        const SizedBox(
           width: 10,
         ),
         FutureBuilder<String>(
@@ -116,8 +136,10 @@ class widget_302 {
             if (snapshot.hasData) {
               return Container(
                   margin: const EdgeInsets.symmetric(vertical: 12),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
                   width: 30,
                   decoration: BoxDecoration(
+                    color: const Color.fromRGBO(21, 43, 81, 1),
                     color: const Color.fromRGBO(21, 43, 81, 1),
                     borderRadius: BorderRadius.circular(6),
                   ),
@@ -129,9 +151,11 @@ class widget_302 {
                       child: Text(
                         snapshot.data!,
                         style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     // offset: Offset(0.0, appBarHeight),
+                    shape: const RoundedRectangleBorder(
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(8.0),
@@ -142,11 +166,13 @@ class widget_302 {
                     ),
                     itemBuilder: (ctx) => [
                       const PopupMenuItem(
+                      const PopupMenuItem(
                         child: Text(
                           "WELCOME",
                         ),
                       ),
                       PopupMenuItem(
+                        child: const Row(
                         child: const Row(
                           children: [
                             Icon(Icons.person),
@@ -189,9 +215,37 @@ class widget_302 {
                                 builder: (context) =>
                                     const UserPermissionScreen()));
                           }
+                          if (isProfilePageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const Profile_screen()));
+                          }
                         },
                       ),
                       PopupMenuItem(
+                        child: const Row(
+                          children: [
+                            Icon(Icons.person),
+                            //  FaIcon(
+                            //    FontAwesomeIcons.user,
+                            //    size: 20,
+                            //    color: Colors.black,
+                            //  ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("User Permission"),
+                          ],
+                        ),
+                        onTap: () {
+                          if (isUserPermitePageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserPermissionScreen()));
+                          }
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: const Row(
                         child: const Row(
                           children: [
                             FaIcon(
@@ -210,9 +264,14 @@ class widget_302 {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => TabBarExample()));
                           }
+                          if (isSettingPageActive != true) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => TabBarExample()));
+                          }
                         },
                       ),
                       PopupMenuItem(
+                        child: const Row(
                         child: const Row(
                           children: [
                             Icon(Icons.directions_run_rounded),
@@ -235,6 +294,7 @@ class widget_302 {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => const Login_Screen()),
+                                  builder: (context) => const Login_Screen()),
                               (route) => false);
                         },
                       ),
@@ -246,6 +306,7 @@ class widget_302 {
             }
           },
         ),
+        const SizedBox(
         const SizedBox(
           width: 20,
         ),

@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/AdminTenantInsuranceTable.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/tenants.dart';
@@ -999,11 +1000,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   future: futureTenants,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                      return ColabShimmerLoadingWidget();
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1122,7 +1119,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  Tenant_summary(
+                                                                  ResponsiveTenantSummary(
                                                                       tenantId:
                                                                           tenants
                                                                               .tenantId!)));
@@ -1492,12 +1489,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 future: futureTenants,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 55.0,
-                      ),
-                    );
+                    return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1627,21 +1619,22 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   ),
                                                 ),
                                                 children: [
-                                                  // _buildDataCell(_pagedData[i]
-                                                  //     .tenantFirstName!),
                                                   _buildDataCell(
                                                       '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
                                                           .trim()),
                                                   _buildDataCell(_pagedData[i]
-                                                      .rentalAddress!),
+                                                          .rentalAddress! ??
+                                                      ''),
+                                                  // _buildDataCell(''),
                                                   _buildDataCell(_pagedData[i]
-                                                      .tenantPhoneNumber!),
+                                                      .tenantPhoneNumber!
+                                                      .toString()),
                                                   _buildDataCell(_pagedData[i]
-                                                      .tenantAlternativeEmail!),
-                                                  _buildDataCell(
-                                                    _pagedData[i]
-                                                        .createdAt!,
-                                                  ),
+                                                      .tenantAlternativeEmail!
+                                                      .toString()),
+                                                  _buildDataCell(_pagedData[i]
+                                                      .createdAt!
+                                                      .toString()),
                                                   _buildActionsCell(
                                                       _pagedData[i]),
                                                 ],

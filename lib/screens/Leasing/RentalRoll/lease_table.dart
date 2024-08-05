@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/SummeryPageLe
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
@@ -421,7 +422,7 @@ class _Lease_tableState extends State<Lease_table> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Rentalowners_summery(
+            builder: (context) => ResponsiveRentalSummary(
                   rentalOwnersid: '',
                 )));
     /* if (result == true) {
@@ -762,11 +763,7 @@ class _Lease_tableState extends State<Lease_table> {
                   future: futureLease,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                      return ColabShimmerLoadingWidget();
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1433,11 +1430,7 @@ class _Lease_tableState extends State<Lease_table> {
                 future: futureLease,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ));
+                    return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

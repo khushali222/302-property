@@ -40,6 +40,16 @@ String reverseFormatDate(String formattedDate) {
   return dateTime.toIso8601String();
 }
 
+String formatDate3(String dateStr) {
+  DateTime dateTime = DateTime.parse(dateStr);
+  return DateFormat('dd-MM-yyyy').format(dateTime);
+}
+
+String reverseFormatDate(String formattedDate) {
+  DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
+  return dateTime.toIso8601String();
+}
+
 Color blueColor = Color.fromRGBO(21, 43, 83, 1);
 
 Color greyColor = Color.fromRGBO(73, 81, 96, 1);

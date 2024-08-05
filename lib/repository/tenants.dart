@@ -24,7 +24,28 @@ class TenantsRepository {
       },
     );
     print(response.body);
-    print('${Api_url}/api//tenant/tenants/$id');
+    print('${Api_url}/api/tenant/tenants/$id');
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<List<Tenant>> fetchLeaseTenants(String tenantId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/tenant/tenants/$tenantId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print(response.body);
+    print('${Api_url}/api/tenant_details/$id');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
@@ -237,6 +258,8 @@ class TenantsRepository {
     required String emergencyContactEmail,
     required String emergencyContactPhoneNumber,
     required String companyName,
+    required String overRideFee,
+    required String enableOverRideFee,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -256,8 +279,11 @@ class TenantsRepository {
         'relation': emergencyContactRelation,
         'email': emergencyContactEmail,
         'phoneNumber': emergencyContactPhoneNumber,
-      }
+      },
+      'override_fee': overRideFee,
+      'enable_override_fee': enableOverRideFee,
     };
+    print('Data is :$data');
 
     print('$apiUrl/$tenantId');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -349,7 +375,7 @@ class TenantsRepository {
   Future<String> fetchCompanyName(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     final String apiUrl = '$Api_url/api/admin/admin_profile/$adminId';
 
     try {

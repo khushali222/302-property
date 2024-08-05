@@ -10,9 +10,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/VendorModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/screens/Password/changepassword.dart';
+import 'package:three_zero_two_property/screens/Plans/PlansPurcharCard.dart';
 
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
@@ -799,6 +802,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       Uri.parse('${Api_url}/api/admin/token_check_api'),
       headers: {
         // "authorization": "CRM $token",
+        // "authorization": "CRM $token",
         //"id":"CRM $id",
         "Content-Type": "application/json"
       },
@@ -807,10 +811,12 @@ class _Login_ScreenState extends State<Login_Screen> {
     print(response.body);
     final jsonData = json.decode(response.body);
 
+
     if (jsonData['id'] != "") {
       print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
+
 
       print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
@@ -819,6 +825,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('first_name', jsonData['data']['first_name']);
       prefs.setString('last_name', jsonData['data']['last_name']);
       prefs.setString('first_name', jsonData['data']['first_name']);
+
 
       prefs.setString('last_name', jsonData['data']['last_name']);
       prefs.setString('email', jsonData['data']['email']);
@@ -1106,6 +1113,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
 
+      await checkToken(jsonData["token"]);
+      //  await checkToken("token", "id");
       await checkToken(jsonData["token"]);
       //  await checkToken("token", "id");
       // Navigator.push(

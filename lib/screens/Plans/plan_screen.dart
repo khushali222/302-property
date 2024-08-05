@@ -290,6 +290,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:three_zero_two_property/Model/Preminum%20Plans/getPlanDetailModel.dart';
 import 'package:three_zero_two_property/Model/Preminum%20Plans/pastPlansHistoryModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -298,6 +299,7 @@ import 'package:three_zero_two_property/repository/Preminum%20Plans/cancelSubscr
 import 'package:three_zero_two_property/repository/Preminum%20Plans/getPlanDetailService.dart';
 import 'package:three_zero_two_property/repository/Preminum%20Plans/pastPlansHistoryService.dart';
 import 'package:three_zero_two_property/screens/Plans/PlansPurcharCard.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
@@ -312,6 +314,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
   final getPlanDetailService _service = getPlanDetailService();
   bool isLoading = false;
   String? globalPlanName;
+  bool isPlanCancelling = false;
 
   @override
   void initState() {
@@ -360,81 +363,118 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
   void _showEnhancedAlert(
       BuildContext context, String SubscriptionId, String purchaseId) {
-    Alert(
-      context: context,
-      type: AlertType.warning,
-      title: "Warning",
-      desc: "Do you want to cancel your subscription?",
-      style: AlertStyle(
-        backgroundColor: Colors.white,
-        titleStyle: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-        descStyle: TextStyle(
-          fontSize: 16,
-          color: Colors.black54,
-        ),
-        animationType: AnimationType.grow,
-        isOverlayTapDismiss: false,
-        overlayColor: Colors.black.withOpacity(0.5),
-        alertBorder: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          side: BorderSide(color: blueColor, width: 2),
-        ),
-        alertPadding: EdgeInsets.all(16.0),
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "Yes",
-            style: TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () async {
-            setState(() {
-              isLoading = true;
-            });
-            SubscriptionService service = SubscriptionService();
-            int statusCode = await service.cancelSubscription(SubscriptionId);
-            int statusCode1 =
-                await service.cancelFromDataBaseSubscription(purchaseId);
+    bool isPlanCancelling = false;
 
-            if (statusCode == 200 && statusCode1 == 200) {
-              setState(() {
-                isLoading = false;
-              });
-              Fluttertoast.showToast(
-                  msg: 'Subscription cancelled successfully.');
-              print('Subscription cancelled successfully.');
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => PlanPurchaseCard()));
-            } else {
-              setState(() {
-                isLoading = false;
-              });
-              Fluttertoast.showToast(msg: 'Failed to cancel subscription.');
-              print('Failed to cancel subscription. Status code: $statusCode');
-            }
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                "Warning",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              content: Text(
+                "Do you want to cancel your subscription?",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+                side: BorderSide(color: blueColor, width: 2),
+              ),
+              actions: <Widget>[
+                Container(
+                  width: 70,
+                  child: ElevatedButton(
+                    child: isPlanCancelling
+                        ? const Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 25.0,
+                            ),
+                          )
+                        : Text(
+                            "Yes",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        isPlanCancelling = true;
+                      });
+                      SubscriptionService service = SubscriptionService();
+                      int statusCode =
+                          await service.cancelSubscription(SubscriptionId);
+                      int statusCode1 = await service
+                          .cancelFromDataBaseSubscription(purchaseId);
+
+                      if (statusCode == 200 && statusCode1 == 200) {
+                        setState(() {
+                          isPlanCancelling = false;
+                        });
+                        Fluttertoast.showToast(
+                            msg: 'Subscription cancelled successfully.');
+                        print('Subscription cancelled successfully.');
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PlanPurchaseCard()),
+                          (Route<dynamic> route) => false,
+                        );
+                      } else {
+                        setState(() {
+                          isPlanCancelling = false;
+                        });
+                        Fluttertoast.showToast(
+                            msg: 'Failed to cancel subscription.');
+                        print(
+                            'Failed to cancel subscription. Status code: $statusCode');
+                      }
+                    },
+                  ),
+                ),
+                Container(
+                  width: 70,
+                  child: ElevatedButton(
+                    child: Text(
+                      "No",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+              ],
+            );
           },
-          color: blueColor,
-          // width: 120,
-          radius: BorderRadius.circular(8.0),
-        ),
-        DialogButton(
-          child: Text(
-            "No",
-            style: TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: blueColor,
-          // width: 120,
-          radius: BorderRadius.circular(8.0),
-        ),
-      ],
-    ).show();
+        );
+      },
+    );
   }
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
@@ -813,7 +853,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                     future: _futurePlanDetails,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container();
+                        return CardShimmerCurrentPlan();
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data == null) {
@@ -1169,7 +1209,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                             ),
                           if (MediaQuery.of(context).size.width > 500)
                             Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: const EdgeInsets.all(28.0),
                               child: Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
@@ -1226,7 +1266,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                     Row(
                                       children: [
                                         Container(
-                                          width: 355,
+                                          width: screenWidth * 0.43,
                                           height: 110,
                                           margin: EdgeInsets.symmetric(
                                               horizontal: screenWidth * .016),
@@ -1373,7 +1413,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                         ),
                                         // SizedBox(width: 16),
                                         Container(
-                                          width: 355,
+                                          width: screenWidth * 0.43,
                                           height: 110,
                                           margin: EdgeInsets.symmetric(
                                               horizontal: screenWidth * .016),
@@ -1541,12 +1581,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.black,
-                                size: 40.0,
-                              ),
-                            );
+                            return ColabShimmerLoadingWidget();
                           } else if (snapshot.hasError) {
                             return Center(
                                 child: Text('Error: ${snapshot.error}'));
@@ -2025,12 +2060,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 40.0,
-                            ),
-                          );
+                          return ShimmerTabletTable();
                         } else if (snapshot.hasError) {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
@@ -2178,6 +2208,153 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                 ],
               ),
             ),
+    );
+  }
+}
+
+class CardShimmerCurrentPlan extends StatelessWidget {
+  const CardShimmerCurrentPlan({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor),
+          color: Colors.white, // Ensure background color is set
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        height: screenWidth > 500 ? 250 : 340,
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 8),
+              child: Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300], // Set a different background color
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  height: 20,
+                  width: 180,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8, right: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors
+                            .grey[300], // Set a different background color
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      height: 45,
+                      width: 100,
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors
+                            .grey[300], // Set a different background color
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      height: 45,
+                      width: 100,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 16.0, top: 16, right: 16.0, bottom: 8),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color:
+                          Colors.grey[300], // Set a different background color
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    height: 100,
+                    width: double.infinity,
+                  ),
+                ),
+              ),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color:
+                          Colors.grey[300], // Set a different background color
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    height: 100,
+                    width: double.infinity,
+                  ),
+                ),
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 16.0, top: 16, right: 16.0, bottom: 8),
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors
+                                .grey[300], // Set a different background color
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          height: 100,
+                          width: screenWidth * 0.40),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors
+                                .grey[300], // Set a different background color
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          height: 100,
+                          width: screenWidth * 0.40),
+                    ),
+                  ),
+                ],
+              )
+          ],
+        ),
+      ),
     );
   }
 }

@@ -675,9 +675,39 @@ class _Workorder_tableState extends State<Workorder_table> {
                   selectedSubtopic: "Work Order"),
               buildDropdownListTile(
                   context,
+                  FaIcon(
+                    FontAwesomeIcons.key,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Rental",
+                  ["Properties", "RentalOwner", "Tenants"],
+                  selectedSubtopic: "Work Order"),
+              buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.thumbsUp,
+                    size: 20,
+                    color: Colors.black,
+                  ),
+                  "Leasing",
+                  ["Rent Roll", "Applicants"],
+                  selectedSubtopic: "Work Order"),
+              buildDropdownListTile(
+                  context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
+                  ["Vendor", "Work Order"],
+                  selectedSubtopic: "Work Order"),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
                   ["Vendor", "Work Order"],
                   selectedSubtopic: "Work Order"),
               buildListTile(

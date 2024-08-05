@@ -11,6 +11,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
@@ -376,7 +377,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Rentalowners_summery(
+            builder: (context) => ResponsiveRentalSummary(
                   rentalOwnersid: '',
                 )));
     /* if (result == true) {
@@ -394,6 +395,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     final response = await http.get(
       Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
       headers: {
@@ -723,11 +731,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   future: futureRentalOwners,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                      return ColabShimmerLoadingWidget();
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -841,7 +845,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  Rentalowners_summery(
+                                                                  ResponsiveRentalSummary(
                                                                     rentalOwnersid:
                                                                         rentals
                                                                             .rentalownerId!,
@@ -1142,11 +1146,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 future: futureRentalOwners,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ));
+                    return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1405,7 +1405,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Rentalowners_summery(
+                      builder: (context) => ResponsiveRentalSummary(
                             rentalOwnersid: inkText,
                           )));
             },

@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     _navigateToCorrectScreen();
   }
+
   _navigateToCorrectScreen() async {
 
     await Future.delayed(Duration(seconds: 3)); // Simulate splash screen delay
@@ -131,6 +133,7 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );*/
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,4 +155,3 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-

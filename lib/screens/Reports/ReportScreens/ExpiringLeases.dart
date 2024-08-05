@@ -16,12 +16,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
-
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/ExpiringLeaseTable.dart';
 import 'package:three_zero_two_property/widgets/CustomDateField.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -733,11 +734,14 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
       body: Column(
         children: [
           SizedBox(
-            height: 10,
+            height: 16,
           ),
           titleBar(
             title: 'Expiring Lease',
             width: MediaQuery.of(context).size.width * .91,
+          ),
+          SizedBox(
+            height: 10,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8),
@@ -1041,11 +1045,9 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   future: _futureReport,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 40.0,
-                        ),
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ColabShimmerLoadingWidget(),
                       );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
@@ -1207,13 +1209,13 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                               toDate: _toDateController.text,
                                             );
 
-                                            await generatePdf(data);
+                                            await generateCsv(data);
                                           } else {
                                             final data =
                                                 await ExpiringLeaseTableService()
                                                     .fetchExpiringLeases();
 
-                                            await generatePdf(data);
+                                            await generateCsv(data);
                                           }
                                           print('CSV');
                                           // Export as CSV
@@ -1630,12 +1632,16 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                 ),
               ),
             ),
-
+          if (MediaQuery.of(context).size.width > 500)
+            SizedBox(
+              height: 8,
+            ),
           if (MediaQuery.of(context).size.width > 500)
             Expanded(
                 flex: 0,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 0.0, right: 0.0),
+                  padding:
+                      const EdgeInsets.only(left: 32.0, right: 32.0, bottom: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1724,12 +1730,12 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                   toDate: _toDateController.text,
                                 );
 
-                                await generatePdf(data);
+                                await generateCsv(data);
                               } else {
                                 final data = await ExpiringLeaseTableService()
                                     .fetchExpiringLeases();
 
-                                await generatePdf(data);
+                                await generateCsv(data);
                               }
                               print('CSV');
                               // Export as CSV
@@ -1762,18 +1768,16 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                     ],
                   ),
                 )),
-
+          if (MediaQuery.of(context).size.width > 500)
+            SizedBox(
+              height: 18,
+            ),
           if (MediaQuery.of(context).size.width > 500)
             FutureBuilder<List<ReportExpiringLeaseData>>(
               future: _futureReport,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ),
-                  );
+                  return ShimmerTabletTable();
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
