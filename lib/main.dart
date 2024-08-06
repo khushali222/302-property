@@ -82,6 +82,7 @@ import 'TenantsModule/repository/permission_provider.dart';
 //     ),
 //   );
 // }
+
 void main() {
   runApp(
     DevicePreview(
@@ -111,6 +112,9 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (context) => EditFormState(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => WorkOrderCountProvider(),
           ),
           ChangeNotifierProvider(
             create: (context) => ApplicantDetailsProvider(),
@@ -146,6 +150,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromRGBO(21, 43, 83, 1)),
         useMaterial3: false,
+
       ),
       home: SplashScreen(),
     );

@@ -21,7 +21,7 @@ class ApplicantResponse {
 
   Map<String, dynamic> toJson() => {
         "statusCode": statusCode,
-        "data": data.map((x) => x?.toJson()).toList(),
+        "data": data.map((x) => x.toJson()).toList(),
         "message": message,
       };
 }
@@ -143,8 +143,8 @@ class Datum {
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "applicant_NotesAndFile":
-            applicantNotesAndFile.map((x) => x?.toJson()).toList(),
-        "applicant_status": applicantStatus.map((x) => x?.toJson()).toList(),
+            applicantNotesAndFile.map((x) => x.toJson()).toList(),
+        "applicant_status": applicantStatus.map((x) => x.toJson()).toList(),
         "__v": v,
         "rentalData": rentalData?.toJson(),
         "unitData": unitData?.toJson(),

@@ -2,7 +2,7 @@
 class RentalOwners {
   String? adminId;
   String? firstName;
-  String? lastName;
+
   String? companyName;
   String? primaryEmail;
   String? phoneNumber;
@@ -14,7 +14,6 @@ class RentalOwners {
   RentalOwners({
      this.adminId,
      this.firstName,
-     this.lastName,
      this.companyName,
      this.primaryEmail,
      this.phoneNumber,
@@ -26,8 +25,7 @@ class RentalOwners {
 
   Map<String, dynamic> toJson() => {
     'admin_id': adminId,
-    'rentalOwner_firstName': firstName,
-    'rentalOwner_lastName': lastName,
+    'rentalOwner_name': firstName,
     'rentalOwner_companyName': companyName,
     'rentalOwner_primaryEmail': primaryEmail,
     'rentalOwner_phoneNumber': phoneNumber,

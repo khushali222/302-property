@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/add_new_property.dart';
@@ -18,6 +19,7 @@ import '../../../constant/constant.dart';
 import '../../../model/properties.dart';
 import '../../../model/properties_summery.dart';
 import '../../../model/rental_properties.dart';
+import '../../../provider/add_property.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/rental_properties.dart';
 import '../../../widgets/drawer_tiles.dart';
@@ -561,6 +563,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   GestureDetector(
                     onTap: () async {
                       if (rentalCount < propertyCountLimit) {
+                        final ownerDetailsProvider = Provider.of<OwnerDetailsProvider>(context, listen: false);
+                        ownerDetailsProvider.clearOwners();
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => Add_new_property()));
@@ -1041,7 +1045,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData!.rentalOwnerFirstName}',
+                                                                        '${rentals.rentalOwnerData!.rentalOwnerName}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1275,6 +1279,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               onPressed:
                                                                   () async {
                                                                 // handleEdit(Propertytype);
+
                                                                 var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
@@ -1481,7 +1486,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                           'RentalOwnersName',
                                           3,
                                           (staff) => staff.rentalOwnerData!
-                                              .rentalOwnerFirstName!),
+                                              .rentalOwnerName!),
                                       _buildHeader(
                                           'RentalCompanyName',
                                           4,
@@ -1550,7 +1555,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             _pagedData[i]),
                                         // _buildDataCell(_pagedData[i].rentalOwnerData!.rentalOwnerFirstName!),
                                         _buildDataCell(
-                                            '${_pagedData[i].rentalOwnerData?.rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerData?.rentalOwnerLastName ?? ''}',
+                                            '${_pagedData[i].rentalOwnerData?.rentalOwnerName ?? ''} ',
                                             _pagedData[i]),
                                         _buildDataCell(
                                             _pagedData[i]
