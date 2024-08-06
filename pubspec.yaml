@@ -138,6 +138,9 @@ flutter:
      - family: mulish
        fonts:
          - asset: assets/font/Mulish-ExtraLight.ttf
+     - family: Poppins
+       fonts:
+         - asset: assets/font/poppins.ttf
 
 
   # For details regarding fonts from package dependencies,

@@ -75,6 +75,7 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 //     ),
 //   );
 // }
+
 void main() {
   runApp(
     DevicePreview(
@@ -106,6 +107,9 @@ void main() {
             create: (context) => EditFormState(),
           ),
           ChangeNotifierProvider(
+            create: (context) => WorkOrderCountProvider(),
+          ),
+          ChangeNotifierProvider(
             create: (context) => ApplicantDetailsProvider(),
           ),
           ChangeNotifierProvider(
@@ -131,6 +135,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromRGBO(21, 43, 83, 1)),
         useMaterial3: false,
+        fontFamily: "Poppins",
       ),
       home: SplashScreen(),
     );

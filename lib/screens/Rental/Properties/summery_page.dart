@@ -1555,10 +1555,10 @@ class _Summery_pageState extends State<Summery_page>
                   context,
                   Icon(
                     CupertinoIcons.house,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Add Property Type",
-                  true),
+                  false),
               buildListTile(context, Icon(CupertinoIcons.person_add),
                   "Add Staff Member", false),
               buildDropdownListTile(
@@ -1569,7 +1569,9 @@ class _Summery_pageState extends State<Summery_page>
                     color: Colors.black,
                   ),
                   "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
+                  ["Properties", "RentalOwner", "Tenants"],
+                  selectedSubtopic: "Properties",
+                  initvalue: true),
               buildDropdownListTile(
                   context,
                   FaIcon(
@@ -1578,13 +1580,25 @@ class _Summery_pageState extends State<Summery_page>
                     color: Colors.black,
                   ),
                   "Leasing",
-                  ["Rent Roll", "Applicants"]),
+                  ["Rent Roll", "Applicants"],
+                  selectedSubtopic: "Properties",
+                  initvalue: false),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"]),
+                  ["Vendor", "Work Order"],
+                  selectedSubtopic: "Properties",
+                  initvalue: false),
+              buildListTile(
+                  context,
+                  const FaIcon(
+                    FontAwesomeIcons.letterboxd,
+                    color: Colors.black,
+                  ),
+                  "Reports",
+                  false),
             ],
           ),
         ),
@@ -1592,7 +1606,7 @@ class _Summery_pageState extends State<Summery_page>
       body: Column(
         children: <Widget>[
           const SizedBox(
-            height: 50,
+            height: 20,
           ),
           Row(
             children: [
@@ -2226,18 +2240,17 @@ class _Summery_pageState extends State<Summery_page>
                       } else if (searchValuerent!.isNotEmpty) {
                         data = snapshot.data!
                             .where((rentals) => rentals
-                                .rentalOwnerData!.rentalOwnerFirstName!
+                                .rentalOwnerData!.rentalOwnerName!
                                 .toLowerCase()
                                 .contains(searchValuerent!.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
                             .where((rentals) =>
-                                rentals.rentalOwnerData!.rentalOwnerLastName! ==
+                                rentals.rentalOwnerData!.rentalOwnerCompanyName! ==
                                 searchValuerent)
                             .toList();
                       }
-
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
@@ -2325,7 +2338,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   child: InkWell(
                                                     onTap: () {},
                                                     child: Text(
-                                                      '   ${rentals.rentalOwnerData?.rentalOwnerFirstName} ${rentals.rentalOwnerData?.rentalOwnerLastName}',
+                                                      '   ${rentals.rentalOwnerData?.rentalOwnerName} ',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -2652,10 +2665,10 @@ class _Summery_pageState extends State<Summery_page>
                     } else if (searchValuerent.isNotEmpty) {
                       filteredData = snapshot.data!
                           .where((staff) =>
-                              staff.rentalOwnerData!.rentalOwnerFirstName!
+                              staff.rentalOwnerData!.rentalOwnerName!
                                   .toLowerCase()
                                   .contains(searchValuerent.toLowerCase()) ||
-                              staff.rentalOwnerData!.rentalOwnerLastName!
+                              staff.rentalOwnerData!.rentalOwnerPhoneNumber!
                                   .toLowerCase()
                                   .contains(searchValuerent.toLowerCase()))
                           .toList();
@@ -2691,27 +2704,27 @@ class _Summery_pageState extends State<Summery_page>
                                           'Company Name',
                                           1,
                                           (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerFirstName!),
+                                              .rentalOwnerCompanyName!),
                                       _buildHeaderrent(
                                           'Email',
                                           2,
                                           (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerFirstName!),
+                                              .rentalOwnerPrimaryEmail!),
                                       _buildHeaderrent(
                                           'Phone Number',
                                           3,
                                           (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerFirstName!),
+                                              .rentalOwnerPhoneNumber!),
                                       _buildHeaderrent(
                                           'Home Number',
                                           4,
                                           (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerFirstName!),
+                                              .rentalOwnerHomeNumber!),
                                       _buildHeaderrent(
                                           'Business Number',
                                           5,
                                           (rental) => rental.rentalOwnerData!
-                                              .rentalOwnerFirstName!),
+                                              .rentalOwnerBuisinessNumber!),
                                     ],
                                   ),
                                   TableRow(
@@ -2748,8 +2761,7 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                       children: [
                                         _buildDataCellrent(
-                                            '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerFirstName!}'
-                                            '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerLastName!}'),
+                                            '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
                                         // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
                                         _buildDataCellrent(
                                             _pagedDatarent[i].rentalOwnerData!.rentalOwnerCompanyName!,),

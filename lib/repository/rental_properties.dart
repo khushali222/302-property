@@ -125,8 +125,9 @@ class Rental_PropertiesRepository{
 
   Future<bool> checkIfRentalOwnerExists({
    // required String rentalowner_id,
-    required String rentalOwner_firstName,
-    required String rentalOwner_lastName,
+     String? rentalOwner_firstName,
+     String? rentalOwner_lastName,
+    required String rentalOwner_name,
     required String rentalOwner_companyName,
     required String rentalOwner_primaryEmail,
     required String rentalOwner_alternativeEmail,
@@ -138,6 +139,7 @@ class Rental_PropertiesRepository{
      // 'rentalowner_id': rentalowner_id,
       'rentalOwner_firstName': rentalOwner_firstName,
       'rentalOwner_lastName': rentalOwner_lastName,
+      'rentalOwner_name': rentalOwner_name,
       'rentalOwner_companyName': rentalOwner_companyName,
       'rentalOwner_primaryEmail': rentalOwner_primaryEmail,
       'rentalOwner_alternativeEmail': rentalOwner_alternativeEmail,
@@ -158,6 +160,7 @@ class Rental_PropertiesRepository{
       body: jsonEncode(requestData),
     );
     var responseData = json.decode(response.body);
+    print(response.body);
     if (responseData["statusCode"] == 200) {
     //  Fluttertoast.showToast(msg: responseData["message"]);
       print(responseData);
@@ -175,61 +178,7 @@ class Rental_PropertiesRepository{
     }
   }
 
-  // Future<bool> checkIfRentalOwnerExists({
-  //   // required String rentalowner_id,
-  //   required String rentalOwner_firstName,
-  //   required String rentalOwner_lastName,
-  //   required String rentalOwner_companyName,
-  //   required String rentalOwner_primaryEmail,
-  //   required String rentalOwner_alternativeEmail,
-  //   required String rentalOwner_phoneNumber,
-  //   required String rentalOwner_homeNumber,
-  //   required String rentalOwner_businessNumber,
-  // }) async {
-  //   final Map<String, dynamic> requestData = {
-  //     // 'rentalowner_id': rentalowner_id,
-  //     'rentalOwner_firstName': rentalOwner_firstName,
-  //     'rentalOwner_lastName': rentalOwner_lastName,
-  //     'rentalOwner_companyName': rentalOwner_companyName,
-  //     'rentalOwner_primaryEmail': rentalOwner_primaryEmail,
-  //     'rentalOwner_alternativeEmail': rentalOwner_alternativeEmail,
-  //     'rentalOwner_phoneNumber': rentalOwner_phoneNumber,
-  //     'rentalOwner_homeNumber': rentalOwner_homeNumber,
-  //     'rentalOwner_businessNumber': rentalOwner_businessNumber,
-  //   };
-  //   final response = await http.post(
-  //     Uri.parse('${Api_url}/api/rental_owner/check_rental_owner'),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(requestData),
-  //   );
-  //
-  //   var responseData = json.decode(response.body);
-  //   if (responseData["statusCode"] == 200) {
-  //
-  //     print(responseData);
-  //     return
-  //     // Rental owner exists, return true
-  //     return true;
-  //   } else {
-  //     // Rental owner doesn't exist, return false
-  //     return false;
-  //   }
-  // }
 
-  // Future<List<Rental>> fetchRentalOwner() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? id = prefs.getString("adminId");
-  //   final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'));
-  //   if (response.statusCode == 200) {
-  //     List jsonResponse = json.decode(response.body);//['data'];
-  //     return jsonResponse.map((data) => RentalOwner.fromJson(data)).toList();
-  //   } else {
-  //     throw Exception('Failed to load data');
-  //   }
-  // }
-// Fetch rental owner data
 
 
 

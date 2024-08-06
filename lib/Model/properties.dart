@@ -21,6 +21,7 @@ class Rentals {
   String? staffMemberId;
   String? createdAt;
   String? updatedAt;
+
   List<String>? rentalImages;
   bool? isDelete;
   RentalOwnerData? rentalOwnerData;
@@ -85,6 +86,7 @@ class RentalOwnerData {
   String? rentalOwnerFirstName;
   String? rentalOwnerLastName;
   String? rentalOwnerCompanyName;
+  String? rentalOwnerName;
   String? rentalOwnerPrimaryEmail;
   String? rentalOwnerAlternativeEmail;
   String? rentalOwnerPhoneNumber;
@@ -107,6 +109,7 @@ class RentalOwnerData {
      this.rentalOwnerFirstName,
      this.rentalOwnerLastName,
      this.rentalOwnerCompanyName,
+     this.rentalOwnerName,
      this.rentalOwnerPrimaryEmail,
      this.rentalOwnerAlternativeEmail,
      this.rentalOwnerPhoneNumber,
@@ -131,6 +134,7 @@ class RentalOwnerData {
       rentalOwnerFirstName: json['rentalOwner_firstName']?? "",
       rentalOwnerLastName: json['rentalOwner_lastName']?? "",
       rentalOwnerCompanyName: json['rentalOwner_companyName']?? "",
+      rentalOwnerName: json['rentalOwner_name']?? "",
       rentalOwnerPrimaryEmail: json['rentalOwner_primaryEmail']?? "",
       rentalOwnerAlternativeEmail: json['rentalOwner_alternateEmail']?? "",
       rentalOwnerPhoneNumber: json['rentalOwner_phoneNumber']?? "",
