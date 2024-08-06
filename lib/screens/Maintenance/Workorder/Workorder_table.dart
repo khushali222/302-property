@@ -1253,7 +1253,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                    formatDate('${workOrder.workOrderData?.createdAt}'),
+                                                                    formatDatenew('${workOrder.workOrderData?.createdAt}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
@@ -1315,7 +1315,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                         blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate('${workOrder.workOrderData?.updatedAt}'),
+                                                                    text: formatDatenew('${workOrder.workOrderData?.updatedAt}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
