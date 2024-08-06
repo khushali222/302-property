@@ -686,8 +686,10 @@ class _Login_ScreenState extends State<Login_Screen> {
 
 
                         });
-
-                        if (emailerror == false && passworderror == false ) {
+                        if(selectedrole == ""){
+                          Fluttertoast.showToast(msg: "Please select the company");
+                        }
+                        else if (emailerror == false && passworderror == false ) {
 
                           if(selectedrole == "admin")
                             await loginsubmit();
