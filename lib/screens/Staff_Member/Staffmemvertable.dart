@@ -670,7 +670,7 @@ class _StaffTableState extends State<StaffTable> {
                                   ? 14
                                   : 18),
                           contentPadding:
-                              (EdgeInsets.only(left: 5, bottom: 13, top: 14)),
+                              (EdgeInsets.only(left: 5, bottom: 13, top: 7)),
                         ),
                       ),
                     ),

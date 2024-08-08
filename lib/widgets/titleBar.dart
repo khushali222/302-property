@@ -14,7 +14,7 @@ class titleBar extends StatelessWidget {
         child: Container(
           // height: 50.0,
           height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-          padding: EdgeInsets.only(top: 8, left: 10),
+          padding: EdgeInsets.only(top: MediaQuery.of(context).size.width < 500 ? 9 :5, left: 10),
           width: width,
           margin: const EdgeInsets.only(bottom: 6.0),
           decoration: BoxDecoration(
@@ -33,7 +33,9 @@ class titleBar extends StatelessWidget {
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width < 500 ? 22 : 26),
+                fontSize: MediaQuery.of(context).size.width < 500
+                    ? 21
+                    : MediaQuery.of(context).size.width * 0.035),
           ),
         ),
       ),

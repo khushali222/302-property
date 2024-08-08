@@ -29,12 +29,12 @@ class StaffMemberRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
-    String?  id = prefs.getString('adminId');
+    String?  adminid = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -113,12 +113,12 @@ class StaffMemberRepository {
    // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String?  adminid = prefs.getString('adminId');
     final http.Response response = await http.delete(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );

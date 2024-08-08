@@ -1282,12 +1282,8 @@ class _Summery_pageState extends State<Summery_page>
                 child: Row(
                   children: [
                     width < 400
-                        ? Text(" Contact Name",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white))
-                        : Text(" Contact Name",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white)),
+                        ? Text(" Contact\nName", textAlign: TextAlign.center,style: TextStyle(color: Colors.white,))
+                        : Text(" Contact\nName",textAlign: TextAlign.center, style: TextStyle(color: Colors.white,)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                   ],
@@ -1441,7 +1437,7 @@ class _Summery_pageState extends State<Summery_page>
         padding: const EdgeInsets.only(top: 20.0, left: 16, bottom: 15),
         child: InkWell(
             onTap: () {},
-            child: Text(text, style: const TextStyle(fontSize: 18))),
+            child: Text(text?.isNotEmpty == true ? text! : 'N/A', style: const TextStyle(fontSize: 18))),
       ),
     );
   }
@@ -2349,7 +2345,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   child: InkWell(
                                                     onTap: () {},
                                                     child: Text(
-                                                      '   ${rentals.rentalOwnerData?.rentalOwnerName} ',
+                                                      '   ${(rentals.rentalOwnerData?.rentalOwnerName??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerName} ',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -2367,7 +2363,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${rentals.rentalOwnerData?.rentalOwnerCompanyName}',
+                                                    '${(rentals.rentalOwnerData?.rentalOwnerCompanyName??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerCompanyName}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -2384,7 +2380,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
+                                                    '${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -2453,7 +2449,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
+                                                                        '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2486,7 +2482,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+                                                                        '${(rentals.rentalOwnerData?.rentalOwnerHomeNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2519,7 +2515,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
+                                                                        '${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2932,7 +2928,7 @@ class _Summery_pageState extends State<Summery_page>
                               elevation: 3,
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
-                                height: 230,
+                                height: 220,
                                 width: MediaQuery.of(context).size.width * .44,
                                 decoration: BoxDecoration(
                                   color:
@@ -2956,7 +2952,7 @@ class _Summery_pageState extends State<Summery_page>
                           tenants.length,
                           (index) => Padding(
                             padding: const EdgeInsets.only(
-                                left: 20, right: 20, top: 20),
+                                left: 20, right: 20, top: 20,),
                             child: Material(
                               elevation: 3,
                               borderRadius: BorderRadius.circular(10),
@@ -2968,7 +2964,10 @@ class _Summery_pageState extends State<Summery_page>
                                       Colors.white, // Change as per your need
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: buildTenantCard(tenants[index]),
+                                child: buildTenantCard(
+                                    tenants[index]
+
+                                ),
                               ),
                             ),
                           ),
@@ -3991,6 +3990,7 @@ class _Summery_pageState extends State<Summery_page>
             ),
           ],
         ),
+        const SizedBox(height: 10),
       ],
     );
   }

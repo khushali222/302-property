@@ -671,7 +671,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                     int index = entry.key;
                                     bool isExpanded = expandedIndex == index;
                                     Data data = entry.value;
-
                                     return Container(
                                       decoration: BoxDecoration(
                                         border: Border.all(color: blueColor),

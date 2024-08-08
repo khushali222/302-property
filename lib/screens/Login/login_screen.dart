@@ -1467,10 +1467,15 @@ class _Login_ScreenState extends State<Login_Screen> {
       print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
+      print(jsonData);
+      String? companyName = jsonData['data']['company_name'];
 
       print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
+
+      prefs.setString('companyName', companyName!);
+      print('Company Name: $companyName');
       prefs.setString("role", "Admin");
       prefs.setString('first_name', jsonData['data']['first_name']);
       prefs.setString('last_name', jsonData['data']['last_name']);

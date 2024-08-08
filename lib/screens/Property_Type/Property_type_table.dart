@@ -797,7 +797,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding: EdgeInsets.only(
-                                      left: 5, bottom: 13, top: 14)),
+                                      left: 5, bottom: 13, top: 7)),
                             ),
                           ),
                         ],
@@ -1513,12 +1513,15 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 //     '${formatDate(_pagedData[i].updatedAt!)}'),
                                                 _buildDataCell(_pagedData[i]
                                                     .propertyType!),
+
                                                 _buildDataCell(_pagedData[i]
                                                     .propertysubType!),
+
                                                 _buildDataCell(
                                                   formatDate(
                                                       _pagedData[i].createdAt!),
                                                 ),
+
                                                 _buildDataCell(
                                                   formatDate(
                                                       _pagedData[i].updatedAt!),
