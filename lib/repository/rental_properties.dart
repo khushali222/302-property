@@ -223,7 +223,7 @@ class Rental_PropertiesRepository{
         'Content-Type': 'application/json'},
       body: jsonEncode(rentalRequest.toJson()),
     );
-
+     print('create rental ${response.body}');
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: "Properties added successfully");
       // Handle success

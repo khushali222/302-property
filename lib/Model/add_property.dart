@@ -2,7 +2,6 @@
 class RentalOwners {
   String? adminId;
   String? firstName;
-
   String? companyName;
   String? primaryEmail;
   String? phoneNumber;
@@ -10,6 +9,7 @@ class RentalOwners {
   String? state;
   String? country;
   String? postalCode;
+  List<ProcessorLists>? processorList;
 
   RentalOwners({
      this.adminId,
@@ -17,6 +17,7 @@ class RentalOwners {
      this.companyName,
      this.primaryEmail,
      this.phoneNumber,
+     this.processorList,
      this.city,
      this.state,
      this.country,
@@ -33,6 +34,7 @@ class RentalOwners {
     'state': state,
     'country': country,
     'postal_code': postalCode,
+    'processor_list': processorList,
   };
 }
 
@@ -117,4 +119,26 @@ class RentalRequest {
     'rental': rental!.toJson(),
     'units': units!.map((unit) => unit.toJson()).toList(),
   };
+}
+
+class ProcessorLists {
+  String? processorId;
+  String? sId;
+
+  ProcessorLists({this.processorId, this.sId});
+
+  factory ProcessorLists.fromJson(Map<String, dynamic> json) {
+    return ProcessorLists(
+      processorId: json['processor_id'],
+      sId: json['_id'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['processor_id'] = this.processorId;
+    data['_id'] = this.sId;
+    return data;
+  }
+
 }

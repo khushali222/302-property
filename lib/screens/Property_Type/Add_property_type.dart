@@ -104,7 +104,8 @@ class _Add_propertyState extends State<Add_property> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body:
+      SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -118,7 +119,7 @@ class _Add_propertyState extends State<Add_property> {
               height: 25,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25),
+              padding:  EdgeInsets.only(left:  MediaQuery.of(context).size.width < 500 ? 25 :55, right:  MediaQuery.of(context).size.width < 500 ? 25 :55),
               child: Material(
                 elevation: 6,
                 borderRadius: BorderRadius.circular(10),
@@ -146,7 +147,7 @@ class _Add_propertyState extends State<Add_property> {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(21, 43, 81, 1),
-                                fontSize: 15),
+                                fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
                           ),
                         ],
                       ),
@@ -163,7 +164,7 @@ class _Add_propertyState extends State<Add_property> {
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14),
+                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
                           ),
                         ],
                       ),
@@ -267,7 +268,7 @@ class _Add_propertyState extends State<Add_property> {
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12),
+                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
                           ),
                         ],
                       ),
@@ -283,7 +284,7 @@ class _Add_propertyState extends State<Add_property> {
                             elevation: 2,
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
-                              width: 150,
+                              width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
                               padding: EdgeInsets.only(left: 10),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -304,8 +305,12 @@ class _Add_propertyState extends State<Add_property> {
                       ),
                       Row(
                         children: [
+                          if (MediaQuery.of(context).size.width < 500)
                           SizedBox(
                               width: MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width > 500)
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.02),
                           Container(
                             height: MediaQuery.of(context).size.height * 0.02,
                             width: MediaQuery.of(context).size.height * 0.02,
@@ -334,7 +339,7 @@ class _Add_propertyState extends State<Add_property> {
                             "Multi unit",
                             style: TextStyle(
                               fontSize:
-                                  MediaQuery.of(context).size.width * 0.03,
+                              MediaQuery.of(context).size.width < 500 ? 15 :18,
                               color: Colors.grey,
                             ),
                           ),
@@ -347,8 +352,12 @@ class _Add_propertyState extends State<Add_property> {
                       ),
                       Row(
                         children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width < 500)
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width > 500)
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.02),
                           GestureDetector(
                             onTap: () async {
                               if (selectedValue == null ||
@@ -387,8 +396,8 @@ class _Add_propertyState extends State<Add_property> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: 30.0,
-                                width: MediaQuery.of(context).size.width * .4,
+                                height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
+                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -411,7 +420,7 @@ class _Add_propertyState extends State<Add_property> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 12),
+                                              fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
                                         ),
                                 ),
                               ),
@@ -427,8 +436,8 @@ class _Add_propertyState extends State<Add_property> {
                             child: Material(
                               elevation: 2,
                               child: Container(
-                                  width: 100,
-                                  height: 30,
+                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
+                                  height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
                                   color: Colors.white,
                                   child: Center(child: Text("Cancel"))),
                             ),
@@ -442,7 +451,10 @@ class _Add_propertyState extends State<Add_property> {
                         Text(
                           "Please fill in all fields correctly.",
                           style: TextStyle(color: Colors.redAccent),
-                        )
+                        ),
+                      SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ),
                 ),

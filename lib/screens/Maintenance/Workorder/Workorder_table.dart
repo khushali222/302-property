@@ -1679,11 +1679,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 _buildDataCell(_pagedData[i]
                                                     .workOrderData!.status.toString()),
                                                 _buildDataCell(
-                                                  formatDate(
+                                                  formatDatenew(
                                                       _pagedData[i].workOrderData!.createdAt!),
                                                 ),
                                                 _buildDataCell(
-                                                  formatDate(
+                                                  formatDatenew(
                                                       _pagedData[i].workOrderData!.updatedAt!),
                                                 ),
                                                 _buildActionsCell(

@@ -435,7 +435,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               columnSpacing: 10,
                               headingRowHeight:
                               MediaQuery.of(context).size.width < 500 ?55:60,
-                              dataRowHeight:  MediaQuery.of(context).size.width < 500 ?50:553,
+                              dataRowHeight:  MediaQuery.of(context).size.width < 500 ?50:60,
                               // horizontalMargin: 10,
                               columns: [
                                 DataColumn(
@@ -509,7 +509,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                         DataCell(
-
                                           SizedBox(
                                             height:
                                             10,
@@ -2047,9 +2046,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             fontSize:
                             16.0,
                           );
+                          List<ProcessorList> selectedProcessors = _processorGroups
+                              .where((group) => group.isChecked)
+                              .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
+                              .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
+                              .toList();
                           Ownersdetails =
                               RentalOwner(
-
                                 rentalOwnerPhoneNumber:
                                 phonenum
                                     .text,
@@ -2066,8 +2069,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 country: county2.text,
                                 state:  state2.text,
                                 postalCode: code2.text,
+                                processorList:selectedProcessors,
                               );
-
                           context
                               .read<
                               OwnerDetailsProvider>()
@@ -2087,6 +2090,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             rentalOwner_businessNumber: businessnum.text,
                           );
                           if (response == true) {
+                            List<ProcessorList> selectedProcessors = _processorGroups
+                                .where((group) => group.isChecked)
+                                .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
+                                .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
+                                .toList();
                             Ownersdetails = RentalOwner(
                               rentalOwnerPhoneNumber: phonenum.text,
                               rentalOwnerName: firstname.text,
@@ -2100,6 +2108,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               country: county2.text,
                               state: state2.text,
                               postalCode: code2.text,
+                              processorList: selectedProcessors,
                             );
                             context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
                             Fluttertoast.showToast(

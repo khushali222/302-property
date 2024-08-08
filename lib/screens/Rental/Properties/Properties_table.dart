@@ -360,8 +360,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
             print(id);
-            var data = PropertiesRepository().DeleteProperties(id: id);
+            var data = PropertiesRepository().DeleteProperties(id: id,);
             setState(() {
               futureRentalOwners = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -435,7 +436,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   void handleDelete(Rentals properties) {
     print(properties.propertyId);
     // _showAlert(context,property.propertyId!);
-    _showAlert(context, properties.propertyId!);
+    _showAlert(context, properties.rentalId!);
 
     // Handle delete action
     print('Delete ${properties.propertyId}');
@@ -471,6 +472,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
       throw Exception('Failed to load data');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -681,7 +683,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             ? 14
                                             : 18),
                                 contentPadding: (EdgeInsets.only(
-                                    left: 5, bottom: 13, top: 14)),
+                                    left: 5, bottom: 12, top: 8)),
                               ),
                             ),
                           ),
@@ -947,7 +949,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           const EdgeInsets.only(
                                                               left: 10.0),
                                                       child: Text(
-                                                        '${rentals.rentalAddress}',
+                                                        '${(rentals.rentalAddress ?? '').isEmpty ? 'N/A': rentals.rentalAddress}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -966,7 +968,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${rentals.propertyTypeData!.propertyType}',
+                                                    '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A':rentals.propertyTypeData!.propertyType}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -983,7 +985,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${rentals.propertyTypeData!.propertySubType}',
+                                                    '${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' :rentals.propertyTypeData!.propertySubType}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1045,7 +1047,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData!.rentalOwnerName}',
+                                                                        '${(rentals.rentalOwnerData!.rentalOwnerName??'').isEmpty ? 'N/A':rentals.rentalOwnerData!.rentalOwnerName}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1078,7 +1080,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData!.city}',
+                                                                        '${(rentals.rentalOwnerData!.city ??"").isEmpty ? 'N/A':rentals.rentalOwnerData!.city}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1111,7 +1113,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData!.rentalOwnerPhoneNumber}',
+                                                                        '${(rentals.rentalOwnerData!.rentalOwnerPhoneNumber ??"").isEmpty ? 'N/A' : rentals.rentalOwnerData!.rentalOwnerPhoneNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1180,7 +1182,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData!.rentalOwnerCompanyName}',
+                                                                        '${(rentals.rentalOwnerData!.rentalOwnerCompanyName ?? "").isEmpty ?'N/A':rentals.rentalOwnerData!.rentalOwnerCompanyName}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1213,7 +1215,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
+                                                                        '${(rentals.rentalOwnerData!.rentalOwnerPrimaryEmail ?? "").isEmpty?'N/A' : rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1312,7 +1314,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 _showAlert(
                                                                     context,
                                                                     rentals
-                                                                        .propertyId!);
+                                                                        .rentalId!);
                                                               },
                                                             ),
                                                           ],
@@ -1450,7 +1452,23 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   } else {
                     List<Rentals>? filteredData = [];
                     _tableData = snapshot.data!;
-
+                    if (selectedValue == null && searchvalue.isEmpty) {
+                      _tableData = snapshot.data!;
+                    } else if (selectedValue == "All") {
+                      _tableData = snapshot.data!;
+                    } else if (searchvalue.isNotEmpty) {
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.rentalAddress!
+                          .toLowerCase()
+                          .contains(searchvalue.toLowerCase()) )
+                          .toList();
+                    } else {
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.propertyTypeData?.propertyType == selectedValue)
+                          .toList();
+                    }
                     totalrecords = _tableData.length;
                     return Padding(
                       padding: const EdgeInsets.symmetric(
@@ -1562,6 +1580,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                 .rentalOwnerData!
                                                 .rentalOwnerCompanyName!,
                                             _pagedData[i]),
+
                                         _buildDataCell(
                                             _pagedData[i].rentalCity!,
                                             _pagedData[i]),
@@ -1686,7 +1705,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   MaterialPageRoute(
                       builder: (context) => Summery_page(properties: inkText)));
             },
-            child: Text(text, style: const TextStyle(fontSize: 18))),
+            child: Text(text?.isNotEmpty == true ? text! : 'N/A', style: const TextStyle(fontSize: 18))),
       ),
     );
   }

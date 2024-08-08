@@ -123,7 +123,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
-                padding: EdgeInsets.only(top: 14, left: 10),
+                padding: EdgeInsets.only(top: 9, left: 10),
                 width: MediaQuery.of(context).size.width * .91,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
@@ -143,7 +143,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18),
+                      fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 20
+                  ),
                 ),
               ),
             ),
@@ -176,7 +177,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .05),
+                                MediaQuery.of(context).size.width < 500 ? 20 : 25),
                           ),
                         ],
                       ),
@@ -194,7 +195,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
                           ),
                         ],
                       ),
@@ -231,10 +232,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter staff member name",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                            fontSize:MediaQuery.of(context).size.width < 500 ? 15 : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: nameerror
@@ -292,7 +290,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
                           ),
                         ],
                       ),
@@ -329,10 +327,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter designation",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: designationerror
@@ -390,7 +385,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
                           ),
                         ],
                       ),
@@ -428,10 +423,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: phonenumbererror
@@ -489,7 +481,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
                           ),
                         ],
                       ),
@@ -528,10 +520,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter email",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: emailerror
@@ -589,7 +578,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
                           ),
                         ],
                       ),
@@ -626,10 +615,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter password",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: passworderror
@@ -678,8 +664,12 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       ),
                       Row(
                         children: [
+                          if(MediaQuery.of(context).size.width < 500 )
                           SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.02),
+                              width: MediaQuery.of(context).size.width * 0.01),
+                          if(MediaQuery.of(context).size.width > 500 )
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.004),
                           GestureDetector(
                             onTap: () async {
                               if (name.text.isEmpty) {
@@ -778,7 +768,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               child: Container(
                                 height:
                                     MediaQuery.of(context).size.height * .04,
-                                width: MediaQuery.of(context).size.width * .36,
+                                width: MediaQuery.of(context).size.width < 500 ? 150 : 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -801,10 +791,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .034),
+                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
                                         ),
                                 ),
                               ),
@@ -817,7 +804,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               onTap: () {
                                 Navigator.pop(context);
                               },
-                              child: Text("Cancel")),
+                              child: Text("Cancel",style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),)),
                         ],
                       ),
                     ],

@@ -128,7 +128,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
               height: 25,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25),
+              padding:  EdgeInsets.only(left:  MediaQuery.of(context).size.width < 500 ? 25 :55, right:  MediaQuery.of(context).size.width < 500 ? 25 :55),
               child: Material(
                 elevation: 6,
                 borderRadius: BorderRadius.circular(10),
@@ -156,7 +156,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(21, 43, 81, 1),
-                                fontSize: 15),
+                                fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
                           ),
                         ],
                       ),
@@ -173,7 +173,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14),
+                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
                           ),
                         ],
                       ),
@@ -209,17 +209,17 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               items: items
                                   .map(
                                       (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ))
                                   .toList(),
                               value: selectedValue,
                               onChanged: (value) {
@@ -231,7 +231,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 height: 50,
                                 width: 160,
                                 padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
+                                const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
@@ -253,7 +253,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   radius: const Radius.circular(40),
                                   thickness: MaterialStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                  MaterialStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -277,7 +277,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12),
+                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
                           ),
                         ],
                       ),
@@ -293,7 +293,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             elevation: 2,
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
-                              width: 150,
+                              width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
                               padding: EdgeInsets.only(left: 10),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -309,51 +309,17 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           ),
                         ],
                       ),
-                      /* Row(
-                        children: [
-                          SizedBox(width: 15,),
-                          Stack(
-                            children: [
-                              Container(
-                                width: 80,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                child: Center(
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: selectedMonth,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedMonth = newValue!;
-                                        });
-                                      },
-                                      items: months.map((String months){
-                                        return DropdownMenuItem<String>(
-                                          value: months,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                            child: Text(months,style: TextStyle(fontSize: 12),),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),*/
                       SizedBox(
                         height: 20,
                       ),
                       Row(
                         children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width < 500)
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width > 500)
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.02),
                           Container(
                             height: MediaQuery.of(context).size.height * 0.02,
                             width: MediaQuery.of(context).size.height * 0.02,
@@ -367,7 +333,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   : Colors.white,
                               checkColor: Colors.white,
                               value:
-                                  isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
                               onChanged: (value) {
                                 setState(() {
                                   isChecked = value ??
@@ -382,7 +348,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             "Multi unit",
                             style: TextStyle(
                               fontSize:
-                                  MediaQuery.of(context).size.width * 0.03,
+                              MediaQuery.of(context).size.width < 500 ? 15 :18,
                               color: Colors.grey,
                             ),
                           ),
@@ -395,8 +361,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                       ),
                       Row(
                         children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width < 500)
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width > 500)
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.02),
                           GestureDetector(
                             onTap: () async {
                               if (selectedValue == null ||
@@ -410,15 +380,15 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   iserror = false;
                                 });
                                 SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
+                                await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 PropertyTypeRepository()
                                     .EditPropertyType(
-                                        adminId: id!,
-                                        propertyType: selectedValue,
-                                        propertySubType: subtype.text,
-                                        isMultiUnit: isChecked,
-                                        id: widget.property.propertyId)
+                                    adminId: id!,
+                                    propertyType: selectedValue,
+                                    propertySubType: subtype.text,
+                                    isMultiUnit: isChecked,
+                                    id: widget.property.propertyId)
                                     .then((value) {
                                   setState(() {
                                     widget.property.propertyType =
@@ -443,8 +413,8 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: 30.0,
-                                width: MediaQuery.of(context).size.width * .4,
+                                height: MediaQuery.of(context).size.width < 500 ? 40 :45,
+                                width:  MediaQuery.of(context).size.width < 500 ? 150 : 165,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -459,20 +429,21 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 25.0,
-                                        )
+                                    color: Colors.white,
+                                    size: 25.0,
+                                  )
                                       : Text(
-                                          "Edit Property Type",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12),
-                                        ),
+                                    "Edit Property Type",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+
                           SizedBox(
                             width: 15,
                           ),
@@ -483,8 +454,8 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             child: Material(
                               elevation: 2,
                               child: Container(
-                                  width: 100,
-                                  height: 30,
+                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
+                                  height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
                                   color: Colors.white,
                                   child: Center(child: Text("Cancel"))),
                             ),
@@ -498,7 +469,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                         Text(
                           "Please fill in all fields correctly.",
                           style: TextStyle(color: Colors.redAccent),
-                        )
+                        ),
+                      SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ),
                 ),

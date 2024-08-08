@@ -41,6 +41,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
     //addPropertyGroup();
     fetchOwners();
     fetchDetails1(widget.rentalId);
+
   }
 
   Future<void> fetchDetails1(String rentalId) async {
@@ -80,7 +81,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
         state2.text = fetchedDetails.rentalOwnerData!.state!;
         county2.text = fetchedDetails.rentalOwnerData!.country!;
         code2.text = fetchedDetails.rentalOwnerData!.postalCode!;
-
+        _processorGroups.clear();
+        var processorList = fetchedDetails.rentalOwnerData!.processorList;
+        for (var processor in processorList!) {
+          var controller = TextEditingController(text: processor.processorId ?? 'N/A');
+          _processorGroups.add(ProcessorGroup(isChecked: true, controller: controller));
+        }
         // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
       });
     } catch (e) {
@@ -356,250 +362,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                 SizedBox(height: 25),
                 isChecked
                     ?
-                // Column(
-                //         children: [
-                //           SizedBox(height: 16.0),
-                //           Row(
-                //             children: [
-                //               Expanded(
-                //                 child: Material(
-                //                   elevation: 3,
-                //                   borderRadius: BorderRadius.circular(5),
-                //                   child: Container(
-                //                     height: 50,
-                //                     decoration: BoxDecoration(
-                //                       borderRadius: BorderRadius.circular(5),
-                //                       // color: Colors
-                //                       //     .white,
-                //                       border:
-                //                           Border.all(color: Color(0xFF8A95A8)),
-                //                     ),
-                //                     child: Stack(
-                //                       children: [
-                //                         Positioned.fill(
-                //                           child: TextField(
-                //                             style: TextStyle(
-                //                               color: Colors.black,
-                //                               fontSize: 13,
-                //                             ),
-                //                             controller: searchController,
-                //                             //keyboardType: TextInputType.emailAddress,
-                //                             onChanged: (value) {
-                //                               setState(() {
-                //                                 if (value != "")
-                //                                   filteredOwners = owners
-                //                                       .where((element) => element
-                //                                           .rentalOwnername
-                //                                           .toLowerCase()
-                //                                           .contains(value
-                //                                               .toLowerCase()))
-                //                                       .toList();
-                //                                 if (value == "") {
-                //                                   filteredOwners = owners;
-                //                                 }
-                //                               });
-                //                             },
-                //                             cursorColor:
-                //                                 Color.fromRGBO(21, 43, 81, 1),
-                //                             decoration: InputDecoration(
-                //                               border: InputBorder.none,
-                //                               contentPadding: EdgeInsets.only(
-                //                                   top: 13,
-                //                                   bottom: 13,
-                //                                   left: 14),
-                //                               hintText:
-                //                                   "Search by first and last name",
-                //                               hintStyle: TextStyle(
-                //                                 color: Color(0xFF8A95A8),
-                //                                 fontSize: 13,
-                //                               ),
-                //                             ),
-                //                           ),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //           SizedBox(height: 16.0),
-                //           Row(
-                //             children: [
-                //               Expanded(
-                //                 child: Container(
-                //                   decoration: BoxDecoration(
-                //                     borderRadius: BorderRadius.circular(5),
-                //                     border: Border.all(color: Colors.grey),
-                //                   ),
-                //                   child: DataTable(
-                //                     columnSpacing: 10,
-                //                     headingRowHeight: 50,
-                //                     dataRowHeight: 40,
-                //                     // horizontalMargin: 10,
-                //                     columns: [
-                //                       DataColumn(
-                //                           label: Expanded(
-                //                         child: Text(
-                //                           'Rentalowner \nName',
-                //                           style: TextStyle(
-                //                               fontSize: MediaQuery.of(context)
-                //                                           .size
-                //                                           .width <
-                //                                       500
-                //                                   ? 13
-                //                                   : 18,
-                //                               fontWeight: FontWeight.bold),
-                //                         ),
-                //                       )),
-                //                       DataColumn(
-                //                           label: Expanded(
-                //                         child: Text(
-                //                           'Processor \nID',
-                //                           style: TextStyle(
-                //                               fontSize: MediaQuery.of(context)
-                //                                           .size
-                //                                           .width <
-                //                                       500
-                //                                   ? 13
-                //                                   : 18,
-                //                               fontWeight: FontWeight.bold),
-                //                         ),
-                //                       )),
-                //                       DataColumn(
-                //                           label: Expanded(
-                //                         child: Text(
-                //                           'Select \n',
-                //                           style: TextStyle(
-                //                               fontSize: 13,
-                //                               fontWeight: FontWeight.bold),
-                //                         ),
-                //                       )),
-                //                     ],
-                //                     rows: List<DataRow>.generate(
-                //                       filteredOwners.length,
-                //                       (index) => DataRow(
-                //                         cells: [
-                //                           DataCell(
-                //                             Text(
-                //                               '${filteredOwners[index].rentalOwnername} '
-                //                               '(${filteredOwners[index].phoneNumber})',
-                //                               style: TextStyle(
-                //                                   fontSize:
-                //                                       MediaQuery.of(context)
-                //                                                   .size
-                //                                                   .width <
-                //                                               500
-                //                                           ? 12
-                //                                           : 18),
-                //                             ),
-                //                           ),
-                //                           DataCell(
-                //                             Text(
-                //                               filteredOwners[index]
-                //                                   .processorList
-                //                                   .map((processor) =>
-                //                                       processor.processorId)
-                //                                   .join(
-                //                                       '\n'), // Join processor IDs with newline
-                //                               style: TextStyle(
-                //                                   fontSize:
-                //                                       MediaQuery.of(context)
-                //                                                   .size
-                //                                                   .width <
-                //                                               500
-                //                                           ? 12
-                //                                           : 18),
-                //                             ),
-                //                           ),
-                //                           DataCell(
-                //                             SizedBox(
-                //                               height: 10,
-                //                               width: 35,
-                //                               child: Checkbox(
-                //                                 value: selectedIndex == index,
-                //                                 onChanged: (bool? value) {
-                //                                   setState(() {
-                //                                     if (value != null &&
-                //                                         value) {
-                //                                       selectedIndex = index;
-                //                                       selectedOwner =
-                //                                           filteredOwners[index];
-                //                                       firstname.text =
-                //                                           selectedOwner!
-                //                                               .rentalOwnername;
-                //                                       comname.text =
-                //                                           selectedOwner!
-                //                                               .companyName;
-                //                                       primaryemail.text =
-                //                                           selectedOwner!
-                //                                               .primaryEmail;
-                //                                       alternativeemail.text =
-                //                                           selectedOwner!
-                //                                               .alternateEmail;
-                //                                       homenum.text =
-                //                                           selectedOwner!
-                //                                                   .homeNumber ??
-                //                                               '';
-                //                                       phonenum.text =
-                //                                           selectedOwner!
-                //                                               .phoneNumber;
-                //                                       businessnum
-                //                                           .text = selectedOwner!
-                //                                               .businessNumber ??
-                //                                           '';
-                //                                       street2.text =
-                //                                           selectedOwner!
-                //                                               .streetAddress;
-                //                                       city2.text =
-                //                                           selectedOwner!.city;
-                //                                       state2.text =
-                //                                           selectedOwner!.state;
-                //                                       county2.text =
-                //                                           selectedOwner!
-                //                                               .country;
-                //                                       code2.text =
-                //                                           selectedOwner!
-                //                                               .postalCode;
-                //                                       proid.text = selectedOwner!
-                //                                           .processorList
-                //                                           .map((processor) =>
-                //                                               processor
-                //                                                   .processorId)
-                //                                           .join(', ');
-                //                                     } else {
-                //                                       selectedIndex = null;
-                //                                     }
-                //                                     isChecked2 = true;
-                //                                     isChecked = false;
-                //                                     _processorGroups.clear();
-                //                                     for (Processor processor
-                //                                         in selectedOwner!
-                //                                             .processorList) {
-                //                                       _processorGroups.add(ProcessorGroup(
-                //                                           isChecked: false,
-                //                                           controller:
-                //                                               TextEditingController(
-                //                                                   text: processor
-                //                                                       .processorId)));
-                //                                     }
-                //                                   });
-                //                                 },
-                //                                 activeColor: Color.fromRGBO(
-                //                                     21, 43, 81, 1),
-                //                               ),
-                //                             ),
-                //                           ),
-                //                         ],
-                //                       ),
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ],
-                //       )
                 Column(
                   children: [
                     SizedBox(
@@ -703,7 +465,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                               columnSpacing: 10,
                               headingRowHeight:
                               MediaQuery.of(context).size.width < 500 ?55:60,
-                              dataRowHeight:  MediaQuery.of(context).size.width < 500 ?50:553,
+                              dataRowHeight:  MediaQuery.of(context).size.width < 500 ?50:60,
                               // horizontalMargin: 10,
                               columns: [
                                 DataColumn(
@@ -2420,7 +2182,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                         setState(() {
                           hasError = false; // Set error state if needed
                         });
-
                         Navigator.pop(context);
                       },
                       child: ClipRRect(

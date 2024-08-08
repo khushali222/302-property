@@ -1620,68 +1620,68 @@ class _DashboardState extends State<Dashboard> {
                       const SizedBox(
                         height: 10,
                       ),
-                      LayoutBuilder(
-                        builder:
-                            (BuildContext context, BoxConstraints constraints) {
-                          // Check if the device width is less than 600 (considered as phone screen)
-                          if (constraints.maxWidth < 500) {
-                            // Phone layout
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: PieCharts(dataMap: {
-                                    "Properties": countList[0].toDouble(),
-                                    "Gap1": 0.2,
-                                    "Tenants": countList[1].toDouble(),
-                                    "Gap2": 0.2,
-                                    "Applicants": countList[2].toDouble(),
-                                    "Gap3": 0.2,
-                                    "Vendors": countList[3].toDouble(),
-                                    "Gap4": 0.2,
-                                    "Work Orders": countList[4].toDouble(),
-                                    "Gap5": 0.2,
-                                  }),
-                                ), // Vertical layout for phone
-                                SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.015),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 0, right: 8),
-                                  child: Barchart(),
-                                ),
-                              ],
-                            );
-                          } else {
-                            // Tablet layout
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                top: 35,
-                              ),
-                              child: Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  PieCharts(dataMap: {
-                                    "Properties": countList[0].toDouble(),
-                                    "Tenants": countList[1].toDouble(),
-                                    "Applicants": countList[2].toDouble(),
-                                    "Vendors": countList[3].toDouble(),
-                                    "Work Orders": countList[4].toDouble(),
-                                  }),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Barchart(),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                      // LayoutBuilder(
+                      //   builder:
+                      //       (BuildContext context, BoxConstraints constraints) {
+                      //     // Check if the device width is less than 600 (considered as phone screen)
+                      //     if (constraints.maxWidth < 500) {
+                      //       // Phone layout
+                      //       return Column(
+                      //         children: [
+                      //           Padding(
+                      //             padding: const EdgeInsets.only(
+                      //                 left: 10, right: 10),
+                      //             child: PieCharts(dataMap: {
+                      //               "Properties": countList[0].toDouble(),
+                      //               "Gap1": 0.2,
+                      //               "Tenants": countList[1].toDouble(),
+                      //               "Gap2": 0.2,
+                      //               "Applicants": countList[2].toDouble(),
+                      //               "Gap3": 0.2,
+                      //               "Vendors": countList[3].toDouble(),
+                      //               "Gap4": 0.2,
+                      //               "Work Orders": countList[4].toDouble(),
+                      //               "Gap5": 0.2,
+                      //             }),
+                      //           ), // Vertical layout for phone
+                      //           SizedBox(
+                      //               height: MediaQuery.of(context).size.height *
+                      //                   0.015),
+                      //           Padding(
+                      //             padding:
+                      //                 const EdgeInsets.only(left: 0, right: 8),
+                      //             child: Barchart(),
+                      //           ),
+                      //         ],
+                      //       );
+                      //     } else {
+                      //       // Tablet layout
+                      //       return Padding(
+                      //         padding: const EdgeInsets.only(
+                      //           top: 35,
+                      //         ),
+                      //         child: Row(
+                      //           children: [
+                      //             const SizedBox(
+                      //               width: 20,
+                      //             ),
+                      //             PieCharts(dataMap: {
+                      //               "Properties": countList[0].toDouble(),
+                      //               "Tenants": countList[1].toDouble(),
+                      //               "Applicants": countList[2].toDouble(),
+                      //               "Vendors": countList[3].toDouble(),
+                      //               "Work Orders": countList[4].toDouble(),
+                      //             }),
+                      //             const SizedBox(
+                      //               width: 10,
+                      //             ),
+                      //             Barchart(),
+                      //           ],
+                      //         ),
+                      //       );
+                      //     }
+                      //   },
+                      // ),
                     ],
                   )),
       ),
