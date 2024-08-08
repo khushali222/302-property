@@ -6,12 +6,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
+import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart';
+import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -452,6 +456,16 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
 
   Future<void> generateDelinquentTenantsPdf(
       List<DelinquentTenantsData> delinquentTenantsData) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      // Handle error
+      print("Error fetching profile data: $e");
+      return;
+    }
     setState(() {
       istenantDataLoading = true;
     });
@@ -494,10 +508,42 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      pw.Text('302 Properties, LLC'),
-                      pw.Text('250 Corporate Blvd., Suite L'),
-                      pw.Text('Newark, DE 19702'),
-                      pw.Text('(302) 525-4302'),
+                      pw.Text(
+                        profileData?.companyName?.isNotEmpty == true
+                            ? profileData!.companyName!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        profileData?.companyAddress?.isNotEmpty == true
+                            ? profileData!.companyAddress!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        profileData?.companyPostalCode?.isNotEmpty == true
+                            ? profileData!.companyPostalCode!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -837,10 +883,10 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                   context,
                   const Icon(
                     CupertinoIcons.circle_grid_3x3,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Dashboard",
-                  true),
+                  false),
               buildListTile(
                   context,
                   const Icon(
@@ -969,7 +1015,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                       height:
                                           MediaQuery.of(context).size.width <
                                                   500
-                                              ? 40
+                                              ? 48
                                               : 50,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
@@ -1653,7 +1699,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                       height:
                                           MediaQuery.of(context).size.width <
                                                   500
-                                              ? 40
+                                              ? 48
                                               : 50,
                                       decoration: BoxDecoration(
                                         color: Colors.white,

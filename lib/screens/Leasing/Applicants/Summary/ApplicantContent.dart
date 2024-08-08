@@ -1687,7 +1687,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       Padding(
                                         padding: const EdgeInsets.all(0.0),
                                         child: Material(
-                                          elevation: 6,
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           child: Container(
@@ -1797,7 +1796,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${data.applicantFirstName} ${data.applicantLastName}',
+                                                        '${(data.applicantFirstName ?? '').isEmpty ? 'N/A' : data.applicantFirstName} ${(data.applicantLastName ?? '').isEmpty ? 'N/A' : data.applicantLastName}',
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -1811,7 +1810,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   const SizedBox(
                                                     height: 18,
                                                   ),
-                                                  // Rental Owner
+// Applicant Birth Date
                                                   const Row(
                                                     children: [
                                                       SizedBox(
@@ -1835,7 +1834,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${data.applicantFirstName ?? 'N/A'}',
+                                                        '${(data.applicantFirstName ?? '').isEmpty ? 'N/A' : data.applicantFirstName}',
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -1849,7 +1848,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   const SizedBox(
                                                     height: 18,
                                                   ),
-                                                  // Tenant
+// Applicant Current Address
                                                   const Row(
                                                     children: [
                                                       SizedBox(
@@ -1873,7 +1872,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${data.applicantFirstName} ${data.applicantLastName}',
+                                                        '${(data.applicantCity ?? '').isEmpty ? 'N/A' : data.applicantCity}',
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -1884,9 +1883,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                     ],
                                                   ),
-
                                                   const SizedBox(
-                                                    height: 5,
+                                                    height: 18,
                                                   ),
                                                 ],
                                               ),
@@ -3283,7 +3281,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 padding:
                                                     const EdgeInsets.all(0.0),
                                                 child: Material(
-                                                  elevation: 6,
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   child: Container(
@@ -3629,7 +3626,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       Padding(
                                         padding: const EdgeInsets.all(0.0),
                                         child: Material(
-                                          elevation: 6,
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           child: Container(
@@ -3698,7 +3694,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Flexible(
                                                         child: Text(
-                                                          '${data.rentalHistory!.rentalAdress ?? 'N/A'}, ${data.rentalHistory!.rentalCity ?? 'N/A'},${data.rentalHistory!.rentalState ?? 'N/A'},${data.rentalHistory!.rentalCountry ?? 'N/A'},${data.rentalHistory!.rentalPostcode ?? 'N/A'}',
+                                                          '${(data.rentalHistory?.rentalAdress ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalAdress}, '
+                                                          '${(data.rentalHistory?.rentalCity ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalCity}, '
+                                                          '${(data.rentalHistory?.rentalState ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalState}, '
+                                                          '${(data.rentalHistory?.rentalCountry ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalCountry}, '
+                                                          '${(data.rentalHistory?.rentalPostcode ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalPostcode}',
                                                           style:
                                                               const TextStyle(
                                                             fontWeight:
@@ -3718,8 +3718,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   const SizedBox(
                                                     height: 24,
                                                   ),
-                                                  // Rental Owner
-
+// Rental Owner
                                                   Row(
                                                     children: [
                                                       Expanded(
@@ -3747,7 +3746,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.rentalHistory!.startDate ?? 'N/A'} to ${data.rentalHistory!.endDate ?? 'N/A'}',
+                                                                '${(data.rentalHistory?.startDate ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.startDate} to ${(data.rentalHistory?.endDate ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.endDate}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -3790,7 +3789,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.rentalHistory!.rent ?? 'N/A'}',
+                                                                '${(data.rentalHistory?.rent ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rent}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -3810,12 +3809,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       ),
                                                     ],
                                                   ),
-
                                                   const SizedBox(
                                                     height: 24,
                                                   ),
-                                                  // Tenant
-
+// Tenant
                                                   Row(
                                                     children: [
                                                       Expanded(
@@ -3843,7 +3840,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.rentalHistory!.leavingReason ?? 'N/A'}',
+                                                                '${(data.rentalHistory?.leavingReason ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.leavingReason}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -3886,7 +3883,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.rentalHistory!.rentalOwnerFirstName ?? 'N/A'} ${data.rentalHistory!.rentalOwnerLastName ?? 'N/A'}',
+                                                                '${(data.rentalHistory?.rentalOwnerFirstName ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerFirstName} ${(data.rentalHistory?.rentalOwnerLastName ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerLastName}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -3906,6 +3903,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       ),
                                                     ],
                                                   ),
+
                                                   const SizedBox(
                                                     height: 24,
                                                   ),
@@ -4019,7 +4017,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           Padding(
                                             padding: const EdgeInsets.all(0.0),
                                             child: Material(
-                                              elevation: 6,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               child: Container(
@@ -4309,16 +4306,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         children: [
                                                           Expanded(
                                                             child: Container(
-                                                              child:
-                                                                  const Column(
+                                                              child: Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 2,
                                                                   ),
-                                                                  Text(
+                                                                  const Text(
                                                                     "Rental Owner Phone",
                                                                     style: TextStyle(
                                                                         color: Color(
@@ -4329,13 +4325,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         fontSize:
                                                                             12),
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     height: 5,
                                                                   ),
                                                                   Text(
-                                                                    'N/A',
+                                                                    '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerPhoneNumber}',
                                                                     style:
-                                                                        TextStyle(
+                                                                        const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold,
@@ -4353,16 +4349,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           ),
                                                           Expanded(
                                                             child: Container(
-                                                              child:
-                                                                  const Column(
+                                                              child: Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 2,
                                                                   ),
-                                                                  Text(
+                                                                  const Text(
                                                                     "Rental Owner Email",
                                                                     style: TextStyle(
                                                                         color: Color(
@@ -4373,13 +4368,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         fontSize:
                                                                             12),
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     height: 5,
                                                                   ),
                                                                   Text(
-                                                                    'N/A',
+                                                                    '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerPrimaryEmail}',
                                                                     style:
-                                                                        TextStyle(
+                                                                        const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold,
@@ -4420,7 +4415,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       Padding(
                                         padding: const EdgeInsets.all(0.0),
                                         child: Material(
-                                          elevation: 6,
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           child: Container(
@@ -4488,7 +4482,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${data.emergencyContact!.firstName} ${data.emergencyContact!.lastName}',
+                                                        '${(data.emergencyContact?.firstName ?? 'N/A').isEmpty ? '' : data.emergencyContact!.firstName} ${(data.emergencyContact?.lastName ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.lastName}',
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -4502,7 +4496,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   const SizedBox(
                                                     height: 18,
                                                   ),
-                                                  // Rental Owner
+// Emergency Contact Relationship
                                                   const Row(
                                                     children: [
                                                       SizedBox(
@@ -4526,7 +4520,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${data.emergencyContact!.relationship}',
+                                                        '${(data.emergencyContact?.relationship ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.relationship}',
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -4540,7 +4534,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   const SizedBox(
                                                     height: 18,
                                                   ),
-                                                  // Tenant
+// Emergency Contact Email
                                                   const Row(
                                                     children: [
                                                       SizedBox(
@@ -4564,7 +4558,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${data.emergencyContact!.email}',
+                                                        '${(data.emergencyContact?.email ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.email}',
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -4578,7 +4572,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   const SizedBox(
                                                     height: 18,
                                                   ),
-                                                  // Tenant
+// Emergency Contact Phone
                                                   const Row(
                                                     children: [
                                                       SizedBox(
@@ -4602,7 +4596,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${data.emergencyContact!.phoneNumber}',
+                                                        '${(data.emergencyContact?.phoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : data.emergencyContact!.phoneNumber}',
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -4612,6 +4606,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       ),
                                                       const SizedBox(width: 2),
                                                     ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 18,
                                                   ),
 
                                                   const SizedBox(
@@ -4634,7 +4631,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           Padding(
                                             padding: const EdgeInsets.all(0.0),
                                             child: Material(
-                                              elevation: 6,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               child: Container(
@@ -4879,7 +4875,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       Padding(
                                         padding: const EdgeInsets.all(0.0),
                                         child: Material(
-                                          elevation: 6,
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           child: Container(
@@ -4948,7 +4943,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Flexible(
                                                         child: Text(
-                                                          '${data.employment!.streetAddress ?? ''}, ${data.employment!.city ?? ''},${data.employment!.state ?? ''} ,${data.employment!.country ?? ''} ,${data.employment!.postalCode ?? ''}',
+                                                          '${(data.employment?.streetAddress?.isEmpty ?? true) ? 'N/A' : data.employment!.streetAddress}, '
+                                                          '${(data.employment?.city?.isEmpty ?? true) ? 'N/A' : data.employment!.city}, '
+                                                          '${(data.employment?.state?.isEmpty ?? true) ? 'N/A' : data.employment!.state}, '
+                                                          '${(data.employment?.country?.isEmpty ?? true) ? 'N/A' : data.employment!.country}, '
+                                                          '${(data.employment?.postalCode?.isEmpty ?? true) ? 'N/A' : data.employment!.postalCode}',
                                                           style:
                                                               const TextStyle(
                                                             fontWeight:
@@ -4968,7 +4967,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   const SizedBox(
                                                     height: 24,
                                                   ),
-
                                                   Row(
                                                     children: [
                                                       Expanded(
@@ -4996,7 +4994,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.employment!.name ?? ''}',
+                                                                '${(data.employment?.name?.isEmpty ?? true) ? 'N/A' : data.employment!.name}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -5039,7 +5037,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.employment!.employmentPhoneNumber ?? ''}',
+                                                                '${(data.employment?.employmentPhoneNumber?.toString().isEmpty ?? true) ? 'N/A' : data.employment!.employmentPhoneNumber}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -5059,12 +5057,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       ),
                                                     ],
                                                   ),
-
                                                   const SizedBox(
                                                     height: 24,
                                                   ),
-                                                  // Rental Owner
-
                                                   Row(
                                                     children: [
                                                       Expanded(
@@ -5092,7 +5087,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.employment!.employmentPrimaryEmail ?? ''}',
+                                                                '${(data.employment?.employmentPrimaryEmail?.isEmpty ?? true) ? 'N/A' : data.employment!.employmentPrimaryEmail}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -5121,7 +5116,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 width: 2,
                                                               ),
                                                               const Text(
-                                                                "Employer Phone Number",
+                                                                "Employer Position",
                                                                 style: TextStyle(
                                                                     color: Color(
                                                                         0xFF8A95A8),
@@ -5135,7 +5130,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.employment!.employmentPosition ?? ''}',
+                                                                '${(data.employment?.employmentPosition?.isEmpty ?? true) ? 'N/A' : data.employment!.employmentPosition}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -5155,7 +5150,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       ),
                                                     ],
                                                   ),
-
                                                   const SizedBox(
                                                     height: 24,
                                                   ),
@@ -5186,7 +5180,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.employment!.supervisorFirstName ?? ''} ${data.employment!.supervisorLastName ?? ''}',
+                                                                '${(data.employment?.supervisorFirstName?.isEmpty ?? true) ? 'N/A' : data.employment!.supervisorFirstName} '
+                                                                '${(data.employment?.supervisorLastName?.isEmpty ?? true) ? 'N/A' : data.employment!.supervisorLastName}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -5229,7 +5224,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.employment!.supervisorTitle ?? ''}',
+                                                                '${(data.employment?.supervisorTitle?.isEmpty ?? true) ? 'N/A' : data.employment!.supervisorTitle}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -5249,6 +5244,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       ),
                                                     ],
                                                   ),
+
                                                   // Tenant
                                                 ],
                                               ),
@@ -5267,7 +5263,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           Padding(
                                             padding: const EdgeInsets.all(0.0),
                                             child: Material(
-                                              elevation: 6,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               child: Container(

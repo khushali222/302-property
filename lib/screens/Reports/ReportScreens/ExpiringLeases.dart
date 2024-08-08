@@ -15,12 +15,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:provider/provider.dart';
 
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
+import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/ExpiringLeaseTable.dart';
+import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/widgets/CustomDateField.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -76,6 +79,16 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
   }
 
   Future<void> generatePdf(List<ReportExpiringLeaseData> leaseData) async {
+      final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      // Handle error
+      print("Error fetching profile data: $e");
+      return;
+    }
     final pdf = pw.Document();
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
@@ -111,10 +124,42 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      pw.Text('302 Properties, LLC'),
-                      pw.Text('250 Corporate Blvd., Suite L'),
-                      pw.Text('Newark, DE 19702'),
-                      pw.Text('(302) 525-4302'),
+                      pw.Text(
+                        profileData?.companyName?.isNotEmpty == true
+                            ? profileData!.companyName!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        profileData?.companyAddress?.isNotEmpty == true
+                            ? profileData!.companyAddress!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        profileData?.companyPostalCode?.isNotEmpty == true
+                            ? profileData!.companyPostalCode!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -668,7 +713,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                 context,
                 const Icon(
                   CupertinoIcons.circle_grid_3x3,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
                 "Dashboard",
                 true,
@@ -731,312 +776,313 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 16,
-          ),
-          titleBar(
-            title: 'Expiring Lease',
-            width: MediaQuery.of(context).size.width * .91,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color.fromRGBO(21, 43, 83, 1),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 16,
+            ),
+            titleBar(
+              title: 'Expiring Lease',
+              width: MediaQuery.of(context).size.width * .91,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Color.fromRGBO(21, 43, 83, 1),
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: screenWidth > 500
-                      ? Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('From',
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600)),
-                                  SizedBox(height: 5),
-                                  CustomDateField(
-                                      hintText: 'yyyy-mm-dd',
-                                      controller: _fromDateController),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 40),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('To',
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600)),
-                                  SizedBox(height: 5),
-                                  CustomDateField(
-                                      hintText: 'yyyy-mm-dd',
-                                      controller: _toDateController),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 20),
-                            Expanded(
-                              child: Container(
-                                // color: Colors.amber,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 18),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: blueColor),
-                                        onPressed: _fetchData,
-                                        child: Text('Show Leases'),
-                                      ),
-                                      SizedBox(width: 8),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: blueColor),
-                                        onPressed: () {
-                                          _fromDateController.clear();
-                                          _toDateController.clear();
-                                        },
-                                        child: Text('Clear'),
-                                      ),
-                                    ],
-                                  ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: screenWidth > 500
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('From',
+                                        style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600)),
+                                    SizedBox(height: 5),
+                                    CustomDateField(
+                                        hintText: 'yyyy-mm-dd',
+                                        controller: _fromDateController),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
+                              SizedBox(width: 40),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('To',
+                                        style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600)),
+                                    SizedBox(height: 5),
+                                    CustomDateField(
+                                        hintText: 'yyyy-mm-dd',
+                                        controller: _toDateController),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                              Expanded(
+                                child: Container(
+                                  // color: Colors.amber,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 18),
+                                    child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('From',
-                                            style: TextStyle(
-                                                color: Colors.grey[600],
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600)),
-                                        SizedBox(height: 5),
-                                        CustomDateField(
-                                            hintText: 'dd-mm-yyyy',
-                                            controller: _fromDateController),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: blueColor),
+                                          onPressed: _fetchData,
+                                          child: Text('Show Leases'),
+                                        ),
+                                        SizedBox(width: 8),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: blueColor),
+                                          onPressed: () {
+                                            _fromDateController.clear();
+                                            _toDateController.clear();
+                                          },
+                                          child: Text('Clear'),
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 16,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('To',
-                                            style: TextStyle(
-                                                color: Colors.grey[600],
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600)),
-                                        SizedBox(height: 5),
-                                        CustomDateField(
-                                            hintText: 'dd-mm-yyyy',
-                                            controller: _toDateController),
-                                      ],
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('From',
+                                              style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600)),
+                                          SizedBox(height: 5),
+                                          CustomDateField(
+                                              hintText: 'dd-mm-yyyy',
+                                              controller: _fromDateController),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: blueColor),
-                                  onPressed: _fetchData,
-                                  child: Text('Show Leases'),
-                                ),
-                                SizedBox(width: 8),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: blueColor),
-                                  onPressed: () {
-                                    _fromDateController.clear();
-                                    _toDateController.clear();
-                                  },
-                                  child: Text('Clear'),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                  SizedBox(
+                                    width: 16,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('To',
+                                              style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600)),
+                                          SizedBox(height: 5),
+                                          CustomDateField(
+                                              hintText: 'dd-mm-yyyy',
+                                              controller: _toDateController),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor),
+                                    onPressed: _fetchData,
+                                    child: Text('Show Leases'),
+                                  ),
+                                  SizedBox(width: 8),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor),
+                                    onPressed: () {
+                                      _fromDateController.clear();
+                                      _toDateController.clear();
+                                    },
+                                    child: Text('Clear'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                  ),
                 ),
               ),
             ),
-          ),
-          // Expanded(
-          //     flex: 0,
-          //     child: Padding(
-          //       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //         children: [
-          //           Material(
-          //             elevation: 3,
-          //             borderRadius: BorderRadius.circular(2),
-          //             child: Container(
-          //               padding: const EdgeInsets.symmetric(horizontal: 10),
-          //               // height: 40,
-          //               height:
-          //                   MediaQuery.of(context).size.width < 500 ? 40 : 50,
-          //               width: MediaQuery.of(context).size.width < 500
-          //                   ? MediaQuery.of(context).size.width * .45
-          //                   : MediaQuery.of(context).size.width * .4,
-          //               decoration: BoxDecoration(
-          //                 color: Colors.white,
-          //                 borderRadius: BorderRadius.circular(2),
-          //                 border: Border.all(color: const Color(0xFF8A95A8)),
-          //               ),
-          //               child: TextField(
-          //                 onChanged: (value) {
-          //                   setState(() {
-          //                     searchvalue = value;
-          //                   });
-          //                 },
-          //                 decoration: const InputDecoration(
-          //                   border: InputBorder.none,
-          //                   hintText: "Search here...",
-          //                   hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-          //                   // contentPadding: EdgeInsets.all(10),
-          //                 ),
-          //               ),
-          //             ),
-          //           ),
-          //           ElevatedButton(
-          //             style: ElevatedButton.styleFrom(
-          //               backgroundColor: blueColor,
-          //             ),
-          //             onPressed: () {},
-          //             child: PopupMenuButton<String>(
-          //               onSelected: (value) async {
-          //                 // Add your export logic here based on the selected value
-          //                 if (value == 'PDF') {
-          //                   if (_fromDateController.text.isNotEmpty &&
-          //                       _toDateController.text.isNotEmpty) {
-          //                     final data = await ExpiringLeaseTableService()
-          //                         .fetchExpiringLeases(
-          //                       fromDate: _fromDateController.text,
-          //                       toDate: _toDateController.text,
-          //                     );
+            // Expanded(
+            //     flex: 0,
+            //     child: Padding(
+            //       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+            //       child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           Material(
+            //             elevation: 3,
+            //             borderRadius: BorderRadius.circular(2),
+            //             child: Container(
+            //               padding: const EdgeInsets.symmetric(horizontal: 10),
+            //               // height: 40,
+            //               height:
+            //                   MediaQuery.of(context).size.width < 500 ? 40 : 50,
+            //               width: MediaQuery.of(context).size.width < 500
+            //                   ? MediaQuery.of(context).size.width * .45
+            //                   : MediaQuery.of(context).size.width * .4,
+            //               decoration: BoxDecoration(
+            //                 color: Colors.white,
+            //                 borderRadius: BorderRadius.circular(2),
+            //                 border: Border.all(color: const Color(0xFF8A95A8)),
+            //               ),
+            //               child: TextField(
+            //                 onChanged: (value) {
+            //                   setState(() {
+            //                     searchvalue = value;
+            //                   });
+            //                 },
+            //                 decoration: const InputDecoration(
+            //                   border: InputBorder.none,
+            //                   hintText: "Search here...",
+            //                   hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+            //                   // contentPadding: EdgeInsets.all(10),
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //           ElevatedButton(
+            //             style: ElevatedButton.styleFrom(
+            //               backgroundColor: blueColor,
+            //             ),
+            //             onPressed: () {},
+            //             child: PopupMenuButton<String>(
+            //               onSelected: (value) async {
+            //                 // Add your export logic here based on the selected value
+            //                 if (value == 'PDF') {
+            //                   if (_fromDateController.text.isNotEmpty &&
+            //                       _toDateController.text.isNotEmpty) {
+            //                     final data = await ExpiringLeaseTableService()
+            //                         .fetchExpiringLeases(
+            //                       fromDate: _fromDateController.text,
+            //                       toDate: _toDateController.text,
+            //                     );
 
-          //                     await generatePdf(data);
-          //                   } else {
-          //                     final data = await ExpiringLeaseTableService()
-          //                         .fetchExpiringLeases();
+            //                     await generatePdf(data);
+            //                   } else {
+            //                     final data = await ExpiringLeaseTableService()
+            //                         .fetchExpiringLeases();
 
-          //                     await generatePdf(data);
-          //                   }
+            //                     await generatePdf(data);
+            //                   }
 
-          //                   print('pdf');
-          //                   // Export as PDF
-          //                 } else if (value == 'XLSX') {
-          //                   if (_fromDateController.text.isNotEmpty &&
-          //                       _toDateController.text.isNotEmpty) {
-          //                     final data = await ExpiringLeaseTableService()
-          //                         .fetchExpiringLeases(
-          //                       fromDate: _fromDateController.text,
-          //                       toDate: _toDateController.text,
-          //                     );
+            //                   print('pdf');
+            //                   // Export as PDF
+            //                 } else if (value == 'XLSX') {
+            //                   if (_fromDateController.text.isNotEmpty &&
+            //                       _toDateController.text.isNotEmpty) {
+            //                     final data = await ExpiringLeaseTableService()
+            //                         .fetchExpiringLeases(
+            //                       fromDate: _fromDateController.text,
+            //                       toDate: _toDateController.text,
+            //                     );
 
-          //                     await generateExcel(data);
-          //                   } else {
-          //                     final data = await ExpiringLeaseTableService()
-          //                         .fetchExpiringLeases();
+            //                     await generateExcel(data);
+            //                   } else {
+            //                     final data = await ExpiringLeaseTableService()
+            //                         .fetchExpiringLeases();
 
-          //                     await generateExcel(data);
-          //                   }
-          //                   print('XLSX');
-          //                   // Export as XLSX
-          //                 } else if (value == 'CSV') {
-          //                   if (_fromDateController.text.isNotEmpty &&
-          //                       _toDateController.text.isNotEmpty) {
-          //                     final data = await ExpiringLeaseTableService()
-          //                         .fetchExpiringLeases(
-          //                       fromDate: _fromDateController.text,
-          //                       toDate: _toDateController.text,
-          //                     );
+            //                     await generateExcel(data);
+            //                   }
+            //                   print('XLSX');
+            //                   // Export as XLSX
+            //                 } else if (value == 'CSV') {
+            //                   if (_fromDateController.text.isNotEmpty &&
+            //                       _toDateController.text.isNotEmpty) {
+            //                     final data = await ExpiringLeaseTableService()
+            //                         .fetchExpiringLeases(
+            //                       fromDate: _fromDateController.text,
+            //                       toDate: _toDateController.text,
+            //                     );
 
-          //                     await generatePdf(data);
-          //                   } else {
-          //                     final data = await ExpiringLeaseTableService()
-          //                         .fetchExpiringLeases();
+            //                     await generatePdf(data);
+            //                   } else {
+            //                     final data = await ExpiringLeaseTableService()
+            //                         .fetchExpiringLeases();
 
-          //                     await generatePdf(data);
-          //                   }
-          //                   print('CSV');
-          //                   // Export as CSV
-          //                 }
-          //               },
-          //               itemBuilder: (BuildContext context) =>
-          //                   <PopupMenuEntry<String>>[
-          //                 const PopupMenuItem<String>(
-          //                   value: 'PDF',
-          //                   child: Text('PDF'),
-          //                 ),
-          //                 const PopupMenuItem<String>(
-          //                   value: 'XLSX',
-          //                   child: Text('XLSX'),
-          //                 ),
-          //                 const PopupMenuItem<String>(
-          //                   value: 'CSV',
-          //                   child: Text('CSV'),
-          //                 ),
-          //               ],
-          //               child: Row(
-          //                 mainAxisSize: MainAxisSize.min,
-          //                 children: [
-          //                   Text('Export'),
-          //                   Icon(Icons.arrow_drop_down),
-          //                 ],
-          //               ),
-          //             ),
-          //           )
-          //         ],
-          //       ),
-          //     )),
-          if (MediaQuery.of(context).size.width < 500)
-            Expanded(
-              child: Padding(
+            //                     await generatePdf(data);
+            //                   }
+            //                   print('CSV');
+            //                   // Export as CSV
+            //                 }
+            //               },
+            //               itemBuilder: (BuildContext context) =>
+            //                   <PopupMenuEntry<String>>[
+            //                 const PopupMenuItem<String>(
+            //                   value: 'PDF',
+            //                   child: Text('PDF'),
+            //                 ),
+            //                 const PopupMenuItem<String>(
+            //                   value: 'XLSX',
+            //                   child: Text('XLSX'),
+            //                 ),
+            //                 const PopupMenuItem<String>(
+            //                   value: 'CSV',
+            //                   child: Text('CSV'),
+            //                 ),
+            //               ],
+            //               child: Row(
+            //                 mainAxisSize: MainAxisSize.min,
+            //                 children: [
+            //                   Text('Export'),
+            //                   Icon(Icons.arrow_drop_down),
+            //                 ],
+            //               ),
+            //             ),
+            //           )
+            //         ],
+            //       ),
+            //     )),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
                 padding: const EdgeInsets.only(
                   left: 10.0,
                   right: 10.0,
@@ -1096,7 +1142,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                             flex: 0,
                             child: Padding(
                               padding:
-                                  const EdgeInsets.only(left: 5.0, right: 5.0),
+                                  const EdgeInsets.only(left: 0.0, right: 0.0),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -1631,272 +1677,274 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   },
                 ),
               ),
-            ),
-          if (MediaQuery.of(context).size.width > 500)
-            SizedBox(
-              height: 8,
-            ),
-          if (MediaQuery.of(context).size.width > 500)
-            Expanded(
-                flex: 0,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 32.0, right: 32.0, bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(2),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          // height: 40,
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .45
-                              : MediaQuery.of(context).size.width * .4,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(color: const Color(0xFF8A95A8)),
-                          ),
-                          child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                searchvalue = value;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Search here...",
-                              hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                              // contentPadding: EdgeInsets.all(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: blueColor,
-                        ),
-                        onPressed: () {},
-                        child: PopupMenuButton<String>(
-                          onSelected: (value) async {
-                            // Add your export logic here based on the selected value
-                            if (value == 'PDF') {
-                              if (_fromDateController.text.isNotEmpty &&
-                                  _toDateController.text.isNotEmpty) {
-                                final data = await ExpiringLeaseTableService()
-                                    .fetchExpiringLeases(
-                                  fromDate: _fromDateController.text,
-                                  toDate: _toDateController.text,
-                                );
-
-                                await generatePdf(data);
-                              } else {
-                                final data = await ExpiringLeaseTableService()
-                                    .fetchExpiringLeases();
-
-                                await generatePdf(data);
-                              }
-
-                              print('pdf');
-                              // Export as PDF
-                            } else if (value == 'XLSX') {
-                              if (_fromDateController.text.isNotEmpty &&
-                                  _toDateController.text.isNotEmpty) {
-                                final data = await ExpiringLeaseTableService()
-                                    .fetchExpiringLeases(
-                                  fromDate: _fromDateController.text,
-                                  toDate: _toDateController.text,
-                                );
-
-                                await generateExcel(data);
-                              } else {
-                                final data = await ExpiringLeaseTableService()
-                                    .fetchExpiringLeases();
-
-                                await generateExcel(data);
-                              }
-                              print('XLSX');
-                              // Export as XLSX
-                            } else if (value == 'CSV') {
-                              if (_fromDateController.text.isNotEmpty &&
-                                  _toDateController.text.isNotEmpty) {
-                                final data = await ExpiringLeaseTableService()
-                                    .fetchExpiringLeases(
-                                  fromDate: _fromDateController.text,
-                                  toDate: _toDateController.text,
-                                );
-
-                                await generateCsv(data);
-                              } else {
-                                final data = await ExpiringLeaseTableService()
-                                    .fetchExpiringLeases();
-
-                                await generateCsv(data);
-                              }
-                              print('CSV');
-                              // Export as CSV
-                            }
-                          },
-                          itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<String>>[
-                            const PopupMenuItem<String>(
-                              value: 'PDF',
-                              child: Text('PDF'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'XLSX',
-                              child: Text('XLSX'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'CSV',
-                              child: Text('CSV'),
-                            ),
-                          ],
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('Export'),
-                              Icon(Icons.arrow_drop_down),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )),
-          if (MediaQuery.of(context).size.width > 500)
-            SizedBox(
-              height: 18,
-            ),
-          if (MediaQuery.of(context).size.width > 500)
-            FutureBuilder<List<ReportExpiringLeaseData>>(
-              future: _futureReport,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ShimmerTabletTable();
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No data available'));
-                }
-
-                var data = snapshot.data!;
-
-                // Apply filtering based on selectedValue and searchvalue
-                if (selectedValue == null && searchvalue.isEmpty) {
-                  data = snapshot.data!;
-                } else if (selectedValue == "All") {
-                  data = snapshot.data!;
-                } else if (searchvalue.isNotEmpty) {
-                  data = snapshot.data!
-                      .where((lease) =>
-                          lease.rentalAddress!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()) ||
-                          lease.tenantNames!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()))
-                      .toList();
-                } else {
-                  data = snapshot.data!
-                      .where((lease) => lease.rentalAddress == selectedValue)
-                      .toList();
-                }
-
-                // Apply pagination
-                final int itemsPerPage = 10;
-                final int totalPages = (data.length / itemsPerPage).ceil();
-                final int currentPage =
-                    1; // Update this with your pagination logic
-                final List<ReportExpiringLeaseData> pagedData = data
-                    .skip((currentPage - 1) * itemsPerPage)
-                    .take(itemsPerPage)
-                    .toList();
-
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: Column(
+            if (MediaQuery.of(context).size.width > 500)
+              SizedBox(
+                height: 8,
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              Expanded(
+                  flex: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 32.0, right: 32.0, bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Table(
-                          defaultColumnWidth: IntrinsicColumnWidth(),
-                          columnWidths: {
-                            0: FlexColumnWidth(),
-                            1: FlexColumnWidth(),
-                            2: FlexColumnWidth(),
-                            3: FlexColumnWidth(),
-                          },
-                          children: [
-                            TableRow(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: blueColor),
+                        Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(2),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            // height: 40,
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 40
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .45
+                                : MediaQuery.of(context).size.width * .4,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(2),
+                              border:
+                                  Border.all(color: const Color(0xFF8A95A8)),
+                            ),
+                            child: TextField(
+                              onChanged: (value) {
+                                setState(() {
+                                  searchvalue = value;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search here...",
+                                hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                                // contentPadding: EdgeInsets.all(10),
                               ),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                          ),
+                          onPressed: () {},
+                          child: PopupMenuButton<String>(
+                            onSelected: (value) async {
+                              // Add your export logic here based on the selected value
+                              if (value == 'PDF') {
+                                if (_fromDateController.text.isNotEmpty &&
+                                    _toDateController.text.isNotEmpty) {
+                                  final data = await ExpiringLeaseTableService()
+                                      .fetchExpiringLeases(
+                                    fromDate: _fromDateController.text,
+                                    toDate: _toDateController.text,
+                                  );
+
+                                  await generatePdf(data);
+                                } else {
+                                  final data = await ExpiringLeaseTableService()
+                                      .fetchExpiringLeases();
+
+                                  await generatePdf(data);
+                                }
+
+                                print('pdf');
+                                // Export as PDF
+                              } else if (value == 'XLSX') {
+                                if (_fromDateController.text.isNotEmpty &&
+                                    _toDateController.text.isNotEmpty) {
+                                  final data = await ExpiringLeaseTableService()
+                                      .fetchExpiringLeases(
+                                    fromDate: _fromDateController.text,
+                                    toDate: _toDateController.text,
+                                  );
+
+                                  await generateExcel(data);
+                                } else {
+                                  final data = await ExpiringLeaseTableService()
+                                      .fetchExpiringLeases();
+
+                                  await generateExcel(data);
+                                }
+                                print('XLSX');
+                                // Export as XLSX
+                              } else if (value == 'CSV') {
+                                if (_fromDateController.text.isNotEmpty &&
+                                    _toDateController.text.isNotEmpty) {
+                                  final data = await ExpiringLeaseTableService()
+                                      .fetchExpiringLeases(
+                                    fromDate: _fromDateController.text,
+                                    toDate: _toDateController.text,
+                                  );
+
+                                  await generateCsv(data);
+                                } else {
+                                  final data = await ExpiringLeaseTableService()
+                                      .fetchExpiringLeases();
+
+                                  await generateCsv(data);
+                                }
+                                print('CSV');
+                                // Export as CSV
+                              }
+                            },
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
+                              const PopupMenuItem<String>(
+                                value: 'PDF',
+                                child: Text('PDF'),
+                              ),
+                              const PopupMenuItem<String>(
+                                value: 'XLSX',
+                                child: Text('XLSX'),
+                              ),
+                              const PopupMenuItem<String>(
+                                value: 'CSV',
+                                child: Text('CSV'),
+                              ),
+                            ],
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                _buildHeader('Rental Address', 0,
-                                    (lease) => lease.rentalAddress!),
-                                _buildHeader('Tenant Names', 1,
-                                    (lease) => lease.tenantNames!),
-                                _buildHeader('Lease Start', 2,
-                                    (lease) => lease.createdAt!),
-                                _buildHeader(
-                                    'Rent', 3, (lease) => lease.createdAt!),
-                                _buildHeader(
-                                    'Lease End', 5, (lease) => lease.endDate!),
+                                Text('Export'),
+                                Icon(Icons.arrow_drop_down),
                               ],
                             ),
-                            TableRow(
-                              decoration: BoxDecoration(
-                                border: Border.symmetric(
-                                    horizontal: BorderSide.none),
-                              ),
-                              children: List.generate(
-                                  5,
-                                  (index) =>
-                                      TableCell(child: Container(height: 20))),
-                            ),
-                            for (var i = 0; i < pagedData.length; i++)
-                              TableRow(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    left: BorderSide(
-                                        color: Color.fromRGBO(21, 43, 81, 1)),
-                                    right: BorderSide(
-                                        color: Color.fromRGBO(21, 43, 81, 1)),
-                                    top: BorderSide(
-                                        color: Color.fromRGBO(21, 43, 81, 1)),
-                                    bottom: i == pagedData.length - 1
-                                        ? BorderSide(
-                                            color:
-                                                Color.fromRGBO(21, 43, 81, 1))
-                                        : BorderSide.none,
-                                  ),
-                                ),
-                                children: [
-                                  _buildDataCell(pagedData[i].rentalAddress!),
-                                  _buildDataCell(pagedData[i].tenantNames!),
-                                  _buildDataCell(
-                                      '\$${pagedData[i].amount.toString()}'),
-                                  _buildDataCell(pagedData[i].createdAt!),
-                                  _buildDataCell(pagedData[i].endDate!),
-                                ],
-                              ),
-                          ],
-                        ),
-                        SizedBox(height: 25),
-                        _buildPaginationControls(),
-                        SizedBox(height: 25),
+                          ),
+                        )
                       ],
                     ),
-                  ),
-                );
-              },
-            ),
-        ],
+                  )),
+            if (MediaQuery.of(context).size.width > 500)
+              SizedBox(
+                height: 18,
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<List<ReportExpiringLeaseData>>(
+                future: _futureReport,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ShimmerTabletTable();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No data available'));
+                  }
+
+                  var data = snapshot.data!;
+
+                  // Apply filtering based on selectedValue and searchvalue
+                  if (selectedValue == null && searchvalue.isEmpty) {
+                    data = snapshot.data!;
+                  } else if (selectedValue == "All") {
+                    data = snapshot.data!;
+                  } else if (searchvalue.isNotEmpty) {
+                    data = snapshot.data!
+                        .where((lease) =>
+                            lease.rentalAddress!
+                                .toLowerCase()
+                                .contains(searchvalue.toLowerCase()) ||
+                            lease.tenantNames!
+                                .toLowerCase()
+                                .contains(searchvalue.toLowerCase()))
+                        .toList();
+                  } else {
+                    data = snapshot.data!
+                        .where((lease) => lease.rentalAddress == selectedValue)
+                        .toList();
+                  }
+
+                  // Apply pagination
+                  final int itemsPerPage = 10;
+                  final int totalPages = (data.length / itemsPerPage).ceil();
+                  final int currentPage =
+                      1; // Update this with your pagination logic
+                  final List<ReportExpiringLeaseData> pagedData = data
+                      .skip((currentPage - 1) * itemsPerPage)
+                      .take(itemsPerPage)
+                      .toList();
+
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.95,
+                      child: Column(
+                        children: [
+                          Table(
+                            defaultColumnWidth: IntrinsicColumnWidth(),
+                            columnWidths: {
+                              0: FlexColumnWidth(),
+                              1: FlexColumnWidth(),
+                              2: FlexColumnWidth(),
+                              3: FlexColumnWidth(),
+                            },
+                            children: [
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: blueColor),
+                                ),
+                                children: [
+                                  _buildHeader('Rental Address', 0,
+                                      (lease) => lease.rentalAddress!),
+                                  _buildHeader('Tenant Names', 1,
+                                      (lease) => lease.tenantNames!),
+                                  _buildHeader('Lease Start', 2,
+                                      (lease) => lease.createdAt!),
+                                  _buildHeader(
+                                      'Rent', 3, (lease) => lease.createdAt!),
+                                  _buildHeader('Lease End', 5,
+                                      (lease) => lease.endDate!),
+                                ],
+                              ),
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  border: Border.symmetric(
+                                      horizontal: BorderSide.none),
+                                ),
+                                children: List.generate(
+                                    5,
+                                    (index) => TableCell(
+                                        child: Container(height: 20))),
+                              ),
+                              for (var i = 0; i < pagedData.length; i++)
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(
+                                          color: Color.fromRGBO(21, 43, 81, 1)),
+                                      right: BorderSide(
+                                          color: Color.fromRGBO(21, 43, 81, 1)),
+                                      top: BorderSide(
+                                          color: Color.fromRGBO(21, 43, 81, 1)),
+                                      bottom: i == pagedData.length - 1
+                                          ? BorderSide(
+                                              color:
+                                                  Color.fromRGBO(21, 43, 81, 1))
+                                          : BorderSide.none,
+                                    ),
+                                  ),
+                                  children: [
+                                    _buildDataCell(pagedData[i].rentalAddress!),
+                                    _buildDataCell(pagedData[i].tenantNames!),
+                                    _buildDataCell(
+                                        '\$${pagedData[i].amount.toString()}'),
+                                    _buildDataCell(pagedData[i].createdAt!),
+                                    _buildDataCell(pagedData[i].endDate!),
+                                  ],
+                                ),
+                            ],
+                          ),
+                          SizedBox(height: 25),
+                          _buildPaginationControls(),
+                          SizedBox(height: 25),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+          ],
+        ),
       ),
     );
   }
