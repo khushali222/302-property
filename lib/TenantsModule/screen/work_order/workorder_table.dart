@@ -869,6 +869,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
+                        print(snapshot.data!.length);
                         data = snapshot.data!
                             .where((property) =>
                         property.workSubject!
@@ -884,6 +885,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         property.status == selectedValue)
                             .toList();
                       }
+
+                      data = data.reversed.toList();
                       if(data.length == 0){
                         return Column(
                           children: [
@@ -1200,7 +1203,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5),
-                                                      Container(
+                                                     /* Container(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
@@ -1255,7 +1258,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
+                                                      ),*/
                                                     ],
                                                   ),
                                                 ],

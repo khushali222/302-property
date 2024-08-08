@@ -139,7 +139,7 @@ class _DashboardState extends State<Dashboard> {
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         final data = jsonData["data"];
-        setState(() {
+
           currentMonthRentDue =
               double.parse(data['currentMonthRentDue'].toString());
           lastMonthRentDue = double.parse(data['lastMonthRentDue'].toString());
@@ -148,7 +148,7 @@ class _DashboardState extends State<Dashboard> {
           lastMonthRentPaid =
               double.parse(data['lastMonthRentPaid'].toString());
           totalRentPastDue = double.parse(data['totalRentPastDue'].toString());
-        });
+        setState(() {  });
       } else {
         throw Exception('Failed to load data');
       }
@@ -1620,7 +1620,7 @@ class _DashboardState extends State<Dashboard> {
                       const SizedBox(
                         height: 10,
                       ),
-                      LayoutBuilder(
+                     /* LayoutBuilder(
                         builder:
                             (BuildContext context, BoxConstraints constraints) {
                           // Check if the device width is less than 600 (considered as phone screen)
@@ -1667,10 +1667,15 @@ class _DashboardState extends State<Dashboard> {
                                   ),
                                   PieCharts(dataMap: {
                                     "Properties": countList[0].toDouble(),
+                                    "Gap1": 0.2,
                                     "Tenants": countList[1].toDouble(),
+                                    "Gap2": 0.2,
                                     "Applicants": countList[2].toDouble(),
+                                    "Gap3": 0.2,
                                     "Vendors": countList[3].toDouble(),
+                                    "Gap4": 0.2,
                                     "Work Orders": countList[4].toDouble(),
+                                    "Gap5": 0.2,
                                   }),
                                   const SizedBox(
                                     width: 10,
@@ -1681,7 +1686,7 @@ class _DashboardState extends State<Dashboard> {
                             );
                           }
                         },
-                      ),
+                      ),*/
                     ],
                   )),
       ),

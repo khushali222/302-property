@@ -103,7 +103,7 @@ class PropertyTypeRepository {
     }
   }
   Future<Map<String, dynamic>> DeletePropertyType({
-    required String? id
+    required String? pro_id
   }) async {
 
     //print('$apiUrl/$id');
@@ -112,7 +112,7 @@ class PropertyTypeRepository {
     String?  id = prefs.getString('adminId');
 
     final http.Response response = await http.delete(
-      Uri.parse('$apiUrl/$id'),
+      Uri.parse('$apiUrl/$pro_id'),
       headers: <String, String>{
 
           "authorization": "CRM $token",

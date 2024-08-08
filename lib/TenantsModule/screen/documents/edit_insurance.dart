@@ -149,6 +149,7 @@ class _edit_insuranceState extends State<edit_insurance> {
 
     expiration.text = formatDate3( widget.data.expirationDate!);
     liablity.text = widget.data.liabilityCoverage.toString()!;
+    if(widget.data.policy != "")
     _uploadedFileNames.add(widget.data.policy!);
     super.initState();
 

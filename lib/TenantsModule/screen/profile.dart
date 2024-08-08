@@ -208,11 +208,15 @@ class _Profile_screenState extends State<Profile_screen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Card(
-                      elevation: 4,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Padding(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: blueColor),
+                            borderRadius: BorderRadius.circular(6)
+                        ),
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -230,11 +234,15 @@ class _Profile_screenState extends State<Profile_screen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Card(
-                      elevation: 4,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Padding(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: blueColor),
+                            borderRadius: BorderRadius.circular(6)
+                        ),
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -310,10 +318,10 @@ class InfoRow extends StatelessWidget {
             flex: 1,
             child: Text(
               '$label',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),
             ),
           ),
-          Text(":  "),
+          Text("  :     "),
           Expanded(
             flex: 2,
             child: Text(
@@ -343,10 +351,10 @@ class InfoRows extends StatelessWidget {
             flex: 1,
             child: Text(
               '$label',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),
             ),
           ),
-          Text(":  "),
+          Text(":    "),
           Expanded(
             flex: 2,
             child: Text(

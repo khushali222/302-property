@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:developer';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +22,7 @@ class InsuranceRepository {
       "Content-Type": "application/json"
     });
 
-    print(response.body);
+    log(response.body);
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body)['data'];
       return data.map((json) => Insurance_data.fromJson(json)).toList();

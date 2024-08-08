@@ -65,11 +65,11 @@ class WideScreenLayout extends StatelessWidget {
                   title: "Tenant's Insurance",
                   description: "Produces a list of all insured units",
                   onTap: () {
-                   /* Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RentersInsurance()),
-                    );*/
+                          builder: (context) => DocumentsInsuranceTable(),),
+                    );
                   },
                 ),
               ),
@@ -79,10 +79,10 @@ class WideScreenLayout extends StatelessWidget {
                   title: "Tenant's Leases",
                   description: "Produces a list of leases",
                   onTap: () {
-                   /* Navigator.push(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ExpiringLeases()),
-                    );*/
+                      MaterialPageRoute(builder: (context) =>Lease_Table(),),
+                    );
                     // Navigate to the appropriate screen
                   },
                 ),

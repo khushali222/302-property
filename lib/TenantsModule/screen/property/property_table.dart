@@ -146,7 +146,7 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -170,7 +170,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Start Date", style: TextStyle(color: Colors.white)),
+                    Text("   Start Date", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                    /* ascending2
                         ? Padding(
@@ -433,12 +433,20 @@ class _PropertyTableState extends State<PropertyTable> {
   //     ),
   //   );
   // }
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text,tenant_property Propertytype) {
     return TableCell(
-      child: Container(
-        height: 60,
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
+      child: InkWell(
+        onTap: (){
+
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
+
+        },
+        child: Container(
+          height: 60,
+          padding: const EdgeInsets.only(top: 20.0, left: 16),
+          child: Text(text, style: const TextStyle(fontSize: 18)),
+        ),
       ),
     );
   }
@@ -1474,15 +1482,15 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 // Text(
                                                 //     '${formatDate(_pagedData[i].updatedAt!)}'),
                                                 _buildDataCell(_pagedData[i]
-                                                    .rentalAdress!),
+                                                    .rentalAdress!,_pagedData[i]),
 
                                                 _buildDataCell(
 
-                                                      _pagedData[i].startDate!,
+                                                      _pagedData[i].startDate!,_pagedData[i]
                                                 ),
                                                 _buildDataCell(
 
-                                                      _pagedData[i].endDate!,
+                                                      _pagedData[i].endDate!,_pagedData[i]
                                                 ),
                                                /* _buildActionsCell(_pagedData[i]),*/
                                               ],

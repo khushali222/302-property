@@ -34,84 +34,31 @@ class _PropertiesState extends State<Properties> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Image.asset("assets/images/logo.png"),
               ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person,
-                    color: Colors.black,
-                  ),
-                  "Profile",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.home,
-                    color: Colors.white,
-                  ),
-                  "Properties",
-                  true),
-              buildListTile(
-                  context,
-                  const Icon(
-                    Icons.wallet,
-                    color: Colors.black,
-                  ),
-                  "Rent Roll",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    Icons.lock_person_outlined,
-                    color: Colors.black,
-                  ),
-                  "Tenants",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.square_list,
-                    color: Colors.black,
-                  ),
-                  "Work Order",
-                  false),
-              /* buildDropdownListTile(
-                  context,
-                  const FaIcon(
+              SizedBox(height: 40),
+              buildListTile(context,Icon(CupertinoIcons.circle_grid_3x3,color: Colors.black,), "Dashboard",false),
+              buildListTile(context,Icon(CupertinoIcons.house,color: Colors.black,), "Add Property Type",false),
+              buildListTile(context,Icon(CupertinoIcons.person_add,color: Colors.white,), "Add Staff Member",true),
+              buildDropdownListTile(context,
+                  FaIcon(
                     FontAwesomeIcons.key,
                     size: 20,
                     color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
+                  ), "Rental", ["Properties", "RentalOwner", "Tenants"]),
+              buildDropdownListTile(context,FaIcon(
+                FontAwesomeIcons.thumbsUp,
+                size: 20,
+                color: Colors.black,
+              ), "Leasing",
                   ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
+              buildDropdownListTile(context,
+                  Image.asset("assets/icons/maintence.png", height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"]),*/
+                  ["Vendor", "Work Order"]),
             ],
           ),
         ),

@@ -298,7 +298,7 @@ class _PropertyTableState extends State<PropertyTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(id: id);
+            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id);
             // Add your delete logic here
             setState(() {
               futurePropertyTypes =

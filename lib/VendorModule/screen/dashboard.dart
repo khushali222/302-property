@@ -590,7 +590,70 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                           Padding(
                             padding:
                             const EdgeInsets.only(left: 0, right: 8),
-                            child: BarchartTablet(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Statistics",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),
+                                      SizedBox(width: 30,),
+                                      Container(
+                                        height: 50,
+                                        width: 220,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Color.fromRGBO(206, 233, 255, 1),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            SizedBox(width: 10,),
+                                            Container(height: 20,width: 20,
+
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(2),
+                                                color:  Color.fromRGBO(21, 43, 81, 1),
+                                              ),
+                                            ),
+                                            SizedBox(width: 10,),
+                                            Text("New Work Orders",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(width: 30,),
+                                      Container(
+                                        height: 50,
+                                        width: 250,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Color.fromRGBO(206, 233, 255, 1),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            SizedBox(width: 10,),
+                                            Container(height:20 ,width: 20,
+
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(2),
+                                                color:  Color.fromRGBO(90, 134, 213, 1),
+                                              ),
+                                            ),
+                                            SizedBox(width: 10,),
+                                            Text("OverDue Work Orders",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+                                    ],
+                                  ),
+                                ),
+                                BarchartTablet(),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -771,8 +834,74 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                         const SizedBox(height: 20),
                         Padding(
                           padding:
-                          const EdgeInsets.only(left: 0, right: 8),
-                          child: Barchart(),
+                          const EdgeInsets.only(left: 10, right: 8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Statistics",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                                   SizedBox(height: 10,),
+                                    Container(
+                                      height: 40,
+                                      width: 160,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: Color.fromRGBO(206, 233, 255, 1),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 10,),
+                                          Container(height: 15,width: 15,
+
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(2),
+                                              color:  Color.fromRGBO(21, 43, 81, 1),
+                                            ),
+                                          ),
+                                          SizedBox(width: 10,),
+                                          Text("New Work Orders",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Container(
+                                      height: 40,
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: Color.fromRGBO(206, 233, 255, 1),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 10,),
+                                          Container(height: 15,width: 15,
+
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(2),
+                                              color:  Color.fromRGBO(90, 134, 213, 1),
+                                            ),
+                                          ),
+                                          SizedBox(width: 10,),
+                                          Text("OverDue Work Orders",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 10,),
+                                  ],
+                                ),
+                              ),
+
+
+
+                              Barchart(),
+                            ],
+                          ),
                         ),
                       ],
                     );

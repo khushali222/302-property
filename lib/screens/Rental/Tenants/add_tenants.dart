@@ -1122,13 +1122,16 @@ class CustomTextFieldState extends State<CustomTextField> {
                       },*/
                       onFieldSubmitted: widget.onChanged2,
                       onChanged:(value){
+                        print("object calin $value");
                         if(value.isNotEmpty){
                           setState(() {
                             _errorMessage = null;
                           });
                         }
+
                         widget.onChanged;
-                      },
+                      print("callllll");
+                        },
 
 
                       onTap: widget.onTap,

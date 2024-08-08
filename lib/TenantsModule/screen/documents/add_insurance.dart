@@ -197,7 +197,7 @@ class _add_insuranceState extends State<add_insurance> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding:  EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.04,vertical: 10),
                   child: Container(
                     width: double.infinity,
                     // height: !form_valid ? 860 : 830,
@@ -396,7 +396,7 @@ class _add_insuranceState extends State<add_insurance> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width * .04),
                   child: Row(
                     children: [
                       Container(
