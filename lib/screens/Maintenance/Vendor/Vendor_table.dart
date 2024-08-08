@@ -248,6 +248,15 @@ class _Vendor_tableState extends State<Vendor_table> {
   }
 
   void handleEdit(Vendor property) async {
+    var check = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => edit_vendor(
+                  vender_id: property.vendorId,
+                )));
+    if (check == true) {
+      setState(() {});
+    }
     // Handle edit action
     //print('Edit ${property.sId}');
     /* var check = await Navigator.push(
@@ -625,7 +634,7 @@ class _Vendor_tableState extends State<Vendor_table> {
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
-                      width:  (MediaQuery.of(context).size.width < 500)
+                      width: (MediaQuery.of(context).size.width < 500)
                           ? MediaQuery.of(context).size.width * 0.3
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
@@ -642,9 +651,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 14
-                                    : 20,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 14
+                                        : 20,
                               ),
                             ),
                           ],

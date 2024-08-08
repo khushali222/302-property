@@ -232,6 +232,7 @@ class ColabShimmerLoadingWidget extends StatelessWidget {
 class ShimmerTabletTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
       child: Column(
@@ -247,21 +248,21 @@ class ShimmerTabletTable extends StatelessWidget {
                   // Header Row
                   TableRow(
                     decoration: BoxDecoration(border: Border.all()),
-                    children: [
-                      for (var i = 0;
-                          i < 7;
-                          i++) // Adjust to match the number of columns
-                        Shimmer.fromColors(
+                    children: List.generate(
+                      1,
+                      (index) => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Shimmer.fromColors(
                           baseColor: Colors.grey[300]!,
                           highlightColor: Colors.grey[100]!,
                           child: Container(
-                            width:
-                                100, // Adjust the width according to your column width
+                            width: screenWidth * 0.9,
                             height: 40,
                             color: Colors.white,
                           ),
                         ),
-                    ],
+                      ),
+                    ),
                   ),
                   // Data Rows
                   for (var i = 0; i < 5; i++) // Simulate 5 rows
@@ -278,18 +279,21 @@ class ShimmerTabletTable extends StatelessWidget {
                               : BorderSide.none,
                         ),
                       ),
-                      children: [
-                        Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: Container(
-                            width:
-                                700, // Adjust the width to span across all columns
-                            height: 40,
-                            color: Colors.white,
+                      children: List.generate(
+                        1,
+                        (index) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              height: 24,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                 ],
               ),

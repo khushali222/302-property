@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -39,6 +40,43 @@ class _AddCardState extends State<AddCard> {
   TextEditingController state = TextEditingController();
   TextEditingController country = TextEditingController();
   TextEditingController zip = TextEditingController();
+  String? _selectedExpiringMonth;
+  String? _selectedExpiringYear;
+  List<String> expiringMonth = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12'
+  ];
+  List<String> expiringYear =
+      List.generate(12, (index) => (2024 + index).toString());
+  String yearmessage = "";
+  bool yearerror = false;
+  String carderrorMessage = '';
+
+  void _validateInput() {
+    setState(() {
+      String input = cardNumber.text.trim();
+      if (input.isEmpty) {
+        carderrorMessage = 'This field cannot be empty';
+      } else if (input.length > 16) {
+        carderrorMessage = 'Card number cannot be more than 16 digits';
+      } else if (!isValidLuhn(input)) {
+        carderrorMessage = 'Invalid card number';
+      } else {
+        carderrorMessage = '';
+      }
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   String? messageCardAvailable;
@@ -489,8 +527,8 @@ class _AddCardState extends State<AddCard> {
                           )
                         : DropdownButtonHideUnderline(
                             child: DropdownButtonFormField2<String>(
-                              decoration:
-                                  const InputDecoration(border: InputBorder.none),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please select resident';
@@ -552,51 +590,147 @@ class _AddCardState extends State<AddCard> {
                             ),
                           ),
                     const SizedBox(
-                      height: 8,
+                      height: 10,
                     ),
-                    const Text('Card Number *',
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: const Text(
+                        "Card Number",
                         style: TextStyle(
-                            fontSize: 13,
+                            color: Colors.grey,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey)),
-
-
-                            
-                    CustomTextField(
-                      validator: (value) {
-                        if (value == null ||
-                            value.isEmpty &&
-                                !isValidLuhn(value.replaceAll(' ', ''))) {
-                          return !isValidLuhn(value!.replaceAll(' ', ''))
-                              ? 'Invalid credit card number'
-                              : 'Please enter a credit card number';
-                        } else if (!isValidLuhn(value.replaceAll(' ', ''))) {
-                          return 'Invalid credit card number';
-                        }
-                        return null;
-                      },
-                      keyboardType: TextInputType.number,
-                      hintText: '0000 0000 0000 0000',
-                      controller: cardNumber,
+                            fontSize: 13),
+                      ),
                     ),
+                    Material(
+                      elevation: 2,
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Container(
+                        height: 50,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              offset: Offset(4, 4),
+                              blurRadius: 3,
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: TextField(
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintStyle: TextStyle(
+                                      fontSize: 13, color: Color(0xFFb0b6c3)),
+                                  border: InputBorder.none,
+                                  hintText: "Enter number...*",
+                                ),
+                                onChanged: (value) {
+                                  if (value.length > 16) {
+                                    cardNumber.text = value.substring(0, 16);
+                                    cardNumber.selection =
+                                        TextSelection.fromPosition(
+                                            TextPosition(offset: 16));
+                                  } else {
+                                    _validateInput();
+                                  }
+                                },
+                                controller: cardNumber,
+                                cursorColor:
+                                    const Color.fromRGBO(21, 43, 81, 1),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 2,
+                    ),
+                    carderrorMessage != null
+                        ? Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Text(
+                              carderrorMessage!,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03),
+                            ),
+                          )
+                        : Container(),
                     const SizedBox(
                       height: 8,
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 8,
                     ),
-                    const Text('Expiration Date *',
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: const Text(
+                        "Expiration Month",
                         style: TextStyle(
-                            fontSize: 13,
+                            color: Colors.grey,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey)),
-                    CustomTextField(
-                      keyboardType: TextInputType.text,
-                      hintText: 'Enter Expiration Date',
-                      controller: expirationDate,
+                            fontSize: 13),
+                      ),
                     ),
-                    const SizedBox(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomDropdown(
+                        items: expiringMonth,
+                        labelText: 'Month',
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedExpiringMonth = value;
+                          });
+                        },
+                        selectedValue: _selectedExpiringMonth,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a month';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
                       height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: const Text(
+                        "Expiration Year",
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomDropdown(
+                        items: expiringYear,
+                        labelText: 'Year',
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedExpiringYear = value;
+                          });
+                        },
+                        selectedValue: _selectedExpiringYear,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a year';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                     const SizedBox(
                       height: 8,
@@ -755,7 +889,9 @@ class _AddCardState extends State<AddCard> {
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF152b51))),
                     ),
-              selectedTenantId == null ? Container() : const SizedBox(height: 8),
+              selectedTenantId == null
+                  ? Container()
+                  : const SizedBox(height: 8),
               selectedTenantId == null
                   ? Container()
                   : Padding(

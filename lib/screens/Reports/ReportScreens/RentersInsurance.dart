@@ -5,9 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
+import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/getAdminAddress.dart';
+import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -413,6 +417,17 @@ class _RentersInsuranceState extends State<RentersInsurance> {
 
   Future<void> generaterentersInsurancePdf(
       List<RentersInsuranceData> rentersInsurance) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      // Handle error
+      print("Error fetching profile data: $e");
+      return;
+    }
+
     final pdf = pw.Document();
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
@@ -448,10 +463,42 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      pw.Text('302 Properties, LLC'),
-                      pw.Text('250 Corporate Blvd., Suite L'),
-                      pw.Text('Newark, DE 19702'),
-                      pw.Text('(302) 525-4302'),
+                      pw.Text(
+                        profileData?.companyName?.isNotEmpty == true
+                            ? profileData!.companyName!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        profileData?.companyAddress?.isNotEmpty == true
+                            ? profileData!.companyAddress!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.Text(
+                        profileData?.companyPostalCode?.isNotEmpty == true
+                            ? profileData!.companyPostalCode!
+                            : 'N/A',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -917,10 +964,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                   context,
                   const Icon(
                     CupertinoIcons.circle_grid_3x3,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Dashboard",
-                  true),
+                  false),
               buildListTile(
                   context,
                   const Icon(
@@ -1049,7 +1096,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                       height:
                                           MediaQuery.of(context).size.width <
                                                   500
-                                              ? 40
+                                              ? 48
                                               : 50,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
@@ -1991,7 +2038,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                       width: MediaQuery.of(context)
                                                                               .size
                                                                               .width *
-                                                                          .08),
+                                                                          .01),
                                                                   Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment

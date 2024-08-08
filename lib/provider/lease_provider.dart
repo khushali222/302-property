@@ -30,15 +30,11 @@ class SelectedTenantsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearTenant(){
+  void clearTenant() {
     _selectedTenants.clear();
     notifyListeners();
   }
-
-
 }
-
-
 
 class SelectedCosignersProvider extends ChangeNotifier {
   List<Cosigner> _cosigners = [];
@@ -49,14 +45,16 @@ class SelectedCosignersProvider extends ChangeNotifier {
     _cosigners.add(cosigner);
     notifyListeners();
   }
+
   void removeConsigner(Cosigner cosigner) {
     _cosigners.remove(cosigner);
     notifyListeners();
   }
-  void updateCosigner(Cosigner updatedCosigner,int index) {
+
+  void updateCosigner(Cosigner updatedCosigner, int index) {
     print("update calling");
     _cosigners[index] = updatedCosigner;
-        notifyListeners();
+    notifyListeners();
     // for (int i = 0; i < _cosigners.length; i++) {
     //
     //   if (_cosigners[i].c_id == updatedCosigner.c_id) {
@@ -67,15 +65,14 @@ class SelectedCosignersProvider extends ChangeNotifier {
     //   }
     // }
   }
-  void clearCosigner(){
+
+  void clearCosigner() {
     _cosigners.clear();
     notifyListeners();
   }
 }
 
 //List<data,List<map<String,dynamic>
-
-
 
 class LeaseLedgerProvider with ChangeNotifier {
   LeaseLedger? _leaseLedger;
@@ -103,6 +100,3 @@ class LeaseLedgerProvider with ChangeNotifier {
     }
   }
 }
-
-
-

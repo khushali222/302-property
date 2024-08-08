@@ -3,10 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/Model/CompletedWorkOrdersModel.dart';
+import 'package:three_zero_two_property/Model/profile.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/CompletedWorkData.dart';
+import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -429,6 +433,16 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   Future<void> generateWorkOrderPdf(
       List<CompletedWorkData> workOrderData) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      // Handle error
+      print("Error fetching profile data: $e");
+      return;
+    }
     final pdf = pw.Document();
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
@@ -460,10 +474,42 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
-                pw.Text('302 Properties, LLC'),
-                pw.Text('250 Corporate Blvd., Suite L'),
-                pw.Text('Newark, DE 19702'),
-                pw.Text('(302) 525-4302'),
+                pw.Text(
+                  profileData?.companyName?.isNotEmpty == true
+                      ? profileData!.companyName!
+                      : 'N/A',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  profileData?.companyAddress?.isNotEmpty == true
+                      ? profileData!.companyAddress!
+                      : 'N/A',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                  '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                  '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  profileData?.companyPostalCode?.isNotEmpty == true
+                      ? profileData!.companyPostalCode!
+                      : 'N/A',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ],
@@ -651,10 +697,10 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   context,
                   const Icon(
                     CupertinoIcons.circle_grid_3x3,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Dashboard",
-                  true),
+                  false),
               buildListTile(
                   context,
                   const Icon(
@@ -707,16 +753,16 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 16),
-          titleBar(
-            title: 'Completed Work Orders',
-            width: MediaQuery.of(context).size.width * .91,
-          ),
-          if (MediaQuery.of(context).size.width < 500)
-            Expanded(
-              child: Padding(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
+            titleBar(
+              title: 'Completed Work Orders',
+              width: MediaQuery.of(context).size.width * .91,
+            ),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
                 padding: const EdgeInsets.only(
                   left: 10.0,
                   right: 10.0,
@@ -786,17 +832,17 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                     borderRadius: BorderRadius.circular(2),
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
+                                          horizontal: 10, vertical: 0),
                                       // height: 40,
                                       height:
                                           MediaQuery.of(context).size.width <
                                                   500
-                                              ? 40
+                                              ? 48
                                               : 50,
                                       width: MediaQuery.of(context).size.width <
                                               500
                                           ? MediaQuery.of(context).size.width *
-                                              .45
+                                              .50
                                           : MediaQuery.of(context).size.width *
                                               .4,
                                       decoration: BoxDecoration(
@@ -1185,231 +1231,258 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   },
                 ),
               ),
-            ),
-          if (MediaQuery.of(context).size.width > 500)
-            const SizedBox(height: 16),
-          if (MediaQuery.of(context).size.width > 500)
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-              child: Expanded(
-                  flex: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 21.0, right: 21.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(2),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 40
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .45
-                                : MediaQuery.of(context).size.width * .4,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(2),
-                              border:
-                                  Border.all(color: const Color(0xFF8A95A8)),
-                            ),
-                            child: TextField(
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                });
-                              },
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                                // contentPadding: EdgeInsets.all(10),
-                              ),
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                          ),
-                          onPressed: () {},
-                          child: PopupMenuButton<String>(
-                            onSelected: (value) async {
-                              // Add your export logic here based on the selected value
-                              if (value == 'PDF') {
-                                print('pdf');
-                                // Export as PDF
-                              } else if (value == 'XLSX') {
-                                print('XLSX');
-                                // Export as XLSX
-                              } else if (value == 'CSV') {
-                                print('CSV');
-                                // Export as CSV
-                              }
-                            },
-                            itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry<String>>[
-                              const PopupMenuItem<String>(
-                                value: 'PDF',
-                                child: Text('PDF'),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: 'XLSX',
-                                child: Text('XLSX'),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: 'CSV',
-                                child: Text('CSV'),
-                              ),
-                            ],
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('Export'),
-                                Icon(Icons.arrow_drop_down),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
-          if (MediaQuery.of(context).size.width > 500)
-            const SizedBox(height: 16),
-          if (MediaQuery.of(context).size.width > 500)
-            FutureBuilder<List<CompletedWorkData>>(
-              future: _futureReport,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ShimmerTabletTable();
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No data available'));
-                }
-
-                var data = snapshot.data!;
-
-                // Apply filtering based on selectedValue and searchvalue
-                if (selectedValue == null && searchvalue.isEmpty) {
-                  data = snapshot.data!;
-                } else if (selectedValue == "All") {
-                  data = snapshot.data!;
-                } else if (searchvalue.isNotEmpty) {
-                  data = snapshot.data!
-                      .where((workOrder) =>
-                          workOrder.workSubject!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()) ||
-                          workOrder.rentalAddress!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()))
-                      .toList();
-                } else {
-                  data = snapshot.data!
-                      .where(
-                          (workOrder) => workOrder.workSubject == selectedValue)
-                      .toList();
-                }
-
-                // Apply pagination
-                final int itemsPerPage = 10;
-                final int totalPages = (data.length / itemsPerPage).ceil();
-                final int currentPage =
-                    1; // Update this with your pagination logic
-                final List<CompletedWorkData> pagedData = data
-                    .skip((currentPage - 1) * itemsPerPage)
-                    .take(itemsPerPage)
-                    .toList();
-
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.95,
+            if (MediaQuery.of(context).size.width > 500)
+              const SizedBox(height: 16),
+            if (MediaQuery.of(context).size.width > 500)
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: Expanded(
+                    flex: 0,
                     child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Column(
+                      padding: const EdgeInsets.only(left: 21.0, right: 21.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Table(
-                            defaultColumnWidth: IntrinsicColumnWidth(),
-                            columnWidths: {
-                              0: FlexColumnWidth(),
-                              1: FlexColumnWidth(),
-                              2: FlexColumnWidth(),
-                              3: FlexColumnWidth(),
-                              4: FlexColumnWidth(),
-                            },
-                            children: [
-                              TableRow(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor),
+                          Material(
+                            elevation: 3,
+                            borderRadius: BorderRadius.circular(2),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              // height: 40,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 40
+                                  : 50,
+                              width: MediaQuery.of(context).size.width < 500
+                                  ? MediaQuery.of(context).size.width * .45
+                                  : MediaQuery.of(context).size.width * .4,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(2),
+                                border:
+                                    Border.all(color: const Color(0xFF8A95A8)),
+                              ),
+                              child: TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchvalue = value;
+                                  });
+                                },
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle:
+                                      TextStyle(color: Color(0xFF8A95A8)),
+                                  // contentPadding: EdgeInsets.all(10),
                                 ),
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                            ),
+                            onPressed: () {},
+                            child: PopupMenuButton<String>(
+                              onSelected: (value) async {
+                                // Add your export logic here based on the selected value
+                                if (value == 'PDF') {
+                                  print('pdf');
+                                  // Export as PDF
+                                } else if (value == 'XLSX') {
+                                  print('XLSX');
+                                  // Export as XLSX
+                                } else if (value == 'CSV') {
+                                  print('CSV');
+                                  // Export as CSV
+                                }
+                              },
+                              itemBuilder: (BuildContext context) =>
+                                  <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'PDF',
+                                  child: Text('PDF'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'XLSX',
+                                  child: Text('XLSX'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'CSV',
+                                  child: Text('CSV'),
+                                ),
+                              ],
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  _buildHeader('Date', 0,
-                                      (workOrder) => workOrder.date!),
-                                  _buildHeader('Address', 1,
-                                      (workOrder) => workOrder.rentalAddress!),
-                                  _buildHeader('Work', 2,
-                                      (workOrder) => workOrder.workSubject!),
-                                  _buildHeader('Description', 3,
-                                      (workOrder) => workOrder.workPerformed!),
-                                  _buildHeader('Note', 5,
-                                      (workOrder) => workOrder.vendorNotes!),
+                                  Text('Export'),
+                                  Icon(Icons.arrow_drop_down),
                                 ],
                               ),
-                              TableRow(
-                                decoration: BoxDecoration(
-                                  border: Border.symmetric(
-                                      horizontal: BorderSide.none),
-                                ),
-                                children: List.generate(
-                                    5,
-                                    (index) => TableCell(
-                                        child: Container(height: 20))),
-                              ),
-                              for (var i = 0; i < pagedData.length; i++)
-                                TableRow(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      left: BorderSide(
-                                          color: Color.fromRGBO(21, 43, 81, 1)),
-                                      right: BorderSide(
-                                          color: Color.fromRGBO(21, 43, 81, 1)),
-                                      top: BorderSide(
-                                          color: Color.fromRGBO(21, 43, 81, 1)),
-                                      bottom: i == pagedData.length - 1
-                                          ? BorderSide(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1))
-                                          : BorderSide.none,
-                                    ),
-                                  ),
-                                  children: [
-                                    _buildDataCell(pagedData[i].date!),
-                                    _buildDataCell(
-                                        pagedData[i].rentalAddress.toString()!),
-                                    _buildDataCell(pagedData[i].workSubject!),
-                                    _buildDataCell(pagedData[i].workPerformed!),
-                                    _buildDataCell(pagedData[i].vendorNotes!),
-                                  ],
-                                ),
-                            ],
-                          ),
-                          SizedBox(height: 25),
-                          _buildPaginationControls(),
-                          SizedBox(height: 25),
+                            ),
+                          )
                         ],
                       ),
+                    )),
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              const SizedBox(height: 16),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<List<CompletedWorkData>>(
+                future: _futureReport,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ShimmerTabletTable();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No data available'));
+                  }
+
+                  var data = snapshot.data!;
+
+                  // Apply filtering based on selectedValue and searchvalue
+                  if (selectedValue == null && searchvalue.isEmpty) {
+                    data = snapshot.data!;
+                  } else if (selectedValue == "All") {
+                    data = snapshot.data!;
+                  } else if (searchvalue.isNotEmpty) {
+                    data = snapshot.data!
+                        .where((workOrder) =>
+                            workOrder.workSubject!
+                                .toLowerCase()
+                                .contains(searchvalue.toLowerCase()) ||
+                            workOrder.rentalAddress!
+                                .toLowerCase()
+                                .contains(searchvalue.toLowerCase()))
+                        .toList();
+                  } else {
+                    data = snapshot.data!
+                        .where((workOrder) =>
+                            workOrder.workSubject == selectedValue)
+                        .toList();
+                  }
+
+                  // Apply pagination
+                  final int itemsPerPage = 10;
+                  final int totalPages = (data.length / itemsPerPage).ceil();
+                  final int currentPage =
+                      1; // Update this with your pagination logic
+                  final List<CompletedWorkData> pagedData = data
+                      .skip((currentPage - 1) * itemsPerPage)
+                      .take(itemsPerPage)
+                      .toList();
+
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.95,
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
+                          children: [
+                            Table(
+                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              columnWidths: {
+                                0: FlexColumnWidth(),
+                                1: FlexColumnWidth(),
+                                2: FlexColumnWidth(),
+                                3: FlexColumnWidth(),
+                                4: FlexColumnWidth(),
+                              },
+                              children: [
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: blueColor),
+                                  ),
+                                  children: [
+                                    _buildHeader('Date', 0,
+                                        (workOrder) => workOrder.date!),
+                                    _buildHeader(
+                                        'Address',
+                                        1,
+                                        (workOrder) =>
+                                            workOrder.rentalAddress!),
+                                    _buildHeader('Work', 2,
+                                        (workOrder) => workOrder.workSubject!),
+                                    _buildHeader(
+                                        'Description',
+                                        3,
+                                        (workOrder) =>
+                                            workOrder.workPerformed!),
+                                    _buildHeader('Note', 5,
+                                        (workOrder) => workOrder.vendorNotes!),
+                                  ],
+                                ),
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                    border: Border.symmetric(
+                                        horizontal: BorderSide.none),
+                                  ),
+                                  children: List.generate(
+                                      5,
+                                      (index) => TableCell(
+                                          child: Container(height: 20))),
+                                ),
+                                for (var i = 0; i < pagedData.length; i++)
+                                  TableRow(
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        left: BorderSide(
+                                            color:
+                                                Color.fromRGBO(21, 43, 81, 1)),
+                                        right: BorderSide(
+                                            color:
+                                                Color.fromRGBO(21, 43, 81, 1)),
+                                        top: BorderSide(
+                                            color:
+                                                Color.fromRGBO(21, 43, 81, 1)),
+                                        bottom: i == pagedData.length - 1
+                                            ? BorderSide(
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1))
+                                            : BorderSide.none,
+                                      ),
+                                    ),
+                                    children: [
+                                      _buildDataCell(pagedData[i].date!.isEmpty
+                                          ? 'N/A'
+                                          : pagedData[i].date!),
+                                      _buildDataCell(
+                                          pagedData[i].rentalAddress!.isEmpty
+                                              ? 'N/A'
+                                              : pagedData[i].rentalAddress!),
+                                      _buildDataCell(
+                                          pagedData[i].workSubject!.isEmpty
+                                              ? 'N/A'
+                                              : pagedData[i].workPerformed!),
+                                      _buildDataCell(
+                                          pagedData[i].workPerformed!.isEmpty
+                                              ? 'N/A'
+                                              : pagedData[i].workPerformed!),
+                                      _buildDataCell(
+                                          (pagedData[i].vendorNotes == null ||
+                                                  pagedData[i]
+                                                      .vendorNotes!
+                                                      .isEmpty)
+                                              ? 'N/A'
+                                              : pagedData[i].vendorNotes!),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                            SizedBox(height: 25),
+                            _buildPaginationControls(),
+                            SizedBox(height: 25),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-        ],
+                  );
+                },
+              ),
+          ],
+        ),
       ),
     );
   }

@@ -15,7 +15,7 @@ import '../../../widgets/titleBar.dart';
 
 class edit_vendor extends StatefulWidget {
   String? vender_id;
-   edit_vendor({super.key,this.vender_id});
+  edit_vendor({super.key, this.vender_id});
 
   @override
   State<edit_vendor> createState() => _edit_vendorState();
@@ -30,21 +30,21 @@ class _edit_vendorState extends State<edit_vendor> {
     try {
       final vendor = await vendorRepository.getVendor(widget.vender_id!);
 
-        firstName.text = vendor.vendorName!;
-        phoneNumber.text = vendor.vendorPhoneNumber!;
-        email.text = vendor.vendorEmail!;
-        passWord.text = vendor.vendorPassword!;
-
+      firstName.text = vendor.vendorName!;
+      phoneNumber.text = vendor.vendorPhoneNumber!;
+      email.text = vendor.vendorEmail!;
+      passWord.text = vendor.vendorPassword!;
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to fetch vendor data')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to fetch vendor data')));
     } finally {
       setState(() {
         isLoading = false;
       });
     }
   }
-  final TextEditingController firstName = TextEditingController();
 
+  final TextEditingController firstName = TextEditingController();
 
   final TextEditingController phoneNumber = TextEditingController();
   bool obsecure = true;
@@ -61,7 +61,9 @@ class _edit_vendorState extends State<edit_vendor> {
     super.initState();
     _fetchVendor();
   }
-  final VendorRepository vendorRepository = VendorRepository(baseUrl: 'https://yourapiurl.com');
+
+  final VendorRepository vendorRepository =
+      VendorRepository(baseUrl: 'https://yourapiurl.com');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,52 +136,351 @@ class _edit_vendorState extends State<edit_vendor> {
           ),
         ),
       ),
-      body:  Form(
-        key: _formkey,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 25,
-              ),
-              titleBar(
-                width: MediaQuery.of(context).size.width * .91,
-                title: 'Edit Vendor',
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 500) {
+            return Form(
+              key: _formkey,
+              child: SingleChildScrollView(
+                child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  width: double.infinity,
-                  height: !formValid ?  460 : 555,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(
-                        color: Color.fromRGBO(21, 43, 103, 1),
-                      )),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Vendor Name *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
                       SizedBox(
-                        height: 10,
+                        height: 25,
                       ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter vendor name',
-                        controller: firstName,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the vendor name';
-                          }
-                          return null;
-                        },
+                      titleBar(
+                        width: MediaQuery.of(context).size.width * .95,
+                        title: 'Edit Vendor',
                       ),
-                      /* SizedBox(
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(16.0),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: Border.all(
+                                color: Color.fromRGBO(21, 43, 103, 1),
+                              )),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Vendor Name *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              CustomTextField(
+                                keyboardType: TextInputType.text,
+                                hintText: 'Enter vendor name',
+                                controller: firstName,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'please enter the vendor name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              /* SizedBox(
+                          height: 10,
+                        ),
+                        Text('Last Name *',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextField(
+                          keyboardType: TextInputType.text,
+                          hintText: 'Enter last name',
+                          controller: lastName,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'please enter the last name';
+                            }
+                            return null;
+                          },
+                        ),*/
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Phone Number *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              CustomTextField(
+                                keyboardType: TextInputType.number,
+                                hintText: 'Enter phone number',
+                                controller: phoneNumber,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'please enter the phone number';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              /*  SizedBox(
+                          height: 10,
+                        ),
+                        Text('Work Number',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextField(
+                          keyboardType: TextInputType.number,
+                          hintText: 'Enter work number',
+                          controller: workNumber,
+                        ),*/
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Email *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              CustomTextField(
+                                keyboardType: TextInputType.emailAddress,
+                                hintText: 'Enter Email',
+                                controller: email,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'please enter email';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              /* SizedBox(
+                          height: 10,
+                        ),
+                        Text('Alternative Email',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextField(
+                          keyboardType: TextInputType.emailAddress,
+                          hintText: 'Enter alternative email',
+                          controller: alterEmail,
+                        ),*/
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Password *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomTextField(
+                                      keyboardType: TextInputType.text,
+                                      obscureText: obsecure,
+                                      hintText: 'Enter password',
+                                      controller: passWord,
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'please enter password';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width:
+                                          10), // Add some space between the widgets
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        obsecure = !obsecure;
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 38,
+                                      height: 50,
+                                      child: Center(
+                                        child: FaIcon(
+                                          !obsecure
+                                              ? FontAwesomeIcons.eyeSlash
+                                              : FontAwesomeIcons.eye,
+                                          size: 20,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.2, 1.2),
+                                            blurRadius: 3.0,
+                                            spreadRadius: 1.0,
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Color.fromRGBO(21, 43, 83, 1),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        setState(() {
+                                          formValid = true;
+                                        });
+                                        if (_formkey.currentState!.validate()) {
+                                          setState(() {
+                                            formValid = false;
+                                          });
+
+                                          await addTenant();
+                                        }
+                                      },
+                                      child: isLoading
+                                          ? Center(
+                                              child: SpinKitFadingCircle(
+                                                color: Colors.white,
+                                                size: 55.0,
+                                              ),
+                                            )
+                                          : Text(
+                                              'Edit Vendor',
+                                              style: TextStyle(
+                                                  color: Color(0xFFf7f8f9)),
+                                            ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Container(
+                                      height: 50,
+                                      width: 120,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0)),
+                                      child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Color(0xFFffffff),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0))),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                                color: Color(0xFF748097)),
+                                          )))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return Form(
+              key: _formkey,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 25,
+                    ),
+                    titleBar(
+                      width: MediaQuery.of(context).size.width * .94,
+                      title: 'Edit Vendor',
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: Color.fromRGBO(21, 43, 103, 1),
+                            )),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Vendor Name *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter vendor name',
+                              controller: firstName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the vendor name';
+                                }
+                                return null;
+                              },
+                            ),
+                            /* SizedBox(
                         height: 10,
                       ),
                       Text('Last Name *',
@@ -201,29 +502,29 @@ class _edit_vendorState extends State<edit_vendor> {
                           return null;
                         },
                       ),*/
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text('Phone Number *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.number,
-                        hintText: 'Enter phone number',
-                        controller: phoneNumber,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the phone number';
-                          }
-                          return null;
-                        },
-                      ),
-                      /*  SizedBox(
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Phone Number *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.number,
+                              hintText: 'Enter phone number',
+                              controller: phoneNumber,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the phone number';
+                                }
+                                return null;
+                              },
+                            ),
+                            /*  SizedBox(
                         height: 10,
                       ),
                       Text('Work Number',
@@ -239,29 +540,29 @@ class _edit_vendorState extends State<edit_vendor> {
                         hintText: 'Enter work number',
                         controller: workNumber,
                       ),*/
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text('Email *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.emailAddress,
-                        hintText: 'Enter Email',
-                        controller: email,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter email';
-                          }
-                          return null;
-                        },
-                      ),
-                      /* SizedBox(
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Email *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.emailAddress,
+                              hintText: 'Enter Email',
+                              controller: email,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter email';
+                                }
+                                return null;
+                              },
+                            ),
+                            /* SizedBox(
                         height: 10,
                       ),
                       Text('Alternative Email',
@@ -277,151 +578,159 @@ class _edit_vendorState extends State<edit_vendor> {
                         hintText: 'Enter alternative email',
                         controller: alterEmail,
                       ),*/
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text('Password *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              keyboardType: TextInputType.text,
-                              obscureText: obsecure,
-                              hintText: 'Enter password',
-                              controller: passWord,
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'please enter password';
-                                }
-                                return null;
-                              },
+                            SizedBox(
+                              height: 10,
                             ),
-                          ),
-                          SizedBox(
-                              width:
-                              10), // Add some space between the widgets
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                obsecure = !obsecure;
-                              });
-                            },
-                            child: Container(
-                              width: 38,
-                              height: 50,
-                              child: Center(
-                                child: FaIcon(
-                                  !obsecure
-                                      ? FontAwesomeIcons.eyeSlash
-                                      : FontAwesomeIcons.eye,
-                                  size: 20,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    offset: Offset(1.2, 1.2),
-                                    blurRadius: 3.0,
-                                    spreadRadius: 1.0,
-                                  ),
-                                ],
-                                border: Border.all(
-                                    width: 0, color: Colors.white),
-                                borderRadius: BorderRadius.circular(6.0),
-                              ),
+                            Text('Password *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 50,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color.fromRGBO(21, 43, 83, 1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    obscureText: obsecure,
+                                    hintText: 'Enter password',
+                                    controller: passWord,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'please enter password';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ),
-                                onPressed: () async {
-                                  setState(() {
-                                    formValid = true;
-                                  });
-                                  if (_formkey.currentState!.validate()) {
+                                SizedBox(
+                                    width:
+                                        10), // Add some space between the widgets
+                                InkWell(
+                                  onTap: () {
                                     setState(() {
-                                      formValid = false;
+                                      obsecure = !obsecure;
                                     });
-
-                                    await addTenant();
-                                  }
-                                },
-                                child: isLoading
-                                    ? Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 55.0,
+                                  },
+                                  child: Container(
+                                    width: 38,
+                                    height: 50,
+                                    child: Center(
+                                      child: FaIcon(
+                                        !obsecure
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 20,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          offset: Offset(1.2, 1.2),
+                                          blurRadius: 3.0,
+                                          spreadRadius: 1.0,
+                                        ),
+                                      ],
+                                      border: Border.all(
+                                          width: 0, color: Colors.white),
+                                      borderRadius: BorderRadius.circular(6.0),
+                                    ),
                                   ),
-                                )
-                                    : Text(
-                                  'Edit Vendor',
-                                  style: TextStyle(color: Color(0xFFf7f8f9)),
                                 ),
-                              ),
+                              ],
                             ),
                             SizedBox(
-                              width: 8,
+                              height: 16,
                             ),
-                            Container(
-                                height: 50,
-                                width: 120,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                child: ElevatedButton(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 50,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFFffffff),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(8.0))),
-                                    onPressed: () {
-                                      Navigator.pop(context);
+                                      backgroundColor:
+                                          Color.fromRGBO(21, 43, 83, 1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      setState(() {
+                                        formValid = true;
+                                      });
+                                      if (_formkey.currentState!.validate()) {
+                                        setState(() {
+                                          formValid = false;
+                                        });
+
+                                        await addTenant();
+                                      }
                                     },
-                                    child: Text(
-                                      'Cancel',
-                                      style: TextStyle(color: Color(0xFF748097)),
-                                    )))
+                                    child: isLoading
+                                        ? Center(
+                                            child: SpinKitFadingCircle(
+                                              color: Colors.white,
+                                              size: 55.0,
+                                            ),
+                                          )
+                                        : Text(
+                                            'Edit Vendor',
+                                            style: TextStyle(
+                                                color: Color(0xFFf7f8f9)),
+                                          ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Container(
+                                    height: 50,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0)),
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFFffffff),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        8.0))),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                              color: Color(0xFF748097)),
+                                        )))
+                              ],
+                            ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
     );
   }
+
   Future<void> addTenant() async {
     setState(() {
       isLoading = true;
@@ -430,21 +739,21 @@ class _edit_vendorState extends State<edit_vendor> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString("adminId")!;
 
-
-
     final vendor = Vendor(
-      adminId:adminId,
+      adminId: adminId,
       vendorName: firstName.text,
       vendorPhoneNumber: phoneNumber.text,
       vendorEmail: email.text,
       vendorPassword: passWord.text,
     );
 
-    final success = await vendorRepository.update_vendor(vendor,widget.vender_id!);
+    final success =
+        await vendorRepository.update_vendor(vendor, widget.vender_id!);
     if (success) {
       //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Vendor added successfully')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add vendor')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to add vendor')));
     }
     setState(() {
       isLoading = false;
@@ -494,7 +803,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   @override
   void dispose() {
@@ -553,7 +862,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     decoration: InputDecoration(
                       suffixIcon: widget.suffixIcon,
                       hintStyle:
-                      TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                          TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                       border: InputBorder.none,
                       hintText: widget.hintText,
                     ),

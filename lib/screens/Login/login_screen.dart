@@ -28,7 +28,6 @@ import '../Password/forgotpassword.dart';
 import '../Password/otp_vrify.dart';
 import '../Plans/PlansPurcharCard.dart';
 
-
 class Login_Screen extends StatefulWidget {
   const Login_Screen({super.key});
 
@@ -76,39 +75,34 @@ class _Login_ScreenState extends State<Login_Screen> {
         _companies = [];
         _selectedCompany = '';
         _password = '';
-
       }
     });
-
   }
 
   void selectCompany(String company, String role) {
-
     _selectedCompany = company;
     selectedrole = role; // Set role when selecting company
     print(selectedrole);
     print(selectedCompany);
-    setState(() {
-
-    });
+    setState(() {});
   }
-
 
   void login() {
     // Implement login logic here
-    print('Logging in with email: $_email, company: $_selectedCompany, password: $_password');
+    print(
+        'Logging in with email: $_email, company: $_selectedCompany, password: $_password');
   }
+
   void setPassword(String password) {
     _password = password;
-
   }
 
   Future<void> submitEmail() async {
-
     print("Calling  ${email.text}");
     // Make API call to check email
     final response = await http.post(
       Uri.parse('$Api_url/api/admin/check_role'),
+     // Uri.parse('$Api_url/api/admin/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.text}),
     );
@@ -124,44 +118,37 @@ class _Login_ScreenState extends State<Login_Screen> {
           setState(() {
             _hasMultipleCompanies = true;
             _companies = roles
-
-                .map<Map<String, String>>((role) => {
-              'company': role['company_name'],
-              'role': role['role']
-            })
+                .map<Map<String, String>>((role) =>
+                    {'company': role['company_name'], 'role': role['role']})
                 .toList();
             _isEmailSubmitted = true;
           });
-
         } else {
           setState(() {
-            if(roles[0]['role'] =="admin"){
+            if (roles[0]['role'] == "admin") {
               _hasMultipleCompanies = false;
               //_selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               _isEmailSubmitted = true;
-            }
-            else{
+            } else {
               print(roles[0]['role']);
               _hasMultipleCompanies = false;
               _selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               _isEmailSubmitted = true;
             }
-
           });
-
         }
       }
     } else {
       Fluttertoast.showToast(msg: "Email is not exist");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     print(MediaQuery.of(context).size.height);
     return Scaffold(
-
       body: Padding(
           padding: const EdgeInsets.all(0.0),
           child: LayoutBuilder(
@@ -1459,6 +1446,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       ),
     );
   }
+
   Future<void> checkToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
@@ -1498,7 +1486,7 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       // Access the expiration date
       var provider =
-      Provider.of<checkPlanPurchaseProiver>(context, listen: false);
+          Provider.of<checkPlanPurchaseProiver>(context, listen: false);
       var expirationDateString =
           provider.checkplanpurchaseModel?.data?.expirationDate;
 
@@ -1524,7 +1512,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-              isPlanActive ? Dashboard() : PlanPurchaseCard()));
+                  isPlanActive ? Dashboard() : PlanPurchaseCard()));
     } else {
       print('Failed to check token');
     }
@@ -1558,17 +1546,19 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
       String stafffirstname = jsonData['staffmember_name'];
-      List<String> firstname =stafffirstname.split(" ") ;
+      List<String> firstname = stafffirstname.split(" ");
       print(firstname);
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname[1]);
-      await Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
+      await Provider.of<StaffPermissionProvider>(context, listen: false)
+          .fetchPermissions();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
     } else {
       print('Failed to check token');
     }
   }
+
   Future<void> checkTokenTenant(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
@@ -1600,13 +1590,15 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('first_name', jsonData['tenant_firstName']);
       prefs.setString('last_name', jsonData['tenant_lastName']);
       prefs.setString('email', jsonData['tenant_email']);
-      await Provider.of<PermissionProvider>(context, listen: false).fetchPermissions();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard_tenants()));
+      await Provider.of<PermissionProvider>(context, listen: false)
+          .fetchPermissions();
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Dashboard_tenants()));
     } else {
       print('Failed to check token');
     }
   }
+
   Future<void> checkTokenVendor(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
@@ -1630,9 +1622,10 @@ class _Login_ScreenState extends State<Login_Screen> {
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       String stafffirstname = jsonData['vendor_name'];
-      List<String> firstname =stafffirstname.split(" ") ;
+      List<String> firstname = stafffirstname.split(" ");
       print(firstname);
-      await Provider.of<PermissionProvider>(context, listen: false).fetchPermissions();
+      await Provider.of<PermissionProvider>(context, listen: false)
+          .fetchPermissions();
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname[1]);
       prefs.setString("role", "Vendor");
@@ -1648,19 +1641,20 @@ class _Login_ScreenState extends State<Login_Screen> {
       /* prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
       prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastname']);
 */
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard_vendors()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Dashboard_vendors()));
     } else {
       print('Failed to check token');
     }
   }
+
   Future<void> checkCompany(String token) async {
     setState(() {
       loading = true;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
-    print("${ Uri.parse('${Api_url}/api/admin/check_company/${token}')}");
+    print("${Uri.parse('${Api_url}/api/admin/check_company/${token}')}");
     final response = await http.get(
       Uri.parse('${Api_url}/api/admin/check_company/${token}'),
       headers: {
@@ -1674,8 +1668,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     final jsonData = json.decode(response.body);
     //if (jsonData["data"]['id'] != "") {
     print(jsonData);
-    if(jsonData["statusCode"] ==200)
-    {
+    if (jsonData["statusCode"] == 200) {
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
       print('Admin ID: $adminId');
@@ -1688,26 +1681,30 @@ class _Login_ScreenState extends State<Login_Screen> {
       /* Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard()));*/
       loginsubmit_usingrole(adminId);
-    }
-    else{
+    } else {
       setState(() {
-
         loading = false;
       });
     }
-
   }
+
   Future<void> loginsubmit_usingrole(String adminId) async {
     setState(() {
       loading = true;
     });
     // List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
-    String rolename  =selectedrole;
+    String rolename = selectedrole;
 
     print("${Api_url}/api/${rolename.toLowerCase()}/login");
     // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
-    final response = await http.post(Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/login'),
-        body: {"email": email.text, "password": password.text,"admin_id":adminId,"company":selectedCompany});
+    final response = await http.post(
+        Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/login'),
+        body: {
+          "email": email.text,
+          "password": password.text,
+          "admin_id": adminId,
+          "company": selectedCompany
+        });
     print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
@@ -1717,13 +1714,9 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('token', jsonData["token"]);
       prefs.setString('adminId', adminId);
       print(rolename);
-      if(rolename == "staffmember")
-        await checkTokenStaff(jsonData["token"]);
-      if(rolename == "tenant")
-        await checkTokenTenant(jsonData["token"]);
-      if(rolename == "vendor")
-        await checkTokenVendor(jsonData["token"]);
-
+      if (rolename == "staffmember") await checkTokenStaff(jsonData["token"]);
+      if (rolename == "tenant") await checkTokenTenant(jsonData["token"]);
+      if (rolename == "vendor") await checkTokenVendor(jsonData["token"]);
 
       //  await checkToken("token", "id");
       // Navigator.push(
@@ -1760,12 +1753,13 @@ class _Login_ScreenState extends State<Login_Screen> {
       });
     }
   }
+
   Future<void> loginsubmit() async {
     setState(() {
       loading = true;
     });
     final response = await http.post(Uri.parse('${Api_url}/api/admin/login'),
-        body: {"email": email.text,"password": password.text});
+        body: {"email": email.text, "password": password.text});
     print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
@@ -1811,6 +1805,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     }
   }
 }
+
 class SingleSelectionButtons extends StatefulWidget {
   final List<Map<String, String>> buttonOptions;
   final Function(int index) onSelected;
@@ -1978,9 +1973,9 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
       }
     );
   }
+
   String capitalizeFirstLetter(String input) {
     if (input.isEmpty) return input;
     return input[0].toUpperCase() + input.substring(1);
   }
-
 }
