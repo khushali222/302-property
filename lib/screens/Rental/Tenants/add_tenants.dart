@@ -839,7 +839,7 @@ class _AddTenantState extends State<AddTenant> {
       email: emergencyEmail.text,
       phoneNumber: emergencyPhoneNumber.text,
     );
-
+    double? overRideFee = double.tryParse(overrideFee.text);
     Tenant tenant = Tenant(
       adminId: adminId,
       tenantFirstName: firstName.text,
@@ -854,11 +854,9 @@ class _AddTenantState extends State<AddTenant> {
       comments: comments.text,
       emergencyContact: emergencyContact,
       enableoverrideFee: enableOverrideFee,
-      overRideFee: double.parse(overrideFee.text),
+      overRideFee: overRideFee,
     );
  
-    
-
     bool success = await TenantsRepository().addTenant(tenant);
 
     setState(() {

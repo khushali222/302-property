@@ -796,7 +796,7 @@ class _RentalownersSummeryForMobileState
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Text(
-                                        '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}',
+                                       formatDate3( '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}'),
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -820,7 +820,7 @@ class _RentalownersSummeryForMobileState
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Text(
-                                        '${(rentalownersummery.first.endDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.endDate}',
+                                        formatDate3('${(rentalownersummery.first.endDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.endDate}'),
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1680,7 +1680,7 @@ class _RentalownersSummeryForTabletState
                                           padding:
                                               const EdgeInsets.only(top: 12),
                                           child: Text(
-                                            '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}',
+                                            formatDate3('${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}'),
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
@@ -1705,7 +1705,7 @@ class _RentalownersSummeryForTabletState
                                           padding:
                                               const EdgeInsets.only(top: 12),
                                           child: Text(
-                                            '${(rentalownersummery.first.endDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.endDate}',
+                                            formatDate3('${(rentalownersummery.first.endDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.endDate}'),
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
@@ -1739,7 +1739,7 @@ class _RentalownersSummeryForTabletState
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 25, right: 25, top: 20, bottom: 30),
+                                    left: 25, right: 10, top: 20, bottom: 30),
                                 child: Column(
                                   children: [
                                     const Row(

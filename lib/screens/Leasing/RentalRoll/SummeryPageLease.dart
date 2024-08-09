@@ -1577,73 +1577,52 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               return Column(
                 children: <Widget>[
                   const SizedBox(
-                    height: 50,
+                    height: 20,
                   ),
                   Row(
                     children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      if( MediaQuery.of(context).size.width < 500)
+                        SizedBox(
+                          width: 18,
+                        ),
+                      if( MediaQuery.of(context).size.width > 500)
+                        SizedBox(
+                          width: 25,
+                        ),
                       Text('${snapshot.data!.data!.rentalAddress}',
                           style: TextStyle(
                               color: Color.fromRGBO(21, 43, 81, 1),
-                              fontWeight: FontWeight.bold)),
-                      const Spacer(),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Material(
-                              elevation: 3,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(5),
-                              ),
-                              child: Container(
-                                height: 40,
-                                width: 80,
-                                decoration: const BoxDecoration(
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(5),
-                                  ),
-                                ),
-                                child: const Center(
-                                    child: Text(
-                                  "Back",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                )),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                              fontWeight: FontWeight.bold,
+                            fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
+
                     ],
+                  ),
+                  SizedBox(
+                    height: 5,
                   ),
                   Row(
                     children: [
+                      if( MediaQuery.of(context).size.width < 500)
                       SizedBox(
-                        width: 10,
+                        width: 18,
                       ),
+                      if( MediaQuery.of(context).size.width > 500)
+                        SizedBox(
+                          width: 25,
+                        ),
                       Text(
                           '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
                           style: TextStyle(
                               color: Color(0xFF8A95A8),
                               fontWeight: FontWeight.bold,
-                              fontSize: 12)),
+                              fontSize:   MediaQuery.of(context).size.width < 500 ? 13 :16)),
                     ],
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    margin:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width < 500 ? 15 :18),
                     height: 60,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -1917,6 +1896,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ),
                               ],
                             ),
+                          if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(
                             height: 10,
                           ),
@@ -2214,10 +2194,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ),
                               ],
                             ),
+
                           if (MediaQuery.of(context).size.width > 500)
                             Row(
                               children: [
-                                const SizedBox(
+                                 SizedBox(
                                   width: 16,
                                 ),
                                 Text(
@@ -2226,7 +2207,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       color:
                                           const Color.fromRGBO(21, 43, 81, 1),
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 2),
+                                      fontSize: 20),
                                 ),
                               ],
                             ),
@@ -2238,45 +2219,49 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               padding: const EdgeInsets.only(left: 16),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
-                                child: DataTable(
-                                  dataRowHeight: 35,
-                                  headingRowHeight: 35,
-                                  border: TableBorder.all(
-                                    width: 1,
-                                    color: const Color.fromRGBO(21, 43, 83, 1),
+                                child: Expanded(
+                                  child: Container(
+                                    child: DataTable(
+                                      dataRowHeight: 50,
+                                      headingRowHeight: 50,
+                                      border: TableBorder.all(
+                                        width: 1,
+                                        color: const Color.fromRGBO(21, 43, 83, 1),
+                                      ),
+                                      columns: [
+                                        const DataColumn(
+                                          label: Text('Status'),
+                                        ),
+                                        const DataColumn(
+                                          label: Text('Start - End'),
+                                        ),
+                                        const DataColumn(
+                                          label: Text('Property'),
+                                        ),
+                                        const DataColumn(
+                                          label: Text('Type'),
+                                        ),
+                                        const DataColumn(
+                                          label: Text('Rent'),
+                                        ),
+                                      ],
+                                      rows: [
+                                        DataRow(cells: <DataCell>[
+                                          DataCell(Text(
+                                              '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}')),
+                                          DataCell(Text(
+                                              ' ${snapshot.data!.data!.startDate} to ${snapshot.data!.data!.endDate}')),
+                                          DataCell(Text(
+                                              '${snapshot.data!.data!.rentalAddress}')),
+                                          DataCell(Text(
+                                              '${snapshot.data!.data!.leaseType}')),
+                                          DataCell(Text(
+                                              '${snapshot.data!.data!.amount}')),
+                                        ]),
+                                        // Add more rows as needed
+                                      ],
+                                    ),
                                   ),
-                                  columns: [
-                                    const DataColumn(
-                                      label: Text('Status'),
-                                    ),
-                                    const DataColumn(
-                                      label: Text('Start - End'),
-                                    ),
-                                    const DataColumn(
-                                      label: Text('Property'),
-                                    ),
-                                    const DataColumn(
-                                      label: Text('Type'),
-                                    ),
-                                    const DataColumn(
-                                      label: Text('Rent'),
-                                    ),
-                                  ],
-                                  rows: [
-                                    DataRow(cells: <DataCell>[
-                                      DataCell(Text(
-                                          '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}')),
-                                      DataCell(Text(
-                                          ' ${snapshot.data!.data!.startDate} to ${snapshot.data!.data!.endDate}')),
-                                      DataCell(Text(
-                                          '${snapshot.data!.data!.rentalAddress}')),
-                                      DataCell(Text(
-                                          '${snapshot.data!.data!.leaseType}')),
-                                      DataCell(Text(
-                                          '${snapshot.data!.data!.amount}')),
-                                    ]),
-                                    // Add more rows as needed
-                                  ],
                                 ),
                               ),
                             ),
@@ -2294,185 +2279,396 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Tenant(context) {
-    return FutureBuilder<LeaseSummary>(
-      future: futureLeaseSummary,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text('No data found.'));
-        } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.data!.tenantData!.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 165,
-                  width: MediaQuery.of(context).size.width * .9,
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                      color: const Color.fromRGBO(21, 43, 81, 1),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isTablet = constraints.maxWidth > 600;
+        return
+          FutureBuilder<LeaseSummary>(
+            future: futureLeaseSummary,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data == null) {
+                return Center(child: Text('No data found.'));
+              } else {
+                return isTablet
+                    ? SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child:
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 35,
+                      right: 35,
+                      top: 30,
+                    ),
+                    child: Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: MediaQuery.of(context).size.width * 0.03,
+                      runSpacing: MediaQuery.of(context).size.width * 0.035,
+                      children: List.generate(
+                        snapshot.data!.data!.tenantData!.length,
+                            (index) => Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            height: 220,
+                            width: MediaQuery.of(context).size.width * .44,
+                            decoration: BoxDecoration(
+                              color:
+                              Colors.white, // Change as per your need
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: const Color.fromRGBO(21, 43, 81, 1),
+                              ),
+                            ),
+                            child:Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 15),
+                                      Container(
+                                        height: 35,
+                                        width: 35,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromRGBO(21, 43, 81, 1),
+                                          border: Border.all(
+                                              color: const Color.fromRGBO(21, 43, 81, 1)),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        child: const Center(
+                                          child: FaIcon(
+                                            FontAwesomeIcons.user,
+                                            size: 17,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 20),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 2),
+                                              Text(
+                                                '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 2),
+                                              Text(
+                                                snapshot.data!.data!.rentalAddress!,
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Color(0xFF8A95A8),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      const Spacer(),
+                                      const Row(
+                                        children: [
+                                          FaIcon(
+                                            FontAwesomeIcons.rightFromBracket,
+                                            size: 17,
+                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            "Move out",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color.fromRGBO(21, 43, 81, 1),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(width: 15),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 15),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      Text(
+                                        '${snapshot.data!.data!.startDate} to',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      Text(
+                                        '${snapshot.data!.data!.endDate}',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      const FaIcon(
+                                        FontAwesomeIcons.phone,
+                                        size: 18,
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '${snapshot.data!.data!.tenantData![index].tenantPhoneNumber}',
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      const FaIcon(
+                                        FontAwesomeIcons.solidEnvelope,
+                                        size: 18,
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '${snapshot.data!.data!.tenantData![index].tenantEmail}',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const SizedBox(width: 15),
-                          Container(
-                            height: 30,
-                            width: 30,
+                )
+                    : SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: MediaQuery.of(context).size.width * 0.03,
+                    runSpacing: MediaQuery.of(context).size.width * 0.02,
+                    children: List.generate(
+                      snapshot.data!.data!.tenantData!.length,
+                          (index) => Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20, right: 20, top: 20,),
+                        child: Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            height: 205,
+                            //  width: MediaQuery.of(context).size.width * .44,
                             decoration: BoxDecoration(
-                              color: const Color.fromRGBO(21, 43, 81, 1),
+                              color:
+                              Colors.white, // Change as per your need
+                              borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 81, 1)),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: const Center(
-                              child: FaIcon(
-                                FontAwesomeIcons.user,
-                                size: 16,
-                                color: Colors.white,
+                                color: const Color.fromRGBO(21, 43, 81, 1),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 20),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Row(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
                                 children: [
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(21, 43, 81, 1),
-                                    ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 15),
+                                      Container(
+                                        height: 30,
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromRGBO(21, 43, 81, 1),
+                                          border: Border.all(
+                                              color: const Color.fromRGBO(21, 43, 81, 1)),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        child: const Center(
+                                          child: FaIcon(
+                                            FontAwesomeIcons.user,
+                                            size: 16,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 20),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 2),
+                                              Text(
+                                                '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 2),
+                                              Text(
+                                                snapshot.data!.data!.rentalAddress!,
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  color: Color(0xFF8A95A8),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      const Spacer(),
+                                      const Row(
+                                        children: [
+                                          FaIcon(
+                                            FontAwesomeIcons.rightFromBracket,
+                                            size: 17,
+                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            "Move out",
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color.fromRGBO(21, 43, 81, 1),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(width: 15),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 15),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      Text(
+                                        '${snapshot.data!.data!.startDate} to',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      Text(
+                                        '${snapshot.data!.data!.endDate}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      const FaIcon(
+                                        FontAwesomeIcons.phone,
+                                        size: 15,
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '${snapshot.data!.data!.tenantData![index].tenantPhoneNumber}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 65),
+                                      const FaIcon(
+                                        FontAwesomeIcons.solidEnvelope,
+                                        size: 15,
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '${snapshot.data!.data!.tenantData![index].tenantEmail}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    snapshot.data!.data!.rentalAddress!,
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF8A95A8),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          const Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.rightFromBracket,
-                                size: 17,
-                                color: Color.fromRGBO(21, 43, 81, 1),
-                              ),
-                              SizedBox(width: 5),
-                              Text(
-                                "Move out",
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 15),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          const SizedBox(width: 65),
-                          Text(
-                            '${snapshot.data!.data!.startDate} to',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color.fromRGBO(21, 43, 81, 1),
-                              fontWeight: FontWeight.w500,
                             ),
+
                           ),
-                        ],
+                        ),
                       ),
-                      Row(
-                        children: [
-                          const SizedBox(width: 65),
-                          Text(
-                            '${snapshot.data!.data!.endDate}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color.fromRGBO(21, 43, 81, 1),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const SizedBox(width: 65),
-                          const FaIcon(
-                            FontAwesomeIcons.phone,
-                            size: 15,
-                            color: Color.fromRGBO(21, 43, 81, 1),
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            '${snapshot.data!.data!.tenantData![index].tenantPhoneNumber}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color.fromRGBO(21, 43, 81, 1),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const SizedBox(width: 65),
-                          const FaIcon(
-                            FontAwesomeIcons.solidEnvelope,
-                            size: 15,
-                            color: Color.fromRGBO(21, 43, 81, 1),
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            '${snapshot.data!.data!.tenantData![index].tenantEmail}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color.fromRGBO(21, 43, 81, 1),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              );
+                );
+
+
+              }
             },
           );
-        }
       },
     );
+
   }
 }
 

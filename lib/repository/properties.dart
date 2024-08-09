@@ -28,6 +28,8 @@ class PropertiesRepository {
       throw Exception('Failed to load data');
     }
   }
+
+
   Future<Map<String, dynamic>> editTenant({
     required String tenantId,
     required String adminId,

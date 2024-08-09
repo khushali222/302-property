@@ -331,6 +331,16 @@ class _Lease_tableState extends State<Lease_table> {
   void handleEdit(Lease1 lease) async {
     // Handle edit action
     print('Edit ${lease.leaseId}');
+    Provider.of<SelectedCosignersProvider>(
+        context,
+        listen:
+        false)
+        .clearCosigner();
+    Provider.of<SelectedTenantsProvider>(
+        context,
+        listen:
+        false)
+        .clearTenant();
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -696,7 +706,7 @@ class _Lease_tableState extends State<Lease_table> {
                     borderRadius: BorderRadius.circular(2),
                     child: Container(
                       height:
-                          (MediaQuery.of(context).size.width < 500) ? 40 : 50,
+                          (MediaQuery.of(context).size.width < 500) ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
@@ -716,7 +726,7 @@ class _Lease_tableState extends State<Lease_table> {
                           border: InputBorder.none,
                           hintText: "Search here...",
                           hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                          contentPadding: EdgeInsets.all(12),
+                          contentPadding: EdgeInsets.all(11),
                         ),
                       ),
                     ),
@@ -1536,8 +1546,19 @@ class _Lease_tableState extends State<Lease_table> {
                                         ),
                                         children: [
                                           //_buildDataCell(_pagedData[i].rentalOwnerFirstName!),
-                                          _buildDataCell(
-                                              '${_pagedData[i].rentalAddress ?? ''}${_pagedData[i].tenantNames ?? ''}'),
+                                          InkWell(
+                                            onTap:(){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SummeryPageLease(
+                                                              leaseId:
+                                                              _pagedData[i].leaseId!)));
+                                            },
+                                            child: _buildDataCell(
+                                                '${_pagedData[i].rentalAddress ?? ''}${_pagedData[i].tenantNames ?? ''}'),
+                                          ),
                                           // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
                                           _buildDataCell(
                                               _pagedData[i].startDate!),
