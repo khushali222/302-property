@@ -994,7 +994,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
-                                                    '${Propertytype.startDate}',
+                                                    '${ formatDate4(Propertytype.startDate!)}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1014,7 +1014,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
-                                                        '${Propertytype.endDate}',
+                                                        '${formatDate4(Propertytype.endDate!)}',
 
                                                     style: TextStyle(
                                                       color: blueColor,

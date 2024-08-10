@@ -13,20 +13,23 @@ import '../../../constant/constant.dart';
 import '../../../model/properties.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
-import '../../../repository/properties_summery.dart';
+import '../../repository/properties_summery.dart';
 import '../../../repository/rental_properties.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 
 class EditRentalowners extends StatefulWidget {
   final String rentalId;
-  const EditRentalowners({super.key, required this.rentalId});
+  final String pro_id;
+
+  const EditRentalowners({super.key, required this.rentalId,required this.pro_id});
 
   @override
   State<EditRentalowners> createState() => _EditRentalownersState();
 }
 
 class _EditRentalownersState extends State<EditRentalowners> {
+  String? processor_id ;
   @override
   void initState() {
     super.initState();
@@ -41,10 +44,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
     //addPropertyGroup();
     fetchOwners();
     fetchDetails1(widget.rentalId);
+
   }
 
   Future<void> fetchDetails1(String rentalId) async {
-    try {
+ //   try {
       Rentals fetchedDetails =
           await Properies_summery_Repo().fetchrentalDetails(rentalId);
       print(fetchedDetails);
@@ -80,15 +84,21 @@ class _EditRentalownersState extends State<EditRentalowners> {
         state2.text = fetchedDetails.rentalOwnerData!.state!;
         county2.text = fetchedDetails.rentalOwnerData!.country!;
         code2.text = fetchedDetails.rentalOwnerData!.postalCode!;
-
+        _processorGroups.clear();
+        var processorList = fetchedDetails.rentalOwnerData!.processorList;
+        for (var processor in processorList!) {
+          var controller = TextEditingController(text: processor["processor_id"] ?? 'N/A');
+          _processorGroups.add(ProcessorGroup(isChecked: processor["processor_id"] == widget.pro_id, controller: controller));
+        }
+        print(_processorGroups.length);
         // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
       });
-    } catch (e) {
+   /* } catch (e) {
       print('Failed to fetch property details: $e');
-    }
+    }*/
   }
 
-  Owner? selectedOwner;
+  Owner? selectedOwner ;
   Owner? rentalOwnerId;
   Owner? getSelectedOwner() {
     for (int i = 0; i < selected.length; i++) {
@@ -178,13 +188,14 @@ class _EditRentalownersState extends State<EditRentalowners> {
   bool hasError = false;
   Future<void> fetchOwners() async {
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     final response = await http
-        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
+        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$admin_id'), headers: {
       "id": "CRM $id",
       "authorization": "CRM $token",
     });
@@ -356,250 +367,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                 SizedBox(height: 25),
                 isChecked
                     ?
-                // Column(
-                //         children: [
-                //           SizedBox(height: 16.0),
-                //           Row(
-                //             children: [
-                //               Expanded(
-                //                 child: Material(
-                //                   elevation: 3,
-                //                   borderRadius: BorderRadius.circular(5),
-                //                   child: Container(
-                //                     height: 50,
-                //                     decoration: BoxDecoration(
-                //                       borderRadius: BorderRadius.circular(5),
-                //                       // color: Colors
-                //                       //     .white,
-                //                       border:
-                //                           Border.all(color: Color(0xFF8A95A8)),
-                //                     ),
-                //                     child: Stack(
-                //                       children: [
-                //                         Positioned.fill(
-                //                           child: TextField(
-                //                             style: TextStyle(
-                //                               color: Colors.black,
-                //                               fontSize: 13,
-                //                             ),
-                //                             controller: searchController,
-                //                             //keyboardType: TextInputType.emailAddress,
-                //                             onChanged: (value) {
-                //                               setState(() {
-                //                                 if (value != "")
-                //                                   filteredOwners = owners
-                //                                       .where((element) => element
-                //                                           .rentalOwnername
-                //                                           .toLowerCase()
-                //                                           .contains(value
-                //                                               .toLowerCase()))
-                //                                       .toList();
-                //                                 if (value == "") {
-                //                                   filteredOwners = owners;
-                //                                 }
-                //                               });
-                //                             },
-                //                             cursorColor:
-                //                                 Color.fromRGBO(21, 43, 81, 1),
-                //                             decoration: InputDecoration(
-                //                               border: InputBorder.none,
-                //                               contentPadding: EdgeInsets.only(
-                //                                   top: 13,
-                //                                   bottom: 13,
-                //                                   left: 14),
-                //                               hintText:
-                //                                   "Search by first and last name",
-                //                               hintStyle: TextStyle(
-                //                                 color: Color(0xFF8A95A8),
-                //                                 fontSize: 13,
-                //                               ),
-                //                             ),
-                //                           ),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //           SizedBox(height: 16.0),
-                //           Row(
-                //             children: [
-                //               Expanded(
-                //                 child: Container(
-                //                   decoration: BoxDecoration(
-                //                     borderRadius: BorderRadius.circular(5),
-                //                     border: Border.all(color: Colors.grey),
-                //                   ),
-                //                   child: DataTable(
-                //                     columnSpacing: 10,
-                //                     headingRowHeight: 50,
-                //                     dataRowHeight: 40,
-                //                     // horizontalMargin: 10,
-                //                     columns: [
-                //                       DataColumn(
-                //                           label: Expanded(
-                //                         child: Text(
-                //                           'Rentalowner \nName',
-                //                           style: TextStyle(
-                //                               fontSize: MediaQuery.of(context)
-                //                                           .size
-                //                                           .width <
-                //                                       500
-                //                                   ? 13
-                //                                   : 18,
-                //                               fontWeight: FontWeight.bold),
-                //                         ),
-                //                       )),
-                //                       DataColumn(
-                //                           label: Expanded(
-                //                         child: Text(
-                //                           'Processor \nID',
-                //                           style: TextStyle(
-                //                               fontSize: MediaQuery.of(context)
-                //                                           .size
-                //                                           .width <
-                //                                       500
-                //                                   ? 13
-                //                                   : 18,
-                //                               fontWeight: FontWeight.bold),
-                //                         ),
-                //                       )),
-                //                       DataColumn(
-                //                           label: Expanded(
-                //                         child: Text(
-                //                           'Select \n',
-                //                           style: TextStyle(
-                //                               fontSize: 13,
-                //                               fontWeight: FontWeight.bold),
-                //                         ),
-                //                       )),
-                //                     ],
-                //                     rows: List<DataRow>.generate(
-                //                       filteredOwners.length,
-                //                       (index) => DataRow(
-                //                         cells: [
-                //                           DataCell(
-                //                             Text(
-                //                               '${filteredOwners[index].rentalOwnername} '
-                //                               '(${filteredOwners[index].phoneNumber})',
-                //                               style: TextStyle(
-                //                                   fontSize:
-                //                                       MediaQuery.of(context)
-                //                                                   .size
-                //                                                   .width <
-                //                                               500
-                //                                           ? 12
-                //                                           : 18),
-                //                             ),
-                //                           ),
-                //                           DataCell(
-                //                             Text(
-                //                               filteredOwners[index]
-                //                                   .processorList
-                //                                   .map((processor) =>
-                //                                       processor.processorId)
-                //                                   .join(
-                //                                       '\n'), // Join processor IDs with newline
-                //                               style: TextStyle(
-                //                                   fontSize:
-                //                                       MediaQuery.of(context)
-                //                                                   .size
-                //                                                   .width <
-                //                                               500
-                //                                           ? 12
-                //                                           : 18),
-                //                             ),
-                //                           ),
-                //                           DataCell(
-                //                             SizedBox(
-                //                               height: 10,
-                //                               width: 35,
-                //                               child: Checkbox(
-                //                                 value: selectedIndex == index,
-                //                                 onChanged: (bool? value) {
-                //                                   setState(() {
-                //                                     if (value != null &&
-                //                                         value) {
-                //                                       selectedIndex = index;
-                //                                       selectedOwner =
-                //                                           filteredOwners[index];
-                //                                       firstname.text =
-                //                                           selectedOwner!
-                //                                               .rentalOwnername;
-                //                                       comname.text =
-                //                                           selectedOwner!
-                //                                               .companyName;
-                //                                       primaryemail.text =
-                //                                           selectedOwner!
-                //                                               .primaryEmail;
-                //                                       alternativeemail.text =
-                //                                           selectedOwner!
-                //                                               .alternateEmail;
-                //                                       homenum.text =
-                //                                           selectedOwner!
-                //                                                   .homeNumber ??
-                //                                               '';
-                //                                       phonenum.text =
-                //                                           selectedOwner!
-                //                                               .phoneNumber;
-                //                                       businessnum
-                //                                           .text = selectedOwner!
-                //                                               .businessNumber ??
-                //                                           '';
-                //                                       street2.text =
-                //                                           selectedOwner!
-                //                                               .streetAddress;
-                //                                       city2.text =
-                //                                           selectedOwner!.city;
-                //                                       state2.text =
-                //                                           selectedOwner!.state;
-                //                                       county2.text =
-                //                                           selectedOwner!
-                //                                               .country;
-                //                                       code2.text =
-                //                                           selectedOwner!
-                //                                               .postalCode;
-                //                                       proid.text = selectedOwner!
-                //                                           .processorList
-                //                                           .map((processor) =>
-                //                                               processor
-                //                                                   .processorId)
-                //                                           .join(', ');
-                //                                     } else {
-                //                                       selectedIndex = null;
-                //                                     }
-                //                                     isChecked2 = true;
-                //                                     isChecked = false;
-                //                                     _processorGroups.clear();
-                //                                     for (Processor processor
-                //                                         in selectedOwner!
-                //                                             .processorList) {
-                //                                       _processorGroups.add(ProcessorGroup(
-                //                                           isChecked: false,
-                //                                           controller:
-                //                                               TextEditingController(
-                //                                                   text: processor
-                //                                                       .processorId)));
-                //                                     }
-                //                                   });
-                //                                 },
-                //                                 activeColor: Color.fromRGBO(
-                //                                     21, 43, 81, 1),
-                //                               ),
-                //                             ),
-                //                           ),
-                //                         ],
-                //                       ),
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ],
-                //       )
                 Column(
                   children: [
                     SizedBox(
@@ -703,7 +470,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                               columnSpacing: 10,
                               headingRowHeight:
                               MediaQuery.of(context).size.width < 500 ?55:60,
-                              dataRowHeight:  MediaQuery.of(context).size.width < 500 ?50:553,
+                              dataRowHeight:  MediaQuery.of(context).size.width < 500 ?50:60,
                               // horizontalMargin: 10,
                               columns: [
                                 DataColumn(
@@ -2143,15 +1910,14 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.01),
-                                  if (selectedOwner != null)
+                                //  if (selectedOwner != null)
                                     Padding(
                                       padding: const EdgeInsets.only(left: 13),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          if (selectedOwner!
-                                              .processorList.isNotEmpty) ...[
+
                                             Row(
                                               children: [
                                                 Text(
@@ -2187,6 +1953,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                                 group?.isChecked =
                                                                     value ??
                                                                         false;
+                                                                processor_id = group.controller.text;
                                                               });
                                                             },
                                                             activeColor:
@@ -2313,7 +2080,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                 // Handle error display here if needed
                                               ],
                                             ),
-                                          ],
+
                                         ],
                                       ),
                                     ),
@@ -2330,10 +2097,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                       GestureDetector(
                                         onTap: () {
                                           setState(() {
+                                            print("calling");
                                             _processorGroups.add(ProcessorGroup(
                                                 isChecked: false,
                                                 controller:
                                                     TextEditingController()));
+                                            print(_processorGroups.length);
                                           });
                                         },
                                         child: ClipRRect(
@@ -2393,6 +2162,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                   children: [
                     GestureDetector(
                       onTap: () async {
+
+
+                        List<ProcessorList> selectedProcessors = _processorGroups
+                        //  .where((group) => group.isChecked)
+                            .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
+                            .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
+                            .toList();
                         Ownersdetails = RentalOwner(
                           rentalOwnerPhoneNumber: phonenum.text,
                           rentalOwnerName: firstname.text,
@@ -2406,7 +2182,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           country: county2.text,
                           state: state2.text,
                           postalCode: code2.text,
+                          processorList: selectedProcessors,
                         );
+                        context
+                            .read<
+                            OwnerDetailsProvider>()
+                            .selectedprocessid(
+                            processor_id!);
                         context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
                         Fluttertoast.showToast(
                           msg: "Rental Owner Added Successfully!",
@@ -2420,7 +2202,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                         setState(() {
                           hasError = false; // Set error state if needed
                         });
-
                         Navigator.pop(context);
                       },
                       child: ClipRRect(

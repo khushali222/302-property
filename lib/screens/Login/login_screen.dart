@@ -1547,7 +1547,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString("staff_id", jsonData["staffmember_id"]);
       prefs.setString("role", "Staffmember");
       print(jsonData["staffmember_firstName"]);
-
+      prefs.setString('companyName', selectedCompany!);
       prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
       String stafffirstname = jsonData['staffmember_name'];
@@ -1587,7 +1587,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       prefs.setString("role", "Tenant");
-
+      prefs.setString('companyName', selectedCompany!);
       print(jsonData["tenant_firstName"]);
       prefs.setString("tenant_id", jsonData["tenant_id"]);
       prefs.setString('checkedToken', token);
@@ -1633,6 +1633,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           .fetchPermissions();
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname[1]);
+      prefs.setString('companyName', selectedCompany!);
       prefs.setString("role", "Vendor");
       print(jsonData["vendor_firstName"]);
       prefs.setString("vendor_id", jsonData["vendor_id"]);

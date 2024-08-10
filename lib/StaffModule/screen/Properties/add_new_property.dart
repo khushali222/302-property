@@ -12,14 +12,14 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
-import 'package:three_zero_two_property/repository/Staffmember.dart';
+import '../../repository/Staffmember.dart';
 import '../../repository/rental_properties.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/add_rentalowners.dart';
+import 'add_rentalowners.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-
-import '../../model/propertytype.dart';
+import 'package:three_zero_two_property/model/properties.dart';
+import '../../../model/propertytype.dart';
 import '../../../constant/constant.dart';
-import '../../model/add_property.dart';
+import '../../../model/add_property.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
 import '../../repository/Property_type.dart';
@@ -679,6 +679,16 @@ class _Add_new_propertyState extends State<Add_new_property> {
   Widget build(BuildContext context) {
     // print(selectedIsMultiUnit);
     // print(selectedProperty);
+    final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
+
+    final firstnameController = TextEditingController(text: ownerDetails?.rentalOwnerName);
+    final comnameController = TextEditingController(text: ownerDetails?.rentalOwnerCompanyName);
+    final primaryemailController = TextEditingController(text: ownerDetails?.rentalOwnerPrimaryEmail);
+    final phonenumController = TextEditingController(text: ownerDetails?.rentalOwnerPhoneNumber);
+    final cityController = TextEditingController(text: ownerDetails?.city);
+    final stateController = TextEditingController(text: ownerDetails?.state);
+    final countyController = TextEditingController(text: ownerDetails?.country);
+    final codeController = TextEditingController(text: ownerDetails?.postalCode);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -761,7 +771,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: EdgeInsets.only(top: 14, left: 10),
+                    padding: EdgeInsets.only(top: 10, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: Color.fromRGBO(21, 43, 81, 1),
@@ -882,7 +892,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             .05,
                                         width:
                                         MediaQuery.of(context).size.width *
-                                            .5,
+                                            .6,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
@@ -898,10 +908,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             hint: Text(
                                               'Add Property Type',
                                               style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                    .03,
+                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
                                                 color: Color(0xFF8A95A8),
                                               ),
                                             ),
@@ -947,434 +954,341 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           SingleChildScrollView(
                                                             child: Column(
                                                               children: [
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    Text(
-                                                                      "Add Property Type",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                          fontSize:
-                                                                          18),
-                                                                    ),
-                                                                    Spacer(),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                      child:
-                                                                      Container(
-                                                                        //    color: Colors.redAccent,
-                                                                        padding:
-                                                                        EdgeInsets.zero,
-                                                                        child:
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .xmark,
-                                                                          size:
-                                                                          15,
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
+                                                                Container(
+                                                                  // height: MediaQuery.of(context).size.height * .43,
+                                                                  width: MediaQuery.of(context).size.width * .99,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors.white,
+                                                                      borderRadius: BorderRadius.circular(10),
+                                                                      border: Border.all(
+                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                      )),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height: 20,
                                                                       ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 15,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
-                                                                      "Property Type*",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .grey,
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                          14),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    DropdownButtonHideUnderline(
-                                                                      child: DropdownButton2<
-                                                                          String>(
-                                                                        isExpanded:
-                                                                        true,
-                                                                        hint:
-                                                                        const Row(
-                                                                          children: [
-                                                                            SizedBox(
-                                                                              width: 4,
-                                                                            ),
-                                                                            Expanded(
-                                                                              child: Text(
-                                                                                'Type',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                ),
-                                                                                overflow: TextOverflow.ellipsis,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        items: items
-                                                                            .map((String item) => DropdownMenuItem<String>(
-                                                                          value: item,
-                                                                          child: Text(
-                                                                            item,
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: Colors.black,
-                                                                            ),
-                                                                            overflow: TextOverflow.ellipsis,
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
                                                                           ),
-                                                                        ))
-                                                                            .toList(),
-                                                                        value:
-                                                                        selectedValue,
-                                                                        onChanged:
-                                                                            (value) {
-                                                                          setState(
-                                                                                  () {
-                                                                                selectedValue =
-                                                                                    value;
-                                                                              });
-                                                                        },
-                                                                        buttonStyleData:
-                                                                        ButtonStyleData(
-                                                                          height:
-                                                                          50,
-                                                                          width:
-                                                                          160,
-                                                                          padding: const EdgeInsets
-                                                                              .only(
-                                                                              left: 14,
-                                                                              right: 14),
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                            border:
-                                                                            Border.all(
-                                                                              color: Colors.black26,
-                                                                            ),
-                                                                            color:
-                                                                            Colors.white,
+                                                                          Text(
+                                                                            "New Property Type",
+                                                                            style: TextStyle(
+                                                                                fontWeight: FontWeight.bold,
+                                                                                color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                           ),
-                                                                          elevation:
-                                                                          3,
-                                                                        ),
-                                                                        dropdownStyleData:
-                                                                        DropdownStyleData(
-                                                                          maxHeight:
-                                                                          200,
-                                                                          width:
-                                                                          200,
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(14),
-                                                                            //color: Colors.redAccent,
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
                                                                           ),
-                                                                          offset: const Offset(
-                                                                              -20,
-                                                                              0),
-                                                                          scrollbarTheme:
-                                                                          ScrollbarThemeData(
-                                                                            radius:
-                                                                            const Radius.circular(40),
-                                                                            thickness:
-                                                                            MaterialStateProperty.all(6),
-                                                                            thumbVisibility:
-                                                                            MaterialStateProperty.all(true),
-                                                                          ),
-                                                                        ),
-                                                                        menuItemStyleData:
-                                                                        const MenuItemStyleData(
-                                                                          height:
-                                                                          40,
-                                                                          padding: EdgeInsets.only(
-                                                                              left: 14,
-                                                                              right: 14),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
-                                                                      "Property SubType*",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .grey,
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                          12),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Material(
-                                                                      elevation:
-                                                                      2,
-                                                                      borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          10),
-                                                                      child:
-                                                                      Container(
-                                                                        width:
-                                                                        150,
-                                                                        padding:
-                                                                        EdgeInsets.only(left: 10),
-                                                                        decoration:
-                                                                        BoxDecoration(
-                                                                          color:
-                                                                          Colors.white,
-                                                                          borderRadius:
-                                                                          BorderRadius.circular(10),
-                                                                        ),
-                                                                        child:
-                                                                        TextFormField(
-                                                                          controller:
-                                                                          subtype,
-                                                                          decoration: InputDecoration(
-                                                                              border: InputBorder.none,
-                                                                              hintText: "Townhome"),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    Container(
-                                                                      height: MediaQuery.of(context)
-                                                                          .size
-                                                                          .height *
-                                                                          0.02,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .height *
-                                                                          0.02,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                      Checkbox(
-                                                                        activeColor: isChecked
-                                                                            ? Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1)
-                                                                            : Colors.white,
-                                                                        checkColor:
-                                                                        Colors.white,
-                                                                        value:
-                                                                        isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
-                                                                        onChanged:
-                                                                            (value) {
-                                                                          setState(
-                                                                                  () {
-                                                                                isChecked =
-                                                                                    value ?? false; // ensure value is not null
-                                                                              });
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.02),
-                                                                    Text(
-                                                                      "Multi unit",
-                                                                      style:
-                                                                      TextStyle(
-                                                                        fontSize:
-                                                                        MediaQuery.of(context).size.width *
-                                                                            0.03,
-                                                                        color: Colors
-                                                                            .grey,
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    GestureDetector(
-                                                                      onTap:
-                                                                          () async {
-                                                                        if (selectedValue ==
-                                                                            null ||
-                                                                            subtype.text.isEmpty) {
-                                                                          setState(
-                                                                                  () {
-                                                                                iserror =
-                                                                                true;
-                                                                              });
-                                                                        } else {
-                                                                          setState(
-                                                                                  () {
-                                                                                isLoading =
-                                                                                true;
-                                                                                iserror =
-                                                                                false;
-                                                                              });
-                                                                          SharedPreferences
-                                                                          prefs =
-                                                                          await SharedPreferences.getInstance();
-
-                                                                          String?
-                                                                          id =
-                                                                          prefs.getString("adminId");
-                                                                          PropertyTypeRepository()
-                                                                              .addPropertyType(
-                                                                            adminId:
-                                                                            id!,
-                                                                            propertyType:
-                                                                            selectedValue,
-                                                                            propertySubType:
-                                                                            subtype.text,
-                                                                            isMultiUnit:
-                                                                            isChecked,
-                                                                          )
-                                                                              .then((value) {
-                                                                            setState(() {
-                                                                              isLoading = false;
-                                                                            });
-                                                                            Navigator.pop(context,
-                                                                                true);
-                                                                          }).catchError((e) {
-                                                                            setState(() {
-                                                                              isLoading = false;
-                                                                            });
-                                                                          });
-                                                                        }
-                                                                        print(
-                                                                            selectedValue);
-                                                                      },
-                                                                      child:
-                                                                      ClipRRect(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(5.0),
-                                                                        child:
-                                                                        Container(
-                                                                          height:
-                                                                          33.0,
-                                                                          width:
-                                                                          MediaQuery.of(context).size.width * .4,
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(5.0),
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                81,
-                                                                                1),
-                                                                            boxShadow: [
-                                                                              BoxShadow(
+                                                                          Text(
+                                                                            "Property Type*",
+                                                                            style: TextStyle(
                                                                                 color: Colors.grey,
-                                                                                offset: Offset(0.0, 1.0), //(x,y)
-                                                                                blurRadius: 6.0,
-                                                                              ),
-                                                                            ],
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
                                                                           ),
-                                                                          child:
-                                                                          Center(
-                                                                            child: isLoading
-                                                                                ? SpinKitFadingCircle(
-                                                                              color: Colors.white,
-                                                                              size: 25.0,
-                                                                            )
-                                                                                : Text(
-                                                                              "Add Property Type",
-                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          DropdownButtonHideUnderline(
+                                                                            child: DropdownButton2<String>(
+                                                                              isExpanded: true,
+                                                                              hint: const Row(
+                                                                                children: [
+                                                                                  SizedBox(
+                                                                                    width: 4,
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: Text(
+                                                                                      'Type',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.black,
+                                                                                      ),
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              items: items
+                                                                                  .map(
+                                                                                      (String item) => DropdownMenuItem<String>(
+                                                                                    value: item,
+                                                                                    child: Text(
+                                                                                      item,
+                                                                                      style: const TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.black,
+                                                                                      ),
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                    ),
+                                                                                  ))
+                                                                                  .toList(),
+                                                                              value: selectedValue,
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  selectedValue = value;
+                                                                                });
+                                                                              },
+                                                                              buttonStyleData: ButtonStyleData(
+                                                                                height: 50,
+                                                                                width: 160,
+                                                                                padding:
+                                                                                const EdgeInsets.only(left: 14, right: 14),
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(10),
+                                                                                  border: Border.all(
+                                                                                    color: Colors.black26,
+                                                                                  ),
+                                                                                  color: Colors.white,
+                                                                                ),
+                                                                                elevation: 3,
+                                                                              ),
+                                                                              dropdownStyleData: DropdownStyleData(
+                                                                                maxHeight: 200,
+                                                                                width: 200,
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(14),
+                                                                                  //color: Colors.redAccent,
+                                                                                ),
+                                                                                offset: const Offset(-20, 0),
+                                                                                scrollbarTheme: ScrollbarThemeData(
+                                                                                  radius: const Radius.circular(40),
+                                                                                  thickness: MaterialStateProperty.all(6),
+                                                                                  thumbVisibility:
+                                                                                  MaterialStateProperty.all(true),
+                                                                                ),
+                                                                              ),
+                                                                              menuItemStyleData: const MenuItemStyleData(
+                                                                                height: 40,
+                                                                                padding: EdgeInsets.only(left: 14, right: 14),
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
+                                                                        ],
                                                                       ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                  ],
+                                                                      SizedBox(
+                                                                        height: 20,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          Text(
+                                                                            "Property SubType*",
+                                                                            style: TextStyle(
+                                                                                color: Colors.grey,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          Material(
+                                                                            elevation: 2,
+                                                                            borderRadius: BorderRadius.circular(10),
+                                                                            child: Container(
+                                                                              width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
+                                                                              padding: EdgeInsets.only(left: 10),
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.white,
+                                                                                borderRadius: BorderRadius.circular(10),
+                                                                              ),
+                                                                              child: TextFormField(
+                                                                                controller: subtype,
+                                                                                decoration: InputDecoration(
+                                                                                    border: InputBorder.none,
+                                                                                    hintText: "Townhome"),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 20,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          if (MediaQuery.of(context).size.width < 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.05),
+                                                                          if (MediaQuery.of(context).size.width > 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.02),
+                                                                          Container(
+                                                                            height: MediaQuery.of(context).size.height * 0.02,
+                                                                            width: MediaQuery.of(context).size.height * 0.02,
+                                                                            decoration: BoxDecoration(
+                                                                              color: Colors.white,
+                                                                              borderRadius: BorderRadius.circular(5),
+                                                                            ),
+                                                                            child: Checkbox(
+                                                                              activeColor: isChecked
+                                                                                  ? Color.fromRGBO(21, 43, 81, 1)
+                                                                                  : Colors.white,
+                                                                              checkColor: Colors.white,
+                                                                              value:
+                                                                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  isChecked = value ??
+                                                                                      false; // ensure value is not null
+                                                                                });
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              width: MediaQuery.of(context).size.width * 0.02),
+                                                                          Text(
+                                                                            "Multi unit",
+                                                                            style: TextStyle(
+                                                                              fontSize:
+                                                                              MediaQuery.of(context).size.width < 500 ? 15 :18,
+                                                                              color: Colors.grey,
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              width: MediaQuery.of(context).size.width * 0.05),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 20,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          if (MediaQuery.of(context).size.width < 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.05),
+                                                                          if (MediaQuery.of(context).size.width > 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.02),
+                                                                          GestureDetector(
+                                                                            onTap: () async {
+                                                                              if (selectedValue == null ||
+                                                                                  subtype.text.isEmpty) {
+                                                                                setState(() {
+                                                                                  iserror = true;
+                                                                                });
+                                                                              } else {
+                                                                                setState(() {
+                                                                                  isLoading = true;
+                                                                                  iserror = false;
+                                                                                });
+                                                                                SharedPreferences prefs =
+                                                                                await SharedPreferences.getInstance();
+                                                                                String? id = prefs.getString("adminId");
+                                                                                PropertyTypeRepository()
+                                                                                    .addPropertyType(
+                                                                                  adminId: id!,
+                                                                                  propertyType: selectedValue,
+                                                                                  propertySubType: subtype.text,
+                                                                                  isMultiUnit: isChecked,
+                                                                                )
+                                                                                    .then((value) {
+                                                                                  setState(() {
+                                                                                    isLoading = false;
+                                                                                  });
+                                                                                  Navigator.pop(context, true);
+                                                                                }).catchError((e) {
+                                                                                  setState(() {
+                                                                                    isLoading = false;
+                                                                                  });
+                                                                                });
+                                                                              }
+                                                                              print(selectedValue);
+                                                                            },
+                                                                            child: ClipRRect(
+                                                                              borderRadius: BorderRadius.circular(5.0),
+                                                                              child: Container(
+                                                                                height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
+                                                                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(5.0),
+                                                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                  boxShadow: [
+                                                                                    BoxShadow(
+                                                                                      color: Colors.grey,
+                                                                                      offset: Offset(0.0, 1.0), //(x,y)
+                                                                                      blurRadius: 6.0,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                child: Center(
+                                                                                  child: isLoading
+                                                                                      ? SpinKitFadingCircle(
+                                                                                    color: Colors.white,
+                                                                                    size: 25.0,
+                                                                                  )
+                                                                                      : Text(
+                                                                                    "Add Property Type",
+                                                                                    style: TextStyle(
+                                                                                        color: Colors.white,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap: () {
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                            child: Material(
+                                                                              elevation: 2,
+                                                                              child: Container(
+                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
+                                                                                  height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
+                                                                                  color: Colors.white,
+                                                                                  child: Center(child: Text("Cancel"))),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      if (iserror)
+                                                                        Text(
+                                                                          "Please fill in all fields correctly.",
+                                                                          style: TextStyle(color: Colors.redAccent),
+                                                                        ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                if (iserror)
-                                                                  Text(
-                                                                    "Please fill in all fields correctly.",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .redAccent),
-                                                                  )
                                                               ],
                                                             ),
                                                           ),
@@ -6310,8 +6224,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
                                                     ),
                                                     columnSpacing: 10,
-                                                    headingRowHeight: MediaQuery.of(context).size.width < 500 ?40:50,
-                                                    dataRowHeight: MediaQuery.of(context).size.width < 500 ?40:50,
+                                                    headingRowHeight: MediaQuery.of(context).size.width < 500 ?40:40,
+                                                    dataRowHeight: MediaQuery.of(context).size.width < 500 ?40:40,
                                                     columns: [
                                                       DataColumn(
                                                         label: Expanded(
@@ -8182,12 +8096,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Text(
-                                  "Who will be primary manager of this Property ?",
-                                  style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      //  fontWeight: FontWeight.bold,
-                                      fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18),
+                                Expanded(
+                                  child: Text(
+                                    "Who will be primary manager of this Property ?",
+                                    style: TextStyle(
+                                        color: Color(0xFF8A95A8),
+                                        //  fontWeight: FontWeight.bold,
+                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18),
+                                  ),
                                 ),
                               ],
                             ),
@@ -8869,154 +8785,161 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               SizedBox(
                                                                 height: 20,
                                                               ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (name.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          nameerror =
-                                                                          true;
-                                                                          namemessage =
-                                                                          "name is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          nameerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (designation
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          designationerror =
-                                                                          true;
-                                                                          designationmessage =
-                                                                          "designation is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          designationerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (phonenumber
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          phonenumbererror =
-                                                                          true;
-                                                                          phonenumbermessage =
-                                                                          "number is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          phonenumbererror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (email.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          emailerror =
-                                                                          true;
-                                                                          emailmessage =
-                                                                          "email is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          emailerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (password
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          passworderror =
-                                                                          true;
-                                                                          passwordmessage =
-                                                                          "password is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          passworderror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (!nameerror &&
-                                                                      !designationerror &&
-                                                                      !phonenumbererror &&
-                                                                      !emailerror &&
-                                                                      !phonenumbererror) {
-                                                                    setState(
-                                                                            () {
-                                                                          loading =
-                                                                          true;
-                                                                        });
-                                                                  }
-                                                                  SharedPreferences
-                                                                  prefs =
-                                                                  await SharedPreferences
-                                                                      .getInstance();
-                                                                  String?
-                                                                  adminId =
-                                                                  prefs.getString(
-                                                                      "adminId");
-                                                                  if (adminId !=
-                                                                      null) {
-                                                                    try {
-                                                                      await StaffMemberRepository()
-                                                                          .addStaffMember(
-                                                                        adminId:
-                                                                        adminId,
-                                                                        staffmemberName:
-                                                                        name.text,
-                                                                        staffmemberDesignation:
-                                                                        designation.text,
-                                                                        staffmemberPhoneNumber:
-                                                                        phonenumber.text,
-                                                                        staffmemberEmail:
-                                                                        email.text,
-                                                                        staffmemberPassword:
-                                                                        password.text,
-                                                                      );
-                                                                      setState(
-                                                                              () {
-                                                                            loading =
-                                                                            false;
-                                                                          });
-                                                                      Navigator.of(
-                                                                          context)
-                                                                          .pop(
-                                                                          true);
-                                                                    } catch (e) {
-                                                                      setState(
-                                                                              () {
-                                                                            loading =
-                                                                            false;
-                                                                          });
-                                                                      // Handle error
-                                                                    }
-                                                                  }
-                                                                },
-                                                                child: Row(
-                                                                  children: [
+                                                              Row(
+                                                                children: [
+                                                                  if(MediaQuery.of(context).size.width > 500)
                                                                     SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    ClipRRect(
+                                                                      width: MediaQuery.of(context).size.width *
+                                                                          0.013,
+                                                                    ),
+                                                                  if(MediaQuery.of(context).size.width < 500)
+                                                                    SizedBox(
+                                                                      width: MediaQuery.of(context).size.width *
+                                                                          0.035,
+                                                                    ),
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () async {
+                                                                      if (name.text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              nameerror =
+                                                                              true;
+                                                                              namemessage =
+                                                                              "name is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              nameerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (designation
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              designationerror =
+                                                                              true;
+                                                                              designationmessage =
+                                                                              "designation is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              designationerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (phonenumber
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              phonenumbererror =
+                                                                              true;
+                                                                              phonenumbermessage =
+                                                                              "number is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              phonenumbererror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (email.text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              emailerror =
+                                                                              true;
+                                                                              emailmessage =
+                                                                              "email is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              emailerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (password
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              passworderror =
+                                                                              true;
+                                                                              passwordmessage =
+                                                                              "password is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              passworderror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (!nameerror &&
+                                                                          !designationerror &&
+                                                                          !phonenumbererror &&
+                                                                          !emailerror &&
+                                                                          !phonenumbererror) {
+                                                                        setState(
+                                                                                () {
+                                                                              loading =
+                                                                              true;
+                                                                            });
+                                                                      }
+                                                                      SharedPreferences
+                                                                      prefs =
+                                                                      await SharedPreferences
+                                                                          .getInstance();
+                                                                      String?
+                                                                      adminId =
+                                                                      prefs.getString(
+                                                                          "adminId");
+                                                                      if (adminId !=
+                                                                          null) {
+                                                                        try {
+                                                                          await StaffMemberRepository()
+                                                                              .addStaffMember(
+                                                                            adminId:
+                                                                            adminId,
+                                                                            staffmemberName:
+                                                                            name.text,
+                                                                            staffmemberDesignation:
+                                                                            designation.text,
+                                                                            staffmemberPhoneNumber:
+                                                                            phonenumber.text,
+                                                                            staffmemberEmail:
+                                                                            email.text,
+                                                                            staffmemberPassword:
+                                                                            password.text,
+                                                                          );
+                                                                          setState(
+                                                                                  () {
+                                                                                loading =
+                                                                                false;
+                                                                              });
+                                                                          Navigator.of(
+                                                                              context)
+                                                                              .pop(
+                                                                              true);
+                                                                        } catch (e) {
+                                                                          setState(
+                                                                                  () {
+                                                                                loading =
+                                                                                false;
+                                                                              });
+                                                                          // Handle error
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    child: ClipRRect(
                                                                       borderRadius:
                                                                       BorderRadius.circular(
                                                                           5.0),
@@ -9051,18 +8974,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             style: TextStyle(
                                                                                 color: Colors.white,
                                                                                 fontWeight: FontWeight.bold,
-                                                                                fontSize: 13),
+                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18),
                                                                           ),
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: (){
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                    child: Text(
                                                                         "Cancel"),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -9079,15 +9007,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   Icons.add,
                                                   size: 16,
                                                 ),
-                                                SizedBox(width: 4),
+                                                SizedBox(width: 3),
                                                 Text(
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .023),
+                                                      MediaQuery.of(context).size.width < 500 ? 11 : 15),
                                                 ),
                                               ],
                                             ),
@@ -9122,10 +9047,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 'Select',
                                                 style: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .04,
+                                                  MediaQuery.of(context).size.width < 500 ? 15 : 18,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                               ),
@@ -9735,22 +9657,51 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
-                        RentalOwners owners = RentalOwners(
-                          firstName: firstname.text,
-                          companyName: comname.text,
-                          primaryEmail: primaryemail.text,
-                          phoneNumber: phonenum.text,
-                          city: city2.text,
-                          state: state2.text,
-                          country: county2.text,
-                          postalCode: code2.text,
+
+                      //  final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
+
+                      /*  List<ProcessorLists> selectedProcessors = _processorGroups
+                            .where((group) => group.isChecked)
+                            .map((group) => ProcessorLists(processorId: group.controller.text.trim())) // Create ProcessorList objects
+                            .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
+                            .toList();*/
+                        RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
+
+                        String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist!;
+                        List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+                          return {
+                            'processor_id': processor.processorId ?? "",
+                          };
+                        }).toList();
+
+                        SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        String? adminId = prefs.getString("adminId");
+                        final updatedOwner = RentalOwner(
+                          rentalOwnerName: firstnameController.text,
+                          rentalOwnerCompanyName: comnameController.text,
+                          rentalOwnerPrimaryEmail: primaryemailController.text,
+                          rentalOwnerPhoneNumber: phonenumController.text,
+                          city: cityController.text,
+                          state: stateController.text,
+                          country: countyController.text,
+                          postalCode: codeController.text,
                         );
-                        // if (unit.text.isEmpty || unitaddress.text.isEmpty || bath.text.isEmpty || bed.text.isEmpty || sqft.text.isEmpty) {
-                        //   iserror2 = true;
-                        //
-                        // } else {
-                        //   iserror2 = false;
-                        // }
+                        Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+                        RentalOwners owners = RentalOwners(
+                          adminId: adminId,
+                          firstName: updatedOwner.rentalOwnerName,
+                          companyName:updatedOwner.rentalOwnerCompanyName,
+                          primaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
+                          phoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+                          city: updatedOwner.city,
+                          state: updatedOwner.state,
+                          country: updatedOwner.country,
+                          postalCode: updatedOwner.postalCode,
+                          processorid: processorIds!,
+                        );
+
+
                         if (address.text.isEmpty) {
                           setState(() {
                             addresserror = true;
@@ -9835,6 +9786,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               country: country.text,
                               postcode: postalcode.text,
                               staffMemberId: sid,
+                                processor_id:processorId
                             );
                             List<Unit> units = [];
                             if (propertyGroupControllers.isNotEmpty) {
@@ -9916,7 +9868,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
 //                                  units[i].unit = controllers[0].text;
                               }
                             }
-
                             RentalRequest rentalrequest = RentalRequest(
                                 rentalOwner: owners,
                                 rental: rentals,
@@ -10003,6 +9954,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
   Widget _buildProcessorGroup(int index) {
     ProcessorGroup group = _processorGroups[index];
+
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -10246,7 +10198,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(jsonEncode(data));
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/rentals/rentals'),
@@ -10409,6 +10362,7 @@ class ProcessorGroup {
 
   ProcessorGroup({required this.isChecked, required this.controller});
 }
+
 
 class OwnersDetails {
   RentalOwner? Ownersdetails;

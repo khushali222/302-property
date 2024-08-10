@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/propertytype.dart';
+import '../../model/propertytype.dart';
 import '../../constant/constant.dart';
 
 class PropertyTypeRepository {

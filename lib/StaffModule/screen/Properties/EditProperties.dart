@@ -13,21 +13,21 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
-import 'package:three_zero_two_property/repository/Staffmember.dart';
+import '../../repository/Staffmember.dart';
 import 'package:three_zero_two_property/repository/rental_properties.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/Edit_Rentalowners.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/add_rentalowners.dart';
+import 'Edit_Rentalowners.dart';
+import 'add_rentalowners.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
-import '../../../Model/propertytype.dart';
+import '../../../model/propertytype.dart';
 import '../../../constant/constant.dart';
 import '../../../model/add_property.dart';
 import '../../../model/properties.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
-import '../../../repository/Property_type.dart';
-import '../../../repository/properties.dart';
-import '../../../repository/properties_summery.dart';
+import '../../repository/Property_type.dart';
+import '../../repository/properties.dart';
+import '../../repository/properties_summery.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/rental_widget.dart';
 import 'package:http/http.dart' as http;
@@ -171,10 +171,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
       isLoading = true;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
+    await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$admin_id'),headers: {
       "id":"CRM $id",
       "authorization": "CRM $token",
     });
@@ -232,6 +233,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
       country: widget.properties.rentalOwnerData?.country,
 
     );
+    processor_id = widget.properties.processor_id;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<OwnerDetailsProvider>(context, listen: false);
       if (Ownersdetails != null) {
@@ -243,8 +245,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
     print(widget.rentalId);
     fetchDetails1(widget.rentalId);
   }
-
-
 
   Future<void> fetchDetails1(String rentalId) async {
     try {
@@ -773,6 +773,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
     // }
   }
   RentalOwner? Ownersdetails;
+  String? processor_id ;
   List<OwnersDetails> OwnersdetailsGroups = [];
   bool hasError = false;
 
@@ -873,7 +874,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: EdgeInsets.only(top: 14, left: 10),
+                    padding: EdgeInsets.only(top: 10, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: Color.fromRGBO(21, 43, 81, 1),
@@ -994,7 +995,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                             .05,
                                         width:
                                         MediaQuery.of(context).size.width *
-                                            .5,
+                                            .6,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
@@ -1010,10 +1011,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                             hint: Text(
                                               'Add Property Type',
                                               style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                    .03,
+                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
                                                 color: Color(0xFF8A95A8),
                                               ),
                                             ),
@@ -1059,434 +1057,341 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           SingleChildScrollView(
                                                             child: Column(
                                                               children: [
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    Text(
-                                                                      "Add Property Type",
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                          fontSize:
-                                                                          18),
-                                                                    ),
-                                                                    Spacer(),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                      child:
-                                                                      Container(
-                                                                        //    color: Colors.redAccent,
-                                                                        padding:
-                                                                        EdgeInsets.zero,
-                                                                        child:
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .xmark,
-                                                                          size:
-                                                                          15,
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
+                                                                Container(
+                                                                  // height: MediaQuery.of(context).size.height * .43,
+                                                                  width: MediaQuery.of(context).size.width * .99,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors.white,
+                                                                      borderRadius: BorderRadius.circular(10),
+                                                                      border: Border.all(
+                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                      )),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height: 20,
                                                                       ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 15,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
-                                                                      "Property Type*",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .grey,
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                          14),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    DropdownButtonHideUnderline(
-                                                                      child: DropdownButton2<
-                                                                          String>(
-                                                                        isExpanded:
-                                                                        true,
-                                                                        hint:
-                                                                        const Row(
-                                                                          children: [
-                                                                            SizedBox(
-                                                                              width: 4,
-                                                                            ),
-                                                                            Expanded(
-                                                                              child: Text(
-                                                                                'Type',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color: Colors.black,
-                                                                                ),
-                                                                                overflow: TextOverflow.ellipsis,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        items: items
-                                                                            .map((String item) => DropdownMenuItem<String>(
-                                                                          value: item,
-                                                                          child: Text(
-                                                                            item,
-                                                                            style: const TextStyle(
-                                                                              fontSize: 14,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: Colors.black,
-                                                                            ),
-                                                                            overflow: TextOverflow.ellipsis,
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
                                                                           ),
-                                                                        ))
-                                                                            .toList(),
-                                                                        value:
-                                                                        selectedValue,
-                                                                        onChanged:
-                                                                            (value) {
-                                                                          setState(
-                                                                                  () {
-                                                                                selectedValue =
-                                                                                    value;
-                                                                              });
-                                                                        },
-                                                                        buttonStyleData:
-                                                                        ButtonStyleData(
-                                                                          height:
-                                                                          50,
-                                                                          width:
-                                                                          160,
-                                                                          padding: const EdgeInsets
-                                                                              .only(
-                                                                              left: 14,
-                                                                              right: 14),
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                            border:
-                                                                            Border.all(
-                                                                              color: Colors.black26,
-                                                                            ),
-                                                                            color:
-                                                                            Colors.white,
+                                                                          Text(
+                                                                            "New Property Type",
+                                                                            style: TextStyle(
+                                                                                fontWeight: FontWeight.bold,
+                                                                                color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                           ),
-                                                                          elevation:
-                                                                          3,
-                                                                        ),
-                                                                        dropdownStyleData:
-                                                                        DropdownStyleData(
-                                                                          maxHeight:
-                                                                          200,
-                                                                          width:
-                                                                          200,
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(14),
-                                                                            //color: Colors.redAccent,
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
                                                                           ),
-                                                                          offset: const Offset(
-                                                                              -20,
-                                                                              0),
-                                                                          scrollbarTheme:
-                                                                          ScrollbarThemeData(
-                                                                            radius:
-                                                                            const Radius.circular(40),
-                                                                            thickness:
-                                                                            MaterialStateProperty.all(6),
-                                                                            thumbVisibility:
-                                                                            MaterialStateProperty.all(true),
-                                                                          ),
-                                                                        ),
-                                                                        menuItemStyleData:
-                                                                        const MenuItemStyleData(
-                                                                          height:
-                                                                          40,
-                                                                          padding: EdgeInsets.only(
-                                                                              left: 14,
-                                                                              right: 14),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
-                                                                      "Property SubType*",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .grey,
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                          12),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Material(
-                                                                      elevation:
-                                                                      2,
-                                                                      borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          10),
-                                                                      child:
-                                                                      Container(
-                                                                        width:
-                                                                        150,
-                                                                        padding:
-                                                                        EdgeInsets.only(left: 10),
-                                                                        decoration:
-                                                                        BoxDecoration(
-                                                                          color:
-                                                                          Colors.white,
-                                                                          borderRadius:
-                                                                          BorderRadius.circular(10),
-                                                                        ),
-                                                                        child:
-                                                                        TextFormField(
-                                                                          controller:
-                                                                          subtype,
-                                                                          decoration: InputDecoration(
-                                                                              border: InputBorder.none,
-                                                                              hintText: "Townhome"),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    Container(
-                                                                      height: MediaQuery.of(context)
-                                                                          .size
-                                                                          .height *
-                                                                          0.02,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .height *
-                                                                          0.02,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                      Checkbox(
-                                                                        activeColor: isChecked
-                                                                            ? Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1)
-                                                                            : Colors.white,
-                                                                        checkColor:
-                                                                        Colors.white,
-                                                                        value:
-                                                                        isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
-                                                                        onChanged:
-                                                                            (value) {
-                                                                          setState(
-                                                                                  () {
-                                                                                isChecked =
-                                                                                    value ?? false; // ensure value is not null
-                                                                              });
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.02),
-                                                                    Text(
-                                                                      "Multi unit",
-                                                                      style:
-                                                                      TextStyle(
-                                                                        fontSize:
-                                                                        MediaQuery.of(context).size.width *
-                                                                            0.03,
-                                                                        color: Colors
-                                                                            .grey,
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    GestureDetector(
-                                                                      onTap:
-                                                                          () async {
-                                                                        if (selectedValue ==
-                                                                            null ||
-                                                                            subtype.text.isEmpty) {
-                                                                          setState(
-                                                                                  () {
-                                                                                iserror =
-                                                                                true;
-                                                                              });
-                                                                        } else {
-                                                                          setState(
-                                                                                  () {
-                                                                                isLoading =
-                                                                                true;
-                                                                                iserror =
-                                                                                false;
-                                                                              });
-                                                                          SharedPreferences
-                                                                          prefs =
-                                                                          await SharedPreferences.getInstance();
-
-                                                                          String?
-                                                                          id =
-                                                                          prefs.getString("adminId");
-                                                                          PropertyTypeRepository()
-                                                                              .addPropertyType(
-                                                                            adminId:
-                                                                            id!,
-                                                                            propertyType:
-                                                                            selectedValue,
-                                                                            propertySubType:
-                                                                            subtype.text,
-                                                                            isMultiUnit:
-                                                                            isChecked,
-                                                                          )
-                                                                              .then((value) {
-                                                                            setState(() {
-                                                                              isLoading = false;
-                                                                            });
-                                                                            Navigator.pop(context,
-                                                                                true);
-                                                                          }).catchError((e) {
-                                                                            setState(() {
-                                                                              isLoading = false;
-                                                                            });
-                                                                          });
-                                                                        }
-                                                                        print(
-                                                                            selectedValue);
-                                                                      },
-                                                                      child:
-                                                                      ClipRRect(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(5.0),
-                                                                        child:
-                                                                        Container(
-                                                                          height:
-                                                                          33.0,
-                                                                          width:
-                                                                          MediaQuery.of(context).size.width * .4,
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(5.0),
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                81,
-                                                                                1),
-                                                                            boxShadow: [
-                                                                              BoxShadow(
+                                                                          Text(
+                                                                            "Property Type*",
+                                                                            style: TextStyle(
                                                                                 color: Colors.grey,
-                                                                                offset: Offset(0.0, 1.0), //(x,y)
-                                                                                blurRadius: 6.0,
-                                                                              ),
-                                                                            ],
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
                                                                           ),
-                                                                          child:
-                                                                          Center(
-                                                                            child: isLoading
-                                                                                ? SpinKitFadingCircle(
-                                                                              color: Colors.white,
-                                                                              size: 25.0,
-                                                                            )
-                                                                                : Text(
-                                                                              "Add Property Type",
-                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          DropdownButtonHideUnderline(
+                                                                            child: DropdownButton2<String>(
+                                                                              isExpanded: true,
+                                                                              hint: const Row(
+                                                                                children: [
+                                                                                  SizedBox(
+                                                                                    width: 4,
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: Text(
+                                                                                      'Type',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.black,
+                                                                                      ),
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              items: items
+                                                                                  .map(
+                                                                                      (String item) => DropdownMenuItem<String>(
+                                                                                    value: item,
+                                                                                    child: Text(
+                                                                                      item,
+                                                                                      style: const TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.black,
+                                                                                      ),
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                    ),
+                                                                                  ))
+                                                                                  .toList(),
+                                                                              value: selectedValue,
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  selectedValue = value;
+                                                                                });
+                                                                              },
+                                                                              buttonStyleData: ButtonStyleData(
+                                                                                height: 50,
+                                                                                width: 160,
+                                                                                padding:
+                                                                                const EdgeInsets.only(left: 14, right: 14),
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(10),
+                                                                                  border: Border.all(
+                                                                                    color: Colors.black26,
+                                                                                  ),
+                                                                                  color: Colors.white,
+                                                                                ),
+                                                                                elevation: 3,
+                                                                              ),
+                                                                              dropdownStyleData: DropdownStyleData(
+                                                                                maxHeight: 200,
+                                                                                width: 200,
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(14),
+                                                                                  //color: Colors.redAccent,
+                                                                                ),
+                                                                                offset: const Offset(-20, 0),
+                                                                                scrollbarTheme: ScrollbarThemeData(
+                                                                                  radius: const Radius.circular(40),
+                                                                                  thickness: MaterialStateProperty.all(6),
+                                                                                  thumbVisibility:
+                                                                                  MaterialStateProperty.all(true),
+                                                                                ),
+                                                                              ),
+                                                                              menuItemStyleData: const MenuItemStyleData(
+                                                                                height: 40,
+                                                                                padding: EdgeInsets.only(left: 14, right: 14),
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
+                                                                        ],
                                                                       ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                  ],
+                                                                      SizedBox(
+                                                                        height: 20,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          Text(
+                                                                            "Property SubType*",
+                                                                            style: TextStyle(
+                                                                                color: Colors.grey,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          Material(
+                                                                            elevation: 2,
+                                                                            borderRadius: BorderRadius.circular(10),
+                                                                            child: Container(
+                                                                              width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
+                                                                              padding: EdgeInsets.only(left: 10),
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.white,
+                                                                                borderRadius: BorderRadius.circular(10),
+                                                                              ),
+                                                                              child: TextFormField(
+                                                                                controller: subtype,
+                                                                                decoration: InputDecoration(
+                                                                                    border: InputBorder.none,
+                                                                                    hintText: "Townhome"),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 20,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          if (MediaQuery.of(context).size.width < 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.05),
+                                                                          if (MediaQuery.of(context).size.width > 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.02),
+                                                                          Container(
+                                                                            height: MediaQuery.of(context).size.height * 0.02,
+                                                                            width: MediaQuery.of(context).size.height * 0.02,
+                                                                            decoration: BoxDecoration(
+                                                                              color: Colors.white,
+                                                                              borderRadius: BorderRadius.circular(5),
+                                                                            ),
+                                                                            child: Checkbox(
+                                                                              activeColor: isChecked
+                                                                                  ? Color.fromRGBO(21, 43, 81, 1)
+                                                                                  : Colors.white,
+                                                                              checkColor: Colors.white,
+                                                                              value:
+                                                                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  isChecked = value ??
+                                                                                      false; // ensure value is not null
+                                                                                });
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              width: MediaQuery.of(context).size.width * 0.02),
+                                                                          Text(
+                                                                            "Multi unit",
+                                                                            style: TextStyle(
+                                                                              fontSize:
+                                                                              MediaQuery.of(context).size.width < 500 ? 15 :18,
+                                                                              color: Colors.grey,
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              width: MediaQuery.of(context).size.width * 0.05),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 20,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          if (MediaQuery.of(context).size.width < 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.05),
+                                                                          if (MediaQuery.of(context).size.width > 500)
+                                                                            SizedBox(
+                                                                                width: MediaQuery.of(context).size.width * 0.02),
+                                                                          GestureDetector(
+                                                                            onTap: () async {
+                                                                              if (selectedValue == null ||
+                                                                                  subtype.text.isEmpty) {
+                                                                                setState(() {
+                                                                                  iserror = true;
+                                                                                });
+                                                                              } else {
+                                                                                setState(() {
+                                                                                  isLoading = true;
+                                                                                  iserror = false;
+                                                                                });
+                                                                                SharedPreferences prefs =
+                                                                                await SharedPreferences.getInstance();
+                                                                                String? id = prefs.getString("adminId");
+                                                                                PropertyTypeRepository()
+                                                                                    .addPropertyType(
+                                                                                  adminId: id!,
+                                                                                  propertyType: selectedValue,
+                                                                                  propertySubType: subtype.text,
+                                                                                  isMultiUnit: isChecked,
+                                                                                )
+                                                                                    .then((value) {
+                                                                                  setState(() {
+                                                                                    isLoading = false;
+                                                                                  });
+                                                                                  Navigator.pop(context, true);
+                                                                                }).catchError((e) {
+                                                                                  setState(() {
+                                                                                    isLoading = false;
+                                                                                  });
+                                                                                });
+                                                                              }
+                                                                              print(selectedValue);
+                                                                            },
+                                                                            child: ClipRRect(
+                                                                              borderRadius: BorderRadius.circular(5.0),
+                                                                              child: Container(
+                                                                                height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
+                                                                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(5.0),
+                                                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                  boxShadow: [
+                                                                                    BoxShadow(
+                                                                                      color: Colors.grey,
+                                                                                      offset: Offset(0.0, 1.0), //(x,y)
+                                                                                      blurRadius: 6.0,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                child: Center(
+                                                                                  child: isLoading
+                                                                                      ? SpinKitFadingCircle(
+                                                                                    color: Colors.white,
+                                                                                    size: 25.0,
+                                                                                  )
+                                                                                      : Text(
+                                                                                    "Add Property Type",
+                                                                                    style: TextStyle(
+                                                                                        color: Colors.white,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width: 15,
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap: () {
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                            child: Material(
+                                                                              elevation: 2,
+                                                                              child: Container(
+                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
+                                                                                  height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
+                                                                                  color: Colors.white,
+                                                                                  child: Center(child: Text("Cancel"))),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      if (iserror)
+                                                                        Text(
+                                                                          "Please fill in all fields correctly.",
+                                                                          style: TextStyle(color: Colors.redAccent),
+                                                                        ),
+                                                                      SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                if (iserror)
-                                                                  Text(
-                                                                    "Please fill in all fields correctly.",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .redAccent),
-                                                                  )
                                                               ],
                                                             ),
                                                           ),
@@ -1497,8 +1402,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 );
                                               } else {
                                                 setState(() {
-
-
                                                   print(snapshot.data!
                                                       .where((element) =>
                                                   element
@@ -1718,7 +1621,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               //     ),
                               //   ),
                               // ),
-                    Expanded(
+                     Expanded(
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
@@ -5823,8 +5726,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                                               ),
                                               columnSpacing: 10,
-                                              headingRowHeight: MediaQuery.of(context).size.width < 500 ?40:50,
-                                              dataRowHeight: MediaQuery.of(context).size.width < 500 ?40:50,
+                                              headingRowHeight: MediaQuery.of(context).size.width < 500 ?40:40,
+                                              dataRowHeight: MediaQuery.of(context).size.width < 500 ?40:40,
                                               columns: [
                                                 DataColumn(
                                                   label: Expanded(
@@ -7396,7 +7299,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               //     );
                                                               //   },
                                                               // );
-                                                            //  Navigator.push(context, MaterialPageRoute(builder: (context)=>EditRentalowners(rentalId: widget.rentalId,pro_id: processor_id,)));
+                                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>EditRentalowners(rentalId: widget.rentalId,pro_id: processor_id!,)));
                                                             },
                                                             child: Container(
                                                               padding:
@@ -7483,12 +7386,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Text(
-                                  "Who will be primary manager of this Property ?",
-                                  style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      //  fontWeight: FontWeight.bold,
-                                      fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18),
+                                Expanded(
+                                  child: Text(
+                                    "Who will be primary manager of this Property ?",
+                                    style: TextStyle(
+                                        color: Color(0xFF8A95A8),
+                                        //  fontWeight: FontWeight.bold,
+                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18),
+                                  ),
                                 ),
                               ],
                             ),
@@ -8169,154 +8074,161 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               SizedBox(
                                                                 height: 20,
                                                               ),
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (name.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          nameerror =
-                                                                          true;
-                                                                          namemessage =
-                                                                          "name is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          nameerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (designation
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          designationerror =
-                                                                          true;
-                                                                          designationmessage =
-                                                                          "designation is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          designationerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (phonenumber
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          phonenumbererror =
-                                                                          true;
-                                                                          phonenumbermessage =
-                                                                          "number is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          phonenumbererror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (email.text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          emailerror =
-                                                                          true;
-                                                                          emailmessage =
-                                                                          "email is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          emailerror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (password
-                                                                      .text
-                                                                      .isEmpty) {
-                                                                    setState(
-                                                                            () {
-                                                                          passworderror =
-                                                                          true;
-                                                                          passwordmessage =
-                                                                          "password is required";
-                                                                        });
-                                                                  } else {
-                                                                    setState(
-                                                                            () {
-                                                                          passworderror =
-                                                                          false;
-                                                                        });
-                                                                  }
-                                                                  if (!nameerror &&
-                                                                      !designationerror &&
-                                                                      !phonenumbererror &&
-                                                                      !emailerror &&
-                                                                      !phonenumbererror) {
-                                                                    setState(
-                                                                            () {
-                                                                          loading =
-                                                                          true;
-                                                                        });
-                                                                  }
-                                                                  SharedPreferences
-                                                                  prefs =
-                                                                  await SharedPreferences
-                                                                      .getInstance();
-                                                                  String?
-                                                                  adminId =
-                                                                  prefs.getString(
-                                                                      "adminId");
-                                                                  if (adminId !=
-                                                                      null) {
-                                                                    try {
-                                                                      await StaffMemberRepository()
-                                                                          .addStaffMember(
-                                                                        adminId:
-                                                                        adminId,
-                                                                        staffmemberName:
-                                                                        name.text,
-                                                                        staffmemberDesignation:
-                                                                        designation.text,
-                                                                        staffmemberPhoneNumber:
-                                                                        phonenumber.text,
-                                                                        staffmemberEmail:
-                                                                        email.text,
-                                                                        staffmemberPassword:
-                                                                        password.text,
-                                                                      );
-                                                                      setState(
-                                                                              () {
-                                                                            loading =
-                                                                            false;
-                                                                          });
-                                                                      Navigator.of(
-                                                                          context)
-                                                                          .pop(
-                                                                          true);
-                                                                    } catch (e) {
-                                                                      setState(
-                                                                              () {
-                                                                            loading =
-                                                                            false;
-                                                                          });
-                                                                      // Handle error
-                                                                    }
-                                                                  }
-                                                                },
-                                                                child: Row(
-                                                                  children: [
+                                                              Row(
+                                                                children: [
+                                                                  if(MediaQuery.of(context).size.width > 500)
                                                                     SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.05),
-                                                                    ClipRRect(
+                                                                      width: MediaQuery.of(context).size.width *
+                                                                          0.013,
+                                                                    ),
+                                                                  if(MediaQuery.of(context).size.width < 500)
+                                                                    SizedBox(
+                                                                      width: MediaQuery.of(context).size.width *
+                                                                          0.035,
+                                                                    ),
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () async {
+                                                                      if (name.text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              nameerror =
+                                                                              true;
+                                                                              namemessage =
+                                                                              "name is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              nameerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (designation
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              designationerror =
+                                                                              true;
+                                                                              designationmessage =
+                                                                              "designation is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              designationerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (phonenumber
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              phonenumbererror =
+                                                                              true;
+                                                                              phonenumbermessage =
+                                                                              "number is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              phonenumbererror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (email.text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              emailerror =
+                                                                              true;
+                                                                              emailmessage =
+                                                                              "email is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              emailerror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (password
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              passworderror =
+                                                                              true;
+                                                                              passwordmessage =
+                                                                              "password is required";
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              passworderror =
+                                                                              false;
+                                                                            });
+                                                                      }
+                                                                      if (!nameerror &&
+                                                                          !designationerror &&
+                                                                          !phonenumbererror &&
+                                                                          !emailerror &&
+                                                                          !phonenumbererror) {
+                                                                        setState(
+                                                                                () {
+                                                                              loading =
+                                                                              true;
+                                                                            });
+                                                                      }
+                                                                      SharedPreferences
+                                                                      prefs =
+                                                                      await SharedPreferences
+                                                                          .getInstance();
+                                                                      String?
+                                                                      adminId =
+                                                                      prefs.getString(
+                                                                          "adminId");
+                                                                      if (adminId !=
+                                                                          null) {
+                                                                        try {
+                                                                          await StaffMemberRepository()
+                                                                              .addStaffMember(
+                                                                            adminId:
+                                                                            adminId,
+                                                                            staffmemberName:
+                                                                            name.text,
+                                                                            staffmemberDesignation:
+                                                                            designation.text,
+                                                                            staffmemberPhoneNumber:
+                                                                            phonenumber.text,
+                                                                            staffmemberEmail:
+                                                                            email.text,
+                                                                            staffmemberPassword:
+                                                                            password.text,
+                                                                          );
+                                                                          setState(
+                                                                                  () {
+                                                                                loading =
+                                                                                false;
+                                                                              });
+                                                                          Navigator.of(
+                                                                              context)
+                                                                              .pop(
+                                                                              true);
+                                                                        } catch (e) {
+                                                                          setState(
+                                                                                  () {
+                                                                                loading =
+                                                                                false;
+                                                                              });
+                                                                          // Handle error
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    child: ClipRRect(
                                                                       borderRadius:
                                                                       BorderRadius.circular(
                                                                           5.0),
@@ -8356,13 +8268,18 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Text(
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap:(){
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                    child: Text(
                                                                         "Cancel"),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -8384,10 +8301,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .023),
+                                                      MediaQuery.of(context).size.width < 500 ? 15 : 18),
                                                 ),
                                               ],
                                             ),
@@ -8421,10 +8335,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 'Select',
                                                 style: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .04,
+                                                  MediaQuery.of(context).size.width < 500 ? 15 : 18,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                               ),
@@ -9095,7 +9006,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           });
                           // print(selectedpropertytypedata!.propertyId);
                           print('hiii${widget.properties.propertyId}');
-
                           print('staff${widget.properties.staffMemberId}');
                           SharedPreferences prefs =
                           await SharedPreferences.getInstance();
@@ -9246,8 +9156,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             country: countyController.text,
                             postalCode: codeController.text,
                           );
+                          RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
 
-                          Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+                          String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist!;
+                          List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+                            return {
+                              'processor_id': processor.processorId ?? "",
+                            };
+                          }).toList();
+
+                          //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
 
                           Rentals properties = Rentals(
                             adminId: id,
@@ -9262,6 +9180,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               state: updatedOwner.state,
                               country: updatedOwner.country,
                               postalCode: updatedOwner.postalCode,
+                              processorList: processorIds
                             ),
                             rentalId: widget.rentalId,
                             propertyId: widget.properties.propertyId,
@@ -9271,6 +9190,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             rentalCountry: country.text,
                             rentalPostcode: postalcode.text,
                             staffMemberId: widget.properties.staffMemberId,
+                              processor_id:processorId
                           );
                           PropertiesRepository()
                               .updateRental1(properties)

@@ -28,13 +28,14 @@ import '../../../model/properties_workorders.dart';
 import '../../../model/unitsummery_propeties.dart';
 import '../../../model/workordr.dart';
 import '../../../provider/properties_workorders.dart';
-import '../../../repository/properties.dart';
-import '../../../repository/properties_summery.dart';
+import '../../repository/properties.dart';
+import '../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
+
 
 class Summery_page extends StatefulWidget {
   Rentals properties;
@@ -60,6 +61,7 @@ class _Summery_pageState extends State<Summery_page>
   unit_properties? unit;
   DateTime? startdate;
   DateTime? enddate;
+  int unitCount = 0;
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
   TextEditingController unitnum = TextEditingController();
@@ -158,10 +160,12 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   File? _image;
+  List<File> _images = [];
   String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest(
         'POST',
@@ -191,6 +195,7 @@ class _Summery_pageState extends State<Summery_page>
     if (image != null) {
       setState(() {
         _image = File(image.path);
+        _images.add(File(image.path));
       });
       _uploadImage(File(image.path));
     }
@@ -200,6 +205,7 @@ class _Summery_pageState extends State<Summery_page>
     try {
       String? fileName = await uploadImage(imageFile);
       setState(() {
+        _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
       });
     } catch (e) {
@@ -250,7 +256,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   final Properies_summery_Repo unitRepository = Properies_summery_Repo();
-  int unitCount = 0;
+  //int unitCount = 0;
   int tenentCount = 0;
   int count = 0;
   int complete_count = 0;
@@ -424,7 +430,7 @@ class _Summery_pageState extends State<Summery_page>
                         : Text("Work Order",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    SizedBox(width: 1),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -769,6 +775,12 @@ class _Summery_pageState extends State<Summery_page>
   bool ascending2multi = false;
   bool ascending3multi = false;
 
+
+  countupdateunit(int cnt){
+    setState(() {
+      unitCount = cnt;
+    });
+  }
   Widget _buildHeadersmulti() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -1279,12 +1291,8 @@ class _Summery_pageState extends State<Summery_page>
                 child: Row(
                   children: [
                     width < 400
-                        ? Text(" Contact Name",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white))
-                        : Text(" Contact Name",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white)),
+                        ? Text(" Contact\nName", textAlign: TextAlign.center,style: TextStyle(color: Colors.white,))
+                        : Text(" Contact\nName",textAlign: TextAlign.center, style: TextStyle(color: Colors.white,)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                   ],
@@ -1438,7 +1446,7 @@ class _Summery_pageState extends State<Summery_page>
         padding: const EdgeInsets.only(top: 20.0, left: 16, bottom: 15),
         child: InkWell(
             onTap: () {},
-            child: Text(text, style: const TextStyle(fontSize: 18))),
+            child: Text(text?.isNotEmpty == true ? text! : 'N/A', style: const TextStyle(fontSize: 18))),
       ),
     );
   }
@@ -1669,19 +1677,19 @@ class _Summery_pageState extends State<Summery_page>
                   text: 'Summary',
                 ),
                 Tab(
-                  text: 'Units($unitCount)',
+                  text: 'Units',
                 ),
                 StatefulBuilder(
                   builder: (BuildContext context,
                       void Function(void Function()) setState) {
-                    return Tab(text: 'Tenant($tenentCount)');
+                    return Tab(text: 'Tenant');
                   },
                 ),
                 StatefulBuilder(
                   builder: (BuildContext context,
                       void Function(void Function()) setState) {
                     return Tab(
-                        text: 'Work(${!isChecked ? count : complete_count})');
+                        text: 'Work');
                   },
                 ),
                 // Consumer<WorkOrderCountProvider>(
@@ -1845,21 +1853,20 @@ class _Summery_pageState extends State<Summery_page>
                               ],
                             ),
                             SizedBox(height: 5),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  '${widget.properties?.rentalAddress}',
+                                  maxLines: 2, // Set maximum number of lines
+                                  overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                    color: blueColor,
+                                  ),
                                 ),
-                                Text('${widget.properties.rentalAddress}',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(21, 43, 81, 1),
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 14
-                                              : 18,
-                                    )),
-                              ],
+                              ),
                             ),
                             SizedBox(height: 5),
                             Row(
@@ -2032,6 +2039,7 @@ class _Summery_pageState extends State<Summery_page>
             const SizedBox(
               height: 20,
             ),
+
             Row(
               children: [
                 if (MediaQuery.of(context).size.width > 500)
@@ -2255,21 +2263,17 @@ class _Summery_pageState extends State<Summery_page>
                       } else {
                         data = snapshot.data!
                             .where((rentals) =>
-                                rentals
-                                    .rentalOwnerData!.rentalOwnerCompanyName! ==
+                                rentals.rentalOwnerData!.rentalOwnerCompanyName! ==
                                 searchValuerent)
                             .toList();
                       }
-                      data = data
-                          .where(
-                              (e) => e.rentalId == widget.properties.rentalId)
-                          .toList();
-                      print(data.length);
+                      data = data.where((e)=>e.rentalId == widget.properties.rentalId).toList();
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
                           .toList();
+                      print("currentpage data ${currentPageData.length}");
                       return SingleChildScrollView(
                         child: Column(
                           children: [
@@ -2352,7 +2356,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   child: InkWell(
                                                     onTap: () {},
                                                     child: Text(
-                                                      '   ${rentals.rentalOwnerData?.rentalOwnerName} ',
+                                                      '   ${(rentals.rentalOwnerData?.rentalOwnerName??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerName} ',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -2370,7 +2374,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${rentals.rentalOwnerData?.rentalOwnerCompanyName}',
+                                                    '${(rentals.rentalOwnerData?.rentalOwnerCompanyName??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerCompanyName}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -2387,7 +2391,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
+                                                    '${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -2456,7 +2460,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
+                                                                        '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2489,7 +2493,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+                                                                        '${(rentals.rentalOwnerData?.rentalOwnerHomeNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2522,7 +2526,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
+                                                                        '${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2687,9 +2691,7 @@ class _Summery_pageState extends State<Summery_page>
                                   .contains(searchValuerent.toLowerCase()))
                           .toList();
                     }
-                    filteredData = filteredData!
-                        .where((e) => e.rentalId == widget.properties.rentalId)
-                        .toList();
+
                     _tableDatarent = filteredData!;
                     totalrecordsrent = _tableDatarent.length;
                     return Padding(
@@ -2898,7 +2900,8 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Tenants(BuildContext context) {
-    return LayoutBuilder(
+    return
+      LayoutBuilder(
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
 
@@ -2917,7 +2920,9 @@ class _Summery_pageState extends State<Summery_page>
               return Text('Error: ${snapshot.error}');
             } else {
               List<TenantData> tenants = snapshot.data ?? [];
-
+              if(snapshot.data!.length == 0){
+                return Center(child: Text("No Data Availabel"));
+              }
               return isTablet
                   ? SingleChildScrollView(
                       scrollDirection: Axis.vertical,
@@ -2937,7 +2942,7 @@ class _Summery_pageState extends State<Summery_page>
                               elevation: 3,
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
-                                height: 200,
+                                height: 220,
                                 width: MediaQuery.of(context).size.width * .44,
                                 decoration: BoxDecoration(
                                   color:
@@ -2961,19 +2966,22 @@ class _Summery_pageState extends State<Summery_page>
                           tenants.length,
                           (index) => Padding(
                             padding: const EdgeInsets.only(
-                                left: 20, right: 20, top: 20),
+                                left: 20, right: 20, top: 20,),
                             child: Material(
                               elevation: 3,
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
-                                height: 180,
+                                height: 205,
                                 //  width: MediaQuery.of(context).size.width * .44,
                                 decoration: BoxDecoration(
                                   color:
                                       Colors.white, // Change as per your need
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: buildTenantCard(tenants[index]),
+                                child: buildTenantCard(
+                                    tenants[index]
+
+                                ),
                               ),
                             ),
                           ),
@@ -2986,864 +2994,7 @@ class _Summery_pageState extends State<Summery_page>
       },
     );
 
-    //   FutureBuilder<List<TenantData>>(
-    //   future: Properies_summery_Repo()
-    //       .fetchPropertiessummery(widget.properties.rentalId!),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return const Center(
-    //         child: Center(
-    //             child: SpinKitFadingCircle(
-    //           color: Colors.black,
-    //           size: 40.0,
-    //         )),
-    //       );
-    //     } else if (snapshot.hasError) {
-    //       return Text('Error: ${snapshot.error}');
-    //     } else {
-    //       List<TenantData> tenants = snapshot.data ?? [];
-    //       print(snapshot.data!.length);
-    //       //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
-    //       return
-    //         ListView.builder(
-    //         padding: const EdgeInsets.symmetric(vertical: 5),
-    //         itemCount: tenants.length,
-    //         itemBuilder: (context, index) {
-    //           // String fullName = '${tenants[index].leaseTenantData} ${tenants[index].tenantLastName}';
-    //           return Padding(
-    //             padding: const EdgeInsets.all(8.0),
-    //             child: Container(
-    //               height: 165,
-    //               width: MediaQuery.of(context).size.width * .9,
-    //               margin: const EdgeInsets.symmetric(horizontal: 10),
-    //               decoration: BoxDecoration(
-    //                 borderRadius: BorderRadius.circular(5),
-    //                 border: Border.all(
-    //                   color: const Color.fromRGBO(21, 43, 81, 1),
-    //                 ),
-    //               ),
-    //               child: Column(
-    //                 children: [
-    //                   const SizedBox(
-    //                     height: 10,
-    //                   ),
-    //                   Row(
-    //                     children: [
-    //                       const SizedBox(
-    //                         width: 15,
-    //                       ),
-    //                       Container(
-    //                         height: 30,
-    //                         width: 30,
-    //                         // width: MediaQuery.of(context).size.width * .4,
-    //                         decoration: BoxDecoration(
-    //                           color: const Color.fromRGBO(21, 43, 81, 1),
-    //                           border: Border.all(
-    //                               color: const Color.fromRGBO(21, 43, 81, 1)),
-    //                           // color: Colors.blue,
-    //                           borderRadius: BorderRadius.circular(5),
-    //                         ),
-    //                         child: const Center(
-    //                           child: FaIcon(
-    //                             FontAwesomeIcons.user,
-    //                             size: 16,
-    //                             color: Colors.white,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                       const SizedBox(
-    //                         width: 20,
-    //                       ),
-    //                       Column(
-    //                         mainAxisAlignment: MainAxisAlignment.start,
-    //                         crossAxisAlignment: CrossAxisAlignment.start,
-    //                         children: [
-    //                           const SizedBox(
-    //                             height: 4,
-    //                           ),
-    //                           Row(
-    //                             children: [
-    //                               const SizedBox(
-    //                                 width: 2,
-    //                               ),
-    //                               Text(
-    //                                 // ('Tenant: ${rentalSummary.leaseTenantData[0].tenantData.tenantFirstName} ${rentalSummary.leaseTenantData[0].tenantData.tenantLastName}')
-    //                                 //  '${tenants[index].leaseTenantData![0].tenantData?.tenantFirstName} ${tenants[index].leaseTenantData![0].tenantData?.
-    //                                 //  tenantLastName}'
-    //                                 '${tenants[index].firstName} ${tenants[index].lastName}',
-    //                                 style: const TextStyle(
-    //                                   fontSize: 14,
-    //                                   fontWeight: FontWeight.bold,
-    //                                   color: Color.fromRGBO(21, 43, 81, 1),
-    //                                 ),
-    //                               ),
-    //                             ],
-    //                           ),
-    //                           const SizedBox(
-    //                             height: 6,
-    //                           ),
-    //                           Row(
-    //                             children: [
-    //                               const SizedBox(
-    //                                 width: 2,
-    //                               ),
-    //                               Text(
-    //                                 formatDate2(tenants[index].updatedAt!),
-    //                                 // '${widget.properties.rentalAddress}',
-    //                                 style: const TextStyle(
-    //                                   fontSize: 11,
-    //                                   color: Color(0xFF8A95A8),
-    //                                 ),
-    //                               ),
-    //                             ],
-    //                           ),
-    //                         ],
-    //                       ),
-    //                       const Spacer(),
-    //                       InkWell(
-    //                         onTap: () {
-    //                           showDialog(
-    //                             context: context,
-    //                             builder: (BuildContext context) {
-    //                               bool isChecked =
-    //                                   false; // Moved isChecked inside the StatefulBuilder
-    //                               return StatefulBuilder(
-    //                                 builder: (BuildContext context,
-    //                                     StateSetter setState) {
-    //                                   return AlertDialog(
-    //                                     backgroundColor: Colors.white,
-    //                                     surfaceTintColor: Colors.white,
-    //                                     content: SingleChildScrollView(
-    //                                       child: Column(
-    //                                         children: [
-    //                                           const Row(
-    //                                             children: [
-    //                                               SizedBox(
-    //                                                 width: 0,
-    //                                               ),
-    //                                               Text(
-    //                                                 "Move out Tenants",
-    //                                                 style: TextStyle(
-    //                                                     fontWeight:
-    //                                                         FontWeight.bold,
-    //                                                     color: Color.fromRGBO(
-    //                                                         21, 43, 81, 1),
-    //                                                     fontSize: 15),
-    //                                               ),
-    //                                             ],
-    //                                           ),
-    //                                           const SizedBox(
-    //                                             height: 10,
-    //                                           ),
-    //                                           const Row(
-    //                                             children: [
-    //                                               SizedBox(
-    //                                                 width: 0,
-    //                                               ),
-    //                                               Expanded(
-    //                                                 child: Text(
-    //                                                   "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
-    //                                                   style: TextStyle(
-    //                                                     fontWeight:
-    //                                                         FontWeight.w500,
-    //                                                     fontSize: 13,
-    //                                                     color:
-    //                                                         Color(0xFF8A95A8),
-    //                                                   ),
-    //                                                 ),
-    //                                               ),
-    //                                               SizedBox(
-    //                                                 width: 0,
-    //                                               ),
-    //                                             ],
-    //                                           ),
-    //                                           const SizedBox(
-    //                                             height: 15,
-    //                                           ),
-    //                                           Material(
-    //                                             elevation: 3,
-    //                                             borderRadius:
-    //                                                 BorderRadius.circular(10),
-    //                                             child: Container(
-    //                                               // height: 280,
-    //                                               width: MediaQuery.of(context)
-    //                                                       .size
-    //                                                       .width *
-    //                                                   .65,
-    //                                               decoration: BoxDecoration(
-    //                                                 border: Border.all(
-    //                                                     color: const Color.fromRGBO(
-    //                                                         21, 43, 81, 1)),
-    //                                                 // color: Colors.blue,
-    //                                                 borderRadius:
-    //                                                     BorderRadius.circular(
-    //                                                         5),
-    //                                               ),
-    //                                               child: Column(
-    //                                                 children: [
-    //                                                   const SizedBox(
-    //                                                     height: 10,
-    //                                                   ),
-    //                                                   Padding(
-    //                                                     padding:
-    //                                                         const EdgeInsets
-    //                                                             .only(
-    //                                                             left: 5,
-    //                                                             right: 5),
-    //                                                     child: Table(
-    //                                                       border:
-    //                                                           TableBorder.all(
-    //                                                               color: const Color
-    //                                                                   .fromRGBO(
-    //                                                                       21,
-    //                                                                       43,
-    //                                                                       81,
-    //                                                                       1)),
-    //                                                       children: [
-    //                                                         const TableRow(children: [
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 'Address/Unit',
-    //                                                                 style: TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .bold,
-    //                                                                     fontSize:
-    //                                                                         13),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 'Lease Type',
-    //                                                                 style: TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .bold,
-    //                                                                     fontSize:
-    //                                                                         13),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 'Start End',
-    //                                                                 style: TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .bold,
-    //                                                                     fontSize:
-    //                                                                         13),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                         ]),
-    //                                                         TableRow(children: [
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   const EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 '${widget.properties.rentalAddress}',
-    //                                                                 style: const TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .w500,
-    //                                                                     fontSize:
-    //                                                                         12),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   const EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 ' ${tenants[index].leaseType}',
-    //                                                                 style: const TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .w500,
-    //                                                                     fontSize:
-    //                                                                         12),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   const EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 ' ${tenants[index].createdAt} ${tenants[index].updatedAt}',
-    //                                                                 style: const TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .w500,
-    //                                                                     fontSize:
-    //                                                                         12),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                         ])
-    //                                                       ],
-    //                                                     ),
-    //                                                   ),
-    //                                                   const SizedBox(
-    //                                                     height: 10,
-    //                                                   ),
-    //                                                   Padding(
-    //                                                     padding:
-    //                                                         const EdgeInsets
-    //                                                             .only(
-    //                                                             left: 5,
-    //                                                             right: 5),
-    //                                                     child: Table(
-    //                                                       border:
-    //                                                           TableBorder.all(
-    //                                                               color: const Color
-    //                                                                   .fromRGBO(
-    //                                                                       21,
-    //                                                                       43,
-    //                                                                       81,
-    //                                                                       1)),
-    //                                                       children: [
-    //                                                         const TableRow(children: [
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 'Tenants',
-    //                                                                 style: TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .bold,
-    //                                                                     fontSize:
-    //                                                                         13),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 'Notice Given Date',
-    //                                                                 style: TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .bold,
-    //                                                                     fontSize:
-    //                                                                         13),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 'Move-Out Date',
-    //                                                                 style: TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .bold,
-    //                                                                     fontSize:
-    //                                                                         13),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                         ]),
-    //                                                         TableRow(children: [
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   const EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Text(
-    //                                                                 ' ${tenants[index].firstName} ${tenants[index].lastName}',
-    //                                                                 style: const TextStyle(
-    //                                                                     color: Color.fromRGBO(
-    //                                                                         21,
-    //                                                                         43,
-    //                                                                         81,
-    //                                                                         1),
-    //                                                                     fontWeight:
-    //                                                                         FontWeight
-    //                                                                             .w500,
-    //                                                                     fontSize:
-    //                                                                         12),
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   const EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Row(
-    //                                                                 children: [
-    //                                                                   const SizedBox(
-    //                                                                       width:
-    //                                                                           2),
-    //                                                                   Expanded(
-    //                                                                     child:
-    //                                                                         Material(
-    //                                                                       elevation:
-    //                                                                           4,
-    //                                                                       child:
-    //                                                                           Container(
-    //                                                                         height:
-    //                                                                             50,
-    //                                                                         width:
-    //                                                                             MediaQuery.of(context).size.width * .4,
-    //                                                                         decoration:
-    //                                                                             BoxDecoration(
-    //                                                                           borderRadius: BorderRadius.circular(2),
-    //                                                                           border: Border.all(
-    //                                                                             color: const Color(0xFF8A95A8),
-    //                                                                           ),
-    //                                                                         ),
-    //                                                                         child:
-    //                                                                             Stack(
-    //                                                                           children: [
-    //                                                                             Positioned.fill(
-    //                                                                               child: TextField(
-    //                                                                                 onChanged: (value) {
-    //                                                                                   setState(() {
-    //                                                                                     // startdatederror = false;
-    //                                                                                     // _selectDate(context);
-    //                                                                                   });
-    //                                                                                 },
-    //                                                                                 controller: startdateController,
-    //                                                                                 cursorColor: const Color.fromRGBO(21, 43, 81, 1),
-    //                                                                                 decoration: InputDecoration(
-    //                                                                                   hintText: "mm/dd/yyyy",
-    //                                                                                   hintStyle: TextStyle(
-    //                                                                                     fontSize: MediaQuery.of(context).size.width * .037,
-    //                                                                                     color: const Color(0xFF8A95A8),
-    //                                                                                   ),
-    //                                                                                   // enabledBorder: startdatederror
-    //                                                                                   //     ? OutlineInputBorder(
-    //                                                                                   //   borderRadius:
-    //                                                                                   //   BorderRadius.circular(3),
-    //                                                                                   //   borderSide: BorderSide(
-    //                                                                                   //     color: Colors.red,
-    //                                                                                   //   ),
-    //                                                                                   // )
-    //                                                                                   //     : InputBorder.none,
-    //                                                                                   border: InputBorder.none,
-    //                                                                                   contentPadding: const EdgeInsets.all(12),
-    //                                                                                   suffixIcon: IconButton(
-    //                                                                                     icon: const Icon(Icons.calendar_today),
-    //                                                                                     onPressed: () => _startDate(context),
-    //                                                                                   ),
-    //                                                                                 ),
-    //                                                                                 readOnly: true,
-    //                                                                                 onTap: () {
-    //                                                                                   _startDate(context);
-    //                                                                                   setState(() {
-    //                                                                                     //startdatederror = false;
-    //                                                                                   });
-    //                                                                                 },
-    //                                                                               ),
-    //                                                                             ),
-    //                                                                           ],
-    //                                                                         ),
-    //                                                                       ),
-    //                                                                     ),
-    //                                                                   ),
-    //                                                                   const SizedBox(
-    //                                                                       width:
-    //                                                                           2),
-    //                                                                 ],
-    //                                                               ),
-    //                                                               // Text(
-    //                                                               //   '${widget.properties.staffMemberData!.staffmemberName}',
-    //                                                               //   style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1),fontWeight: FontWeight.w500,fontSize: 12),
-    //                                                               // ),
-    //                                                             ),
-    //                                                           ),
-    //                                                           TableCell(
-    //                                                             child: Padding(
-    //                                                               padding:
-    //                                                                   const EdgeInsets
-    //                                                                       .all(
-    //                                                                       8.0),
-    //                                                               child: Row(
-    //                                                                 children: [
-    //                                                                   const SizedBox(
-    //                                                                       width:
-    //                                                                           2),
-    //                                                                   Expanded(
-    //                                                                     child:
-    //                                                                         Material(
-    //                                                                       elevation:
-    //                                                                           4,
-    //                                                                       child:
-    //                                                                           Container(
-    //                                                                         height:
-    //                                                                             50,
-    //                                                                         //width: MediaQuery.of(context).size.width * .6,
-    //                                                                         decoration:
-    //                                                                             BoxDecoration(
-    //                                                                           borderRadius: BorderRadius.circular(2),
-    //                                                                           border: Border.all(
-    //                                                                             color: const Color(0xFF8A95A8),
-    //                                                                           ),
-    //                                                                         ),
-    //                                                                         child:
-    //                                                                             Stack(
-    //                                                                           children: [
-    //                                                                             Positioned.fill(
-    //                                                                               child: TextField(
-    //                                                                                 onChanged: (value) {
-    //                                                                                   setState(() {
-    //                                                                                     // startdatederror = false;
-    //                                                                                     // _selectDate(context);
-    //                                                                                   });
-    //                                                                                 },
-    //                                                                                 controller: enddateController,
-    //                                                                                 cursorColor: const Color.fromRGBO(21, 43, 81, 1),
-    //                                                                                 decoration: InputDecoration(
-    //                                                                                   hintText: "mm/dd/yyyy",
-    //                                                                                   hintStyle: TextStyle(
-    //                                                                                     fontSize: MediaQuery.of(context).size.width * .037,
-    //                                                                                     color: const Color(0xFF8A95A8),
-    //                                                                                   ),
-    //                                                                                   // enabledBorder: startdatederror
-    //                                                                                   //     ? OutlineInputBorder(
-    //                                                                                   //   borderRadius:
-    //                                                                                   //   BorderRadius.circular(3),
-    //                                                                                   //   borderSide: BorderSide(
-    //                                                                                   //     color: Colors.red,
-    //                                                                                   //   ),
-    //                                                                                   // )
-    //                                                                                   //     : InputBorder.none,
-    //                                                                                   border: InputBorder.none,
-    //                                                                                   contentPadding: const EdgeInsets.all(12),
-    //                                                                                   suffixIcon: IconButton(
-    //                                                                                     icon: const Icon(Icons.calendar_today),
-    //                                                                                     onPressed: () => _endDate(context),
-    //                                                                                   ),
-    //                                                                                 ),
-    //                                                                                 readOnly: true,
-    //                                                                                 onTap: () {
-    //                                                                                   _endDate(context);
-    //                                                                                   setState(() {
-    //                                                                                     //startdatederror = false;
-    //                                                                                   });
-    //                                                                                 },
-    //                                                                               ),
-    //                                                                             ),
-    //                                                                           ],
-    //                                                                         ),
-    //                                                                       ),
-    //                                                                     ),
-    //                                                                   ),
-    //                                                                   const SizedBox(
-    //                                                                       width:
-    //                                                                           2),
-    //                                                                 ],
-    //                                                               ),
-    //                                                             ),
-    //                                                           ),
-    //                                                         ])
-    //                                                       ],
-    //                                                     ),
-    //                                                   ),
-    //                                                   const SizedBox(
-    //                                                     height: 10,
-    //                                                   ),
-    //                                                 ],
-    //                                               ),
-    //                                             ),
-    //                                           ),
-    //                                           const SizedBox(
-    //                                             height: 20,
-    //                                           ),
-    //                                           Row(
-    //                                             mainAxisAlignment:
-    //                                                 MainAxisAlignment.end,
-    //                                             crossAxisAlignment:
-    //                                                 CrossAxisAlignment.end,
-    //                                             children: [
-    //                                               GestureDetector(
-    //                                                 onTap: () {
-    //                                                   Navigator.pop(context);
-    //                                                 },
-    //                                                 child: Material(
-    //                                                   elevation: 3,
-    //                                                   borderRadius:
-    //                                                       const BorderRadius.all(
-    //                                                     Radius.circular(5),
-    //                                                   ),
-    //                                                   child: Container(
-    //                                                     height: 30,
-    //                                                     width: 60,
-    //                                                     decoration:
-    //                                                         const BoxDecoration(
-    //                                                       color: Colors.white,
-    //                                                       borderRadius:
-    //                                                           BorderRadius.all(
-    //                                                         Radius.circular(5),
-    //                                                       ),
-    //                                                     ),
-    //                                                     child: const Center(
-    //                                                         child: Text(
-    //                                                       "Close",
-    //                                                       style: TextStyle(
-    //                                                           fontWeight:
-    //                                                               FontWeight
-    //                                                                   .w500,
-    //                                                           color: Color
-    //                                                               .fromRGBO(
-    //                                                                   21,
-    //                                                                   43,
-    //                                                                   81,
-    //                                                                   1)),
-    //                                                     )),
-    //                                                   ),
-    //                                                 ),
-    //                                               ),
-    //                                               const SizedBox(
-    //                                                 width: 10,
-    //                                               ),
-    //                                               Material(
-    //                                                 elevation: 3,
-    //                                                 borderRadius:
-    //                                                     const BorderRadius.all(
-    //                                                   Radius.circular(5),
-    //                                                 ),
-    //                                                 child: Container(
-    //                                                   height: 30,
-    //                                                   width: 80,
-    //                                                   decoration: const BoxDecoration(
-    //                                                     color: Color.fromRGBO(
-    //                                                         21, 43, 81, 1),
-    //                                                     borderRadius:
-    //                                                         BorderRadius.all(
-    //                                                       Radius.circular(5),
-    //                                                     ),
-    //                                                   ),
-    //                                                   child: const Center(
-    //                                                       child: Text(
-    //                                                     "Move Out",
-    //                                                     style: TextStyle(
-    //                                                         fontWeight:
-    //                                                             FontWeight.bold,
-    //                                                         color: Colors.white,
-    //                                                         fontSize: 13),
-    //                                                   )),
-    //                                                 ),
-    //                                               ),
-    //                                             ],
-    //                                           ),
-    //                                           const SizedBox(
-    //                                             height: 15,
-    //                                           ),
-    //                                         ],
-    //                                       ),
-    //                                     ),
-    //                                   );
-    //                                 },
-    //                               );
-    //                             },
-    //                           );
-    //                         },
-    //                         child: const Row(
-    //                           children: [
-    //                             FaIcon(
-    //                               FontAwesomeIcons.rightFromBracket,
-    //                               size: 17,
-    //                               color: Color.fromRGBO(21, 43, 81, 1),
-    //                             ),
-    //                             SizedBox(
-    //                               width: 5,
-    //                             ),
-    //                             Text(
-    //                               "Move out",
-    //                               style: TextStyle(
-    //                                 fontSize: 11,
-    //                                 fontWeight: FontWeight.w500,
-    //                                 color: Color.fromRGBO(21, 43, 81, 1),
-    //                               ),
-    //                             ),
-    //                           ],
-    //                         ),
-    //                       ),
-    //                       const SizedBox(
-    //                         width: 15,
-    //                       ),
-    //                     ],
-    //                   ),
-    //                   const SizedBox(
-    //                     height: 15,
-    //                   ),
-    //                   Row(
-    //                     children: [
-    //                       const SizedBox(
-    //                         width: 65,
-    //                       ),
-    //                       Text(
-    //                         '${tenants[index].createdAt}  to',
-    //                         style: const TextStyle(
-    //                             fontSize: 12,
-    //                             color: Color.fromRGBO(21, 43, 81, 1),
-    //                             fontWeight: FontWeight.w500),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                   Row(
-    //                     children: [
-    //                       const SizedBox(
-    //                         width: 65,
-    //                       ),
-    //                       Text(
-    //                         // '${tenants[index].updatedAt}',
-    //                         '${tenants[index].updatedAt}',
-    //                         style: const TextStyle(
-    //                             fontSize: 12,
-    //                             color: Color.fromRGBO(21, 43, 81, 1),
-    //                             fontWeight: FontWeight.w500),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                   const SizedBox(
-    //                     height: 10,
-    //                   ),
-    //                   Row(
-    //                     children: [
-    //                       const SizedBox(
-    //                         width: 65,
-    //                       ),
-    //                       const FaIcon(
-    //                         FontAwesomeIcons.phone,
-    //                         size: 15,
-    //                         color: Color.fromRGBO(21, 43, 81, 1),
-    //                       ),
-    //                       const SizedBox(
-    //                         width: 5,
-    //                       ),
-    //                       Text(
-    //                         '${tenants[index].phoneNumber}',
-    //                         style: const TextStyle(
-    //                             fontSize: 12,
-    //                             color: Color.fromRGBO(21, 43, 81, 1),
-    //                             fontWeight: FontWeight.w500),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                   const SizedBox(
-    //                     height: 10,
-    //                   ),
-    //                   Row(
-    //                     // mainAxisAlignment: MainAxisAlignment.center,
-    //                     // crossAxisAlignment: CrossAxisAlignment.center,
-    //                     children: [
-    //                       const SizedBox(
-    //                         width: 65,
-    //                       ),
-    //                       const FaIcon(
-    //                         FontAwesomeIcons.solidEnvelope,
-    //                         size: 15,
-    //                         color: Color.fromRGBO(21, 43, 81, 1),
-    //                       ),
-    //                       const SizedBox(
-    //                         width: 5,
-    //                       ),
-    //                       Text(
-    //                         '${tenants[index].email}',
-    //                         style: const TextStyle(
-    //                             fontSize: 12,
-    //                             color: Color.fromRGBO(21, 43, 81, 1),
-    //                             fontWeight: FontWeight.w500),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //           );
-    //         },
-    //       );
-    //     }
-    //   },
-    // );
+
   }
 
   Widget buildTenantCard(TenantData tenant) {
@@ -3996,6 +3147,7 @@ class _Summery_pageState extends State<Summery_page>
             ),
           ],
         ),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -7961,19 +7113,33 @@ class _Summery_pageState extends State<Summery_page>
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        _image != null
-                                            ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : Text(''),
+                                        _images.isNotEmpty
+                                            ? Wrap(
+                                          spacing: 8.0, // Horizontal spacing between items
+                                          runSpacing: 8.0, // Vertical spacing between rows
+                                          children: List.generate(
+                                            _images.length,
+                                                (index) {
+                                              return SizedBox(
+                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
+                                                child: Row(
+                                                  children: [
+                                                    Image.file(
+                                                      _images[index],
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                            : Center(
+                                          child: Text("No images selected."),
+                                        ),
                                         SizedBox(height: 8.0),
                                         Row(
                                           children: [
@@ -8011,10 +7177,10 @@ class _Summery_pageState extends State<Summery_page>
                                                     rentalsqft: sqft3.text,
                                                     rentalbath: bath3.text,
                                                     rentalbed: bed3.text,
+                                                    rentalImages: _uploadedFileNames!
                                                   )
                                                       .then((value) {
                                                     setState(() {
-                                                      print(value);
                                                       futureUnitsummery =
                                                           Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
                                                       isLoading = false;
@@ -8030,8 +7196,10 @@ class _Summery_pageState extends State<Summery_page>
                                                         rentalsqft: sqft3.text,
                                                         rentalbath: bath3.text,
                                                         rentalbed: bed3.text,
+
                                                       ));
                                                     });
+                                                    reload_Screen();
                                                     Navigator.pop(
                                                         context, true);
                                                   }).catchError((e) {
@@ -8362,19 +7530,33 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         ),
                                         SizedBox(height: 8.0),
-                                        _image != null
-                                            ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : Text(''),
+                                        _images.isNotEmpty
+                                            ? Wrap(
+                                          spacing: 8.0, // Horizontal spacing between items
+                                          runSpacing: 8.0, // Vertical spacing between rows
+                                          children: List.generate(
+                                            _images.length,
+                                                (index) {
+                                              return SizedBox(
+                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
+                                                child: Row(
+                                                  children: [
+                                                    Image.file(
+                                                      _images[index],
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                            : Center(
+                                          child: Text("No images selected."),
+                                        ),
                                         SizedBox(height: 8.0),
                                         Row(
                                           children: [
@@ -8390,7 +7572,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     iserror = true;
                                                   });
                                                 } else {
-                                                  print("unit callinggg");
+                                                  print("unit calling");
                                                   setState(() {
                                                     isLoading = true;
                                                     iserror = false;
@@ -8409,9 +7591,10 @@ class _Summery_pageState extends State<Summery_page>
                                                         street3.text,
                                                     rentalsqft: sqft3.text,
                                                     rentalunit: unitnum.text,
+                                                    rentalImages: _uploadedFileNames!
                                                   )
                                                       .then((value) {
-                                                        print("valuess..........$value");
+                                                        print("valuesss....${value}");
                                                     setState(() {
 
                                                       isLoading = false;
@@ -8427,16 +7610,18 @@ class _Summery_pageState extends State<Summery_page>
                                                             unitnum.text,
                                                       ));
                                                     });
-
-                                                    Navigator.of(context).pop();
+                                                    reload_Screen();
+                                                    Navigator.pop(
+                                                        context, true);
                                                   }).catchError((e) {
                                                     setState(() {
                                                       isLoading = false;
                                                     });
                                                   });
                                                 }
-                                                futureUnitsummery =
-                                                    Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+                                                print("calling.............");
+
+
                                               },
                                               child: Material(
                                                 elevation: 3,
@@ -8568,6 +7753,7 @@ class _Summery_pageState extends State<Summery_page>
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(child: Text('No data available'));
                       } else {
+                        print("data update...");
                         var data = snapshot.data!;
                         if (selectedValue == null && searchvalue!.isEmpty) {
                           data = snapshot.data!;
@@ -8590,6 +7776,7 @@ class _Summery_pageState extends State<Summery_page>
                           //       .toList();
                         }
                         // sortData(data);
+                        //countupdateunit(data.length);
                         final totalPages =
                             (data.length / itemsPerPagemulti).ceil();
                         final currentPageData = data
@@ -9722,6 +8909,7 @@ class _Summery_pageState extends State<Summery_page>
                           .toList();
                     }
                     totalrecordsmulti = _tableDatamulti.length;
+
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -10762,10 +9950,15 @@ class _Summery_pageState extends State<Summery_page>
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image(
                             image: NetworkImage(
+                                unit.rentalImages != null ? unit.rentalImages!.length >0 ? "$image_url${unit.rentalImages!.first}" : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU' :
+
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
                             fit: BoxFit.cover,
                             height: MediaQuery.of(context).size.width < 500
-                                ? 150
+                                ? 140
+                                : 220,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? 160
                                 : 220,
                           ),
                         ),
@@ -10774,6 +9967,19 @@ class _Summery_pageState extends State<Summery_page>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16),
+                            child: Text(
+                              '${unit!.rentalunit}',
+                              style: TextStyle(
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20,
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
@@ -10790,16 +9996,19 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             height: 5,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16),
-                            child: Text(
-                              '${widget.properties?.rentalAddress}',
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Text(
+                                '${widget.properties?.rentalAddress}',
+                                maxLines: 2, // Set maximum number of lines
+                                overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -10808,7 +10017,9 @@ class _Summery_pageState extends State<Summery_page>
                           Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
+                              maxLines: 2,
                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width < 500
@@ -11221,10 +10432,10 @@ class _Summery_pageState extends State<Summery_page>
                 ),
                 Spacer(),
                 GestureDetector(
-                  onTap: () async {
-                    /* final result =
+                 /* onTap: () async {
+                    final result =
                         await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddWorkorder(
+                            builder: (context) => ResponsiveAddWorkOrder(
                                   rentalid: widget.properties.rentalId,
                                 )));
                     if (result == true) {
@@ -11232,8 +10443,8 @@ class _Summery_pageState extends State<Summery_page>
                         futureworkordersummery = Properies_summery_Repo()
                             .fetchWorkOrders(widget.properties.rentalId!);
                       });
-                    }*/
-                  },
+                    }
+                  },*/
                   child: Container(
                     height: (MediaQuery.of(context).size.width < 500)
                         ? 40
@@ -11241,7 +10452,7 @@ class _Summery_pageState extends State<Summery_page>
 
                     // height:  MediaQuery.of(context).size.width * 0.07,
                     // height:  40,
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width: MediaQuery.of(context).size.width * 0.29,
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(21, 43, 81, 1),
                       borderRadius: BorderRadius.circular(5),
@@ -11436,8 +10647,6 @@ class _Summery_pageState extends State<Summery_page>
                       color: Colors.black,
                       size: 40.0,
                     ));
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: Text('No data available'));
                   } else {
@@ -12091,7 +11300,10 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   reload_Screen() {
-    setState(() {});
+    setState(() {
+      futureUnitsummery =
+          Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+    });
   }
 }
 
@@ -13259,7 +12471,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
   }
 
   reload_screen() {
-    setState(() {});
+    setState(() {
+      futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+    });
   }
 
   DateTime? _selectedDate;

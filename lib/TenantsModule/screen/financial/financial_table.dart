@@ -1,4 +1,4 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -100,7 +100,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ),*/
 
             Expanded(
-              flex: 4,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -125,9 +125,9 @@ class _FinancialTableState extends State<FinancialTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("           Account",
+                        ? Text("         Account",
                         style: TextStyle(color: Colors.white))
-                        : Text("         Account",
+                        : Text("       Account",
                         style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
@@ -177,7 +177,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("  Type", style: TextStyle(color: Colors.white)),
+                    Text("    Type", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -226,7 +226,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("    Date", style: TextStyle(color: Colors.white)),
+                    Text("      Date", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -1026,7 +1026,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 4,
+                                                  flex: 3,
                                                   child: InkWell(
                                                     onTap: (){
                                                       // Navigator.of(context)
@@ -1074,7 +1074,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   flex: 2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    '${Tenant_financial.entry?.first.date}' ,
+                                                    '${formatDate4(Tenant_financial.entry!.first.date!)}' ,
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
 
 import '../../constant/constant.dart';
-import '../model/add_property.dart';
+import '../../model/add_property.dart';
 
 class Rental_PropertiesRepository{
 

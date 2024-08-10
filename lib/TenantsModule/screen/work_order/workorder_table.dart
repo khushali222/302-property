@@ -442,12 +442,18 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   //     ),
   //   );
   // }
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text,WorkOrder workorder) {
     return TableCell(
-      child: Container(
-        height: 60,
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
+      child: InkWell(
+        onTap: (){
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+        },
+        child: Container(
+          height: 60,
+          padding: const EdgeInsets.only(top: 20.0, left: 16),
+          child: Text(text, style: const TextStyle(fontSize: 18)),
+        ),
       ),
     );
   }
@@ -1506,31 +1512,31 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                       children: [
 
                                         _buildDataCell(_pagedData[i]
-                                            .workSubject!),
+                                            .workSubject!,_pagedData[i]),
 
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .rentalAddress!,
+                                              .rentalAddress!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .workCategory!,
+                                              .workCategory!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .staffMemberName!,
+                                              .staffMemberName!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .status!,
+                                              .status!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .createdAt!,
+                                              .createdAt!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .updatedAt!,
+                                              .updatedAt!,_pagedData[i]
                                         ),
 
                                       ],

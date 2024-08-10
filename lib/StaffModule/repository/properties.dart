@@ -227,7 +227,7 @@ class PropertiesRepository {
 
   Future<Map<String, dynamic>> DeleteProperties({
     required String? pro_id,
-
+    // required String? companyName,
   }) async {
 
     // print('$apiUrl/$id');
@@ -235,14 +235,27 @@ class PropertiesRepository {
     String?  id = prefs.getString('staff_id');
     String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? companyName = prefs.getString('companyName');
+    print('company name $companyName');
+   // print(adminid);
     final http.Response response = await http.delete(
-      Uri.parse('${Api_url}/api/rentals/rental/$pro_id'),
+      Uri.parse('${Api_url}/api/rentals/rental/$pro_id').replace(queryParameters: {
+        'company_name': companyName,
+      }),
       headers: <String, String>{
         "authorization" : "CRM $token",
         "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+      // body: jsonEncode(<String, String>{
+      //   'company_name': companyName??"",
+      // }),
     );
+    print( Uri.parse('${Api_url}/api/rentals/rental/$pro_id').replace(queryParameters: {
+      'company_name': companyName,
+    }));
+    print('delete ${Api_url}/api/rentals/rental/$id');
+
     var responseData = json.decode(response.body);
     print(response.body);
     if (responseData["statusCode"] == 200) {
@@ -251,7 +264,7 @@ class PropertiesRepository {
 
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add property type');
+      throw Exception('Failed to delete property type');
     }
   }
 
