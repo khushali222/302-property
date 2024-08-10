@@ -3273,348 +3273,742 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         ? EditApplicantSummary(
                                             applicantId: widget.applicant_id,
                                           )
-                                        : Column(
-                                            crossAxisAlignment:
+                                        : LayoutBuilder(
+                                          builder: (context,contraints) {
+                                            if(contraints.maxWidth > 500){
+                                              return Column(
+                                                crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding:
+                                                children: [
+                                                  Padding(
+                                                    padding:
                                                     const EdgeInsets.all(0.0),
-                                                child: Material(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
+                                                    child: Material(
                                                       borderRadius:
+                                                      BorderRadius.circular(10),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
                                                           BorderRadius.circular(
                                                               10),
-                                                      border: Border.all(
-                                                          color: const Color
-                                                              .fromRGBO(
-                                                              21, 43, 81, 1)),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
+                                                          border: Border.all(
+                                                              color: const Color
+                                                                  .fromRGBO(
+                                                                  21, 43, 81, 1)),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
                                                           const EdgeInsets.only(
                                                               left: 16,
                                                               right: 16,
                                                               top: 16,
                                                               bottom: 16),
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
                                                                 MainAxisAlignment
                                                                     .spaceBetween,
-                                                            children: [
-                                                              Flexible(
-                                                                flex: 3,
-                                                                child:
+                                                                children: [
+                                                                  Flexible(
+                                                                    flex: 3,
+                                                                    child:
                                                                     Container(
-                                                                  child: Text(
-                                                                    "Applicant Information",
-                                                                    style: TextStyle(
-                                                                        color: const Color
-                                                                            .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
-                                                                        fontWeight:
+                                                                      child: Text(
+                                                                        "Applicant Information",
+                                                                        style: TextStyle(
+                                                                            color: const Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                81,
+                                                                                1),
+                                                                            fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        fontSize:
+                                                                            fontSize:
                                                                             MediaQuery.of(context).size.width *
-                                                                                .045),
+                                                                                .03),
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                child:
+                                                                  Flexible(
+                                                                    child:
                                                                     ElevatedButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    print(
-                                                                        'full edit');
-                                                                    setState(
-                                                                        () {
-                                                                      showEditForm =
-                                                                          true;
-                                                                    });
-                                                                  },
-                                                                  child: Text(
-                                                                    "Edit", // Updated text to differentiate from the first one
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontWeight:
+                                                                      onPressed:
+                                                                          () {
+                                                                        print(
+                                                                            'full edit');
+                                                                        setState(
+                                                                                () {
+                                                                              showEditForm =
+                                                                              true;
+                                                                            });
+                                                                      },
+                                                                      child: Text(
+                                                                        "Edit", // Updated text to differentiate from the first one
+                                                                        style: TextStyle(
+                                                                            color: Colors
+                                                                                .white,
+                                                                            fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        fontSize:
+                                                                            fontSize:
                                                                             MediaQuery.of(context).size.width *
-                                                                                .045),
-                                                                  ),
-                                                                  style: ElevatedButton
-                                                                      .styleFrom(
-                                                                          // Button color
+                                                                                .03),
+                                                                      ),
+                                                                      style: ElevatedButton
+                                                                          .styleFrom(
+                                                                        // Button color
                                                                           backgroundColor:
-                                                                              blueColor),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          // Unit ID
-                                                          const Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 2,
-                                                              ),
-                                                              Text(
-                                                                "Applicant Name",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                              Text(
-                                                                '${data.applicantFirstName} ${data.applicantLastName}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
-                                                                ),
+                                                                          blueColor),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                               const SizedBox(
-                                                                  width: 2),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 18,
-                                                          ),
-                                                          // Rental Owner
-                                                          const Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 2,
+                                                                height: 10,
                                                               ),
-                                                              Text(
-                                                                "Applicant Birth Date",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                              Text(
-                                                                '${data.applicantCity ?? 'N/A'}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 18,
-                                                          ),
-                                                          // Tenant
-                                                          const Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 2,
-                                                              ),
-                                                              Text(
-                                                                "Applicant Current Address",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        12),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                              Text(
-                                                                '${data.applicantStreetAddress ?? 'N/A'}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                            ],
-                                                          ),
+                                                              // Unit ID
 
-                                                          const SizedBox(
-                                                            height: 18,
-                                                          ),
-                                                          // Tenant
-                                                          const Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 2,
+
+                                                              Row(
+                                                                children: [
+                                                                  Expanded(
+                                                                    child: Column(
+                                                                      children: [
+                                                                        const Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 2,
+                                                                            ),
+                                                                            Text(
+                                                                              "Applicant Name",
+                                                                              style: TextStyle(
+                                                                                  color: Color(
+                                                                                      0xFF8A95A8),
+                                                                                  fontWeight:
+                                                                                  FontWeight
+                                                                                      .bold,
+                                                                                  fontSize:
+                                                                                  18),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                            Text(
+                                                                              '${data.applicantFirstName} ${data.applicantLastName}',
+                                                                              style:
+                                                                              const TextStyle(
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize: 16,
+                                                                                color: Color
+                                                                                    .fromRGBO(
+                                                                                    21,
+                                                                                    43,
+                                                                                    83,
+                                                                                    1),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 18,
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Column(
+                                                                      children: [
+                                                                        const Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 2,
+                                                                            ),
+                                                                            Text(
+                                                                              "Applicant Birth Date",
+                                                                              style: TextStyle(
+                                                                                  color: Color(
+                                                                                      0xFF8A95A8),
+                                                                                  fontWeight:
+                                                                                  FontWeight
+                                                                                      .bold,
+                                                                                  fontSize:
+                                                                                  18),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                            Text(
+                                                                              '${data.applicantCity ?? 'N/A'}',
+                                                                              style:
+                                                                              const TextStyle(
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize:16,
+                                                                                color: Color
+                                                                                    .fromRGBO(
+                                                                                    21,
+                                                                                    43,
+                                                                                    83,
+                                                                                    1),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                              Text(
-                                                                "Applicant Email",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
+
+                                                              // Rental Owner
+
+
+                                                              const SizedBox(
+                                                                height: 18,
+                                                              ),
+                                                              // Tenant
+                                                              Row(
+                                                                children: [
+                                                                  Expanded(
+                                                                    child: Column(
+                                                                      children: [
+                                                                        const Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 2,
+                                                                            ),
+                                                                            Text(
+                                                                              "Applicant Current Address",
+                                                                              style: TextStyle(
+                                                                                  color: Color(
+                                                                                      0xFF8A95A8),
+                                                                                  fontWeight:
+                                                                                  FontWeight
+                                                                                      .bold,
+                                                                                  fontSize:
+                                                                                  18),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                            Text(
+                                                                              '${data.applicantStreetAddress ?? 'N/A'}',
+                                                                              style:
+                                                                              const TextStyle(
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize: 16,
+                                                                                color: Color
+                                                                                    .fromRGBO(
+                                                                                    21,
+                                                                                    43,
+                                                                                    83,
+                                                                                    1),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 18,
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Column(
+                                                                      children: [
+                                                                        const Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 2,
+                                                                            ),
+                                                                            Text(
+                                                                              "Applicant Email",
+                                                                              style: TextStyle(
+                                                                                  color: Color(
+                                                                                      0xFF8A95A8),
+                                                                                  fontWeight:
+                                                                                  FontWeight
+                                                                                      .bold,
+                                                                                  fontSize:
+                                                                                  18),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                            Text(
+                                                                              '${data.applicantEmail ?? 'N/A'}',
+                                                                              style:
+                                                                              const TextStyle(
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize: 16,
+                                                                                color: Color
+                                                                                    .fromRGBO(
+                                                                                    21,
+                                                                                    43,
+                                                                                    83,
+                                                                                    1),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                                width: 2),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                             
+
+                                                            
+                                                              // Tenant
+                                                            
+                                                              
+                                                              const SizedBox(
+                                                                height: 18,
+                                                              ),
+                                                              // Tenant
+                                                              const Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2,
+                                                                  ),
+                                                                  Text(
+                                                                    "Applicant Phone",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    fontSize:
-                                                                        12),
+                                                                        fontSize:
+                                                                        18),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Row(
-                                                            children: [
                                                               const SizedBox(
-                                                                  width: 2),
-                                                              Text(
-                                                                '${data.applicantEmail ?? 'N/A'}',
-                                                                style:
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                  Text(
+                                                                    '${data.applicantPhoneNumber ?? 'N/A'}',
+                                                                    style:
                                                                     const TextStyle(
-                                                                  fontWeight:
+                                                                      fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
+                                                                      fontSize:16,
+                                                                      color: Color
+                                                                          .fromRGBO(
                                                                           21,
                                                                           43,
                                                                           83,
                                                                           1),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 18,
-                                                          ),
-                                                          // Tenant
-                                                          const Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 2,
-                                                              ),
-                                                              Text(
-                                                                "Applicant Phone",
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        12),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
-                                                          const SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                              Text(
-                                                                '${data.applicantPhoneNumber ?? 'N/A'}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 2),
-                                                            ],
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              ),
 
-                                              // Add more fields as needed
-                                            ],
-                                          ),
+                                                  // Add more fields as needed
+                                                ],
+                                              );
+                                            }
+                                            return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(0.0),
+                                                    child: Material(
+                                                      borderRadius:
+                                                          BorderRadius.circular(10),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  10),
+                                                          border: Border.all(
+                                                              color: const Color
+                                                                  .fromRGBO(
+                                                                  21, 43, 81, 1)),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                                  left: 16,
+                                                                  right: 16,
+                                                                  top: 16,
+                                                                  bottom: 16),
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Flexible(
+                                                                    flex: 3,
+                                                                    child:
+                                                                        Container(
+                                                                      child: Text(
+                                                                        "Applicant Information",
+                                                                        style: TextStyle(
+                                                                            color: const Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                81,
+                                                                                1),
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                MediaQuery.of(context).size.width *
+                                                                                    .045),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Flexible(
+                                                                    child:
+                                                                        ElevatedButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        print(
+                                                                            'full edit');
+                                                                        setState(
+                                                                            () {
+                                                                          showEditForm =
+                                                                              true;
+                                                                        });
+                                                                      },
+                                                                      child: Text(
+                                                                        "Edit", // Updated text to differentiate from the first one
+                                                                        style: TextStyle(
+                                                                            color: Colors
+                                                                                .white,
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                MediaQuery.of(context).size.width *
+                                                                                    .045),
+                                                                      ),
+                                                                      style: ElevatedButton
+                                                                          .styleFrom(
+                                                                              // Button color
+                                                                              backgroundColor:
+                                                                                  blueColor),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              // Unit ID
+                                                              const Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2,
+                                                                  ),
+                                                                  Text(
+                                                                    "Applicant Name",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                  Text(
+                                                                    '${data.applicantFirstName} ${data.applicantLastName}',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 18,
+                                                              ),
+                                                              // Rental Owner
+                                                              const Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2,
+                                                                  ),
+                                                                  Text(
+                                                                    "Applicant Birth Date",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                  Text(
+                                                                    '${data.applicantCity ?? 'N/A'}',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 18,
+                                                              ),
+                                                              // Tenant
+                                                              const Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2,
+                                                                  ),
+                                                                  Text(
+                                                                    "Applicant Current Address",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                  Text(
+                                                                    '${data.applicantStreetAddress ?? 'N/A'}',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+
+                                                              const SizedBox(
+                                                                height: 18,
+                                                              ),
+                                                              // Tenant
+                                                              const Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2,
+                                                                  ),
+                                                                  Text(
+                                                                    "Applicant Email",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                  Text(
+                                                                    '${data.applicantEmail ?? 'N/A'}',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 18,
+                                                              ),
+                                                              // Tenant
+                                                              const Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 2,
+                                                                  ),
+                                                                  Text(
+                                                                    "Applicant Phone",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                  Text(
+                                                                    '${data.applicantPhoneNumber ?? 'N/A'}',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  // Add more fields as needed
+                                                ],
+                                              );
+                                          }
+                                        ),
                             const SizedBox(
                               height: 16.0,
                             ),
@@ -4010,400 +4404,807 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   )
                                 : showEditForm
                                     ? Container()
-                                    : Column(
-                                        crossAxisAlignment:
+                                    : LayoutBuilder(
+                                      builder: (context,constraint) {
+                                        if(constraint.maxWidth > 600){
+                                          return Column(
+                                            crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child: Material(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(0.0),
+                                                child: Material(
                                                   borderRadius:
+                                                  BorderRadius.circular(10),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
                                                       BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color:
+                                                      border: Border.all(
+                                                          color:
                                                           const Color.fromRGBO(
                                                               21, 43, 81, 1)),
-                                                ),
-                                                child: Padding(
-                                                  padding:
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
                                                       const EdgeInsets.only(
                                                           left: 16,
                                                           right: 16,
                                                           top: 16,
                                                           bottom: 16),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
+                                                      child: Column(
                                                         children: [
-                                                          const SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Rental History",
-                                                            style: TextStyle(
-                                                                color: const Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    81,
-                                                                    1),
-                                                                fontWeight:
+                                                          Row(
+                                                            children: [
+                                                              const SizedBox(
+                                                                width: 2,
+                                                              ),
+                                                              Text(
+                                                                "Rental History",
+                                                                style: TextStyle(
+                                                                    color: const Color
+                                                                        .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: MediaQuery.of(
-                                                                            context)
+                                                                    fontSize: MediaQuery.of(
+                                                                        context)
                                                                         .size
                                                                         .width *
-                                                                    .045),
+                                                                        .03),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      // Unit ID
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 2,
+                                                          const SizedBox(
+                                                            height: 10,
                                                           ),
-                                                          Text(
-                                                            "Rental Address",
-                                                            style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF8A95A8),
-                                                                fontWeight:
+                                                          // Unit ID
+                                                          const Row(
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 2,
+                                                              ),
+                                                              Text(
+                                                                "Rental Address",
+                                                                style: TextStyle(
+                                                                    color: Color(
+                                                                        0xFF8A95A8),
+                                                                    fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 12),
+                                                                    fontSize: 18),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(width: 2),
-                                                          Text(
-                                                            'N/A',
-                                                            style: TextStyle(
-                                                              fontWeight:
+                                                          const SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          const Row(
+                                                            children: [
+                                                              SizedBox(width: 2),
+                                                              Text(
+                                                                'N/A',
+                                                                style: TextStyle(
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
+                                                                  fontSize:16,
+                                                                  color: Color
+                                                                      .fromRGBO(
                                                                       21,
                                                                       43,
                                                                       83,
                                                                       1),
-                                                            ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 2),
+                                                            ],
                                                           ),
-                                                          SizedBox(width: 2),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      // Rental Owner
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
+                                                          const SizedBox(
+                                                            height: 18,
+                                                          ),
+                                                          // Rental Owner
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
                                                                   const Column(
-                                                                crossAxisAlignment:
+                                                                    crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Rental Dates",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Rental Dates",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
+                                                                            fontSize:
+                                                                            18),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
                                                                         TextStyle(
-                                                                      fontWeight:
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
+                                                                          fontSize:16,
+                                                                          color: Color
+                                                                              .fromRGBO(
                                                                               21,
                                                                               43,
                                                                               83,
                                                                               1),
-                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
                                                                   const Column(
-                                                                crossAxisAlignment:
+                                                                    crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Monthly Rent",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Monthly Rent",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
+                                                                            fontSize:
+                                                                            18),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
                                                                         TextStyle(
-                                                                      fontWeight:
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
+                                                                          fontSize:16,
+                                                                          color: Color
+                                                                              .fromRGBO(
                                                                               21,
                                                                               43,
                                                                               83,
                                                                               1),
-                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
+                                                                ),
                                                               ),
-                                                            ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
+                                                          const SizedBox(
+                                                            height: 18,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
                                                                   const Column(
-                                                                crossAxisAlignment:
+                                                                    crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Reason of Leaving",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Reason of Leaving",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
+                                                                            fontSize:
+                                                                            18),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
                                                                         TextStyle(
-                                                                      fontWeight:
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
+                                                                          fontSize:16,
+                                                                          color: Color
+                                                                              .fromRGBO(
                                                                               21,
                                                                               43,
                                                                               83,
                                                                               1),
-                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
                                                                   const Column(
-                                                                crossAxisAlignment:
+                                                                    crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Rental Owner Name",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Rental Owner Name",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
+                                                                            fontSize:
+                                                                            18),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
                                                                         TextStyle(
-                                                                      fontWeight:
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
+                                                                          fontSize:16,
+                                                                          color: Color
+                                                                              .fromRGBO(
                                                                               21,
                                                                               43,
                                                                               83,
                                                                               1),
-                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
+                                                                ),
                                                               ),
-                                                            ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
 
-                                                      const SizedBox(
-                                                        height: 24,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  const SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  const Text(
-                                                                    "Rental Owner Phone",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerPhoneNumber}',
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
+                                                          const SizedBox(
+                                                            height: 24,
                                                           ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Column(
-                                                                crossAxisAlignment:
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
-                                                                children: [
-                                                                  const SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  const Text(
-                                                                    "Rental Owner Email",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
+                                                                    children: [
+                                                                      const SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      const Text(
+                                                                        "Rental Owner Phone",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerPrimaryEmail}',
-                                                                    style:
+                                                                            fontSize:
+                                                                            18),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' :'N/A'}',
+                                                                        style:
                                                                         const TextStyle(
-                                                                      fontWeight:
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
+                                                                          fontSize:16,
+                                                                          color: Color
+                                                                              .fromRGBO(
                                                                               21,
                                                                               43,
                                                                               83,
                                                                               1),
-                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
+                                                                ),
                                                               ),
-                                                            ),
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                    children: [
+                                                                      const SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      const Text(
+                                                                        "Rental Owner Email",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:
+                                                                            18),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : 'N/A'}',
+                                                                        style:
+                                                                        const TextStyle(
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                          fontSize:16,
+                                                                          color: Color
+                                                                              .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+
+                                                          const SizedBox(
+                                                            height: 5,
                                                           ),
                                                         ],
                                                       ),
-
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                            ],
+                                          );
+                                        }
+                                        return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(0.0),
+                                                child: Material(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(10),
+                                                      border: Border.all(
+                                                          color:
+                                                              const Color.fromRGBO(
+                                                                  21, 43, 81, 1)),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16,
+                                                              right: 16,
+                                                              top: 16,
+                                                              bottom: 16),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              const SizedBox(
+                                                                width: 2,
+                                                              ),
+                                                              Text(
+                                                                "Rental History",
+                                                                style: TextStyle(
+                                                                    color: const Color
+                                                                        .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize: MediaQuery.of(
+                                                                                context)
+                                                                            .size
+                                                                            .width *
+                                                                        .045),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          // Unit ID
+                                                          const Row(
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 2,
+                                                              ),
+                                                              Text(
+                                                                "Rental Address",
+                                                                style: TextStyle(
+                                                                    color: Color(
+                                                                        0xFF8A95A8),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize: 12),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          const Row(
+                                                            children: [
+                                                              SizedBox(width: 2),
+                                                              Text(
+                                                                'N/A',
+                                                                style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          83,
+                                                                          1),
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 2),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 18,
+                                                          ),
+                                                          // Rental Owner
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
+                                                                      const Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Rental Dates",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color: Color
+                                                                              .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
+                                                                      const Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Monthly Rent",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color: Color
+                                                                              .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 18,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
+                                                                      const Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Reason of Leaving",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color: Color
+                                                                              .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child:
+                                                                      const Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      Text(
+                                                                        "Rental Owner Name",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        'N/A',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color: Color
+                                                                              .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+
+                                                          const SizedBox(
+                                                            height: 24,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      const SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      const Text(
+                                                                        "Rental Owner Phone",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' :'N/A'}',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color: Color
+                                                                              .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Container(
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      const SizedBox(
+                                                                        width: 2,
+                                                                      ),
+                                                                      const Text(
+                                                                        "Rental Owner Email",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Text(
+                                                                        '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : 'N/A'}',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color: Color
+                                                                              .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+
+                                                          const SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                      }
+                                    ),
                             const SizedBox(
                               height: 16,
                             ),
@@ -4624,246 +5425,537 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   )
                                 : showEditForm
                                     ? Container()
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child: Material(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                    : LayoutBuilder(
+                                      builder: (context,contraints) {
+                                        if(contraints.maxWidth > 600)
+                                          {
+                                            return Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(0.0),
+                                                  child: Material(
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                        BorderRadius.circular(10),
+                                                        border: Border.all(
+                                                            color:
+                                                            const Color.fromRGBO(
+                                                                21, 43, 81, 1)),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16,
+                                                            right: 16,
+                                                            top: 16,
+                                                            bottom: 16),
+                                                        child: Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                const SizedBox(
+                                                                  width: 2,
+                                                                ),
+                                                                Text(
+                                                                  "Emergency Contact Information",
+                                                                  style: TextStyle(
+                                                                      color: const Color
+                                                                          .fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1),
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      fontSize: MediaQuery.of(
+                                                                          context)
+                                                                          .size
+                                                                          .width *
+                                                                          .03),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            // Unit ID
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      const Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 2,
+                                                                          ),
+                                                                          Text(
+                                                                            "Emergency Contact Name",
+                                                                            style: TextStyle(
+                                                                                color: Color(
+                                                                                    0xFF8A95A8),
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize: 18),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      const Row(
+                                                                        children: [
+                                                                          SizedBox(width: 2),
+                                                                          Text(
+                                                                            'N/A',
+                                                                            style: TextStyle(
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:16,
+                                                                              color: Color
+                                                                                  .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: 2),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 18,
+                                                                ),
+                                                                Expanded(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      const Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 2,
+                                                                          ),
+                                                                          Text(
+                                                                            "Emergency Contact Relationship",
+                                                                            style: TextStyle(
+                                                                                color: Color(
+                                                                                    0xFF8A95A8),
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize: 18),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      const Row(
+                                                                        children: [
+                                                                          SizedBox(width: 2),
+                                                                          Text(
+                                                                            'N/A',
+                                                                            style: TextStyle(
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:16,
+                                                                              color: Color
+                                                                                  .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: 2),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            
+                                                            // Rental Owner
+                                                           
+
+                                                            const SizedBox(
+                                                              height: 18,
+                                                            ),
+                                                            // Tenant
+                                                            const Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 2,
+                                                                          ),
+                                                                          Text(
+                                                                            "Emergency Contact Email",
+                                                                            style: TextStyle(
+                                                                                color: Color(
+                                                                                    0xFF8A95A8),
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize: 18),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(width: 2),
+                                                                          Text(
+                                                                            'N/A',
+                                                                            style: TextStyle(
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:16,
+                                                                              color: Color
+                                                                                  .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: 2),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 18,
+                                                                ),
+                                                                // Tenant
+                                                                Expanded(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 2,
+                                                                          ),
+                                                                          Text(
+                                                                            "Emergency Contact Phone",
+                                                                            style: TextStyle(
+                                                                                color: Color(
+                                                                                    0xFF8A95A8),
+                                                                                fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                                fontSize: 18),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height: 5,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          SizedBox(width: 2),
+                                                                          Text(
+                                                                            'N/A',
+                                                                            style: TextStyle(
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:16,
+                                                                              color: Color
+                                                                                  .fromRGBO(
+                                                                                  21,
+                                                                                  43,
+                                                                                  83,
+                                                                                  1),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: 2),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                           
+                                                           
+                                                           
+                                                            const SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 16,
-                                                          right: 16,
-                                                          top: 16,
-                                                          bottom: 16),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          const SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Emergency Contact Information",
-                                                            style: TextStyle(
-                                                                color: const Color
+                                              ],
+                                            );
+                                          }
+                                        return Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(0.0),
+                                              child: Material(
+                                                borderRadius:
+                                                BorderRadius.circular(10),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    border: Border.all(
+                                                        color:
+                                                        const Color.fromRGBO(
+                                                            21, 43, 81, 1)),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets.only(
+                                                        left: 16,
+                                                        right: 16,
+                                                        top: 16,
+                                                        bottom: 16),
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            const SizedBox(
+                                                              width: 2,
+                                                            ),
+                                                            Text(
+                                                              "Emergency Contact Information",
+                                                              style: TextStyle(
+                                                                  color: const Color
+                                                                      .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      81,
+                                                                      1),
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize: MediaQuery.of(
+                                                                      context)
+                                                                      .size
+                                                                      .width *
+                                                                      .045),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        // Unit ID
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 2,
+                                                            ),
+                                                            Text(
+                                                              "Emergency Contact Name",
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xFF8A95A8),
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize: 12),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(width: 2),
+                                                            Text(
+                                                              'N/A',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color: Color
                                                                     .fromRGBO(
                                                                     21,
                                                                     43,
-                                                                    81,
+                                                                    83,
                                                                     1),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    .045),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      // Unit ID
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Emergency Contact Name",
-                                                            style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF8A95A8),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(width: 2),
-                                                          Text(
-                                                            'N/A',
-                                                            style: TextStyle(
-                                                              fontWeight:
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 2),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 18,
+                                                        ),
+                                                        // Rental Owner
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 2,
+                                                            ),
+                                                            Text(
+                                                              "Emergency Contact Relationship",
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xFF8A95A8),
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                                  fontSize: 12),
                                                             ),
-                                                          ),
-                                                          SizedBox(width: 2),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      // Rental Owner
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Emergency Contact Relationship",
-                                                            style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF8A95A8),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(width: 2),
+                                                            Text(
+                                                              'N/A',
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(width: 2),
-                                                          Text(
-                                                            'N/A',
-                                                            style: TextStyle(
-                                                              fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 2),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 18,
+                                                        ),
+                                                        // Tenant
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 2,
+                                                            ),
+                                                            Text(
+                                                              "Emergency Contact Email",
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xFF8A95A8),
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                                  fontSize: 12),
                                                             ),
-                                                          ),
-                                                          SizedBox(width: 2),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      // Tenant
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Emergency Contact Email",
-                                                            style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF8A95A8),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(width: 2),
+                                                            Text(
+                                                              'N/A',
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(width: 2),
-                                                          Text(
-                                                            'N/A',
-                                                            style: TextStyle(
-                                                              fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 2),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 18,
+                                                        ),
+                                                        // Tenant
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 2,
+                                                            ),
+                                                            Text(
+                                                              "Emergency Contact Phone",
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xFF8A95A8),
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                                  fontSize: 12),
                                                             ),
-                                                          ),
-                                                          SizedBox(width: 2),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      // Tenant
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Emergency Contact Phone",
-                                                            style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF8A95A8),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(width: 2),
+                                                            Text(
+                                                              'N/A',
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(width: 2),
-                                                          Text(
-                                                            'N/A',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                                FontWeight
+                                                                    .bold,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
                                                             ),
-                                                          ),
-                                                          SizedBox(width: 2),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                    ],
+                                                            SizedBox(width: 2),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        );
+
+                                      }
+                                    ),
                             const SizedBox(
                               height: 16,
                             ),
@@ -5256,411 +6348,830 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   )
                                 : showEditForm
                                     ? Container()
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child: Material(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                    : LayoutBuilder(
+                                      builder: (context,contraints) {
+                                        if(contraints.maxWidth  > 500)
+                                          {
+                                            return Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(0.0),
+                                                  child: Material(
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                        BorderRadius.circular(10),
+                                                        border: Border.all(
+                                                            color:
+                                                            const Color.fromRGBO(
+                                                                21, 43, 81, 1)),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16,
+                                                            right: 16,
+                                                            top: 16,
+                                                            bottom: 16),
+                                                        child: Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                const SizedBox(
+                                                                  width: 2,
+                                                                ),
+                                                                Text(
+                                                                  "Employment",
+                                                                  style: TextStyle(
+                                                                      color: const Color
+                                                                          .fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1),
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      fontSize: MediaQuery.of(
+                                                                          context)
+                                                                          .size
+                                                                          .width *
+                                                                          .03),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            // Unit ID
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            // Unit ID
+                                                            const Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 2,
+                                                                ),
+                                                                Text(
+                                                                  "Employer Address",
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF8A95A8),
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      fontSize: 18),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            const Row(
+                                                              children: [
+                                                                SizedBox(width: 2),
+                                                                Text(
+                                                                  'N/A',
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                    fontSize:16,
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(width: 2),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 18,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    child:
+                                                                    const Column(
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 2,
+                                                                        ),
+                                                                        Text(
+                                                                          "Employer Name",
+                                                                          style: TextStyle(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:
+                                                                              18),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Text(
+                                                                          'N/A',
+                                                                          style:
+                                                                          TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:16,
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    child:
+                                                                    const Column(
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 2,
+                                                                        ),
+                                                                        Text(
+                                                                          "Employer Phone Number",
+                                                                          style: TextStyle(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:
+                                                                              18),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Text(
+                                                                          'N/A',
+                                                                          style:
+                                                                          TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:16,
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            // Unit ID
+
+                                                            const SizedBox(
+                                                              height: 18,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    child:
+                                                                    const Column(
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 2,
+                                                                        ),
+                                                                        Text(
+                                                                          "Employer Email",
+                                                                          style: TextStyle(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:
+                                                                              18),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Text(
+                                                                          'N/A',
+                                                                          style:
+                                                                          TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:16,
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    child:
+                                                                    const Column(
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 2,
+                                                                        ),
+                                                                        Text(
+                                                                          "Position Held",
+                                                                          style: TextStyle(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+
+                                                                              fontSize:
+                                                                              18),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Text(
+                                                                          'N/A',
+                                                                          style:
+                                                                          TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:16,
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            const SizedBox(
+                                                              height: 18,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    child:
+                                                                    const Column(
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 2,
+                                                                        ),
+                                                                        Text(
+                                                                          "Supervisor Title",
+                                                                          style: TextStyle(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:
+                                                                              12),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Text(
+                                                                          'N/A',
+                                                                          style:
+                                                                          TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:16,
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Container(
+                                                                    child:
+                                                                    const Column(
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 2,
+                                                                        ),
+                                                                        Text(
+                                                                          "Supervisor Name",
+                                                                          style: TextStyle(
+                                                                              color: Color(
+                                                                                  0xFF8A95A8),
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                              fontSize:
+                                                                              18),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height: 5,
+                                                                        ),
+                                                                        Text(
+                                                                          'N/A',
+                                                                          style:
+                                                                          TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold, fontSize:16,
+                                                                            color: Color
+                                                                                .fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            const SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 16,
-                                                          right: 16,
-                                                          top: 16,
-                                                          bottom: 16),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          const SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Employment",
-                                                            style: TextStyle(
-                                                                color: const Color
+                                              ],
+                                            );
+                                          }
+                                        return Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(0.0),
+                                              child: Material(
+                                                borderRadius:
+                                                BorderRadius.circular(10),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                    border: Border.all(
+                                                        color:
+                                                        const Color.fromRGBO(
+                                                            21, 43, 81, 1)),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets.only(
+                                                        left: 16,
+                                                        right: 16,
+                                                        top: 16,
+                                                        bottom: 16),
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            const SizedBox(
+                                                              width: 2,
+                                                            ),
+                                                            Text(
+                                                              "Employment",
+                                                              style: TextStyle(
+                                                                  color: const Color
+                                                                      .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      81,
+                                                                      1),
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize: MediaQuery.of(
+                                                                      context)
+                                                                      .size
+                                                                      .width *
+                                                                      .045),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        // Unit ID
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        // Unit ID
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 2,
+                                                            ),
+                                                            Text(
+                                                              "Employer Address",
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xFF8A95A8),
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize: 12),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        const Row(
+                                                          children: [
+                                                            SizedBox(width: 2),
+                                                            Text(
+                                                              'N/A',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color: Color
                                                                     .fromRGBO(
                                                                     21,
                                                                     43,
-                                                                    81,
+                                                                    83,
                                                                     1),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    .045),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      // Unit ID
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      // Unit ID
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 2,
-                                                          ),
-                                                          Text(
-                                                            "Employer Address",
-                                                            style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF8A95A8),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      const Row(
-                                                        children: [
-                                                          SizedBox(width: 2),
-                                                          Text(
-                                                            'N/A',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                          SizedBox(width: 2),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
-                                                                  const Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Employer Name",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ),
-                                                                  ),
-                                                                ],
                                                               ),
                                                             ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
-                                                                  const Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Employer Phone Number",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
+                                                            SizedBox(width: 2),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 18,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Container(
+                                                                child:
+                                                                const Column(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 2,
+                                                                    ),
+                                                                    Text(
+                                                                      "Employer Name",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          fontSize:
+                                                                          12),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Text(
+                                                                      'N/A',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            83,
+                                                                            1),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                            Expanded(
+                                                              child: Container(
+                                                                child:
+                                                                const Column(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 2,
+                                                                    ),
+                                                                    Text(
+                                                                      "Employer Phone Number",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                          fontSize:
+                                                                          12),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Text(
+                                                                      'N/A',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            83,
+                                                                            1),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
 
-                                                      // Unit ID
+                                                        // Unit ID
 
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
-                                                                  const Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Employer Email",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
+                                                        const SizedBox(
+                                                          height: 18,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Container(
+                                                                child:
+                                                                const Column(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 2,
+                                                                    ),
+                                                                    Text(
+                                                                      "Employer Email",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          fontSize:
+                                                                          12),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Text(
+                                                                      'N/A',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            83,
+                                                                            1),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
-                                                                  const Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Position Held",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
+                                                            Expanded(
+                                                              child: Container(
+                                                                child:
+                                                                const Column(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 2,
+                                                                    ),
+                                                                    Text(
+                                                                      "Position Held",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          fontSize:
+                                                                          12),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Text(
+                                                                      'N/A',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            83,
+                                                                            1),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                          ],
+                                                        ),
 
-                                                      const SizedBox(
-                                                        height: 18,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
-                                                                  const Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Supervisor Title",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
+                                                        const SizedBox(
+                                                          height: 18,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Container(
+                                                                child:
+                                                                const Column(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 2,
+                                                                    ),
+                                                                    Text(
+                                                                      "Supervisor Title",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          fontSize:
+                                                                          12),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Text(
+                                                                      'N/A',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            83,
+                                                                            1),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child:
-                                                                  const Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    "Supervisor Name",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    'N/A',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
+                                                            Expanded(
+                                                              child: Container(
+                                                                child:
+                                                                const Column(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 2,
+                                                                    ),
+                                                                    Text(
+                                                                      "Supervisor Name",
+                                                                      style: TextStyle(
+                                                                          color: Color(
+                                                                              0xFF8A95A8),
+                                                                          fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          fontSize:
+                                                                          12),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Text(
+                                                                      'N/A',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color: Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            83,
+                                                                            1),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                          ],
+                                                        ),
 
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                    ],
+                                                        const SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        );
+                                      }
+                                    ),
                           ],
                         ),
             );

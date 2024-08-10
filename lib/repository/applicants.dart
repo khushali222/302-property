@@ -29,7 +29,7 @@ class ApplicantRepository {
       },
       body: jsonEncode(postData),
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: 'Applicant Added Successfully');
       return jsonDecode(response.body);

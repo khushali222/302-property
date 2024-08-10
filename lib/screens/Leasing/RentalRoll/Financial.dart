@@ -268,7 +268,7 @@ class _FinancialTableState extends State<FinancialTable> {
   //   futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
   // }
 
-  void handleEdit(LeaseLedger? ledge) async {
+  void handleEdit(Data? ledge) async {
     // Handle edit action
     // print('Edit ${applicant.sId}');
     // var check = await Navigator.push(
@@ -321,13 +321,13 @@ class _FinancialTableState extends State<FinancialTable> {
     ).show();
   }
 
-  List<LeaseLedger?> _tableData = [];
+  List<Data?> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<LeaseLedger?> get _pagedData {
+  List<Data?> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
@@ -341,7 +341,7 @@ class _FinancialTableState extends State<FinancialTable> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(LeaseLedger? d) getField,
+  void _sort<T>(Comparable<T> Function(Data? d) getField,
       int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -355,14 +355,14 @@ class _FinancialTableState extends State<FinancialTable> {
     });
   }
 
-  void handleDelete(LeaseLedger? ledge) {
-    _showAlert(context, ledge!.data!.first.leaseId!);
+  void handleDelete(Data? ledge) {
+    _showAlert(context, ledge!.leaseId!);
     // Handle delete action
     // print('Delete ${property.sId}');
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(LeaseLedger? d)? getField) {
+      Comparable<T> Function(Data? d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -390,14 +390,15 @@ class _FinancialTableState extends State<FinancialTable> {
 
   Widget _buildDataCell(String text) {
     return TableCell(
-      child: Padding(
+      child: Container(
+        height: 60,
         padding: const EdgeInsets.only(top: 20.0, left: 16),
         child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
     );
   }
 
-  Widget _buildActionsCell(LeaseLedger? data) {
+  Widget _buildActionsCell(Data? data) {
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -1050,7 +1051,9 @@ class _FinancialTableState extends State<FinancialTable> {
                   } else if (!snapshot.hasData) {
                     return const Center(child: Text('No data available'));
                   } else {
+                    _tableData = snapshot.data!.data!;
                     totalrecords = _tableData.length;
+
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -1063,8 +1066,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .91,
+
                                       child: Table(
                                         defaultColumnWidth:
                                             const IntrinsicColumnWidth(),
@@ -1077,22 +1079,25 @@ class _FinancialTableState extends State<FinancialTable> {
                                             ),
                                             children: [
                                               _buildHeader(
-                                                  'Main Type',
+                                                  'Type',
                                                   0,
                                                   (property) => property!
-                                                      .data!.first.totalAmount
+                                                     .totalAmount
                                                       .toString()),
                                               _buildHeader(
-                                                  'Subtype',
+                                                  'Tenant',
                                                   1,
                                                   (property) => property!
-                                                      .data!.first.totalAmount
+                                                      .totalAmount
                                                       .toString()),
                                               _buildHeader(
-                                                  'Created At', 2, null),
+                                                  'Transaction', 2, null),
                                               _buildHeader(
-                                                  'Updated At', 3, null),
-                                              _buildHeader('Actions', 4, null),
+                                                  'Increase', 3, null),
+                                              _buildHeader(
+                                                  'Decrease', 3, null),
+                                              _buildHeader('Balance', 4, null),
+                                              _buildHeader('Date', 4, null),
                                             ],
                                           ),
                                           TableRow(
@@ -1101,7 +1106,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   horizontal: BorderSide.none),
                                             ),
                                             children: List.generate(
-                                                5,
+                                                7,
                                                 (index) => TableCell(
                                                     child:
                                                         Container(height: 20))),
@@ -1131,31 +1136,34 @@ class _FinancialTableState extends State<FinancialTable> {
                                               ),
                                               children: [
                                                 _buildDataCell(_pagedData[i]!
-                                                    .data!
-                                                    .first!
-                                                    .balance
+                                                    .type
                                                     .toString()),
-                                                _buildDataCell(_pagedData[i]!
-                                                    .data!
-                                                    .first!
-                                                    .balance
-                                                    .toString()),
+                                                _buildDataCell('${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
                                                 _buildDataCell(
                                                   _pagedData[i]!
-                                                      .data!
-                                                      .first!
                                                       .balance
                                                       .toString(),
                                                 ),
                                                 _buildDataCell(
                                                   _pagedData[i]!
-                                                      .data!
-                                                      .first!
                                                       .balance
                                                       .toString(),
                                                 ),
-                                                _buildActionsCell(
-                                                    _pagedData[i]),
+                                                _buildDataCell(
+                                                  _pagedData[i]!
+                                                      .balance
+                                                      .toString(),
+                                                ),
+                                                _buildDataCell(
+                                                  _pagedData[i]!
+                                                      .balance
+                                                      .toString(),
+                                                ),
+                                                _buildDataCell(
+                                                  _pagedData[i]!
+                                                      .createdAt
+                                                      .toString(),
+                                                ),
                                               ],
                                             ),
                                         ],

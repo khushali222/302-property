@@ -369,8 +369,8 @@ class LeaseApplicant {
     print('rentalAddress ${rentalAddress}');
     print('rentalUnit ${rentalUnit}');
     return {
-      'rental_address': rentalAddress,
-      'rental_unit': rentalUnit,
+      'rental_id': rentalAddress,
+      'unit_id': rentalUnit,
       'admin_id': adminId,
     };
   }

@@ -429,11 +429,24 @@ class _Applicants_tableState extends State<Applicants_table> {
     );
   }
 
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text,Datum applicant) {
     return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
+      child: InkWell(
+        onTap: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      applicant_summery(
+                        applicant_id:
+                        applicant
+                            .applicantId,
+                      )));
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20.0, left: 16),
+          child: Text(text.isEmpty ? "N/A": text, style: const TextStyle(fontSize: 18)),
+        ),
       ),
     );
   }
@@ -825,7 +838,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                           border: InputBorder.none,
                           hintText: "Search here...",
                           hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                          // contentPadding: EdgeInsets.all(10),
+                           contentPadding: EdgeInsets.all(10),
                         ),
                       ),
                     ),
@@ -903,7 +916,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                 applicant.applicantFirstName == selectedValue)
                             .toList();
                       }
-                      data = data.reversed.toList();
+                     // data = data.reversed.toList();
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -1151,7 +1164,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 if (check ==
                                                                     true) {
                                                                   setState(
-                                                                      () {});
+                                                                      () {
+                                                                   futureApplicantdata =     ApplicantRepository().fetchApplicants();
+                                                                      });
                                                                 }
                                                               },
                                                             ),
@@ -1319,14 +1334,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 22.0, vertical: 5),
+                                  horizontal: 40.0, vertical: 5),
                               child: Column(
                                 children: [
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          .91,
+
                                       child: Table(
                                         defaultColumnWidth:
                                             const IntrinsicColumnWidth(),
@@ -1407,9 +1421,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 // Text(
                                                 //     '${formatDate(_pagedData[i].updatedAt!)}'),
                                                 _buildDataCell(_pagedData[i]
-                                                    .applicantFirstName!),
+                                                    .applicantFirstName!,_pagedData[i]),
                                                 _buildDataCell(_pagedData[i]
-                                                    .applicantEmail!),
+                                                    .applicantEmail!,_pagedData[i]),
                                                 _buildDataCell(
                                                   _pagedData[i]
                                                               .applicantHomeNumber ==
@@ -1417,7 +1431,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                       ? ''
                                                       : _pagedData[i]
                                                           .applicantHomeNumber!
-                                                          .toString(),
+                                                          .toString(),_pagedData[i]
                                                 ),
                                                 _buildDataCell(
                                                   _pagedData[i]
@@ -1426,7 +1440,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                       ? ''
                                                       : _pagedData[i]
                                                           .applicantHomeNumber!
-                                                          .toString(),
+                                                          .toString(),_pagedData[i]
                                                 ),
                                                 // _buildDataCell(
                                                 //   _pagedData[i]

@@ -232,6 +232,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
       country: widget.properties.rentalOwnerData?.country,
 
     );
+    processor_id = widget.properties.processor_id;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<OwnerDetailsProvider>(context, listen: false);
       if (Ownersdetails != null) {
@@ -771,6 +772,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
     // }
   }
   RentalOwner? Ownersdetails;
+  String? processor_id ;
   List<OwnersDetails> OwnersdetailsGroups = [];
   bool hasError = false;
 
@@ -992,7 +994,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                             .05,
                                         width:
                                         MediaQuery.of(context).size.width *
-                                            .5,
+                                            .6,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
@@ -7296,7 +7298,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               //     );
                                                               //   },
                                                               // );
-                                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>EditRentalowners(rentalId: widget.rentalId,)));
+                                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>EditRentalowners(rentalId: widget.rentalId,pro_id: processor_id!,)));
                                                             },
                                                             child: Container(
                                                               padding:
@@ -9153,8 +9155,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             country: countyController.text,
                             postalCode: codeController.text,
                           );
+                          RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
 
-                          Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+                          String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist!;
+                          List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+                            return {
+                              'processor_id': processor.processorId ?? "",
+                            };
+                          }).toList();
+
+                          //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
 
                           Rentals properties = Rentals(
                             adminId: id,
@@ -9169,6 +9179,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               state: updatedOwner.state,
                               country: updatedOwner.country,
                               postalCode: updatedOwner.postalCode,
+                              processorList: processorIds
                             ),
                             rentalId: widget.rentalId,
                             propertyId: widget.properties.propertyId,
@@ -9178,6 +9189,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             rentalCountry: country.text,
                             rentalPostcode: postalcode.text,
                             staffMemberId: widget.properties.staffMemberId,
+                              processor_id:processorId
                           );
                           PropertiesRepository()
                               .updateRental1(properties)

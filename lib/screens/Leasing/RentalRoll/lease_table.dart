@@ -716,7 +716,7 @@ class _Lease_tableState extends State<Lease_table> {
                           border: InputBorder.none,
                           hintText: "Search here...",
                           hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                          contentPadding: EdgeInsets.all(12),
+                          contentPadding: EdgeInsets.all(10),
                         ),
                       ),
                     ),
@@ -1278,8 +1278,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                             )));
                                                                 if (check ==
                                                                     true) {
-                                                                  setState(
-                                                                      () {});
+                                                                  setState(() {
+                                                                    futureLease = LeaseRepository().fetchLease("");
+                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                                  });
                                                                 }
                                                               },
                                                             ),

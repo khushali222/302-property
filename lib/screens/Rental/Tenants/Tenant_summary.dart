@@ -3395,7 +3395,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
                               width: screenWidth * 0.45,
-                              height: 280,
+                            //  height: 0,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),

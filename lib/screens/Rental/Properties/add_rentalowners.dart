@@ -107,6 +107,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
   bool isChecked = false;
   bool isChecked2 = false;
   bool isLoading = false;
+  String? processor_id ;
 
   List<Owner> owners = [];
   List<Owner> filteredOwners = [];
@@ -130,7 +131,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
       "id":"CRM $id",
       "authorization": "CRM $token",
     });
-
+   // print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       owners = data.map((item) => Owner.fromJson(item)).toList();
@@ -179,11 +180,24 @@ class _AddRentalownersState extends State<AddRentalowners> {
     code2.text = widget.OwnersDetails?.postalCode ?? "";
     proid.text = widget.OwnersDetails?.postalCode ?? "";
 
-    if (_processorGroups.isEmpty) {
-      _processorGroups.add(ProcessorGroup(
-        isChecked: false,
-        controller: TextEditingController(),
-      ));
+
+    if(widget.isEdit != null &&  widget.OwnersDetails!.processorList!.length > 0){
+      for(var i=0;i<widget.OwnersDetails!.processorList!.length;i++)
+        {
+          _processorGroups.add(ProcessorGroup(
+            isChecked: false,
+            controller: TextEditingController(text:widget.OwnersDetails!.processorList![i].processorId ),
+          ));
+        }
+
+    }
+    else{
+      if (_processorGroups.isEmpty) {
+        _processorGroups.add(ProcessorGroup(
+          isChecked: false,
+          controller: TextEditingController(),
+        ));
+      }
     }
 
   }
@@ -1592,6 +1606,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                          onChanged: (value) {
                                                            setState(() {
                                                              group?.isChecked = value ?? false;
+                                                             processor_id = group.controller.text;
                                                            });
                                                          },
                                                          activeColor: Color.fromRGBO(21, 43, 81, 1),
@@ -1710,6 +1725,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                          onChanged: (value) {
                                                            setState(() {
                                                              group?.isChecked = value ?? false;
+                                                             processor_id = group.controller.text;
                                                            });
                                                          },
                                                          activeColor: Color.fromRGBO(21, 43, 81, 1),
@@ -2025,8 +2041,9 @@ class _AddRentalownersState extends State<AddRentalowners> {
                       //   }
                       // },
                       onTap: () async {
+                      //  print(processor_id);
                         if (widget.isEdit == true || isChecked2) {
-                          Fluttertoast.showToast(
+                         /* Fluttertoast.showToast(
                             msg:
                             "Rental Owner added Successfully!",
                             toastLength:
@@ -2045,12 +2062,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 .white,
                             fontSize:
                             16.0,
-                          );
+                          );*/
                           List<ProcessorList> selectedProcessors = _processorGroups
-                              .where((group) => group.isChecked)
+
                               .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
                               .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                               .toList();
+                          print(selectedProcessors.length);
                           Ownersdetails =
                               RentalOwner(
                                 rentalOwnerPhoneNumber:
@@ -2076,6 +2094,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               OwnerDetailsProvider>()
                               .setOwnerDetails(
                               Ownersdetails!);
+                          context
+                              .read<
+                              OwnerDetailsProvider>()
+                              .selectedprocessid(
+                              processor_id!);
                           // Navigator.pop(
                           //     context);
 
@@ -2091,7 +2114,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           );
                           if (response == true) {
                             List<ProcessorList> selectedProcessors = _processorGroups
-                                .where((group) => group.isChecked)
+                              //  .where((group) => group.isChecked)
                                 .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
                                 .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                                 .toList();
@@ -2110,8 +2133,14 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               postalCode: code2.text,
                               processorList: selectedProcessors,
                             );
+                            print(selectedProcessors.length);
                             context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
-                            Fluttertoast.showToast(
+                            context
+                                .read<
+                                OwnerDetailsProvider>()
+                                .selectedprocessid(
+                                processor_id!);
+                            /*Fluttertoast.showToast(
                               msg: "Rental Owner Added Successfully",
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.TOP,
@@ -2129,7 +2158,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0,
-                            );
+                            );*/
                           }
                         }
                         setState(() {

@@ -624,7 +624,7 @@ class _AddApplicantState extends State<AddApplicant> {
                   children: [
                     Container(
                         height: 50,
-                        width: 150,
+                        width: 170,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
@@ -718,10 +718,12 @@ class _AddApplicantState extends State<AddApplicant> {
       // Create the LeaseApplicant object
       LeaseApplicant leaseData = LeaseApplicant(
         adminId: adminId,
-        rentalAddress: _selectedProperty.toString(),
-        rentalUnit: _selectedUnit.toString(),
+        rentalAddress: _selectedPropertyId.toString(),
+        rentalUnit: _selectedUnitId.toString(),
       );
 
+      print(_selectedProperty);
+      print(_selectedUnit);
       // Create the ApplicantData object
       Datum applicantDataObj = Datum(
         applicant: applicantData,
@@ -735,7 +737,7 @@ class _AddApplicantState extends State<AddApplicant> {
       );
 
       // Handle successful response
-      Navigator.pop(context);
+      Navigator.pop(context,true);
       // print('Response: $response');
     } catch (e) {
       // Handle error

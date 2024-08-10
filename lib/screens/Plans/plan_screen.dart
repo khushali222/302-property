@@ -1270,7 +1270,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                       children: [
                                         Container(
                                           width: screenWidth * 0.43,
-                                          height: 110,
+                                          height: 150,
                                           margin: EdgeInsets.symmetric(
                                               horizontal: screenWidth * .016),
                                           decoration: const BoxDecoration(
@@ -1417,7 +1417,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                         // SizedBox(width: 16),
                                         Container(
                                           width: screenWidth * 0.43,
-                                          height: 110,
+                                          height: 150,
                                           margin: EdgeInsets.symmetric(
                                               horizontal: screenWidth * .016),
                                           decoration: const BoxDecoration(

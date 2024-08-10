@@ -20,13 +20,16 @@ import 'package:http/http.dart' as http;
 
 class EditRentalowners extends StatefulWidget {
   final String rentalId;
-  const EditRentalowners({super.key, required this.rentalId});
+  final String pro_id;
+
+  const EditRentalowners({super.key, required this.rentalId,required this.pro_id});
 
   @override
   State<EditRentalowners> createState() => _EditRentalownersState();
 }
 
 class _EditRentalownersState extends State<EditRentalowners> {
+  String? processor_id ;
   @override
   void initState() {
     super.initState();
@@ -45,7 +48,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
   }
 
   Future<void> fetchDetails1(String rentalId) async {
-    try {
+ //   try {
       Rentals fetchedDetails =
           await Properies_summery_Repo().fetchrentalDetails(rentalId);
       print(fetchedDetails);
@@ -84,17 +87,18 @@ class _EditRentalownersState extends State<EditRentalowners> {
         _processorGroups.clear();
         var processorList = fetchedDetails.rentalOwnerData!.processorList;
         for (var processor in processorList!) {
-          var controller = TextEditingController(text: processor.processorId ?? 'N/A');
-          _processorGroups.add(ProcessorGroup(isChecked: true, controller: controller));
+          var controller = TextEditingController(text: processor["processor_id"] ?? 'N/A');
+          _processorGroups.add(ProcessorGroup(isChecked: processor["processor_id"] == widget.pro_id, controller: controller));
         }
+        print(_processorGroups.length);
         // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
       });
-    } catch (e) {
+   /* } catch (e) {
       print('Failed to fetch property details: $e');
-    }
+    }*/
   }
 
-  Owner? selectedOwner;
+  Owner? selectedOwner ;
   Owner? rentalOwnerId;
   Owner? getSelectedOwner() {
     for (int i = 0; i < selected.length; i++) {
@@ -184,7 +188,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
   bool hasError = false;
   Future<void> fetchOwners() async {
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -1905,15 +1909,14 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.01),
-                                  if (selectedOwner != null)
+                                //  if (selectedOwner != null)
                                     Padding(
                                       padding: const EdgeInsets.only(left: 13),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          if (selectedOwner!
-                                              .processorList.isNotEmpty) ...[
+
                                             Row(
                                               children: [
                                                 Text(
@@ -1949,6 +1952,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                                 group?.isChecked =
                                                                     value ??
                                                                         false;
+                                                                processor_id = group.controller.text;
                                                               });
                                                             },
                                                             activeColor:
@@ -2075,7 +2079,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                 // Handle error display here if needed
                                               ],
                                             ),
-                                          ],
+
                                         ],
                                       ),
                                     ),
@@ -2092,10 +2096,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                       GestureDetector(
                                         onTap: () {
                                           setState(() {
+                                            print("calling");
                                             _processorGroups.add(ProcessorGroup(
                                                 isChecked: false,
                                                 controller:
                                                     TextEditingController()));
+                                            print(_processorGroups.length);
                                           });
                                         },
                                         child: ClipRRect(
@@ -2155,6 +2161,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                   children: [
                     GestureDetector(
                       onTap: () async {
+
+
+                        List<ProcessorList> selectedProcessors = _processorGroups
+                        //  .where((group) => group.isChecked)
+                            .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
+                            .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
+                            .toList();
                         Ownersdetails = RentalOwner(
                           rentalOwnerPhoneNumber: phonenum.text,
                           rentalOwnerName: firstname.text,
@@ -2168,7 +2181,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           country: county2.text,
                           state: state2.text,
                           postalCode: code2.text,
+                          processorList: selectedProcessors,
                         );
+                        context
+                            .read<
+                            OwnerDetailsProvider>()
+                            .selectedprocessid(
+                            processor_id!);
                         context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
                         Fluttertoast.showToast(
                           msg: "Rental Owner Added Successfully!",

@@ -117,6 +117,7 @@ class PropertiesRepository {
       "state": rentalRequest.rentalOwnerData?.state,
       "country": rentalRequest.rentalOwnerData?.country,
       "postal_code": rentalRequest.rentalOwnerData?.postalCode,
+      "processor_list":rentalRequest.rentalOwnerData!.processorList
     };
 
     final body = jsonEncode({
@@ -131,6 +132,8 @@ class PropertiesRepository {
         "rental_country": rentalRequest.rentalCountry,
         "rental_postcode": rentalRequest.rentalPostcode,
         "staffmember_id": rentalRequest.staffMemberId,
+        "processor_id":rentalRequest.processor_id
+
       },
     });
 

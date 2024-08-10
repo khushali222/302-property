@@ -7396,7 +7396,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               //     );
                                                               //   },
                                                               // );
-                                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>EditRentalowners(rentalId: widget.rentalId,)));
+                                                            //  Navigator.push(context, MaterialPageRoute(builder: (context)=>EditRentalowners(rentalId: widget.rentalId,pro_id: processor_id,)));
                                                             },
                                                             child: Container(
                                                               padding:

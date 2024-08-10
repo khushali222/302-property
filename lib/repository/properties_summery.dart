@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -61,6 +62,7 @@ class Properies_summery_Repo{
      String? rentalsqft,
      String? rentalbath,
      String? rentalbed,
+    List<String?>? rentalImages,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -71,6 +73,7 @@ class Properies_summery_Repo{
       'rental_sqft': rentalsqft,
      'rental_bath': rentalbath,
     'rental_bed': rentalbed,
+      'rental_images':rentalImages
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -336,7 +339,7 @@ class Properies_summery_Repo{
           "Content-Type": "application/json"
         }
     );
-    print(response.body);
+    log(response.body);
     print(rentalId);
     print('${Api_url}/api/rentals/rental_summary/$rentalId');
     if (response.statusCode == 200) {
@@ -375,7 +378,7 @@ class Properies_summery_Repo{
       return jsonResponse.map((data) => propertiesworkData.fromJson(data)).toList();
     } else {
       // Throw an exception if the request failed
-      throw Exception('Failed to load work orders');
+      throw Exception('No work order found');
     }
   }
 

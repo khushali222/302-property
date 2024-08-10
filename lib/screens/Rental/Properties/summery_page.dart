@@ -63,6 +63,7 @@ class _Summery_pageState extends State<Summery_page>
   unit_properties? unit;
   DateTime? startdate;
   DateTime? enddate;
+  int unitCount = 0;
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
   TextEditingController unitnum = TextEditingController();
@@ -161,10 +162,12 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   File? _image;
+  List<File> _images = [];
   String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest(
         'POST',
@@ -194,6 +197,7 @@ class _Summery_pageState extends State<Summery_page>
     if (image != null) {
       setState(() {
         _image = File(image.path);
+        _images.add(File(image.path));
       });
       _uploadImage(File(image.path));
     }
@@ -203,6 +207,7 @@ class _Summery_pageState extends State<Summery_page>
     try {
       String? fileName = await uploadImage(imageFile);
       setState(() {
+        _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
       });
     } catch (e) {
@@ -253,7 +258,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   final Properies_summery_Repo unitRepository = Properies_summery_Repo();
-  int unitCount = 0;
+  //int unitCount = 0;
   int tenentCount = 0;
   int count = 0;
   int complete_count = 0;
@@ -772,6 +777,12 @@ class _Summery_pageState extends State<Summery_page>
   bool ascending2multi = false;
   bool ascending3multi = false;
 
+
+  countupdateunit(int cnt){
+    setState(() {
+      unitCount = cnt;
+    });
+  }
   Widget _buildHeadersmulti() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -1668,19 +1679,19 @@ class _Summery_pageState extends State<Summery_page>
                   text: 'Summary',
                 ),
                 Tab(
-                  text: 'Units($unitCount)',
+                  text: 'Units',
                 ),
                 StatefulBuilder(
                   builder: (BuildContext context,
                       void Function(void Function()) setState) {
-                    return Tab(text: 'Tenant($tenentCount)');
+                    return Tab(text: 'Tenant');
                   },
                 ),
                 StatefulBuilder(
                   builder: (BuildContext context,
                       void Function(void Function()) setState) {
                     return Tab(
-                        text: 'Work(${!isChecked ? count : complete_count})');
+                        text: 'Work');
                   },
                 ),
                 // Consumer<WorkOrderCountProvider>(
@@ -1844,21 +1855,20 @@ class _Summery_pageState extends State<Summery_page>
                               ],
                             ),
                             SizedBox(height: 5),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  '${widget.properties?.rentalAddress}',
+                                  maxLines: 2, // Set maximum number of lines
+                                  overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                    color: blueColor,
+                                  ),
                                 ),
-                                Text('${widget.properties.rentalAddress}',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(21, 43, 81, 1),
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 14
-                                              : 18,
-                                    )),
-                              ],
+                              ),
                             ),
                             SizedBox(height: 5),
                             Row(
@@ -2258,11 +2268,13 @@ class _Summery_pageState extends State<Summery_page>
                                 searchValuerent)
                             .toList();
                       }
+                      data = data.where((e)=>e.rentalId == widget.properties.rentalId).toList();
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
                           .toList();
+                      print("currentpage data ${currentPageData.length}");
                       return SingleChildScrollView(
                         child: Column(
                           children: [
@@ -2908,7 +2920,9 @@ class _Summery_pageState extends State<Summery_page>
               return Text('Error: ${snapshot.error}');
             } else {
               List<TenantData> tenants = snapshot.data ?? [];
-
+              if(snapshot.data!.length == 0){
+                return Center(child: Text("No Data Availabel"));
+              }
               return isTablet
                   ? SingleChildScrollView(
                       scrollDirection: Axis.vertical,
@@ -7956,19 +7970,33 @@ class _Summery_pageState extends State<Summery_page>
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        _image != null
-                                            ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : Text(''),
+                                        _images.isNotEmpty
+                                            ? Wrap(
+                                          spacing: 8.0, // Horizontal spacing between items
+                                          runSpacing: 8.0, // Vertical spacing between rows
+                                          children: List.generate(
+                                            _images.length,
+                                                (index) {
+                                              return SizedBox(
+                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
+                                                child: Row(
+                                                  children: [
+                                                    Image.file(
+                                                      _images[index],
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                            : Center(
+                                          child: Text("No images selected."),
+                                        ),
                                         SizedBox(height: 8.0),
                                         Row(
                                           children: [
@@ -8006,9 +8034,12 @@ class _Summery_pageState extends State<Summery_page>
                                                     rentalsqft: sqft3.text,
                                                     rentalbath: bath3.text,
                                                     rentalbed: bed3.text,
+                                                    rentalImages: _uploadedFileNames!
                                                   )
                                                       .then((value) {
                                                     setState(() {
+                                                      futureUnitsummery =
+                                                          Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
                                                       isLoading = false;
                                                       data.add(unit_properties(
                                                         adminId: id!,
@@ -8022,8 +8053,10 @@ class _Summery_pageState extends State<Summery_page>
                                                         rentalsqft: sqft3.text,
                                                         rentalbath: bath3.text,
                                                         rentalbed: bed3.text,
+
                                                       ));
                                                     });
+                                                    reload_Screen();
                                                     Navigator.pop(
                                                         context, true);
                                                   }).catchError((e) {
@@ -8354,19 +8387,33 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         ),
                                         SizedBox(height: 8.0),
-                                        _image != null
-                                            ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : Text(''),
+                                        _images.isNotEmpty
+                                            ? Wrap(
+                                          spacing: 8.0, // Horizontal spacing between items
+                                          runSpacing: 8.0, // Vertical spacing between rows
+                                          children: List.generate(
+                                            _images.length,
+                                                (index) {
+                                              return SizedBox(
+                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
+                                                child: Row(
+                                                  children: [
+                                                    Image.file(
+                                                      _images[index],
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                            : Center(
+                                          child: Text("No images selected."),
+                                        ),
                                         SizedBox(height: 8.0),
                                         Row(
                                           children: [
@@ -8382,6 +8429,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     iserror = true;
                                                   });
                                                 } else {
+                                                  print("unit calling");
                                                   setState(() {
                                                     isLoading = true;
                                                     iserror = false;
@@ -8400,9 +8448,12 @@ class _Summery_pageState extends State<Summery_page>
                                                         street3.text,
                                                     rentalsqft: sqft3.text,
                                                     rentalunit: unitnum.text,
+                                                    rentalImages: _uploadedFileNames!
                                                   )
                                                       .then((value) {
+                                                        print("valuesss....${value}");
                                                     setState(() {
+
                                                       isLoading = false;
                                                       data.add(unit_properties(
                                                         adminId: id!,
@@ -8416,6 +8467,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             unitnum.text,
                                                       ));
                                                     });
+                                                    reload_Screen();
                                                     Navigator.pop(
                                                         context, true);
                                                   }).catchError((e) {
@@ -8424,6 +8476,9 @@ class _Summery_pageState extends State<Summery_page>
                                                     });
                                                   });
                                                 }
+                                                print("calling.............");
+
+
                                               },
                                               child: Material(
                                                 elevation: 3,
@@ -8555,6 +8610,7 @@ class _Summery_pageState extends State<Summery_page>
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(child: Text('No data available'));
                       } else {
+                        print("data update...");
                         var data = snapshot.data!;
                         if (selectedValue == null && searchvalue!.isEmpty) {
                           data = snapshot.data!;
@@ -8577,6 +8633,7 @@ class _Summery_pageState extends State<Summery_page>
                           //       .toList();
                         }
                         // sortData(data);
+                        //countupdateunit(data.length);
                         final totalPages =
                             (data.length / itemsPerPagemulti).ceil();
                         final currentPageData = data
@@ -9709,6 +9766,7 @@ class _Summery_pageState extends State<Summery_page>
                           .toList();
                     }
                     totalrecordsmulti = _tableDatamulti.length;
+
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -10749,10 +10807,15 @@ class _Summery_pageState extends State<Summery_page>
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image(
                             image: NetworkImage(
+                                unit.rentalImages != null ? unit.rentalImages!.length >0 ? "$image_url${unit.rentalImages!.first}" : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU' :
+
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
                             fit: BoxFit.cover,
                             height: MediaQuery.of(context).size.width < 500
-                                ? 150
+                                ? 140
+                                : 220,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? 160
                                 : 220,
                           ),
                         ),
@@ -10761,6 +10824,19 @@ class _Summery_pageState extends State<Summery_page>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16),
+                            child: Text(
+                              '${unit!.rentalunit}',
+                              style: TextStyle(
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20,
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
@@ -10777,16 +10853,19 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             height: 5,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16),
-                            child: Text(
-                              '${widget.properties?.rentalAddress}',
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Text(
+                                '${widget.properties?.rentalAddress}',
+                                maxLines: 2, // Set maximum number of lines
+                                overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -10795,7 +10874,9 @@ class _Summery_pageState extends State<Summery_page>
                           Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
+                              maxLines: 2,
                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width < 500
@@ -11423,8 +11504,6 @@ class _Summery_pageState extends State<Summery_page>
                       color: Colors.black,
                       size: 40.0,
                     ));
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: Text('No data available'));
                   } else {
@@ -12078,7 +12157,10 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   reload_Screen() {
-    setState(() {});
+    setState(() {
+      futureUnitsummery =
+          Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+    });
   }
 }
 
@@ -13246,7 +13328,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
   }
 
   reload_screen() {
-    setState(() {});
+    setState(() {
+      futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+    });
   }
 
   DateTime? _selectedDate;

@@ -479,11 +479,24 @@ class _Tenants_tableState extends State<Tenants_table> {
     );
   }
 
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text,Tenant tenants) {
     return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ResponsiveTenantSummary(
+                          tenantId:
+                          tenants
+                              .tenantId!)));
+
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20.0, left: 16),
+          child: Text(text.isEmpty ? "N/A": text, style: const TextStyle(fontSize: 18)),
+        ),
       ),
     );
   }
@@ -945,11 +958,11 @@ class _Tenants_tableState extends State<Tenants_table> {
                                     // fontWeight: FontWeight.bold,
                                     color: Color(0xFF8A95A8),
                                     fontSize:
-                                        MediaQuery.of(context).size.width < 500
+                                           MediaQuery.of(context).size.width < 500
                                             ? 14
                                             : 18),
                                 contentPadding: (EdgeInsets.only(
-                                    left: 8, bottom: 13, top: 14)),
+                                    left: 8, bottom: 10, top: 14)),
                               ),
                             ),
                           ),
@@ -1620,20 +1633,20 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 children: [
                                                   _buildDataCell(
                                                       '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
-                                                          .trim()),
+                                                          .trim(),_pagedData[i]),
                                                   _buildDataCell(_pagedData[i]
                                                           .rentalAddress! ??
-                                                      ''),
+                                                      '',_pagedData[i]),
                                                   // _buildDataCell(''),
                                                   _buildDataCell(_pagedData[i]
                                                       .tenantPhoneNumber!
-                                                      .toString()),
+                                                      .toString(),_pagedData[i]),
                                                   _buildDataCell(_pagedData[i]
                                                       .tenantAlternativeEmail!
-                                                      .toString()),
+                                                      .toString(),_pagedData[i]),
                                                   _buildDataCell(_pagedData[i]
                                                       .createdAt!
-                                                      .toString()),
+                                                      .toString(),_pagedData[i]),
                                                   _buildActionsCell(
                                                       _pagedData[i]),
                                                 ],

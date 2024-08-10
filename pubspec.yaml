@@ -48,7 +48,7 @@ dependencies:
   email_validator: ^3.0.0
   http:
   fluttertoast: ^8.2.5
-  syncfusion_flutter_charts: ^26.2.7
+  syncfusion_flutter_charts:
   shared_preferences: ^2.2.3
   pie_chart: ^5.4.0
   d_chart:
@@ -65,7 +65,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   syncfusion_flutter_signaturepad: ^26.2.7
   google_fonts:
-  file_picker: ^8.0.6
+  file_picker: ^8.0.5
   flutter_slidable:
 
   printing:

@@ -732,7 +732,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding: EdgeInsets.only(
-                                      left: 5, bottom: 13, top: 14)),
+                                      left: 5, bottom: 10, top: 14)),
                             ),
                           ),
                         ],
@@ -936,13 +936,16 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    '   ${Propertytype.vendorName}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0),
+                                                    child: Text(
+                                                      '${Propertytype.vendorName}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -987,7 +990,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                               vender_id: Propertytype.vendorId,
                                                                             )));
                                                             if (check == true) {
-                                                              setState(() {});
+                                                              setState(() {
+                                                                futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+                                                              });
                                                             }
                                                           },
                                                           child: Container(
@@ -1359,11 +1364,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
+
                                               _buildHeader(
                                                   'Name',
                                                   0,

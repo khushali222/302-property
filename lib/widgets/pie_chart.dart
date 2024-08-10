@@ -51,68 +51,141 @@ class PieCharts extends StatelessWidget {
     print(legendDataMap);
     legendDataMap.removeWhere((key, value) => value == -1.0);
 
-    return Container(
-      height: 250,
-      margin: EdgeInsets.all(10),
-      child: Card(
-        color: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 4,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 3,
-              child: Container(
+    return LayoutBuilder(
+        builder: (context,contraints) {
 
-                child: PieChart(
-                  dataMap: dataMap,
-                  chartRadius: MediaQuery.of(context).size.width / 3.2,
-                  colorList: colorList,
-                  chartType: ChartType.disc,
-                  centerText: "",
-                  initialAngleInDegree: 0,
-                  legendOptions: LegendOptions(
-                    showLegends: false,
-                  ),
-                  chartValuesOptions: ChartValuesOptions(
-                    showChartValuesInPercentage: false,
-                    showChartValues: false,
-                  ),
-                  emptyColor: Colors.transparent,
-                  gradientList: null,
+          if(contraints.maxWidth > 500){
+
+            return Container(
+              height: 250,
+              width: 375,
+              margin: EdgeInsets.all(10),
+              child: Card(
+                color: Colors.white,
+                surfaceTintColor: Colors.white,
+                elevation: 4,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+
+                        child: PieChart(
+                          dataMap: dataMap,
+                          chartRadius: MediaQuery.of(context).size.width / 3.2,
+                          colorList: colorList,
+                          chartType: ChartType.disc,
+                          centerText: "",
+                          initialAngleInDegree: 0,
+                          legendOptions: LegendOptions(
+                            showLegends: false,
+                          ),
+                          chartValuesOptions: ChartValuesOptions(
+                            showChartValuesInPercentage: false,
+                            showChartValues: false,
+                          ),
+                          emptyColor: Colors.transparent,
+                          gradientList: null,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: legendDataMap.keys.map((key) {
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 15,
+                                height: 15,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: colorList[dataMap.keys.toList().indexOf(key)],
+                                ),
+
+                              ),
+                              SizedBox(width: 10),
+                              Text(key,maxLines: 3,),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    )
+                  ],
                 ),
               ),
-            ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: legendDataMap.keys.map((key) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 15,
-                      height: 15,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                          color: colorList[dataMap.keys.toList().indexOf(key)],
-                      ),
+            );
+          }
 
+          return Container(
+            height: 250,
+            margin: EdgeInsets.all(10),
+            child: Card(
+              color: Colors.white,
+              surfaceTintColor: Colors.white,
+              elevation: 4,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+
+                      child: PieChart(
+                        dataMap: dataMap,
+                        chartRadius: MediaQuery.of(context).size.width / 3.2,
+                        colorList: colorList,
+                        chartType: ChartType.disc,
+                        centerText: "",
+                        initialAngleInDegree: 0,
+                        legendOptions: LegendOptions(
+                          showLegends: false,
+                        ),
+                        chartValuesOptions: ChartValuesOptions(
+                          showChartValuesInPercentage: false,
+                          showChartValues: false,
+                        ),
+                        emptyColor: Colors.transparent,
+                        gradientList: null,
+                      ),
                     ),
-                    SizedBox(width: 10),
-                    Text(key,maxLines: 3,),
-                  ],
-                );
-              }).toList(),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: legendDataMap.keys.map((key) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 15,
+                              height: 15,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: colorList[dataMap.keys.toList().indexOf(key)],
+                              ),
+
+                            ),
+                            SizedBox(width: 10),
+                            Text(key,maxLines: 3,),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  )
+                ],
+              ),
             ),
-          )
-          ],
-        ),
-      ),
+          );
+        }
     );
   }
 }
