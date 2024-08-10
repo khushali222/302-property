@@ -677,7 +677,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                   ? 14
                                   : 18),
                           contentPadding:
-                              (EdgeInsets.only(left: 8, bottom: 13, top: 14)),
+                              (EdgeInsets.only(left: 8, bottom: 13, top: 7)),
                         ),
                       ),
                     ),
@@ -1162,7 +1162,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                   .contains(searchValue.toLowerCase()))
                           .toList();
                     }
-
                     _tableData = filteredData!;
                     totalrecords = _tableData.length;
                     return Padding(

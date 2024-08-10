@@ -174,9 +174,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     if (picked != null && picked != startdate) {
       setState(() {
         startdate = picked;
-        // birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        // enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        // startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        startdateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        // Use this format (yyyy-MM-dd) when passing it to your API or saving it
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print(dateForApi);
       });
     }
   }
@@ -210,7 +212,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         enddate = picked;
         //birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        enddateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
@@ -297,7 +300,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
-                padding: EdgeInsets.only(top: 14, left: 10),
+                padding: EdgeInsets.only(top: 9, left: 10),
                 width: MediaQuery.of(context).size.width * .91,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
@@ -313,7 +316,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                   ],
                 ),
                 child: Text(
-                  "Add Rental Owners",
+                  "Add Rental Owners ",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -351,7 +354,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
                           ),
                         ],
                       ),
@@ -370,7 +375,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -408,9 +415,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter first name",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 19,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: nameerror
@@ -423,7 +432,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                 )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(11),
+                                          contentPadding: EdgeInsets.all(
+                                              MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 14
+                                                  : 11),
                                         ),
                                       ),
                                     ),
@@ -444,8 +459,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -469,7 +488,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -507,9 +528,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter company name",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 19,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: comnameerror
@@ -522,7 +545,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                 )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
+                                          contentPadding: EdgeInsets.all(
+                                              MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 14
+                                                  : 11),
                                         ),
                                       ),
                                     ),
@@ -543,8 +572,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -556,117 +589,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         height: 10,
                       ),
                       //birth date
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Date Of Birth",
-                            style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * .036),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            birthdateerror = false;
-                                            // _selectDate(context);
-                                          });
-                                        },
-                                        controller: birthdateController,
-                                        cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                        decoration: InputDecoration(
-                                          hintText: "yyyy/mm/dd",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: birthdateerror
-                                              ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(Icons.calendar_today),
-                                            onPressed: () =>
-                                                _startDate(context),
-                                          ),
-                                        ),
-                                        readOnly: true,
-                                        onTap: () {
-                                          _birthDate(context);
-                                          setState(() {
-                                            birthdateerror = false;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      birthdateerror
-                          ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  birthdatemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      SizedBox(
-                        height: 5,
-                      ),
                     ],
                   ),
                 ),
@@ -705,7 +627,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
                           ),
                         ],
                       ),
@@ -723,7 +647,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -774,7 +700,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                       hintStyle: TextStyle(
                                                         color:
                                                             Color(0xFF8A95A8),
-                                                        fontSize: 13,
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 19,
                                                       ),
                                                     ),
                                                   ),
@@ -821,9 +753,15 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(5.0),
                                     child: Container(
-                                      height: 30.0,
-                                      width: MediaQuery.of(context).size.width *
-                                          .3,
+                                      height:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 35
+                                              : 40,
+                                      width: MediaQuery.of(context).size.width <
+                                              500
+                                          ? 120
+                                          : 180,
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(5.0),
@@ -842,7 +780,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 10),
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 13
+                                                  : 20),
                                         ),
                                       ),
                                     ),
@@ -891,236 +834,517 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
                           ),
                         ],
                       ),
                       SizedBox(
                         height: 10,
                       ),
+
                       //start date
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Start Date",
-                            style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * .036),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            startdatederror = false;
-                                            // _selectDate(context);
-                                          });
-                                        },
-                                        controller: startdateController,
-                                        cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                        decoration: InputDecoration(
-                                          hintText: "mm/dd/yyyy",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: startdatederror
-                                              ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(Icons.calendar_today),
-                                            onPressed: () {
-                                              _startDate(context);
-                                              setState(() {
-                                                startdatederror = false;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        readOnly: true,
-                                        onTap: () {
-                                          _startDate(context);
-                                          setState(() {
-                                            startdatederror = false;
-                                          });
-                                        },
-                                      ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Start Date",
+                              style: TextStyle(
+                                  color: Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 20),
+                            ),
+                          ],
+                        ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        SizedBox(
+                          height: 5,
+                        ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        Row(
+                          children: [
+                            SizedBox(width: 2),
+                            Expanded(
+                              child: Material(
+                                elevation: 4,
+                                child: Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(2),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
                                     ),
-                                  ],
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: TextField(
+                                          onChanged: (value) {
+                                            setState(() {
+                                              startdatederror = false;
+                                              // _selectDate(context);
+                                            });
+                                          },
+                                          controller: startdateController,
+                                          cursorColor:
+                                              Color.fromRGBO(21, 43, 81, 1),
+                                          decoration: InputDecoration(
+                                            hintText: "dd - mm - yyyy",
+                                            hintStyle: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 18,
+                                              color: Color(0xFF8A95A8),
+                                            ),
+                                            enabledBorder: startdatederror
+                                                ? OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.red,
+                                                    ),
+                                                  )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(12),
+                                            suffixIcon: IconButton(
+                                              icon: Icon(Icons.calendar_today),
+                                              onPressed: () {
+                                                _startDate(context);
+                                                setState(() {
+                                                  startdatederror = false;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          readOnly: true,
+                                          onTap: () {
+                                            _startDate(context);
+                                            setState(() {
+                                              startdatederror = false;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      startdatederror
-                          ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  startdatemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
+                            SizedBox(width: 2),
+                          ],
+                        ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        startdatederror
+                            ? Row(
+                                children: [
+                                  Spacer(),
+                                  Text(
+                                    startdatemessage,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize:
+                                        MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                            500
+                                            ? 15
+                                            : 19),
+                                  ),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                ],
+                              )
+                            : Container(),
+                      if (MediaQuery.of(context).size.width < 500)
+                        SizedBox(
+                          height: 10,
+                        ),
                       //enddate
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Text(
-                            "End Date",
-                            style: TextStyle(
-                                // color: Colors.grey,
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * .036),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 2),
-                          Expanded(
-                            child: Material(
-                              elevation: 4,
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * .6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  border: Border.all(
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            enddatederror = false;
-                                            // _selectDate(context);
-                                          });
-                                        },
-                                        controller: enddateController,
-                                        cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                        decoration: InputDecoration(
-                                          hintText: "mm/dd/yyyy",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          enabledBorder: enddatederror
-                                              ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(Icons.calendar_today),
-                                            onPressed: () => _endDate(context),
-                                          ),
-                                        ),
-                                        readOnly: true,
-                                        onTap: () {
-                                          _endDate(context);
-                                          setState(() {
-                                            enddatederror = false;
-                                          });
-                                        },
-                                      ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 3,
+                            ),
+                            Text(
+                              "End Date",
+                              style: TextStyle(
+                                  // color: Colors.grey,
+                                  color: Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 20),
+                            ),
+                          ],
+                        ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        SizedBox(
+                          height: 5,
+                        ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        Row(
+                          children: [
+                            SizedBox(width: 2),
+                            Expanded(
+                              child: Material(
+                                elevation: 4,
+                                child: Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(2),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
                                     ),
-                                  ],
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: TextField(
+                                          onChanged: (value) {
+                                            setState(() {
+                                              enddatederror = false;
+                                              // _selectDate(context);
+                                            });
+                                          },
+                                          controller: enddateController,
+                                          cursorColor:
+                                              Color.fromRGBO(21, 43, 81, 1),
+                                          decoration: InputDecoration(
+                                            hintText: "dd - mm - yyyy",
+                                            hintStyle: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 18,
+                                              color: Color(0xFF8A95A8),
+                                            ),
+                                            enabledBorder: enddatederror
+                                                ? OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.red,
+                                                    ),
+                                                  )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(12),
+                                            suffixIcon: IconButton(
+                                              icon: Icon(Icons.calendar_today),
+                                              onPressed: () =>
+                                                  _endDate(context),
+                                            ),
+                                          ),
+                                          readOnly: true,
+                                          onTap: () {
+                                            _endDate(context);
+                                            setState(() {
+                                              enddatederror = false;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
+                            SizedBox(width: 2),
+                          ],
+                        ),
+                      if (MediaQuery.of(context).size.width < 500)
+                        enddatederror
+                            ? Row(
+                                children: [
+                                  Spacer(),
+                                  Text(
+                                    enddatemessage,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize:
+                                        MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                            500
+                                            ? 15
+                                            : 19),
+                                  ),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                ],
+                              )
+                            : Container(),
+
+                      if (MediaQuery.of(context).size.width > 500)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // First Column
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Start Date",
+                                      style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 15
+                                              : 20),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Material(
+                                      elevation: 4,
+                                      child: Container(
+                                        height: 50,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .6,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                          border: Border.all(
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            Positioned.fill(
+                                              child: TextField(
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    startdatederror = false;
+                                                    // _selectDate(context);
+                                                  });
+                                                },
+                                                controller: startdateController,
+                                                cursorColor: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                                decoration: InputDecoration(
+                                                  hintText: "dd - mm - yyyy",
+                                                  hintStyle: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 18,
+                                                    color: Color(0xFF8A95A8),
+                                                  ),
+                                                  enabledBorder: startdatederror
+                                                      ? OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(3),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Colors.red,
+                                                          ),
+                                                        )
+                                                      : InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.all(12),
+                                                  suffixIcon: IconButton(
+                                                    icon: Icon(
+                                                        Icons.calendar_today),
+                                                    onPressed: () {
+                                                      _startDate(context);
+                                                      setState(() {
+                                                        startdatederror = false;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                readOnly: true,
+                                                onTap: () {
+                                                  _startDate(context);
+                                                  setState(() {
+                                                    startdatederror = false;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    startdatederror
+                                        ? Row(
+                                            children: [
+                                              Spacer(),
+                                              Text(
+                                                startdatemessage,
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 15
+                                                        : 19),
+                                              ),
+                                              SizedBox(
+                                                width: 2,
+                                              ),
+                                            ],
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              // Second Column
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "End Date",
+                                      style: TextStyle(
+                                          // color: Colors.grey,
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 15
+                                              : 20),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Material(
+                                      elevation: 4,
+                                      child: Container(
+                                        height: 50,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .6,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                          border: Border.all(
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            Positioned.fill(
+                                              child: TextField(
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    enddatederror = false;
+                                                    // _selectDate(context);
+                                                  });
+                                                },
+                                                controller: enddateController,
+                                                cursorColor: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                                decoration: InputDecoration(
+                                                  hintText: "dd - mm - yyyy",
+                                                  hintStyle: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 18,
+                                                    color: Color(0xFF8A95A8),
+                                                  ),
+                                                  enabledBorder: enddatederror
+                                                      ? OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(3),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Colors.red,
+                                                          ),
+                                                        )
+                                                      : InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.all(12),
+                                                  suffixIcon: IconButton(
+                                                    icon: Icon(
+                                                        Icons.calendar_today),
+                                                    onPressed: () =>
+                                                        _endDate(context),
+                                                  ),
+                                                ),
+                                                readOnly: true,
+                                                onTap: () {
+                                                  _endDate(context);
+                                                  setState(() {
+                                                    enddatederror = false;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    enddatederror
+                                        ? Row(
+                                            children: [
+                                              Spacer(),
+                                              Text(
+                                                enddatemessage,
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 15
+                                                        : 19),
+                                              ),
+                                              SizedBox(
+                                                width: 2,
+                                              ),
+                                            ],
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 2),
-                        ],
-                      ),
-                      enddatederror
-                          ? Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  enddatemessage,
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            )
-                          : Container(),
+                        ),
                     ],
                   ),
                 ),
@@ -1159,7 +1383,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
                           ),
                         ],
                       ),
@@ -1178,7 +1404,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1216,9 +1444,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter primary e-mail",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: primaryemailerror
@@ -1252,8 +1482,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1277,7 +1511,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1315,9 +1551,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter alternative e-mail ",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: alternativeerror
@@ -1351,8 +1589,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1376,7 +1618,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1414,9 +1658,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: phonenumerror
@@ -1450,8 +1696,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1475,7 +1725,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1513,9 +1765,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter home number",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: homenumerror
@@ -1549,8 +1803,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1574,7 +1832,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1612,9 +1872,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter office number",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: officenumerror
@@ -1648,8 +1910,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1673,7 +1939,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1711,9 +1979,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter street address",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: street2error
@@ -1747,8 +2017,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1772,7 +2046,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1810,9 +2086,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter city",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: city2error
@@ -1846,8 +2124,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1871,7 +2153,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -1909,9 +2193,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter state",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: state2error
@@ -1945,8 +2231,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1970,7 +2260,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -2008,9 +2300,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter country",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: county2error
@@ -2044,8 +2338,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2069,7 +2367,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -2107,9 +2407,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter postal code",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: code2error
@@ -2143,8 +2445,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2190,7 +2496,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .045),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
                           ),
                         ],
                       ),
@@ -2208,7 +2516,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -2246,9 +2556,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter tax identify type",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: taxtypeerror
@@ -2282,8 +2594,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2306,7 +2622,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * .036),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -2344,9 +2662,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           hintText: "Enter SSN or EIN",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .037,
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 18,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: taxiderror
@@ -2380,8 +2700,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .035),
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2400,9 +2724,15 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
           ),
           Row(
             children: [
-              SizedBox(width: MediaQuery.of(context).size.width * 0.065),
+              if (MediaQuery.of(context).size.width < 500)
+                SizedBox(width: MediaQuery.of(context).size.width * 0.063),
+              if (MediaQuery.of(context).size.width > 500)
+                SizedBox(
+                  width: 25,
+                ),
               GestureDetector(
                 onTap: () async {
+                  print("callllll");
                   if (name.text.isEmpty) {
                     setState(() {
                       nameerror = true;
@@ -2423,16 +2753,16 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       comnameerror = false;
                     });
                   }
-                  if (birthdateController.text.isEmpty) {
-                    setState(() {
-                      birthdateerror = true;
-                      birthdatemessage = "required";
-                    });
-                  } else {
-                    setState(() {
-                      birthdateerror = false;
-                    });
-                  }
+                  // if (birthdateController.text.isEmpty) {
+                  //   setState(() {
+                  //     birthdateerror = true;
+                  //     birthdatemessage = "required";
+                  //   });
+                  // } else {
+                  //   setState(() {
+                  //     birthdateerror = false;
+                  //   });
+                  // }
                   if (startdateController.text.isEmpty) {
                     setState(() {
                       startdatederror = true;
@@ -2597,19 +2927,28 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       !code2error &&
                       !taxtypeerror &&
                       !taxiderror &&
-                      !birthdateerror &&
+                      // !birthdateerror &&
                       !startdatederror &&
                       !enddatederror) {
                     setState(() {
                       loading = true;
                     });
 
-                    List<ProcessorList> processor = [];
-                    for (var i = 0; i < _controllers.length; i++) {
-                      if (_controllers.isNotEmpty)
-                        processor.add(
-                            ProcessorList(processorId: _controllers[i]!.text));
-                    }
+                    print("Callinnnng");
+                    // List<ProcessorList> processor = [];
+                    // for (var i = 0; i < _controllers.length; i++) {
+                    //   if (_controllers.isNotEmpty)
+                    //     processor.add(
+                    //         ProcessorList(processorId: _controllers[i]!.text));
+                    // }
+
+                    List<ProcessorList> processorList = [];
+                    _controllers.forEach((key, controller) {
+                      if (controller.text.isNotEmpty) {
+                        processorList.add(ProcessorList(processorId: controller.text));
+                      }
+                    });
+                    print(processorList.length);
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     var adminId = prefs.getString("adminId");
@@ -2625,52 +2964,52 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       rentalOwnerAlternateEmail: alternativeemail.text,
                       rentalOwnerPhoneNumber: phonenum.text,
                       rentalOwnerHomeNumber: homenum.text,
-                      rentalOwnerBusinessNumber: businessnum.text,
+                      rentalOwnerBusinessNumber: officenum.text,
                       streetAddress: street2.text,
                       city: city2.text,
                       state: state2.text,
                       postalCode: code2.text,
                       country: county2.text,
-                      processorList: processor,
                       textIdentityType: taxtype.text,
                       texpayerId: taxid.text,
+                     // processorLists:processorIds,
+                      processorList:processorList,
                     );
-                    var result =
-                        await RentalOwnerService().addRentalOwner(rentalOwner);
-                    if (result) {
-                      Navigator.of(context).pop(result);
-                    }
+                    print(processorList);
+                   // print(processorIds);
+                    print('hello');
+                    // var result =
+                    //     await RentalOwnerService().addRentalOwner(rentalOwner);
+                    // if (result) {
+                    //   Navigator.of(context).pop(result);
+                    // }else{
+                    //   print("faild");
+                    // }
+                    RentalOwnerService()
+                        .addRentalOwner(rentalOwner)
+                        .then((result) {
+                      setState(() {
+                        loading = false;
+                      });
+                      if (result) {
+                        Navigator.of(context).pop(result);
+                      } else {
+                        print("Failed to add rental owner");
+                      }
+                    }).catchError((e) {
+                      setState(() {
+                        loading = false;
+                      });
+                      print("Error: $e");
+                    });
                   }
-                  // SharedPreferences prefs =
-                  // await SharedPreferences.getInstance();
-                  // String? adminId = prefs.getString("adminId");
-                  // if (adminId != null) {
-                  //   try {
-                  //     await StaffMemberRepository().addStaffMember(
-                  //       adminId: adminId,
-                  //       staffmemberName: name.text,
-                  //       staffmemberDesignation: designation.text,
-                  //       staffmemberPhoneNumber: phonenumber.text,
-                  //       staffmemberEmail: email.text,
-                  //       staffmemberPassword: password.text,
-                  //     );
-                  //     setState(() {
-                  //       loading = false;
-                  //     });
-                  //     Navigator.of(context).pop(true);
-                  //   } catch (e) {
-                  //     setState(() {
-                  //       loading = false;
-                  //     });
-                  //     // Handle error
-                  //   }
-                  // }
-                },
+
+                  },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: MediaQuery.of(context).size.height * .045,
-                    width: MediaQuery.of(context).size.width * .36,
+                    width: MediaQuery.of(context).size.width < 500 ? 160 : 190,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: Color.fromRGBO(21, 43, 81, 1),
@@ -2688,7 +3027,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * .034),
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 15
+                                : 20),
                       ),
                     ),
                   ),
@@ -2698,12 +3039,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 width: 15,
               ),
               InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
                   },
                   child: Text("Cancel")),
             ],
           ),
+
           SizedBox(
             height: 20,
           ),

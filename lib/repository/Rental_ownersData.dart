@@ -60,7 +60,8 @@ class RentalOwnerService {
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
     print(url);
-    print(jsonEncode(rentalOwner.toJson()));
+    print(rentalOwner.processorList!.length);
+    print(' Body: ${jsonEncode(rentalOwner.toJson())}');
     try {
       final response = await http.post(
         url,
@@ -70,10 +71,10 @@ class RentalOwnerService {
           'Content-Type': 'application/json'},
         body: jsonEncode(rentalOwner.toJson()),
       );
-
+       print(jsonEncode(rentalOwner.toJson()));
       var responseData = jsonDecode(response.body);
       print(responseData);
-
+     print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
           print('Response successfully: ${responseData['data']}');
@@ -167,6 +168,7 @@ class RentalOwnerService {
     String? state,
     String? country,
     String? postalCode,
+    List<ProcessorList>? processorList,
   }) async {
     final Map<String, dynamic> data = {
       "admin_id": adminId,
@@ -186,6 +188,7 @@ class RentalOwnerService {
       "state":state,
       "country": country,
       "postal_code": postalCode,
+      "processor_list": processorList?.map((e) => e.toJson()).toList()
     };
     print(data);
     String apiUrl = "${Api_url}/api/rental_owner/rental_owner/$rentalownerId";
