@@ -737,7 +737,6 @@ class _enterChargeState extends State<enterCharge> {
                       ),
                     ),
                  const SizedBox(height: 10),
-
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(

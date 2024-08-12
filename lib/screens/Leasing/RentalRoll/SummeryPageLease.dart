@@ -2393,7 +2393,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           Text(
                                             "Move out",
                                             style: TextStyle(
-                                              fontSize: 15,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: Color.fromRGBO(21, 43, 81, 1),
                                             ),

@@ -187,6 +187,7 @@ class _MakePaymentState extends State<MakePayment> {
           "Last Month's Rent",
           "Pre-payments",
           "Security Deposit"
+
         ];
         for (var item in jsonResponse) {
           String chargeType = item['charge_type'];
@@ -831,16 +832,18 @@ class _MakePaymentState extends State<MakePayment> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
+        body:
+        SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(height: 10,),
               Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: const EdgeInsets.only(top: 14, left: 10),
+                    padding: const EdgeInsets.only(top: 10, left: 10),
                     width: MediaQuery.of(context).size.width * .91,
                     margin: const EdgeInsets.only(bottom: 6.0),
                     //Same as `blurRadius` i guess
@@ -865,10 +868,11 @@ class _MakePaymentState extends State<MakePayment> {
                   ),
                 ),
               ),
+              SizedBox(height: 10,),
               Form(
                 key: _formKey,
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding:  EdgeInsets.only(left:MediaQuery.of(context).size.width < 500 ? 16 : 35,right:MediaQuery.of(context).size.width < 500 ? 16 : 35 ),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -890,14 +894,17 @@ class _MakePaymentState extends State<MakePayment> {
                               const SizedBox(
                                 height: 8,
                               ),
+                              if(MediaQuery.of(context).size.width < 500 )
                               const Text('Received From *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey)),
+                              if(MediaQuery.of(context).size.width < 500 )
                               const SizedBox(
                                 height: 8,
                               ),
+                              if(MediaQuery.of(context).size.width < 500 )
                               tenants.isEmpty
                                   ? const Center(
                                       child: SpinKitFadingCircle(
@@ -977,17 +984,21 @@ class _MakePaymentState extends State<MakePayment> {
                                         ),
                                       ),
                                     ),
+                              if(MediaQuery.of(context).size.width < 500 )
                               const SizedBox(
                                 height: 20,
                               ),
+                              if(MediaQuery.of(context).size.width < 500 )
                               const Text('Date',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey)),
+                              if(MediaQuery.of(context).size.width < 500 )
                               const SizedBox(
                                 height: 8,
                               ),
+                              if(MediaQuery.of(context).size.width < 500 )
                               CustomTextField(
                                 onTap: () async {
                                   DateTime? pickedDate = await showDatePicker(
@@ -1050,6 +1061,191 @@ class _MakePaymentState extends State<MakePayment> {
                                 hintText: 'dd-mm-yyyy',
                                 controller: _startDate,
                               ),
+                              if(MediaQuery.of(context).size.width < 500 )
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              if(MediaQuery.of(context).size.width > 500)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // First Column
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                             Text('Received From *',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
+                                            SizedBox(height: 5),
+                                            tenants.isEmpty
+                                                ? const Center(
+                                              child: SpinKitFadingCircle(
+                                                color: Colors.black,
+                                                size: 50.0,
+                                              ),
+                                            )
+                                                : DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                hint: const Text('Select Tenant'),
+                                                value: selectedTenantId,
+                                                items: tenants.map((tenant) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: tenant['tenant_id'],
+                                                    child: Text(tenant['tenant_name']!),
+                                                  );
+                                                }).toList(),
+                                                // onChanged: (value) {
+                                                //   setState(() {
+                                                //     selectedTenantId = value;
+                                                //     fetchChargesForSelectedTenant(widget.tenantId,);
+                                                //    // ChargeRepositorys().fetchChargesTable(widget.leaseId, widget.tenantId);
+                                                //   });
+                                                //   print(
+                                                //       'Selected tenant_id: $selectedTenantId');
+                                                // },
+                                                onChanged: (value) async {
+                                                  setState(() {
+                                                    selectedTenantId = value;
+                                                    fetchChargesForSelectedTenant(
+                                                        value!);
+                                                  });
+                                                  await fetchcreditcard(value!);
+                                                  print(
+                                                      'Selected tenant_id: $selectedTenantId');
+                                                },
+                                                buttonStyleData: ButtonStyleData(
+                                                  height: MediaQuery.of(context).size.width < 500 ? 45 : 55 ,
+                                                  width: 250,
+                                                  padding: const EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 2,
+                                                ),
+                                                iconStyleData: const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                  iconEnabledColor: Color(0xFFb0b6c3),
+                                                  iconDisabledColor: Colors.grey,
+                                                ),
+                                                dropdownStyleData: DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme: ScrollbarThemeData(
+                                                    radius: const Radius.circular(6),
+                                                    thickness:
+                                                    MaterialStateProperty.all(6),
+                                                    thumbVisibility:
+                                                    MaterialStateProperty.all(true),
+                                                  ),
+                                                ),
+                                                menuItemStyleData:
+                                                const MenuItemStyleData(
+                                                  height: 45,
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(width: 16),
+                                      // Second Column
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                             Text('Date',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
+                                            SizedBox(height: 5),
+                                            CustomTextField(
+                                              onTap: () async {
+                                                DateTime? pickedDate = await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime.now(),
+                                                  lastDate: DateTime(2101),
+                                                  locale: const Locale('en', 'US'),
+                                                  builder:
+                                                      (BuildContext context, Widget? child) {
+                                                    return Theme(
+                                                      data: ThemeData.light().copyWith(
+                                                        colorScheme: const ColorScheme.light(
+                                                          primary: Color.fromRGBO(21, 43, 83,
+                                                              1), // header background color
+                                                          onPrimary: Colors
+                                                              .white, // header text color
+                                                          onSurface: Color.fromRGBO(21, 43,
+                                                              83, 1), // body text color
+                                                        ),
+                                                        textButtonTheme: TextButtonThemeData(
+                                                          style: TextButton.styleFrom(
+                                                            foregroundColor: Colors.white,
+                                                            backgroundColor:
+                                                            const Color.fromRGBO(
+                                                                21,
+                                                                43,
+                                                                83,
+                                                                1), // button text color
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: child!,
+                                                    );
+                                                  },
+                                                );
+                                                if (pickedDate != null) {
+                                                  bool isfuture =
+                                                  pickedDate.isAfter(DateTime.now());
+                                                  String formattedDate =
+                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                  setState(() {
+                                                    futuredate = isfuture;
+                                                    _startDate.text = formattedDate;
+                                                  });
+                                                }
+                                              },
+                                              readOnnly: true,
+                                              suffixIcon: IconButton(
+                                                  onPressed: () {},
+                                                  icon: const Icon(Icons.date_range_rounded)),
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return 'Please select start date';
+                                                }
+                                                return null;
+                                              },
+                                              label: "Select the date",
+                                              keyboardType: TextInputType.text,
+                                              hintText: 'dd-mm-yyyy',
+                                              controller: _startDate,
+                                            ),
+                                            SizedBox(height: 5),
+
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -1108,8 +1304,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     surge_count();
                                   },
                                   buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 200,
+                                    height: MediaQuery.of(context).size.width < 500 ? 46 :55,
+                                    width: MediaQuery.of(context).size.width < 500 ? 200 : 250,
                                     padding: const EdgeInsets.only(
                                         left: 14, right: 14),
                                     decoration: BoxDecoration(
@@ -1369,10 +1565,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                         .height *
                                                     .04,
                                                 // width: MediaQuery.of(context).size.width * .36,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .2,
+                                                width:MediaQuery.of(context).size.width < 500 ? 80 :90,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -1402,11 +1595,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              fontSize: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  .025),
+                                                              fontSize: MediaQuery.of(context).size.width < 500 ? 14 :17),
                                                         ),
                                                 ),
                                               ),
@@ -1493,6 +1682,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
+                                if(MediaQuery.of(context).size.width < 500 )
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: DropdownButtonHideUnderline(
@@ -1562,6 +1752,164 @@ class _MakePaymentState extends State<MakePayment> {
                                     ),
                                   ),
                                 ),
+                                if(MediaQuery.of(context).size.width > 500 )
+                                  Row(
+                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // First Column
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(4.0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  hint: Text('Select Account'),
+                                                  value: selectedAccount,
+                                                  items: _selecttype.map((method) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: method,
+                                                      child: Text(method),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (String? newValue) {
+                                                    // setState(() {
+                                                    //   _selectedPaymentMethod = newValue;
+                                                    //   //_selectedPaymentMethod = addRow();
+                                                    //   if(_selectedPaymentMethod == 'Card')
+                                                    //   addRow();
+                                                    //   if(_selectedPaymentMethod == 'Check')
+                                                    //    Text("hello");
+                                                    //
+                                                    // });
+                                                    setState(() {
+                                                      selectedAccount = newValue;
+                                                    });
+                                                    // print();
+                                                    print(
+                                                        'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
+                                                  },
+                                                  buttonStyleData: ButtonStyleData(
+                                                    height: 55,
+                                                    width: 250,
+                                                    padding: const EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData: const IconStyleData(
+                                                    icon: Icon(
+                                                      Icons.arrow_drop_down,
+                                                    ),
+                                                    iconSize: 24,
+                                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                                    iconDisabledColor: Colors.grey,
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      radius: const Radius.circular(6),
+                                                      thickness: MaterialStateProperty.all(6),
+                                                      thumbVisibility:
+                                                      MaterialStateProperty.all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData: const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding:
+                                                    EdgeInsets.only(left: 14, right: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                     Spacer(),
+                                      // Second Column
+                                      Expanded(
+                                        child: Column(
+                                          //crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                hint: Text('Select Account Holder Type'),
+                                                value: _selectedHoldertype,
+                                                items: _selectholder.map((method) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: method,
+                                                    child: Text(method),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (String? newValue) {
+                                                  // setState(() {
+                                                  //   _selectedPaymentMethod = newValue;
+                                                  //   //_selectedPaymentMethod = addRow();
+                                                  //   if(_selectedPaymentMethod == 'Card')
+                                                  //   addRow();
+                                                  //   if(_selectedPaymentMethod == 'Check')
+                                                  //    Text("hello");
+                                                  //
+                                                  // });
+                                                  setState(() {
+                                                    _selectedHoldertype = newValue;
+                                                  });
+                                                  print(
+                                                      'Selected payment method: $_selectedHoldertype');
+                                                },
+                                                buttonStyleData: ButtonStyleData(
+                                                  height: 55,
+                                                  width: 300,
+                                                  padding: const EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 2,
+                                                ),
+                                                iconStyleData: const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                  iconEnabledColor: Color(0xFFb0b6c3),
+                                                  iconDisabledColor: Colors.grey,
+                                                ),
+                                                dropdownStyleData: DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme: ScrollbarThemeData(
+                                                    radius: const Radius.circular(6),
+                                                    thickness: MaterialStateProperty.all(6),
+                                                    thumbVisibility:
+                                                    MaterialStateProperty.all(true),
+                                                  ),
+                                                ),
+                                                menuItemStyleData: const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding:
+                                                  EdgeInsets.only(left: 14, right: 14),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                    ],
+                                  ),
                                 SizedBox(height: 10),
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
@@ -1585,6 +1933,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
+                                if(MediaQuery.of(context).size.width < 500 )
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: DropdownButtonHideUnderline(
@@ -1900,6 +2249,7 @@ class _MakePaymentState extends State<MakePayment> {
                         // ),
                         // SizedBox(height: 15),
                         // const SizedBox(height: 5),
+                        if(MediaQuery.of(context).size.width < 500 )
                         ...rows.asMap().entries.map((entry) {
                           int index = entry.key;
                           Map<String, dynamic> row = entry.value;
@@ -2128,6 +2478,311 @@ class _MakePaymentState extends State<MakePayment> {
                           );
                         }).toList(),
                         const SizedBox(height: 5),
+                        if(MediaQuery.of(context).size.width > 500 )
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Table(
+                            border: TableBorder.all(width: 1),
+                            columnWidths: const {
+                              0: FlexColumnWidth(3),
+                              1: FlexColumnWidth(3),
+                              2: FlexColumnWidth(2),
+                            },
+                            children: [
+                              const TableRow(children: [
+
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Account',
+                                      style: TextStyle(
+                                          color:
+                                          Color.fromRGBO(21, 43, 83, 1),
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Amount',
+                                      style: TextStyle(
+                                          color:
+                                          Color.fromRGBO(21, 43, 83, 1),
+                                          fontWeight: FontWeight.bold)),
+                                ),
+
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Balance',
+                                      style: TextStyle(
+                                          color:
+                                          Color.fromRGBO(21, 43, 83, 1),
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('',
+                                      style: TextStyle(
+                                          color:
+                                          Color.fromRGBO(21, 43, 83, 1),
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              ]),
+                              /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
+                                            int index = entry.key;
+                                            PartsandchargeData row = entry.value;
+                                            grandTotal += (row.partsQuantity! * row.partsPrice!);
+                                            return TableRow(children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child:Text("${row.partsQuantity}"),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child:Text("${row.account}"),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child:Text("${row.description}"),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child:Text("\$${row.partsPrice}"),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
+                                              ),
+                                            ]);
+                                          }).toList(),*/
+                              ...rows.asMap().entries.map((entry) {
+                                int index = entry.key;
+                                Map<String, dynamic> row = entry.value;
+                                return  TableRow(children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton2<String>(
+                                        isExpanded: true,
+                                        value: row['account'],
+                                        items: [
+                                          ...categorizedData.entries
+                                              .expand((entry) {
+                                            return [
+                                              DropdownMenuItem<String>(
+                                                enabled: false,
+                                                child: Text(
+                                                  entry.key,
+                                                  style: const TextStyle(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1),
+                                                  ),
+                                                ),
+                                              ),
+                                              ...entry.value.map((item) {
+                                                return DropdownMenuItem<
+                                                    String>(
+                                                  value: item,
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .only(
+                                                        left: 16.0),
+                                                    child: Text(
+                                                      item,
+                                                      style:
+                                                      const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                        FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ];
+                                          }).toList(),
+                                        ],
+                                        onChanged: (value) {
+                                          dynamic? chargeType;
+                                          for (var entry
+                                          in categorizedData.entries) {
+                                            if (entry.value
+                                                .contains(value)) {
+                                              chargeType = entry.key;
+                                              break;
+                                            }
+                                          }
+                                          print(value);
+                                          setState(() {
+                                            rows[index]['account'] = value;
+                                            rows[index]['charge_type'] =
+                                                chargeType;
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          width: 220,
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 2,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          iconEnabledColor:
+                                          Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
+                                        ),
+                                        dropdownStyleData:
+                                        DropdownStyleData(
+                                          width: 250,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme:
+                                          ScrollbarThemeData(
+                                            radius:
+                                            const Radius.circular(6),
+                                            thickness:
+                                            MaterialStateProperty.all(
+                                                6),
+                                            thumbVisibility:
+                                            MaterialStateProperty.all(
+                                                true),
+                                          ),
+                                        ),
+                                        hint:
+                                        const Text('Select an account'),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        top: 8
+                                    ),
+                                    child: CustomTextField(
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.isEmpty) {
+                                          return 'Please enter amount';
+                                        }
+                                        return null;
+                                      },
+                                      amount_check: !rows[index]["newfield"]
+                                          ? true
+                                          : null,
+                                      max_amount: rows[index]
+                                      ["charge_amount"]
+                                          .toString(),
+                                      error_mess:
+                                      "Amount must be less than or equal to balance",
+                                      keyboardType: TextInputType.number,
+                                      hintText: 'Enter Amount',
+                                      controller: controllers[index],
+                                      onChanged2: (value) =>
+                                          updateAmount(index, value),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        top: 8
+                                    ),
+                                    child: Material(
+                                      elevation: 3,
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      child: Container(
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFb0b6c3),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+
+                                            SizedBox(width: 12.0),
+                                            Text(
+                                                charges_balances[index]
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight.bold)),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child:  IconButton(
+                                      icon: Icon(Icons.close, color:Colors.black),
+                                      onPressed: () {
+                                        deleteRow(index);
+                                      },
+                                    ),
+                                  ),
+
+                                ]);
+                              }).toList(),
+
+                              TableRow(children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Total',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ),
+
+
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ),
+
+                                /* const Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text('',
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold)),
+                                            ),*/
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child:Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child:Text(''),
+                                ),
+
+                                /* Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: Text(
+                                    '\$${totalAmount.toStringAsFixed(2)}'),
+                                                              ),*/
+
+                              ]),
+
+                            ],
+                          ),
+                        ),
+                        if(MediaQuery.of(context).size.width < 500 ) 
                         Row(
                           children: [
                             SizedBox(width: 10),
@@ -2149,7 +2804,7 @@ class _MakePaymentState extends State<MakePayment> {
                         Row(
                           children: [
                             SizedBox(
-                              width: 5,
+                              width: 10,
                             ),
                             GestureDetector(
                               onTap: () async {
@@ -2159,10 +2814,10 @@ class _MakePaymentState extends State<MakePayment> {
                                 borderRadius: BorderRadius.circular(5.0),
                                 child: Container(
                                   height:
-                                      MediaQuery.of(context).size.height * .05,
+                                      MediaQuery.of(context).size.width < 500 ? 40 :50,
                                   // width: MediaQuery.of(context).size.width * .36,
                                   width:
-                                      MediaQuery.of(context).size.width * .33,
+                                  MediaQuery.of(context).size.width < 500 ? 90 : 100,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
                                     color: Color.fromRGBO(21, 43, 81, 1),
@@ -2185,10 +2840,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .032),
+                                                fontSize:MediaQuery.of(context).size.width < 500 ? 14 : 17),
                                           ),
                                   ),
                                 ),
@@ -2353,7 +3005,7 @@ class _MakePaymentState extends State<MakePayment> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
+                padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width < 500 ? 16 :35, right: 16, bottom: 10,top: 10),
                 child: Row(
                   children: [
                     Container(
@@ -2631,7 +3283,8 @@ class _MakePaymentState extends State<MakePayment> {
               ),
             ],
           ),
-        ));
+        ),
+    );
   }
 
   Widget buildAmountContainer(String label, double amount) {

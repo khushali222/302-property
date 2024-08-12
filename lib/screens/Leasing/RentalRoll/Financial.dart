@@ -1703,7 +1703,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                      height: 36,
+                      height: MediaQuery.of(context).size.width < 500 ? 36 :45,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(width: 1),
@@ -1726,14 +1726,14 @@ class _FinancialTableState extends State<FinancialTable> {
                           child: Text(
                             'Add Cards',
                             style: TextStyle(
-                                fontSize: 12,
+                                fontSize: MediaQuery.of(context).size.width < 500 ? 12 :18,
                                 color: Color.fromRGBO(21, 43, 83, 1)),
                           ))),
                   SizedBox(
                     width: 5,
                   ),
                   Container(
-                      height: 36,
+                      height: MediaQuery.of(context).size.width < 500 ? 36 : 45,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(width: 1),
@@ -1760,14 +1760,14 @@ class _FinancialTableState extends State<FinancialTable> {
                           child: Text(
                             'Make Payment',
                             style: TextStyle(
-                                fontSize: 12,
+                                fontSize: MediaQuery.of(context).size.width < 500 ? 12 :18,
                                 color: Color.fromRGBO(21, 43, 83, 1)),
                           ))),
                   SizedBox(
                     width: 5,
                   ),
                   Container(
-                      height: 34,
+                      height: MediaQuery.of(context).size.width < 500 ? 34 : 45,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(width: 1),
@@ -1790,7 +1790,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           child: Text(
                             'Enter Charge',
                             style: TextStyle(
-                                fontSize: 12,
+                                fontSize: MediaQuery.of(context).size.width < 500 ? 12 :18,
                                 color: Color.fromRGBO(21, 43, 83, 1)),
                           ))),
                 ],
@@ -1993,7 +1993,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                               1)),
                                                                     ),
                                                                     TextSpan(
-                                                                      text: '${data.type == "Refund" ? data.totalAmount : null}',
+                                                                      text: (data.type == "Refund" || data.type == "Charge")
+                                                                          ? '${data.totalAmount}'
+                                                                          : 'N/A',
                                                                       style: const TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
@@ -2019,9 +2021,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                               1)),
                                                                     ),
                                                                     TextSpan(
-                                                                      text: data
-                                                                          .totalAmount
-                                                                          .toString(),
+                                                                      text: '${data.tenantData["tenant_firstName"]} ${data.tenantData["tenant_lastName"]}',
                                                                       style: const TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
@@ -2123,56 +2123,44 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                          'Account: ',
+                                                                          'Transaction: ',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.bold,
                                                                               color: blueColor),
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                          "${entry.account}        ",
+                                                                          "Manual ${data.type} FOR ${data.response} ${data.paymenttype} (#${data.transactionid})   ",
                                                                           style: const TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: Colors.grey),
                                                                         ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                          "         \$${entry.amount.toString()}",
-                                                                          style:
-                                                                          const TextStyle(
-                                                                            fontWeight:
-                                                                            FontWeight.w700,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
-                                                                          ),
-                                                                        ),
+
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                  // Text.rich(
-                                                                  //   TextSpan(
-                                                                  //     children: [
-                                                                  //       TextSpan(
-                                                                  //         text:
-                                                                  //             'Amount: ',
-                                                                  //         style: TextStyle(
-                                                                  //             fontWeight: FontWeight.bold,
-                                                                  //             color: blueColor),
-                                                                  //       ),
-                                                                  //       TextSpan(
-                                                                  //         text:
-                                                                  //             '${entry.amount.toString()}',
-                                                                  //         style: const TextStyle(
-                                                                  //             fontWeight: FontWeight.w700,
-                                                                  //             color: Colors.grey),
-                                                                  //       ),
-                                                                  //     ],
-                                                                  //   ),
-                                                                  // ),
-                                                                  // Add more fields here as necessary
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                          'Decrease: ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:(data.type != "Refund" && data.type != "Charge")
+                                                                              ? '${data.totalAmount}'
+                                                                              : 'N/A',
+                                                                          style: const TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: Colors.grey),
+                                                                        ),
+
+                                                                      ],
+                                                                    ),
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ),
@@ -2229,7 +2217,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Container(
-
                                       child: Table(
                                         defaultColumnWidth:
                                         const IntrinsicColumnWidth(),
@@ -2303,29 +2290,25 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     .toString()),
                                                 _buildDataCell('${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
                                                 _buildDataCell(
-                                                  _pagedData[i]!
-                                                      .balance
-                                                      .toString(),
+                                                 'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})'
                                                 ),
                                                 _buildDataCell(
-                                                  _pagedData[i]!
-                                                      .balance
-                                                      .toString(),
+                                                  _pagedData[i]!.type == "Refund" && _pagedData[i]!.type == "Charge"
+                                                      ? _pagedData[i]!.totalAmount.toString()
+                                                      : 'N/A',
                                                 ),
                                                 _buildDataCell(
-                                                  _pagedData[i]!
-                                                      .balance
-                                                      .toString(),
+                                                  _pagedData[i]!.type != "Refund" && _pagedData[i]!.type != "Charge"
+                                                      ? _pagedData[i]!.totalAmount.toString()
+                                                      : 'N/A',
                                                 ),
                                                 _buildDataCell(
-                                                  _pagedData[i]!
-                                                      .balance
-                                                      .toString(),
+                                                  _pagedData[i]!.balance.toString(),
                                                 ),
                                                 _buildDataCell(
-                                                  _pagedData[i]!
-                                                      .createdAt
-                                                      .toString(),
+                                                 formatDate3( _pagedData[i]!
+                                                      .createdAt.toString()),
+
                                                 ),
                                               ],
                                             ),

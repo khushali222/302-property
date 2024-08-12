@@ -33,6 +33,9 @@ class Data {
   String? chargeId;
   String? adminId;
   String? leaseId;
+  String? response;
+  String? paymenttype;
+  String? transactionid;
   List<Entry>? entry;
   double? totalAmount; // Adjusted to double
   bool? isLeaseAdded;
@@ -50,6 +53,9 @@ class Data {
     this.chargeId,
     this.adminId,
     this.leaseId,
+    this.response,
+    this.paymenttype,
+    this.transactionid,
     this.entry,
     this.totalAmount,
     this.isLeaseAdded,
@@ -68,6 +74,9 @@ class Data {
     chargeId = json['charge_id'];
     adminId = json['admin_id'];
     leaseId = json['lease_id'];
+    paymenttype = json['payment_type'];
+    response = json['response'];
+    transactionid = json['transaction_id'];
     if (json['entry'] != null) {
       entry = [];
       json['entry'].forEach((v) {
