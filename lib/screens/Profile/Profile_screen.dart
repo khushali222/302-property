@@ -181,7 +181,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 Text(
                                   '${_profile?.firstName} ${_profile?.lastName}',
                                   style: TextStyle(
-                                    fontSize: 16.0,
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -190,7 +190,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 Text(
                                   '${_profile?.email}',
                                   style: TextStyle(
-                                    fontSize: 13.0,
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 :  16,
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -199,7 +199,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 Text(
                                   '${_profile?.adminId}',
                                   style: TextStyle(
-                                    fontSize: 13.0,
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 16,
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -402,10 +402,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.04,
+                                                      MediaQuery.of(context).size.width < 500 ? 16 : 20
                                                     ),
                                                   ),
                                                 ],
