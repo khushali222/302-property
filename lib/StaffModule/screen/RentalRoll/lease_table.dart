@@ -501,7 +501,7 @@ class _Lease_tableState extends State<Lease_table> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             if(permissions!.leaseAdd!)
             Padding(
               padding: const EdgeInsets.all(13),
@@ -558,7 +558,7 @@ class _Lease_tableState extends State<Lease_table> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            //SizedBox(height: 10),
             // Padding(
             //   padding: const EdgeInsets.only(left: 13,right: 13),
             //   child: ClipRRect(
@@ -718,7 +718,7 @@ class _Lease_tableState extends State<Lease_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
@@ -807,7 +807,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(width: MediaQuery.of(context).size.width * .08),
+                                                SizedBox(width: 15),
                                                 Expanded(
                                                   flex: 2, // Smaller size for the second field
                                                   child: Text(
@@ -819,7 +819,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(width: MediaQuery.of(context).size.width * .08),
+                                                SizedBox(width: 15),
                                                 Expanded(
                                                  flex: 2, // Smaller size for the third field
                                                   child: Text(
@@ -919,7 +919,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${lease.rentDueDate}',
+                                                                        '${formatDatenew(lease.rentDueDate!)}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight

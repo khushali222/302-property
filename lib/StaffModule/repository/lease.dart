@@ -118,13 +118,15 @@ class LeaseRepository {
     required String companyName,
   }) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String?  id = prefs.getString('staff_id');
+      String?  companyName = prefs.getString('companyName');
       final Uri uri = Uri.parse('$Api_url/api/leases/leases/$leaseId')
           .replace(queryParameters: {
         'company_name': companyName,
       });
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      String?  id = prefs.getString('adminId');
+
       final http.Response response = await http.delete(
         uri,
         headers: <String, String>{

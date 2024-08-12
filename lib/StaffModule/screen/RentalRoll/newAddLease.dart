@@ -1021,7 +1021,7 @@ class _addLease3State extends State<addLease3>
                                       return null;
                                     },
                                     keyboardType: TextInputType.text,
-                                    hintText: 'yyyy-mm-dd',
+                                    hintText: 'dd-mm-yyyy',
                                     controller: startDateController,
                                   ),
                                 ],
@@ -3818,7 +3818,7 @@ class _addLease3State extends State<addLease3>
                           return null;
                         },
                         keyboardType: TextInputType.text,
-                        hintText: 'yyyy-mm-dd',
+                        hintText: 'dd-mm-yyyy',
                         controller: startDateController,
                       ),
                       const SizedBox(
@@ -8652,7 +8652,7 @@ class _AddTenantState extends State<AddTenant> {
                                             color: Color(0xFFb0b6c3)),
                                         border: InputBorder.none,
                                         // labelText: 'Select Date',
-                                        hintText: 'yyyy-mm-dd',
+                                        hintText: 'dd-mm-yyyy',
                                         suffixIcon: IconButton(
                                           icon:
                                               const Icon(Icons.calendar_today),

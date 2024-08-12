@@ -32,7 +32,7 @@ import '../../repository/properties.dart';
 import '../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../repository/unit_data.dart';
+import '../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 
@@ -6248,7 +6248,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Image(
                                             image: NetworkImage(
                                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
-                                            fit: BoxFit.cover,
+                                            fit: BoxFit.fill,
                                             height: MediaQuery.of(context)
                                                         .size
                                                         .width <
@@ -9953,7 +9953,7 @@ class _Summery_pageState extends State<Summery_page>
                                 unit.rentalImages != null ? unit.rentalImages!.length >0 ? "$image_url${unit.rentalImages!.first}" : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU' :
 
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                             height: MediaQuery.of(context).size.width < 500
                                 ? 140
                                 : 220,
@@ -10014,18 +10014,21 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             height: 5,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16),
-                            child: Text(
-                              maxLines: 2,
-                              '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Text(
+                                maxLines: 2,
+                                '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                    color: Colors.grey[800]),
+                              ),
                             ),
                           ),
                           SizedBox(

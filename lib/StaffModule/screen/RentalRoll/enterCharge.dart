@@ -100,9 +100,9 @@ class _enterChargeState extends State<enterCharge> {
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
         fetchedData["Liability Account"] = [
-          "Last Month's Rent",
+          "Rent Income",
           "Pre-payments",
-          "Security Deposit Liability"
+          "Security Deposit"
         ];
 
         for (var item in jsonResponse) {
@@ -921,7 +921,7 @@ class _enterChargeState extends State<enterCharge> {
                                         borderRadius:
                                             BorderRadius.circular(8.0))),
                                 onPressed: () {
-                                  // Navigator.pop(context);
+                                   Navigator.pop(context);
                                   // firstName.clear();
                                   // lastName.clear();
                                   // email.clear();

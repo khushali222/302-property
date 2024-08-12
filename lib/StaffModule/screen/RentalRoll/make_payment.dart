@@ -211,9 +211,10 @@ class _MakePaymentState extends State<MakePayment> {
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
         fetchedData["Liability Account"] = [
-          "Last Month's Rent",
+          "Rent Income",
           "Pre-payments",
-          "Security Deposite"
+          "Security Deposit"
+
         ];
         for (var item in jsonResponse) {
           String chargeType = item['charge_type'];
@@ -503,7 +504,7 @@ class _MakePaymentState extends State<MakePayment> {
         'amount': 0.0,
         'memo': Memo.text,
         'charge_amount': 0.0,
-        'date': reverseFormatDate(_startDate.text),
+        'date': _startDate.text,
         'newfield': true
       });
 
@@ -899,8 +900,8 @@ class _MakePaymentState extends State<MakePayment> {
                                               'Selected tenant_id: $selectedTenantId');
                                         },
                                         buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                          width: 200,
+                                          height: 50,
+                                          width: 230,
                                           padding: const EdgeInsets.only(
                                               left: 14, right: 14),
                                           decoration: BoxDecoration(

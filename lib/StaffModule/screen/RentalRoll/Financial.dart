@@ -5,10 +5,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:three_zero_two_property/Model/propertytype.dart';
+import 'package:three_zero_two_property/model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/repository/Property_type.dart';
-import 'package:three_zero_two_property/repository/lease.dart';
+import '../../repository/Property_type.dart';
+import '../../repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
 import '../../model/staffpermission.dart';
 import '../../repository/staffpermission_provider.dart';
@@ -33,7 +33,7 @@ class FinancialTable extends StatefulWidget {
 
 class _FinancialTableState extends State<FinancialTable> {
   int totalrecords = 0;
-  late Future<List<propertytype>> futurePropertyTypes;
+   Future<List<propertytype>>? futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -309,7 +309,7 @@ class _FinancialTableState extends State<FinancialTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id);
+           // var data = PropertyTypeRepository()!.DeletePropertyType(pro_id: id);
             // Add your delete logic here
             setState(() {
               futurePropertyTypes =

@@ -858,7 +858,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                          //  SizedBox(height: 20),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
