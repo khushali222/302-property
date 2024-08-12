@@ -162,14 +162,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
                                   child: Container(
-                                    width: 70,
-                                    height: 70,
+                                    width: 80,
+                                    height: 80,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                     child: Center(
                                       child: Text(
                                         '${_profile?.firstName?[0].toUpperCase() ?? ''}${_profile?.lastName?[0].toUpperCase() ?? ''}',
                                         style: TextStyle(
-                                          fontSize: 24.0,
+                                          fontSize: MediaQuery.of(context).size.width < 500 ? 24 : 28,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -211,7 +211,7 @@ class _Profile_screenState extends State<Profile_screen> {
                       ),
                       SizedBox(height: 20),
                       Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width < 500 ? 20 : 35, right: MediaQuery.of(context).size.width < 500 ? 20 : 35),
                         child: Material(
                           borderRadius: BorderRadius.circular(10),
                           elevation: 3,
