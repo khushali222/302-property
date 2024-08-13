@@ -30,7 +30,7 @@ class unit_properties {
         });
 
   unit_properties.fromJson(Map<String, dynamic> json) {
-
+    print(json);
     Id = json['_id']??"";
     adminId = json['admin_id']??"";
     unitId = json['unit_id']??"";

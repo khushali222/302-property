@@ -701,6 +701,7 @@ class _EditApplicantState extends State<EditApplicant> {
 
                               Fluttertoast.showToast(
                                   msg: "Applicant updated successfully");
+                              Navigator.of(context).pop(true);
                               setState(() {
                                 widget.applicant.applicant!.applicantFirstName =
                                     firstName.text;
@@ -712,7 +713,7 @@ class _EditApplicantState extends State<EditApplicant> {
                                     email.text;
                                 isLoading = false;
                               });
-                              Navigator.of(context).pop(true);
+
                             } catch (e) {
                               setState(() {
                                 isLoading = false;

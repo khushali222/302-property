@@ -1470,7 +1470,7 @@ class _FinancialTableState extends State<FinancialTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            //var data = PropertyTypeRepository().DeletePropertyType(pro_id: id);
+            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id);
             // Add your delete logic here
             setState(() {
               futurePropertyTypes =
@@ -2231,13 +2231,13 @@ class _FinancialTableState extends State<FinancialTable> {
                                               _buildHeader(
                                                   'Type',
                                                   0,
-                                                      (property) => property!
-                                                      .totalAmount
+                                                  (property) => property!
+                                                     .totalAmount
                                                       .toString()),
                                               _buildHeader(
                                                   'Tenant',
                                                   1,
-                                                      (property) => property!
+                                                  (property) => property!
                                                       .totalAmount
                                                       .toString()),
                                               _buildHeader(
@@ -2257,7 +2257,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                             ),
                                             children: List.generate(
                                                 7,
-                                                    (index) => TableCell(
+                                                (index) => TableCell(
                                                     child:
                                                     Container(height: 20))),
                                           ),

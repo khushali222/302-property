@@ -10,6 +10,7 @@ class RentalOwners {
   String? country;
   String? postalCode;
   List<ProcessorLists>? processorList;
+  List<Map<String, String>>? processorid;
 
   RentalOwners({
      this.adminId,
@@ -22,6 +23,7 @@ class RentalOwners {
      this.state,
      this.country,
      this.postalCode,
+    this.processorid
   });
 
   Map<String, dynamic> toJson() => {
@@ -34,8 +36,13 @@ class RentalOwners {
     'state': state,
     'country': country,
     'postal_code': postalCode,
+    if(processorList != null)
     'processor_list': processorList,
+    if(processorid != null)
+    'processor_list': processorid,
+
   };
+
 }
 
 class Rental {
@@ -48,6 +55,7 @@ class Rental {
   String? country;
   String? postcode;
   String? staffMemberId;
+  String? processor_id;
 
   Rental({
      this.adminId,
@@ -59,6 +67,7 @@ class Rental {
      this.country,
      this.postcode,
      this.staffMemberId,
+    this.processor_id
   });
 
   Map<String, dynamic> toJson() => {
@@ -72,6 +81,7 @@ class Rental {
     'rental_country': country,
     'rental_postcode': postcode,
     'staffmember_id': staffMemberId,
+    'processor_id':processor_id
   };
 }
 

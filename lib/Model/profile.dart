@@ -6,6 +6,11 @@ class profile {
   String? lastName;
   String? email;
   String? companyName;
+  String? companyAddress;
+  String? companyPostalCode;
+  String? companyCity;
+  String? companyState;
+  String? companyCountry;
   int? phoneNumber;
   String? createdAt;
   String? updatedAt;
@@ -16,19 +21,19 @@ class profile {
 
   profile(
       {this.sId,
-        this.adminId,
-        this.roll,
-        this.firstName,
-        this.lastName,
-        this.email,
-        this.companyName,
-        this.phoneNumber,
-        this.createdAt,
-        this.updatedAt,
-        this.isAdminDelete,
-        this.isAddbySuperdmin,
-        this.status,
-        this.iV});
+      this.adminId,
+      this.roll,
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.companyName,
+      this.phoneNumber,
+      this.createdAt,
+      this.updatedAt,
+      this.isAdminDelete,
+      this.isAddbySuperdmin,
+      this.status,
+      this.iV});
 
   profile.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -38,6 +43,11 @@ class profile {
     lastName = json['last_name'];
     email = json['email'];
     companyName = json['company_name'];
+    companyAddress = json['company_address'];
+    companyPostalCode = json['postal_code'];
+    companyCity = json['city'];
+    companyState = json['state'];
+    companyCountry = json['country'];
     phoneNumber = json['phone_number'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
@@ -56,6 +66,11 @@ class profile {
     data['last_name'] = this.lastName;
     data['email'] = this.email;
     data['company_name'] = this.companyName;
+    data['company_address'] = this.companyAddress;
+    data['postal_code'] = companyPostalCode;
+    data['city'] = this.companyCity;
+    data['state'] = this.companyState;
+    data['country'] = this.companyCountry;
     data['phone_number'] = this.phoneNumber;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;

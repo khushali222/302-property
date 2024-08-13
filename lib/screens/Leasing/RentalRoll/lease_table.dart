@@ -1288,8 +1288,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                             )));
                                                                 if (check ==
                                                                     true) {
-                                                                  setState(
-                                                                      () {});
+                                                                  setState(() {
+                                                                    futureLease = LeaseRepository().fetchLease("");
+                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                                  });
                                                                 }
                                                               },
                                                             ),

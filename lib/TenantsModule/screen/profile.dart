@@ -182,8 +182,8 @@ class _Profile_screenState extends State<Profile_screen> {
                               children: [
                                 TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text("${profiledata['leaseData']['lease_type']}",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
                                 TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['leaseData']['rental_adress'] ?? "N/A",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['leaseData']['start_date'] ?? "N/A",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['leaseData']['end_date'] ?? "N/A",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
+                                TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(formatDate4(profiledata['leaseData']['start_date']) ?? "N/A",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
+                                TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(formatDate4(profiledata['leaseData']['end_date']) ?? "N/A",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
                                 TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['leaseData']['rent_cycle'] ?? "N/A",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
                                 TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['leaseData']['amount'].toString(),style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
 
@@ -208,11 +208,15 @@ class _Profile_screenState extends State<Profile_screen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Card(
-                      elevation: 4,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Padding(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: blueColor),
+                            borderRadius: BorderRadius.circular(6)
+                        ),
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -230,11 +234,15 @@ class _Profile_screenState extends State<Profile_screen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Card(
-                      elevation: 4,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Padding(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: blueColor),
+                            borderRadius: BorderRadius.circular(6)
+                        ),
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -242,11 +250,11 @@ class _Profile_screenState extends State<Profile_screen> {
                           children: [
                             InfoRow(label: 'Lease Type', value: "${profiledata['leaseData']['lease_type']}"),
                             InfoRow(label: 'Property', value: profiledata['leaseData']['rental_adress'] ?? "N/A"),
-                            InfoRow(label: 'Start Date', value: profiledata['leaseData']['start_date'] ?? "N/A"),
-                            InfoRow(label: 'End Date', value: profiledata['leaseData']['end_date'] ?? "N/A"),
+                            InfoRow(label: 'Start Date', value: formatDate4(profiledata['leaseData']['start_date']) ?? "N/A"),
+                            InfoRow(label: 'End Date', value: formatDate4(profiledata['leaseData']['end_date']) ?? "N/A"),
                             InfoRow(label: 'Rent Cycle', value: profiledata['leaseData']['rent_cycle'] ?? "N/A"),
                             InfoRow(label: 'Rent Amount', value: profiledata['leaseData']['amount'].toString()),
-                            InfoRow(label: 'Next Due Date', value: profiledata['leaseData']['date'] ?? "N/A"),
+                            InfoRow(label: 'Next Due Date', value: formatDate4(profiledata['leaseData']['date']) ?? "N/A"),
                           ],
                         ),
                       ),
@@ -310,10 +318,10 @@ class InfoRow extends StatelessWidget {
             flex: 1,
             child: Text(
               '$label',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),
             ),
           ),
-          Text(":  "),
+          Text("  :     "),
           Expanded(
             flex: 2,
             child: Text(
@@ -343,10 +351,10 @@ class InfoRows extends StatelessWidget {
             flex: 1,
             child: Text(
               '$label',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),
             ),
           ),
-          Text(":  "),
+          Text(":    "),
           Expanded(
             flex: 2,
             child: Text(

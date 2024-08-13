@@ -225,9 +225,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
-      );
+
 
     }
 

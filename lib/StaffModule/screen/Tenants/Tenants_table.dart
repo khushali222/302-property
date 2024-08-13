@@ -14,7 +14,7 @@ import '../Tenants/add_tenants.dart';
 // import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
-import '../../Model/tenants.dart';
+import '../../../Model/tenants.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
@@ -1096,12 +1096,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .04),
                                                 Expanded(
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
-                                                        '${tenants.createdAt}',
+                                                        '${formatDate(tenants.createdAt!)}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1163,7 +1163,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${tenants.tenantAlternativeEmail}',
+                                                                        '${tenants.tenantEmail??"N/A"}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1192,7 +1192,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${tenants.rentalAddress}',
+                                                                        ' ${tenants.rentalAddress!.isEmpty ? "N/A": tenants.rentalAddress}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1562,15 +1562,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   _buildDataCell(
                                                       '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
                                                           .trim()),
-                                                  _buildDataCell(_pagedData[i]
-                                                      .rentalAddress!),
+                                                  _buildDataCell( _pagedData[i].rentalAddress!.isEmpty  ? "N/A": _pagedData[i]!.rentalAddress!),
                                                   _buildDataCell(_pagedData[i]
                                                       .tenantPhoneNumber!),
                                                   _buildDataCell(_pagedData[i]
-                                                      .tenantAlternativeEmail!),
+                                                      .tenantEmail!),
                                                   _buildDataCell(
-                                                    _pagedData[i]
-                                                        .createdAt!,
+                                                   formatDate( _pagedData[i]
+                                                        .createdAt!),
                                                   ),
                                                   _buildActionsCell(
                                                       _pagedData[i]),

@@ -11,7 +11,7 @@ import 'package:http/http.dart'as http;
 import '../model/add_property.dart';
 
 class PropertiesRepository {
-  final String apiUrl = '${Api_url}/api/propertytype/property_type';
+  //final String apiUrl = '${Api_url}/api/propertytype/property_type';
 
   Future<List<Rentals>> fetchProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -69,10 +69,11 @@ class PropertiesRepository {
       }
     };
 
-    print('$apiUrl/$tenantId');
+    //print('$apiUrl/$tenantId');
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
     final http.Response response = await http.put(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
@@ -150,8 +151,9 @@ class PropertiesRepository {
   Future<void> updateRental1(Rentals rentalRequest) async {
     final url = Uri.parse('${Api_url}/api/rentals/rentals/${rentalRequest.rentalId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString("token");
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     final headers = {
       'Content-Type': 'application/json',
       "id":"CRM $id",
@@ -198,8 +200,9 @@ class PropertiesRepository {
     final url = Uri.parse('${Api_url}/api/rentals/rentals/$rentalid');
     print(rentalRequest.toJson());
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString("token");
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
     print('${Api_url}/api/rentals/rentals/$rentalid');
     final headers = {
       'Content-Type': 'application/json',
@@ -223,21 +226,36 @@ class PropertiesRepository {
   }
 
   Future<Map<String, dynamic>> DeleteProperties({
-    required String? id
+    required String? pro_id,
+    // required String? companyName,
   }) async {
 
     // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? companyName = prefs.getString('companyName');
+    print('company name $companyName');
+   // print(adminid);
     final http.Response response = await http.delete(
-      Uri.parse('$apiUrl/$id'),
+      Uri.parse('${Api_url}/api/rentals/rental/$pro_id').replace(queryParameters: {
+        'company_name': companyName,
+      }),
       headers: <String, String>{
         "authorization" : "CRM $token",
         "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+      // body: jsonEncode(<String, String>{
+      //   'company_name': companyName??"",
+      // }),
     );
+    print( Uri.parse('${Api_url}/api/rentals/rental/$pro_id').replace(queryParameters: {
+      'company_name': companyName,
+    }));
+    print('delete ${Api_url}/api/rentals/rental/$id');
+
     var responseData = json.decode(response.body);
     print(response.body);
     if (responseData["statusCode"] == 200) {
@@ -246,7 +264,7 @@ class PropertiesRepository {
 
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add property type');
+      throw Exception('Failed to delete property type');
     }
   }
 

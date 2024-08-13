@@ -3,8 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
+import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/getAdminAddress.dart';
+import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/OpenWorkOrderReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -87,14 +91,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   }
 
   Widget _buildPaginationControls() {
-    int numorpages = 1;
-    numorpages = (totalrecords / _rowsPerPage).ceil();
+    int numorpages = (_tableData.length / _rowsPerPage).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // Text('Rows per page: '),
-        // SizedBox(width: 10),
         Material(
           elevation: 2,
           color: Colors.white,
@@ -406,8 +407,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
           : b.workSubject!.compareTo(a.workSubject!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.priority!.compareTo(b.priority!)
-          : b.priority!.compareTo(a.priority!));
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
           ? a.status!.compareTo(b.status!)
@@ -427,6 +428,16 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
 
   Future<void> generateWorkOrderPdf(
       List<WorkOrderReportData> workOrderData) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      // Handle error
+      print("Error fetching profile data: $e");
+      return;
+    }
     final pdf = pw.Document();
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
@@ -458,10 +469,42 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
-                pw.Text('302 Properties, LLC'),
-                pw.Text('250 Corporate Blvd., Suite L'),
-                pw.Text('Newark, DE 19702'),
-                pw.Text('(302) 525-4302'),
+                pw.Text(
+                  profileData?.companyName?.isNotEmpty == true
+                      ? profileData!.companyName!
+                      : 'N/A',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  profileData?.companyAddress?.isNotEmpty == true
+                      ? profileData!.companyAddress!
+                      : 'N/A',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                  '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                  '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  profileData?.companyPostalCode?.isNotEmpty == true
+                      ? profileData!.companyPostalCode!
+                      : 'N/A',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ],
@@ -649,10 +692,10 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                   context,
                   const Icon(
                     CupertinoIcons.circle_grid_3x3,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Dashboard",
-                  true),
+                  false),
               buildListTile(
                   context,
                   const Icon(
@@ -770,11 +813,16 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                     return SingleChildScrollView(
                       child: Column(
                         children: [
+                          SizedBox(
+                            height: 8,
+                          ),
                           Expanded(
                             flex: 0,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 5.0, right: 5.0),
+                              padding: const EdgeInsets.only(
+                                left: 5.0,
+                                right: 5.0,
+                              ),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -789,12 +837,12 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                       height:
                                           MediaQuery.of(context).size.width <
                                                   500
-                                              ? 40
+                                              ? 48
                                               : 50,
                                       width: MediaQuery.of(context).size.width <
                                               500
                                           ? MediaQuery.of(context).size.width *
-                                              .45
+                                              .53
                                           : MediaQuery.of(context).size.width *
                                               .4,
                                       decoration: BoxDecoration(
@@ -1204,7 +1252,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                   const EdgeInsets.symmetric(horizontal: 10),
                               // height: 40,
                               height: MediaQuery.of(context).size.width < 500
-                                  ? 40
+                                  ? 48
                                   : 50,
                               width: MediaQuery.of(context).size.width < 500
                                   ? MediaQuery.of(context).size.width * .45
@@ -1316,15 +1364,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                         .toList();
                   }
 
-                  // Apply pagination
-                  final int itemsPerPage = 10;
-                  final int totalPages = (data.length / itemsPerPage).ceil();
-                  final int currentPage =
-                      1; // Update this with your pagination logic
-                  final List<WorkOrderReportData> pagedData = data
-                      .skip((currentPage - 1) * itemsPerPage)
-                      .take(itemsPerPage)
-                      .toList();
+                  // Update _tableData with the filtered data
+                  _tableData = data;
+
+                  // Get the paged data
+                  final pagedData = _pagedData;
 
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -1419,7 +1463,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                     ),
                   );
                 },
-              ),
+              )
           ],
         ),
       ),

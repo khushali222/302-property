@@ -3,7 +3,7 @@ import 'dart:core';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Model/tenants.dart';
+import '../../Model/tenants.dart';
 
 import '../../constant/constant.dart';
 import 'package:http/http.dart'as http;
@@ -232,6 +232,8 @@ class TenantsRepository {
     required String emergencyContactEmail,
     required String emergencyContactPhoneNumber,
     required String companyName,
+    required String overRideFee,
+    required String enableOverRideFee,
   }) async {
     final Map<String, dynamic> data = {
     'admin_id': adminId,
@@ -251,7 +253,10 @@ class TenantsRepository {
       'relation': emergencyContactRelation,
       'email': emergencyContactEmail,
       'phoneNumber': emergencyContactPhoneNumber,
-    }
+
+    },
+      'override_fee': overRideFee,
+      'enable_override_fee': enableOverRideFee,
     };
 
     print('$apiUrl/$tenantId');

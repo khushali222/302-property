@@ -128,7 +128,8 @@ class AddCardService {
 
   Future<int> deleteCard(cardModelFordelete model) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("tenant_id");
+    String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
     final headers = {

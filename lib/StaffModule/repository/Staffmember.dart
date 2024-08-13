@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Staff_Member/Edit_staff_member.dart';
 
 import '../../constant/constant.dart';
-import '../model/staffmember.dart';
+import '../../model/staffmember.dart';
 
 class StaffMemberRepository {
   final String apiUrl = '${Api_url}/api/staffmember/staff_member';
@@ -27,9 +27,9 @@ class StaffMemberRepository {
       "staffmember_password": staffmemberPassword,
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-
-    String?  id = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{

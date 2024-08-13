@@ -123,7 +123,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
-                    ascending1
+                   /* ascending1
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
@@ -139,7 +139,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         size: 20,
                         color: Colors.white,
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -167,10 +167,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                   });
                 },
                 child: Row(
-                  children: [
+                  children: [ SizedBox(width: 25),
                     Text("    Status", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending2
+                   /* ascending2
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
@@ -186,7 +186,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         size: 20,
                         color: Colors.white,
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -216,9 +216,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    Text("   Billable ", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 25),
+                    Text("    Billable ", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending3
+                   /* ascending3
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
@@ -234,7 +235,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         size: 20,
                         color: Colors.white,
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -301,13 +302,14 @@ class _Workorder_tableState extends State<Workorder_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
+            var data = await WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
             // Add your delete logic here
+            if(data)
             setState(() {
               futureworkorders =
                   WorkOrderRepository().fetchWorkOrders();
             });
-            Navigator.pop(context);
+              Navigator.pop(context);
           },
           color: Colors.red,
         )
@@ -995,6 +997,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex:3,
                                                   child: InkWell(
                                                     onTap: (!permissions!.workorderAdd!) ?null :(){
                                                       Navigator.push(context, MaterialPageRoute(builder: (context)=>Workorder_summery(workorder_id: workOrder.workOrderData?.workOrderId,)));
@@ -1018,8 +1021,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .099),
+                                                        .05),
                                                 Expanded(
+                                                  flex:2,
                                                   child: Text(
                                                     '${workOrder.workOrderData?.status}',
                                                     style: TextStyle(
@@ -1035,7 +1039,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .05),
                                                 Expanded(
                                                   child:
                                                  Row(
@@ -1072,7 +1076,38 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             margin: EdgeInsets.only(bottom: 20),
                                             child: SingleChildScrollView(
                                               child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment:   CrossAxisAlignment.start,
                                                 children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 30.0),
+                                                    child: Text.rich(
+                                                      TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                            ' Property : ',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color:
+                                                                blueColor), // Bold and black
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                            '${workOrder.rentalAddress?.rentalAdress}',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w700,
+                                                                color: Colors
+                                                                    .grey), // Light and grey
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
                                                   Row(
                                                     mainAxisAlignment:
                                                     MainAxisAlignment.start,
@@ -1093,32 +1128,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                           CrossAxisAlignment
                                                               .start,
                                                           children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    ' Property : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                    '${workOrder.rentalAddress?.rentalAdress}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
+
                                                             SizedBox(
                                                               height: 5,
                                                             ),
@@ -1591,7 +1601,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 _buildDataCell(_pagedData[i]
                                                     .workOrderData!.status.toString()),
                                                 _buildDataCell(
-                                                  formatDate(
+                                                  formatDatenew(
                                                       _pagedData[i].workOrderData!.createdAt!),
                                                 ),
                                                 _buildDataCell(

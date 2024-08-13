@@ -1306,7 +1306,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5),
-                                                      Container(
+                                                    /*  Container(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
@@ -1361,7 +1361,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
+                                                      ),*/
                                                     ],
                                                   ),
                                                 ],
@@ -1513,11 +1513,23 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                               .contains(searchvalue.toLowerCase()))
                           .toList();
                     } else {
-                      _tableData = snapshot.data!
-                          .where((property) =>
-                      property.status == selectedValue)
-                          .toList();
+                      if(selectedValue =="Over Due"){
+                        _tableData = snapshot.data!.where((element) {
+                          DateTime dueDate = DateTime.parse(element.date!);
+                          bool isOverDue = dueDate.isBefore(DateTime.now());
+                          bool isNotCompleted = element.status != "Completed";
+                          // Adjust based on your date format
+                          return isOverDue && isNotCompleted;
+                        }).toList();
+                      }
+                      else{
+                        _tableData = snapshot.data!
+                            .where((property) =>
+                        property.status == selectedValue)
+                            .toList();
+                      }
                     }
+
                     totalrecords = _tableData.length;
                     return Padding(
                       padding: const EdgeInsets.symmetric(

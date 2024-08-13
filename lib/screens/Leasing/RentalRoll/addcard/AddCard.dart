@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -39,6 +40,43 @@ class _AddCardState extends State<AddCard> {
   TextEditingController state = TextEditingController();
   TextEditingController country = TextEditingController();
   TextEditingController zip = TextEditingController();
+  String? _selectedExpiringMonth;
+  String? _selectedExpiringYear;
+  List<String> expiringMonth = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12'
+  ];
+  List<String> expiringYear =
+      List.generate(12, (index) => (2024 + index).toString());
+  String yearmessage = "";
+  bool yearerror = false;
+  String carderrorMessage = '';
+
+  void _validateInput() {
+    setState(() {
+      String input = cardNumber.text.trim();
+      if (input.isEmpty) {
+        carderrorMessage = 'This field cannot be empty';
+      } else if (input.length > 16) {
+        carderrorMessage = 'Card number cannot be more than 16 digits';
+      } else if (!isValidLuhn(input)) {
+        carderrorMessage = 'Invalid card number';
+      } else {
+        carderrorMessage = '';
+      }
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   String? messageCardAvailable;
@@ -948,8 +986,8 @@ class _AddCardState extends State<AddCard> {
                                             tenantId: selectedTenantId,
                                             billingId: randomNumber,
                                             customerVaultId:
-                                            cardResponses!.customerVaultId,
-                                            responseCode: cardResponses.responseCode,
+                                            cardResponses?.customerVaultId,
+                                            responseCode: cardResponses?.responseCode,
                                           );
                                           await addCardService
                                               .postAddCreditCard(addcards);

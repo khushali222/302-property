@@ -117,11 +117,11 @@ class _Edit_leaseState extends State<Edit_lease>
       print(fetchedDetails.rentCharges!.first!.memo);
       rentNextDueDate.text = fetchedDetails.rentCharges!.first!.date;
       rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
-      securityDepositeAmount.text =
+     /* securityDepositeAmount.text =
       fetchedDetails.securityCharges!.first!.chargeType ==
           'Security Deposite'
           ? fetchedDetails.securityCharges!.first!.amount.toString()
-          : '';
+          : '';*/
 
       for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
         Provider.of<SelectedTenantsProvider>(context, listen: false)
@@ -678,7 +678,8 @@ class _Edit_leaseState extends State<Edit_lease>
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
         'passWord': tenant.tenantPassword ?? '',
-        'rental_unit': tenant.rentalUnit ?? '',
+        if(tenant.rentalUnit != null)
+        'rental_unit': tenant.rentalUnit!,
         'phoneNumber': tenant.tenantPhoneNumber ?? "",
         'workNumber': tenant.tenantAlternativeNumber ?? "",
         'email': tenant.tenantEmail ?? "",

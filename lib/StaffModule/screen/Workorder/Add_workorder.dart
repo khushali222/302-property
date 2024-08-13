@@ -152,9 +152,7 @@ class _AddWorkorderState extends State<AddWorkorder> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
-      );
+
 
     }
 
@@ -194,9 +192,7 @@ class _AddWorkorderState extends State<AddWorkorder> {
       setState(() {
         _isLoadingvendors = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
-      );
+
     }
   }
   Future<void> _loadStaff() async {
@@ -915,7 +911,7 @@ class _AddWorkorderState extends State<AddWorkorder> {
                                                       },
                                                       buttonStyleData: ButtonStyleData(
                                                         height: 45,
-                                                        width: 250,
+                                                        width: 280,
                                                         padding: const EdgeInsets.only(left: 14, right: 14),
                                                         decoration: BoxDecoration(
                                                           borderRadius: BorderRadius.circular(6),
@@ -943,7 +939,7 @@ class _AddWorkorderState extends State<AddWorkorder> {
                                                         ),
                                                       ),
                                                       menuItemStyleData: const MenuItemStyleData(
-                                                        height: 50,
+                                                        height: 55,
                                                         padding: EdgeInsets.only(left: 14, right: 14),
                                                       ),
                                                     ),
@@ -988,7 +984,7 @@ class _AddWorkorderState extends State<AddWorkorder> {
                                                       },
                                                       buttonStyleData: ButtonStyleData(
                                                         height: 45,
-                                                        width: 200,
+                                                        width: 250,
                                                         padding: const EdgeInsets.only(left: 14, right: 14),
                                                         decoration: BoxDecoration(
                                                           borderRadius: BorderRadius.circular(6),
@@ -1151,8 +1147,6 @@ class _AddWorkorderState extends State<AddWorkorder> {
                                             ),
                                           ],
                                         ),
-
-
                                         Text('Welcome To Be Performed',
                                             style: TextStyle(
                                                 fontSize: 13,
@@ -1764,7 +1758,7 @@ class _AddWorkorderState extends State<AddWorkorder> {
                                                       },
                                                       buttonStyleData: ButtonStyleData(
                                                         height: 45,
-                                                        width: 200,
+                                                        width: 250,
                                                         padding: const EdgeInsets.only(left: 14, right: 14),
                                                         decoration: BoxDecoration(
                                                           borderRadius: BorderRadius.circular(6),
@@ -2318,7 +2312,7 @@ class _AddWorkorderState extends State<AddWorkorder> {
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
-                                    width: 200,
+                                    width: 250,
                                     padding: const EdgeInsets.only(left: 14, right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),

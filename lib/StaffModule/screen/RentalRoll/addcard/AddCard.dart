@@ -850,7 +850,7 @@ class _AddCardState extends State<AddCard> {
                     ),
                     Container(
                         height: 42,
-                        width: 80,
+                        width: 100,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
@@ -858,7 +858,9 @@ class _AddCardState extends State<AddCard> {
                                 backgroundColor: const Color(0xFFffffff),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                             child: const Text(
                               'Cancel',
                               style: TextStyle(color: Color(0xFF748097)),

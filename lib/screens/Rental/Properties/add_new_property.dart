@@ -892,7 +892,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             .05,
                                         width:
                                         MediaQuery.of(context).size.width *
-                                            .5,
+                                            .6,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
@@ -9657,11 +9657,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
-                        List<ProcessorLists> selectedProcessors = _processorGroups
+
+                      //  final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
+
+                      /*  List<ProcessorLists> selectedProcessors = _processorGroups
                             .where((group) => group.isChecked)
                             .map((group) => ProcessorLists(processorId: group.controller.text.trim())) // Create ProcessorList objects
                             .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
-                            .toList();
+                            .toList();*/
+                        RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
+
+                        String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist!;
+                        List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+                          return {
+                            'processor_id': processor.processorId ?? "",
+                          };
+                        }).toList();
 
                         SharedPreferences prefs =
                         await SharedPreferences.getInstance();
@@ -9687,18 +9698,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           state: updatedOwner.state,
                           country: updatedOwner.country,
                           postalCode: updatedOwner.postalCode,
-                         processorList: selectedProcessors,
+                          processorid: processorIds!,
                         );
-                       // context.read<OwnerDetailsProvider>().setOwnerDetails(owners);
 
-                        RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
 
-                        // if (unit.text.isEmpty || unitaddress.text.isEmpty || bath.text.isEmpty || bed.text.isEmpty || sqft.text.isEmpty) {
-                        //   iserror2 = true;
-                        //
-                        // } else {
-                        //   iserror2 = false;
-                        // }
                         if (address.text.isEmpty) {
                           setState(() {
                             addresserror = true;
@@ -9783,6 +9786,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               country: country.text,
                               postcode: postalcode.text,
                               staffMemberId: sid,
+                                processor_id:processorId
                             );
                             List<Unit> units = [];
                             if (propertyGroupControllers.isNotEmpty) {

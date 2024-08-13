@@ -442,12 +442,18 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   //     ),
   //   );
   // }
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text,WorkOrder workorder) {
     return TableCell(
-      child: Container(
-        height: 60,
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
+      child: InkWell(
+        onTap: (){
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+        },
+        child: Container(
+          height: 60,
+          padding: const EdgeInsets.only(top: 20.0, left: 16),
+          child: Text(text, style: const TextStyle(fontSize: 18)),
+        ),
       ),
     );
   }
@@ -869,6 +875,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
+                        print(snapshot.data!.length);
                         data = snapshot.data!
                             .where((property) =>
                         property.workSubject!
@@ -884,6 +891,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         property.status == selectedValue)
                             .toList();
                       }
+
+                      data = data.reversed.toList();
                       if(data.length == 0){
                         return Column(
                           children: [
@@ -1200,7 +1209,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5),
-                                                      Container(
+                                                     /* Container(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
@@ -1255,7 +1264,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
+                                                      ),*/
                                                     ],
                                                   ),
                                                 ],
@@ -1503,31 +1512,31 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                       children: [
 
                                         _buildDataCell(_pagedData[i]
-                                            .workSubject!),
+                                            .workSubject!,_pagedData[i]),
 
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .rentalAddress!,
+                                              .rentalAddress!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .workCategory!,
+                                              .workCategory!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .staffMemberName!,
+                                              .staffMemberName!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .status!,
+                                              .status!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .createdAt!,
+                                              .createdAt!,_pagedData[i]
                                         ),
                                         _buildDataCell(
                                           _pagedData[i]
-                                              .updatedAt!,
+                                              .updatedAt!,_pagedData[i]
                                         ),
 
                                       ],

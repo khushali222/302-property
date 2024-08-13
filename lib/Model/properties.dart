@@ -21,6 +21,7 @@ class Rentals {
   String? staffMemberId;
   String? createdAt;
   String? updatedAt;
+  String? processor_id;
 
   List<String>? rentalImages;
   bool? isDelete;
@@ -49,6 +50,7 @@ class Rentals {
      this.rentalOwnerData,
      this.propertyTypeData,
      this.staffMemberData,
+    this.processor_id
   });
 
   // Define the fromJson method within the Rental class
@@ -69,6 +71,7 @@ class Rentals {
       staffMemberId: json['staffmember_id']?? "",
       createdAt: json['createdAt']?? "",
       updatedAt: json['updatedAt']?? "",
+       processor_id: json['processor_id']??"",
        rentalImages:  (json['rental_images'] as List<dynamic>?)
             ?.map((e) => e as String)
             .toList(),
@@ -147,8 +150,8 @@ class RentalOwnerData {
       postalCode: json['postal_code']?? "",
       createdAt: json['createdAt']?? "",
       updatedAt: json['updatedAt']?? "",
-      isDelete: json['is_delete']?? "",
-      processorList: json['processor_list']?? "",
+
+      processorList: json['processor_list']?? [],
     );
   }
 }
@@ -161,7 +164,7 @@ class PropertyTypeData {
   bool? isMultiunit;
   String? createdAt;
   String? updatedAt;
-  bool? isDelete;
+
 
   PropertyTypeData({
      this.id,
@@ -172,7 +175,7 @@ class PropertyTypeData {
      this.isMultiunit,
      this.createdAt,
      this.updatedAt,
-     this.isDelete,
+
   });
 
   factory PropertyTypeData.fromJson(Map<String, dynamic> json) {
@@ -185,7 +188,7 @@ class PropertyTypeData {
       isMultiunit: json['is_multiunit']?? "",
       createdAt: json['createdAt']?? "",
       updatedAt: json['updatedAt']?? "",
-      isDelete: json['is_delete']?? "",
+
     );
   }
 }

@@ -13,7 +13,7 @@ import '../../../constant/constant.dart';
 import '../../../model/properties.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
-import '../../../repository/properties_summery.dart';
+import '../../repository/properties_summery.dart';
 import '../../../repository/rental_properties.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
@@ -191,10 +191,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
       isLoading = false;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     final response = await http
-        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
+        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$admin_id'), headers: {
       "id": "CRM $id",
       "authorization": "CRM $token",
     });

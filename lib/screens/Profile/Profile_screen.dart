@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shimmer/shimmer.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../repository/profile_repository.dart';
@@ -25,6 +28,14 @@ class _Profile_screenState extends State<Profile_screen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _companyNameController = TextEditingController();
+  final TextEditingController _companyAddressController =
+      TextEditingController();
+  final TextEditingController _companyPostalCodeController =
+      TextEditingController();
+  final TextEditingController _companyCityController = TextEditingController();
+  final TextEditingController _companyStateController = TextEditingController();
+  final TextEditingController _companyCountryController =
+      TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isLoading = true;
@@ -48,6 +59,13 @@ class _Profile_screenState extends State<Profile_screen> {
         _emailController.text = profileData.email ?? '';
         _phoneNumberController.text = profileData.phoneNumber?.toString() ?? '';
         _companyNameController.text = profileData.companyName ?? '';
+        _companyAddressController.text = profileData.companyAddress ?? '';
+        _companyPostalCodeController.text = profileData.companyPostalCode ?? '';
+        _companyCityController.text = profileData.companyCity ?? '';
+
+        _companyStateController.text = profileData.companyState ?? '';
+        _companyCountryController.text = profileData.companyCountry ?? '';
+
         _isLoading = false;
       });
     } catch (e) {
@@ -70,15 +88,15 @@ class _Profile_screenState extends State<Profile_screen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Image.asset("assets/images/logo.png"),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.circle_grid_3x3,
                     color: Colors.black,
                   ),
@@ -86,7 +104,7 @@ class _Profile_screenState extends State<Profile_screen> {
                   false),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.house,
                     color: Colors.black,
                   ),
@@ -94,7 +112,7 @@ class _Profile_screenState extends State<Profile_screen> {
                   false),
               buildListTile(
                   context,
-                  Icon(
+                  const Icon(
                     CupertinoIcons.person_add,
                     color: Colors.black,
                   ),
@@ -102,7 +120,7 @@ class _Profile_screenState extends State<Profile_screen> {
                   false),
               buildDropdownListTile(
                   context,
-                  FaIcon(
+                  const FaIcon(
                     FontAwesomeIcons.key,
                     size: 20,
                     color: Colors.black,
@@ -111,7 +129,7 @@ class _Profile_screenState extends State<Profile_screen> {
                   ["Properties", "RentalOwner", "Tenants"]),
               buildDropdownListTile(
                   context,
-                  FaIcon(
+                  const FaIcon(
                     FontAwesomeIcons.thumbsUp,
                     size: 20,
                     color: Colors.black,
@@ -129,47 +147,41 @@ class _Profile_screenState extends State<Profile_screen> {
         ),
       ),
       body: _isLoading
-          ? Center(
-              child: SpinKitFadingCircle(
-                color: Colors.black,
-                size: 50.0,
-              ),
-            )
+          ? const ProfileShimmer()
           : _hasError
               ? Center(
                   child: Text('Error: $_errorMessage'),
                 )
               : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20),
-                      Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
+                  child: Padding(
+                    padding:  EdgeInsets.all(MediaQuery.of(context).size.width < 500 ? 16 : 30),
+                    child: Column(
+                      children: [
+                        // const SizedBox(height: 20),
+                        Container(
                           height: 220,
-                          width: MediaQuery.of(context).size.width * .9,
+                          width: double.infinity,
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
-                            color: Colors.grey.shade100,
+                            // color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
                                   child: Container(
-                                    width: 80,
-                                    height: 80,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    width: 70,
+                                    height: 70,
+                                    color: const Color.fromRGBO(21, 43, 81, 1),
                                     child: Center(
                                       child: Text(
                                         '${_profile?.firstName?[0].toUpperCase() ?? ''}${_profile?.lastName?[0].toUpperCase() ?? ''}',
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width < 500 ? 24 : 28,
+                                        style: const TextStyle(
+                                          fontSize: 24.0,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -177,29 +189,29 @@ class _Profile_screenState extends State<Profile_screen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 8.0),
+                                const SizedBox(height: 8.0),
                                 Text(
                                   '${_profile?.firstName} ${_profile?.lastName}',
                                   style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 22,
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
                                 ),
-                                SizedBox(height: 8.0),
+                                const SizedBox(height: 8.0),
                                 Text(
                                   '${_profile?.email}',
                                   style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 :  16,
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 :  18,
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
                                 ),
-                                SizedBox(height: 8.0),
+                                const SizedBox(height: 8.0),
                                 Text(
                                   '${_profile?.adminId}',
                                   style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 16,
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -208,20 +220,16 @@ class _Profile_screenState extends State<Profile_screen> {
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      Padding(
-                        padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width < 500 ? 20 : 35, right: MediaQuery.of(context).size.width < 500 ? 20 : 35),
-                        child: Material(
+                        const SizedBox(height: 20),
+                        Material(
                           borderRadius: BorderRadius.circular(10),
-                          elevation: 3,
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(16.0),
+                              padding: const EdgeInsets.all(16.0),
                               child: Form(
                                 key: _formKey,
                                 child: Column(
@@ -231,8 +239,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                       borderRadius: BorderRadius.circular(5.0),
                                       child: Container(
                                         height: 50.0,
-                                        padding:
-                                            EdgeInsets.only(top: 8, left: 10),
+                                        padding: const EdgeInsets.only(
+                                            top: 8, left: 10),
                                         width:
                                             MediaQuery.of(context).size.width,
                                         margin: const EdgeInsets.only(
@@ -241,16 +249,17 @@ class _Profile_screenState extends State<Profile_screen> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5.0),
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: const Color.fromRGBO(
+                                              21, 43, 81, 1),
                                           boxShadow: [
-                                            BoxShadow(
+                                            const BoxShadow(
                                               color: Colors.grey,
                                               offset: Offset(0.0, 1.0), //(x,y)
                                               blurRadius: 6.0,
                                             ),
                                           ],
                                         ),
-                                        child: Text(
+                                        child: const Text(
                                           "My Account",
                                           style: TextStyle(
                                               color: Colors.white,
@@ -259,83 +268,154 @@ class _Profile_screenState extends State<Profile_screen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 16.0),
-                                    Text(
+                                    const SizedBox(height: 16.0),
+                                     Text(
                                       "User information",
                                       style: TextStyle(
-                                          fontSize: 17,
+                                          fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 20,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(height: 16.0),
-                                    Text(
+                                    const SizedBox(height: 16.0),
+                                    const Text(
                                       'First Name',
                                       style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     buildTextField(
                                         'First Name',
                                         _firstNameController,
                                         _validateFirstName),
-                                    SizedBox(height: 16.0),
-                                    Text(
+                                    const SizedBox(height: 16.0),
+                                    const Text(
                                       'Last Name',
                                       style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     buildTextField(
                                         'Last Name',
                                         _lastNameController,
                                         _validateFirstName),
-                                    SizedBox(height: 16.0),
-                                    Text(
+                                    const SizedBox(height: 16.0),
+                                    const Text(
                                       'Email Address',
                                       style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     buildTextField('Email Address',
                                         _emailController, _validateFirstName),
-                                    SizedBox(height: 16.0),
-                                    Text(
+                                    const SizedBox(height: 16.0),
+                                    const Text(
                                       'Phone Number',
                                       style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     buildTextField(
                                         'Phone Number',
                                         _phoneNumberController,
                                         _validateFirstName),
-                                    SizedBox(height: 16.0),
-                                    Text(
+                                    const SizedBox(height: 16.0),
+                                    const Text(
                                       'Company Name',
                                       style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     buildTextField(
                                         'Company Name',
                                         _companyNameController,
                                         _validateFirstName),
-                                    SizedBox(height: 16.0),
+                                    const SizedBox(height: 16.0),
+                                    const Text(
+                                      'Company Address',
+                                      style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    buildTextField(
+                                        'Company Address',
+                                        _companyAddressController,
+                                        _validateFirstName),
+                                    const SizedBox(height: 16.0),
+                                    const Text(
+                                      'Postal Code',
+                                      style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    buildTextField(
+                                        'Postal Code',
+                                        _companyPostalCodeController,
+                                        _validateFirstName),
+                                    const SizedBox(height: 16.0),
+                                    const Text(
+                                      'City',
+                                      style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    buildTextField(
+                                        'City',
+                                        _companyCityController,
+                                        _validateFirstName),
+                                    const SizedBox(height: 16.0),
+                                    const Text(
+                                      'State',
+                                      style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    buildTextField(
+                                        'State',
+                                        _companyStateController,
+                                        _validateFirstName),
+                                    const SizedBox(height: 16.0),
+                                    const Text(
+                                      'Country',
+                                      style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    buildTextField(
+                                        'Country',
+                                        _companyCountryController,
+                                        _validateFirstName),
+                                    const SizedBox(height: 16.0),
+
                                     // ElevatedButton(
                                     //   onPressed: () {
                                     //     if (_formKey.currentState!.validate()) {
@@ -360,6 +440,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             if (_formKey.currentState!
                                                 .validate()) {
                                               // If the form is valid, proceed with form submission
+
                                               _formKey.currentState!.save();
                                               ProfileRepository().Edit_profile({
                                                 "first_name":
@@ -369,24 +450,30 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 "email": _emailController.text,
                                                 "company_name":
                                                     _companyNameController.text,
-                                                "phone_number": int.parse(
-                                                    _phoneNumberController
-                                                        .text),
+                                                "phone_number":
+                                                    _phoneNumberController.text,
+                                                "company_address":
+                                                    _companyAddressController
+                                                        .text,
+                                                "postal_code":
+                                                    _companyPostalCodeController
+                                                        .text,
+                                                "city":
+                                                    _companyCityController.text,
+                                                "state": _companyStateController
+                                                    .text,
+                                                "country":
+                                                    _companyCountryController
+                                                        .text,
                                               });
                                             }
                                           },
                                           child: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.05,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
+                                            height: 40,
+                                            width: 160,
                                             decoration: BoxDecoration(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
+                                              color: const Color.fromRGBO(
+                                                  21, 43, 81, 1),
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                             ),
@@ -418,9 +505,9 @@ class _Profile_screenState extends State<Profile_screen> {
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
     );
@@ -432,7 +519,7 @@ class _Profile_screenState extends State<Profile_screen> {
       elevation: 3,
       borderRadius: BorderRadius.circular(5),
       child: Container(
-        padding: EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.only(left: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(5),
@@ -455,5 +542,208 @@ class _Profile_screenState extends State<Profile_screen> {
       return 'Please enter a valid name';
     }
     return null;
+  }
+}
+
+class ProfileShimmer extends StatefulWidget {
+  const ProfileShimmer({super.key});
+
+  @override
+  State<ProfileShimmer> createState() => _ProfileShimmerState();
+}
+
+class _ProfileShimmerState extends State<ProfileShimmer> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: blueColor,
+                    borderRadius: BorderRadius.circular(10.0)),
+                height: 220,
+                width: double.infinity,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                    color: blueColor,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 50,
+                        width: double.infinity,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 20,
+                        width: 180,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 15,
+                        width: 120,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 50,
+                        width: double.infinity,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 15,
+                        width: 120,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 50,
+                        width: double.infinity,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 15,
+                        width: 120,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 50,
+                        width: double.infinity,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 15,
+                        width: 120,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 50,
+                        width: double.infinity,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0)),
+                        height: 30,
+                        width: 140,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

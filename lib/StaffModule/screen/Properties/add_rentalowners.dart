@@ -124,10 +124,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
       isLoading = true;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
+    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     final response =
-    await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
+    await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$admin_id'),headers: {
       "id":"CRM $id",
       "authorization": "CRM $token",
     });

@@ -36,6 +36,7 @@ import '../../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../Leasing/Applicants/addApplicant.dart';
+import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/newAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
 
@@ -63,6 +64,7 @@ class _Summery_pageState extends State<Summery_page>
   unit_properties? unit;
   DateTime? startdate;
   DateTime? enddate;
+  int unitCount = 0;
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
   TextEditingController unitnum = TextEditingController();
@@ -70,7 +72,6 @@ class _Summery_pageState extends State<Summery_page>
   TextEditingController sqft3 = TextEditingController();
   TextEditingController bath3 = TextEditingController();
   TextEditingController bed3 = TextEditingController();
-
   bool isLoading = false;
   bool iserror = false;
   Future<void> _startDate(BuildContext context) async {
@@ -117,17 +118,19 @@ class _Summery_pageState extends State<Summery_page>
     _tabController = TabController(length: 4, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
     _fetchData();
-
+   // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
-
+    displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
     // fetchunits1();
     //fetchLeases();
     // fetchAndSetCounts(context);
     //workorder
     // fetchAndSetCounts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
-  }
 
+  }
+  String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   Future<Map<String, dynamic>> fetchDataOfCountWork(String rentalId) async {
     final response = await http
         .get(Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'));
@@ -161,10 +164,12 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   File? _image;
+  List<File> _images = [];
   String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest(
         'POST',
@@ -194,6 +199,7 @@ class _Summery_pageState extends State<Summery_page>
     if (image != null) {
       setState(() {
         _image = File(image.path);
+        _images.add(File(image.path));
       });
       _uploadImage(File(image.path));
     }
@@ -203,6 +209,7 @@ class _Summery_pageState extends State<Summery_page>
     try {
       String? fileName = await uploadImage(imageFile);
       setState(() {
+        _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
       });
     } catch (e) {
@@ -253,7 +260,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   final Properies_summery_Repo unitRepository = Properies_summery_Repo();
-  int unitCount = 0;
+  //int unitCount = 0;
   int tenentCount = 0;
   int count = 0;
   int complete_count = 0;
@@ -427,7 +434,7 @@ class _Summery_pageState extends State<Summery_page>
                         : Text("Work Order",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    SizedBox(width: 1),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -624,7 +631,7 @@ class _Summery_pageState extends State<Summery_page>
   Widget _buildDataCell(String text) {
     return TableCell(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        padding: const EdgeInsets.only(top: 20.0, left: 16,bottom: 15),
         child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
     );
@@ -772,6 +779,12 @@ class _Summery_pageState extends State<Summery_page>
   bool ascending2multi = false;
   bool ascending3multi = false;
 
+
+  countupdateunit(int cnt){
+    setState(() {
+      unitCount = cnt;
+    });
+  }
   Widget _buildHeadersmulti() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -1286,7 +1299,6 @@ class _Summery_pageState extends State<Summery_page>
                         : Text(" Contact\nName",textAlign: TextAlign.center, style: TextStyle(color: Colors.white,)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
-
                   ],
                 ),
               ),
@@ -1315,9 +1327,10 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("  Company \nName", textAlign: TextAlign.center,style: TextStyle(color: Colors.white)),
+                    Text("  Company \nName",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-
                   ],
                 ),
               ),
@@ -1347,10 +1360,9 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-
-                    Text("   Phone\n  Number",textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
-
-
+                    Text("   Phone\n  Number",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -1435,7 +1447,7 @@ class _Summery_pageState extends State<Summery_page>
   Widget _buildDataCellrent(String text) {
     return TableCell(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16,bottom: 15),
+        padding: const EdgeInsets.only(top: 20.0, left: 16, bottom: 15),
         child: InkWell(
             onTap: () {},
             child: Text(text?.isNotEmpty == true ? text! : 'N/A', style: const TextStyle(fontSize: 18))),
@@ -1490,16 +1502,17 @@ class _Summery_pageState extends State<Summery_page>
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
-            color:
-            _currentPagerent == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            color: _currentPagerent == 0
+                ? Colors.grey
+                : Color.fromRGBO(21, 43, 83, 1),
           ),
           onPressed: _currentPagerent == 0
               ? null
               : () {
-            setState(() {
-              _currentPagerent--;
-            });
-          },
+                  setState(() {
+                    _currentPagerent--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPagerent + 1} of $numorpages',
@@ -1509,18 +1522,20 @@ class _Summery_pageState extends State<Summery_page>
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronRight,
-            color: (_currentPagerent + 1) * _rowsPerPagerent >= _tableDatarent.length
+            color: (_currentPagerent + 1) * _rowsPerPagerent >=
+                    _tableDatarent.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
-          onPressed: (_currentPagerent + 1) * _rowsPerPagerent >= _tableDatarent.length
-              ? null
-              : () {
-            setState(() {
-              _currentPagerent++;
-            });
-          },
+          onPressed:
+              (_currentPagerent + 1) * _rowsPerPagerent >= _tableDatarent.length
+                  ? null
+                  : () {
+                      setState(() {
+                        _currentPagerent++;
+                      });
+                    },
         ),
       ],
     );
@@ -1666,19 +1681,19 @@ class _Summery_pageState extends State<Summery_page>
                   text: 'Summary',
                 ),
                 Tab(
-                  text: 'Units($unitCount)',
+                  text: 'Units',
                 ),
                 StatefulBuilder(
                   builder: (BuildContext context,
                       void Function(void Function()) setState) {
-                    return Tab(text: 'Tenant($tenentCount)');
+                    return Tab(text: 'Tenant');
                   },
                 ),
                 StatefulBuilder(
                   builder: (BuildContext context,
                       void Function(void Function()) setState) {
                     return Tab(
-                        text: 'Work(${!isChecked ? count : complete_count})');
+                        text: 'Work');
                   },
                 ),
                 // Consumer<WorkOrderCountProvider>(
@@ -1842,21 +1857,20 @@ class _Summery_pageState extends State<Summery_page>
                               ],
                             ),
                             SizedBox(height: 5),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  '${widget.properties?.rentalAddress}',
+                                  maxLines: 2, // Set maximum number of lines
+                                  overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                    color: blueColor,
+                                  ),
                                 ),
-                                Text('${widget.properties.rentalAddress}',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(21, 43, 81, 1),
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 14
-                                              : 18,
-                                    )),
-                              ],
+                              ),
                             ),
                             SizedBox(height: 5),
                             Row(
@@ -2033,14 +2047,19 @@ class _Summery_pageState extends State<Summery_page>
             Row(
               children: [
                 if (MediaQuery.of(context).size.width > 500)
-                SizedBox(width: 6,),
+                  SizedBox(
+                    width: 6,
+                  ),
                 if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(width: 10,),
+                  SizedBox(
+                    width: 10,
+                  ),
                 Text(
                   "Rental Owners",
                   style: TextStyle(
                       color: Color.fromRGBO(21, 43, 81, 1),
-                      fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                      fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 16 : 20,
                       fontWeight: FontWeight.bold),
                 ),
               ],
@@ -2252,11 +2271,13 @@ class _Summery_pageState extends State<Summery_page>
                                 searchValuerent)
                             .toList();
                       }
+                      data = data.where((e)=>e.rentalId == widget.properties.rentalId).toList();
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
                           .toList();
+                      print("currentpage data ${currentPageData.length}");
                       return SingleChildScrollView(
                         child: Column(
                           children: [
@@ -2423,9 +2444,9 @@ class _Summery_pageState extends State<Summery_page>
                                                           children: <Widget>[
                                                             SizedBox(
                                                               height: MediaQuery.of(
-                                                                  context)
-                                                                  .size
-                                                                  .height *
+                                                                          context)
+                                                                      .size
+                                                                      .height *
                                                                   .01,
                                                             ),
                                                             Text.rich(
@@ -2684,7 +2705,7 @@ class _Summery_pageState extends State<Summery_page>
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Container(
-                             // width: MediaQuery.of(context).size.width * .91,
+                              // width: MediaQuery.of(context).size.width * .91,
                               child: Table(
                                 defaultColumnWidth: IntrinsicColumnWidth(),
                                 children: [
@@ -2765,8 +2786,11 @@ class _Summery_pageState extends State<Summery_page>
                                             '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
                                         // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
                                         _buildDataCellrent(
-                                            _pagedDatarent[i].rentalOwnerData!.rentalOwnerCompanyName!,),
-                                        _buildDataCellrent(    _pagedDatarent[i]
+                                          _pagedDatarent[i]
+                                              .rentalOwnerData!
+                                              .rentalOwnerCompanyName!,
+                                        ),
+                                        _buildDataCellrent(_pagedDatarent[i]
                                             .rentalOwnerData!
                                             .rentalOwnerPrimaryEmail!),
                                         _buildDataCellrent(_pagedDatarent[i]
@@ -2800,14 +2824,19 @@ class _Summery_pageState extends State<Summery_page>
             Row(
               children: [
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(width: 6,),
+                  SizedBox(
+                    width: 6,
+                  ),
                 if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                 Text(
                   "Staff Details",
                   style: TextStyle(
                       color: Color.fromRGBO(21, 43, 81, 1),
-                      fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 20,
+                      fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 17 : 20,
                       fontWeight: FontWeight.bold),
                 ),
               ],
@@ -2816,43 +2845,49 @@ class _Summery_pageState extends State<Summery_page>
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5,right: 5),
+              padding: const EdgeInsets.only(left: 5, right: 5),
               child: Table(
-
                 border: TableBorder.all(color: blueColor),
                 children: [
-                   TableRow(
-                       decoration:BoxDecoration(
-                       color: blueColor,
-                       //  borderRadius: BorderRadius.circular(10),
+                  TableRow(
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        //  borderRadius: BorderRadius.circular(10),
                       ),
-                       children: [
-                         
-                    TableCell(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Staff Member',style: TextStyle(
-                            color: Colors.white,
-                            fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 19,
-                            fontWeight: FontWeight.bold),),
-                      ),
-                    ),
-                  ]),
+                      children: [
+                        TableCell(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Staff Member',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 19,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ]),
                   TableRow(children: [
                     TableCell(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          widget.properties.staffMemberData?.staffmemberName != null && widget.properties.staffMemberData!.staffmemberName!.isNotEmpty
+                          widget.properties.staffMemberData?.staffmemberName !=
+                                      null &&
+                                  widget.properties.staffMemberData!
+                                      .staffmemberName!.isNotEmpty
                               ? '${widget.properties.staffMemberData!.staffmemberName}'
                               : 'N/A',
                           style: TextStyle(
-
-                              fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 19,
-
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 16
+                                : 19,
                           ),
                         ),
-
                       ),
                     ),
                   ])
@@ -2889,7 +2924,9 @@ class _Summery_pageState extends State<Summery_page>
               return Text('Error: ${snapshot.error}');
             } else {
               List<TenantData> tenants = snapshot.data ?? [];
-
+              if(snapshot.data!.length == 0){
+                return Center(child: Text("No Data Availabel"));
+              }
               return isTablet
                   ? SingleChildScrollView(
                       scrollDirection: Axis.vertical,
@@ -2908,7 +2945,8 @@ class _Summery_pageState extends State<Summery_page>
                             (index) => Material(
                               elevation: 3,
                               borderRadius: BorderRadius.circular(10),
-                              child: Container(
+                              child:
+                              Container(
                                 height: 220,
                                 width: MediaQuery.of(context).size.width * .44,
                                 decoration: BoxDecoration(
@@ -3023,7 +3061,26 @@ class _Summery_pageState extends State<Summery_page>
             ),
             const Spacer(),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    bool isChecked =
+                    false; // Moved isChecked inside the StatefulBuilder
+                    return StatefulBuilder(
+                      builder: (BuildContext context,
+                          StateSetter setState) {
+                        return AlertDialog(
+                          backgroundColor: Colors.white,
+                          surfaceTintColor: Colors.white,
+                          content:
+                          buildMoveout(tenant),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
               child: Row(
                 children: [
                   FaIcon(
@@ -3116,6 +3173,916 @@ class _Summery_pageState extends State<Summery_page>
         ),
         const SizedBox(height: 10),
       ],
+    );
+  }
+
+  // Widget buildMoveout(TenantData tenant){
+  //   return  SingleChildScrollView(
+  //     child:
+  //     Column(
+  //       children: [
+  //         Row(
+  //           children: [
+  //             SizedBox(
+  //               width: 0,
+  //             ),
+  //             Text(
+  //               "Move out Tenants",
+  //               style: TextStyle(
+  //                   fontWeight:
+  //                   FontWeight.bold,
+  //                   color: Color.fromRGBO(
+  //                       21, 43, 81, 1),
+  //                   fontSize: 15),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(
+  //           height: 10,
+  //         ),
+  //         Row(
+  //           children: [
+  //             SizedBox(
+  //               width: 0,
+  //             ),
+  //             Expanded(
+  //               child: Text(
+  //                 "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+  //                 style: TextStyle(
+  //                   fontWeight:
+  //                   FontWeight.w500,
+  //                   fontSize: 13,
+  //                   color:
+  //                   Color(0xFF8A95A8),
+  //                 ),
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 0,
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(
+  //           height: 15,
+  //         ),
+  //         Material(
+  //           elevation: 3,
+  //           borderRadius:
+  //           BorderRadius.circular(10),
+  //           child: Container(
+  //             // height: 280,
+  //             width: MediaQuery.of(context)
+  //                 .size
+  //                 .width *
+  //                 .65,
+  //             decoration: BoxDecoration(
+  //               border: Border.all(
+  //                   color: Color.fromRGBO(
+  //                       21, 43, 81, 1)),
+  //               // color: Colors.blue,
+  //               borderRadius:
+  //               BorderRadius.circular(
+  //                   5),
+  //             ),
+  //             child: Column(
+  //               children: [
+  //                 SizedBox(
+  //                   height: 10,
+  //                 ),
+  //                 Padding(
+  //                   padding:
+  //                   const EdgeInsets
+  //                       .only(
+  //                       left: 5,
+  //                       right: 5),
+  //                   child: Table(
+  //                     border:
+  //                     TableBorder.all(
+  //                         color: Color
+  //                             .fromRGBO(
+  //                             21,
+  //                             43,
+  //                             81,
+  //                             1)),
+  //                     children: [
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Address/Unit',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Lease Type',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Start End',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ]),
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               '${widget.properties.rentalAddress}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               ' ${tenant.leaseType}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               ' ${tenant.createdAt} ${tenant.updatedAt}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ])
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 SizedBox(
+  //                   height: 10,
+  //                 ),
+  //                 Padding(
+  //                   padding:
+  //                   const EdgeInsets
+  //                       .only(
+  //                       left: 5,
+  //                       right: 5),
+  //                   child: Table(
+  //                     border:
+  //                     TableBorder.all(
+  //                         color: Color
+  //                             .fromRGBO(
+  //                             21,
+  //                             43,
+  //                             81,
+  //                             1)),
+  //                     children: [
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Tenants',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Notice Given Date',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Move-Out Date',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ]),
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               ' ${tenant.firstName} ${tenant.lastName}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Row(
+  //                               children: [
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                                 Expanded(
+  //                                   child:
+  //                                   Material(
+  //                                     elevation:
+  //                                     4,
+  //                                     child:
+  //                                     Container(
+  //                                       height:
+  //                                       50,
+  //                                       width:
+  //                                       MediaQuery.of(context).size.width * .4,
+  //                                       decoration:
+  //                                       BoxDecoration(
+  //                                         borderRadius: BorderRadius.circular(2),
+  //                                         border: Border.all(
+  //                                           color: Color(0xFF8A95A8),
+  //                                         ),
+  //                                       ),
+  //                                       child:
+  //                                       Stack(
+  //                                         children: [
+  //                                           Positioned.fill(
+  //                                             child: TextField(
+  //                                               onChanged: (value) {
+  //                                                 setState(() {
+  //                                                   // startdatederror = false;
+  //                                                   // _selectDate(context);
+  //                                                 });
+  //                                               },
+  //                                               controller: startdateController,
+  //                                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
+  //                                               decoration: InputDecoration(
+  //                                                 hintText: "mm/dd/yyyy",
+  //                                                 hintStyle: TextStyle(
+  //                                                   fontSize: MediaQuery.of(context).size.width * .037,
+  //                                                   color: Color(0xFF8A95A8),
+  //                                                 ),
+  //                                                 // enabledBorder: startdatederror
+  //                                                 //     ? OutlineInputBorder(
+  //                                                 //   borderRadius:
+  //                                                 //   BorderRadius.circular(3),
+  //                                                 //   borderSide: BorderSide(
+  //                                                 //     color: Colors.red,
+  //                                                 //   ),
+  //                                                 // )
+  //                                                 //     : InputBorder.none,
+  //                                                 border: InputBorder.none,
+  //                                                 contentPadding: EdgeInsets.all(12),
+  //                                                 suffixIcon: IconButton(
+  //                                                   icon: Icon(Icons.calendar_today),
+  //                                                   onPressed: () => _startDate(context),
+  //                                                 ),
+  //                                               ),
+  //                                               readOnly: true,
+  //                                               onTap: () {
+  //                                                 _startDate(context);
+  //                                                 setState(() {
+  //                                                   //startdatederror = false;
+  //                                                 });
+  //                                               },
+  //                                             ),
+  //                                           ),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                               ],
+  //                             ),
+  //                             // Text(
+  //                             //   '${widget.properties.staffMemberData!.staffmemberName}',
+  //                             //   style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1),fontWeight: FontWeight.w500,fontSize: 12),
+  //                             // ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Row(
+  //                               children: [
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                                 Expanded(
+  //                                   child:
+  //                                   Material(
+  //                                     elevation:
+  //                                     4,
+  //                                     child:
+  //                                     Container(
+  //                                       height:
+  //                                       50,
+  //                                       //width: MediaQuery.of(context).size.width * .6,
+  //                                       decoration:
+  //                                       BoxDecoration(
+  //                                         borderRadius: BorderRadius.circular(2),
+  //                                         border: Border.all(
+  //                                           color: Color(0xFF8A95A8),
+  //                                         ),
+  //                                       ),
+  //                                       child:
+  //                                       Stack(
+  //                                         children: [
+  //                                           Positioned.fill(
+  //                                             child: TextField(
+  //                                               onChanged: (value) {
+  //                                                 setState(() {
+  //                                                   // startdatederror = false;
+  //                                                   // _selectDate(context);
+  //                                                 });
+  //                                               },
+  //                                               controller: enddateController,
+  //                                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
+  //                                               decoration: InputDecoration(
+  //                                                 hintText: "mm/dd/yyyy",
+  //                                                 hintStyle: TextStyle(
+  //                                                   fontSize: MediaQuery.of(context).size.width * .037,
+  //                                                   color: Color(0xFF8A95A8),
+  //                                                 ),
+  //                                                 // enabledBorder: startdatederror
+  //                                                 //     ? OutlineInputBorder(
+  //                                                 //   borderRadius:
+  //                                                 //   BorderRadius.circular(3),
+  //                                                 //   borderSide: BorderSide(
+  //                                                 //     color: Colors.red,
+  //                                                 //   ),
+  //                                                 // )
+  //                                                 //     : InputBorder.none,
+  //                                                 border: InputBorder.none,
+  //                                                 contentPadding: EdgeInsets.all(12),
+  //                                                 suffixIcon: IconButton(
+  //                                                   icon: Icon(Icons.calendar_today),
+  //                                                   onPressed: () => _endDate(context),
+  //                                                 ),
+  //                                               ),
+  //                                               readOnly: true,
+  //                                               onTap: () {
+  //                                                 _endDate(context);
+  //                                                 setState(() {
+  //                                                   //startdatederror = false;
+  //                                                 });
+  //                                               },
+  //                                             ),
+  //                                           ),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ])
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 SizedBox(
+  //                   height: 10,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           height: 20,
+  //         ),
+  //         Row(
+  //           mainAxisAlignment:
+  //           MainAxisAlignment.end,
+  //           crossAxisAlignment:
+  //           CrossAxisAlignment.end,
+  //           children: [
+  //             GestureDetector(
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //               },
+  //               child: Material(
+  //                 elevation: 3,
+  //                 borderRadius:
+  //                 BorderRadius.all(
+  //                   Radius.circular(5),
+  //                 ),
+  //                 child: Container(
+  //                   height: 30,
+  //                   width: 60,
+  //                   decoration:
+  //                   BoxDecoration(
+  //                     color: Colors.white,
+  //                     borderRadius:
+  //                     BorderRadius.all(
+  //                       Radius.circular(5),
+  //                     ),
+  //                   ),
+  //                   child: Center(
+  //                       child: Text(
+  //                         "Close",
+  //                         style: TextStyle(
+  //                             fontWeight:
+  //                             FontWeight
+  //                                 .w500,
+  //                             color: Color
+  //                                 .fromRGBO(
+  //                                 21,
+  //                                 43,
+  //                                 81,
+  //                                 1)),
+  //                       )),
+  //                 ),
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 10,
+  //             ),
+  //             Material(
+  //               elevation: 3,
+  //               borderRadius:
+  //               BorderRadius.all(
+  //                 Radius.circular(5),
+  //               ),
+  //               child: Container(
+  //                 height: 30,
+  //                 width: 80,
+  //                 decoration: BoxDecoration(
+  //                   color: Color.fromRGBO(
+  //                       21, 43, 81, 1),
+  //                   borderRadius:
+  //                   BorderRadius.all(
+  //                     Radius.circular(5),
+  //                   ),
+  //                 ),
+  //                 child: Center(
+  //                     child: Text(
+  //                       "Move Out",
+  //                       style: TextStyle(
+  //                           fontWeight:
+  //                           FontWeight.bold,
+  //                           color: Colors.white,
+  //                           fontSize: 13),
+  //                     )),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(
+  //           height: 15,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  //
+  // }
+
+  Widget buildMoveout(TenantData tenant) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Move out Tenants",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(21, 43, 81, 1),
+                fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
+          ),
+          SizedBox(height: 13),
+          Text(
+            "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+              color: Color(0xFF8A95A8),
+            ),
+          ),
+          SizedBox(height: 15),
+          Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Property Details',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        color: blueColor),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration:  BoxDecoration(
+                  borderRadius:
+                  BorderRadius
+                      .circular(
+                      5),
+
+                  border: Border.all(
+                      color: blueColor),
+                ),
+                child: Table(
+                  //border: TableBorder.all(color:blueColor),
+                  border: TableBorder(
+                    horizontalInside: BorderSide(
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      width: 1.0,
+                    ),
+
+                  ),
+                  columnWidths: {
+                    0: FlexColumnWidth(2),
+                    1: FlexColumnWidth(3),
+                  },
+                  children: [
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Address/Unit',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,),)),
+                        buildTableCell(Text('${widget.properties.rentalAddress}')),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Lease Type',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                        buildTableCell(Text('${tenant.leaseType}')),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                        buildTableCell(Text('${tenant.createdAt} ${tenant.updatedAt}')),
+                      ],
+                    ),
+
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Tenant Details',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        color: Color.fromRGBO(21, 43, 81, 1)),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Table(
+                border: TableBorder.all(color: blueColor),
+                columnWidths: {
+                  0: FlexColumnWidth(2),
+                  1: FlexColumnWidth(3),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Tenants',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(Text('${tenant.firstName} ${tenant.lastName}')),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Notice Given Date',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(buildDateField(startdateController)),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Move-Out Date',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(
+                        Column(
+                          children: [
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Material(
+                                  elevation:2,
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    height:40,
+                                    width:130,
+                                    decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      displayDate,
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                                      ),
+                                    ),
+                                  ),
+                                                        ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ), ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Container(
+                    height:  MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Center(
+                        child: Text(
+                          "Close",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                              color: Color.fromRGBO(21, 43, 81, 1)),
+                        )),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              InkWell(
+                onTap: () async {
+                  // if (selectedValue == null ||
+                  //     subtype.text.isEmpty) {
+                  //   setState(() {
+                  //     iserror = true;
+                  //   });
+                  // } else {
+                  //   setState(() {
+                  //     isLoading = true;
+                  //     iserror = false;
+                  //   });
+                  String? tenantId = tenant.tenantId != null && tenant.tenantId!.isNotEmpty
+                      ? tenant.tenantId!.first
+                      : null;
+                    SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                    String? id = prefs.getString("adminId");
+                    print(moveOutDate);
+                    LeaseMoveoutRepository()
+                        .addMoveoutTenant(
+                      adminId: id!,
+                      tenantId: tenantId,
+                      leaseId: widget.tenants?.leaseId!,
+                      moveoutDate: moveOutDate,
+                      moveoutNoticeGivenDate: startdateController.text,
+                    ).then((value) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      Navigator.pop(context, true);
+                    }).catchError((e) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    });
+                  },
+                  child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Container(
+                    height:  MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width:  MediaQuery.of(context).size.width < 500 ? 100: 130,
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Center(
+                        child: Text(
+                          "Move Out",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,),
+                        )),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15),
+        ],
+      ),
+    );
+  }
+
+
+  Widget buildTableCell(Widget child) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildDateField(TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: 'Select Date',
+        suffixIcon: IconButton(
+          icon: Icon(Icons.calendar_today),
+          onPressed: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101),
+            );
+            if (pickedDate != null) {
+              setState(() {
+                controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+              });
+            }
+          },
+        ),
+      ),
+      readOnly: true,
     );
   }
 
@@ -5294,46 +6261,56 @@ class _Summery_pageState extends State<Summery_page>
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Container(
-                                          height: MediaQuery.of(context).size.width < 500 ? 36 : 45,
-                                          width: MediaQuery.of(context).size.width < 500 ? 100 : 150,
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 36
+                                              : 45,
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 100
+                                              : 150,
                                           child: ElevatedButton(
                                             onPressed: () {
                                               sqft3.text = data[0].rentalsqft!;
                                               bath3.text = data[0].rentalbath!;
                                               bed3.text = data[0].rentalbed!;
                                               street3.text =
-                                              data[0].rentalunitadress!;
+                                                  data[0].rentalunitadress!;
                                               unitnum.text =
-                                              data[0].rentalunit!;
+                                                  data[0].rentalunit!;
                                               //_image = data[0].p;
                                               if (widget
-                                                  .properties
-                                                  .propertyTypeData!
-                                                  .isMultiunit! ==
-                                                  false &&
+                                                          .properties
+                                                          .propertyTypeData!
+                                                          .isMultiunit! ==
+                                                      false &&
                                                   widget
-                                                      .properties
-                                                      .propertyTypeData!
-                                                      .propertyType ==
+                                                          .properties
+                                                          .propertyTypeData!
+                                                          .propertyType ==
                                                       'Residential') {
                                                 showDialog(
                                                   context: context,
                                                   builder:
                                                       (BuildContext context) {
                                                     bool isChecked =
-                                                    false; // Moved isChecked inside the StatefulBuilder
+                                                        false; // Moved isChecked inside the StatefulBuilder
                                                     return StatefulBuilder(
                                                       builder:
                                                           (BuildContext context,
-                                                          StateSetter
-                                                          setState) {
+                                                              StateSetter
+                                                                  setState) {
                                                         return AlertDialog(
                                                           backgroundColor:
-                                                          Colors.white,
+                                                              Colors.white,
                                                           surfaceTintColor:
-                                                          Colors.white,
+                                                              Colors.white,
                                                           content:
-                                                          SingleChildScrollView(
+                                                              SingleChildScrollView(
                                                             child: Column(
                                                               children: [
                                                                 Row(
@@ -5341,23 +6318,23 @@ class _Summery_pageState extends State<Summery_page>
                                                                     const Text(
                                                                       "Edit Unit Details",
                                                                       style:
-                                                                      TextStyle(
+                                                                          TextStyle(
                                                                         color: Color.fromRGBO(
                                                                             21,
                                                                             43,
                                                                             81,
                                                                             1),
                                                                         fontWeight:
-                                                                        FontWeight.bold,
+                                                                            FontWeight.bold,
                                                                       ),
                                                                     ),
                                                                     const Spacer(),
                                                                     Align(
                                                                       alignment:
-                                                                      Alignment
-                                                                          .centerRight,
+                                                                          Alignment
+                                                                              .centerRight,
                                                                       child:
-                                                                      InkWell(
+                                                                          InkWell(
                                                                         onTap:
                                                                             () {
                                                                           Navigator.pop(
@@ -5367,7 +6344,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                             Icons
                                                                                 .close,
                                                                             color:
-                                                                            Colors.black),
+                                                                                Colors.black),
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5383,7 +6360,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           color: Color(
                                                                               0xFF8A95A8),
                                                                           fontWeight:
-                                                                          FontWeight.bold),
+                                                                              FontWeight.bold),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -5394,48 +6371,48 @@ class _Summery_pageState extends State<Summery_page>
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
                                                                       vertical:
-                                                                      1),
+                                                                          1),
                                                                   child:
-                                                                  Material(
+                                                                      Material(
                                                                     elevation:
-                                                                    3,
+                                                                        3,
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     child:
-                                                                    TextFormField(
+                                                                        TextFormField(
                                                                       controller:
-                                                                      sqft3,
+                                                                          sqft3,
                                                                       cursorColor:
-                                                                      Colors
-                                                                          .black,
+                                                                          Colors
+                                                                              .black,
                                                                       decoration:
-                                                                      InputDecoration(
+                                                                          InputDecoration(
                                                                         //  hintText: label,
                                                                         // labelText: label,
                                                                         // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                         filled:
-                                                                        true,
+                                                                            true,
                                                                         fillColor:
-                                                                        Colors.white,
+                                                                            Colors.white,
                                                                         border:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          BorderSide.none,
+                                                                              BorderSide.none,
                                                                         ),
                                                                         enabledBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          const BorderSide(color: Color(0xFF8A95A8)),
+                                                                              const BorderSide(color: Color(0xFF8A95A8)),
                                                                         ),
                                                                         focusedBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide: const BorderSide(
                                                                               color: Color(0xFF8A95A8),
                                                                               width: 2),
@@ -5443,9 +6420,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                         contentPadding: const EdgeInsets
                                                                             .symmetric(
                                                                             vertical:
-                                                                            10.0,
+                                                                                10.0,
                                                                             horizontal:
-                                                                            10.0),
+                                                                                10.0),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -5464,7 +6441,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           color: Color(
                                                                               0xFF8A95A8),
                                                                           fontWeight:
-                                                                          FontWeight.bold),
+                                                                              FontWeight.bold),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -5472,48 +6449,48 @@ class _Summery_pageState extends State<Summery_page>
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
                                                                       vertical:
-                                                                      1),
+                                                                          1),
                                                                   child:
-                                                                  Material(
+                                                                      Material(
                                                                     elevation:
-                                                                    3,
+                                                                        3,
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     child:
-                                                                    TextFormField(
+                                                                        TextFormField(
                                                                       controller:
-                                                                      bath3,
+                                                                          bath3,
                                                                       cursorColor:
-                                                                      Colors
-                                                                          .black,
+                                                                          Colors
+                                                                              .black,
                                                                       decoration:
-                                                                      InputDecoration(
+                                                                          InputDecoration(
                                                                         //  hintText: label,
                                                                         // labelText: label,
                                                                         // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                         filled:
-                                                                        true,
+                                                                            true,
                                                                         fillColor:
-                                                                        Colors.white,
+                                                                            Colors.white,
                                                                         border:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          BorderSide.none,
+                                                                              BorderSide.none,
                                                                         ),
                                                                         enabledBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          const BorderSide(color: Color(0xFF8A95A8)),
+                                                                              const BorderSide(color: Color(0xFF8A95A8)),
                                                                         ),
                                                                         focusedBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide: const BorderSide(
                                                                               color: Color(0xFF8A95A8),
                                                                               width: 2),
@@ -5521,9 +6498,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                         contentPadding: const EdgeInsets
                                                                             .symmetric(
                                                                             vertical:
-                                                                            10.0,
+                                                                                10.0,
                                                                             horizontal:
-                                                                            10.0),
+                                                                                10.0),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -5539,7 +6516,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           color: Color(
                                                                               0xFF8A95A8),
                                                                           fontWeight:
-                                                                          FontWeight.bold),
+                                                                              FontWeight.bold),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -5547,48 +6524,48 @@ class _Summery_pageState extends State<Summery_page>
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
                                                                       vertical:
-                                                                      1),
+                                                                          1),
                                                                   child:
-                                                                  Material(
+                                                                      Material(
                                                                     elevation:
-                                                                    3,
+                                                                        3,
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     child:
-                                                                    TextFormField(
+                                                                        TextFormField(
                                                                       controller:
-                                                                      bed3,
+                                                                          bed3,
                                                                       cursorColor:
-                                                                      Colors
-                                                                          .black,
+                                                                          Colors
+                                                                              .black,
                                                                       decoration:
-                                                                      InputDecoration(
+                                                                          InputDecoration(
                                                                         //  hintText: label,
                                                                         // labelText: label,
                                                                         // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                         filled:
-                                                                        true,
+                                                                            true,
                                                                         fillColor:
-                                                                        Colors.white,
+                                                                            Colors.white,
                                                                         border:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          BorderSide.none,
+                                                                              BorderSide.none,
                                                                         ),
                                                                         enabledBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          const BorderSide(color: Color(0xFF8A95A8)),
+                                                                              const BorderSide(color: Color(0xFF8A95A8)),
                                                                         ),
                                                                         focusedBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide: const BorderSide(
                                                                               color: Color(0xFF8A95A8),
                                                                               width: 2),
@@ -5596,9 +6573,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                         contentPadding: const EdgeInsets
                                                                             .symmetric(
                                                                             vertical:
-                                                                            10.0,
+                                                                                10.0,
                                                                             horizontal:
-                                                                            10.0),
+                                                                                10.0),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -5612,13 +6589,13 @@ class _Summery_pageState extends State<Summery_page>
                                                                       'Photo',
                                                                       style: TextStyle(
                                                                           color:
-                                                                          Colors.black),
+                                                                              Colors.black),
                                                                     ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
                                                                     height:
-                                                                    8.0),
+                                                                        8.0),
                                                                 Row(
                                                                   children: [
                                                                     GestureDetector(
@@ -5627,15 +6604,15 @@ class _Summery_pageState extends State<Summery_page>
                                                                         _pickImage()
                                                                             .then((_) {
                                                                           setState(
-                                                                                  () {}); // Rebuild the widget after selecting the image
+                                                                              () {}); // Rebuild the widget after selecting the image
                                                                         });
                                                                       },
                                                                       child:
-                                                                      const Text(
+                                                                          const Text(
                                                                         '+ Add',
                                                                         style: TextStyle(
                                                                             color:
-                                                                            Colors.green),
+                                                                                Colors.green),
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5645,26 +6622,26 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ),
                                                                 _image != null
                                                                     ? Column(
-                                                                  children: [
-                                                                    Image
-                                                                        .file(
-                                                                      _image!,
-                                                                      height:
-                                                                      80,
-                                                                      width:
-                                                                      80,
-                                                                      fit:
-                                                                      BoxFit.cover,
-                                                                    ),
-                                                                    Text(_uploadedFileName ??
-                                                                        ""),
-                                                                  ],
-                                                                )
+                                                                        children: [
+                                                                          Image
+                                                                              .file(
+                                                                            _image!,
+                                                                            height:
+                                                                                80,
+                                                                            width:
+                                                                                80,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                          Text(_uploadedFileName ??
+                                                                              ""),
+                                                                        ],
+                                                                      )
                                                                     : const Text(
-                                                                    ''),
+                                                                        ''),
                                                                 const SizedBox(
                                                                     height:
-                                                                    8.0),
+                                                                        8.0),
                                                                 Row(
                                                                   children: [
                                                                     const SizedBox(
@@ -5677,25 +6654,25 @@ class _Summery_pageState extends State<Summery_page>
                                                                             .text
                                                                             .isEmpty) {
                                                                           setState(
-                                                                                  () {
-                                                                                iserror =
+                                                                              () {
+                                                                            iserror =
                                                                                 true;
-                                                                              });
+                                                                          });
                                                                         } else {
                                                                           setState(
-                                                                                  () {
-                                                                                isLoading =
+                                                                              () {
+                                                                            isLoading =
                                                                                 true;
-                                                                                iserror =
+                                                                            iserror =
                                                                                 false;
-                                                                              });
+                                                                          });
                                                                           SharedPreferences
-                                                                          prefs =
-                                                                          await SharedPreferences.getInstance();
+                                                                              prefs =
+                                                                              await SharedPreferences.getInstance();
 
                                                                           String?
-                                                                          id =
-                                                                          prefs.getString("adminId");
+                                                                              id =
+                                                                              prefs.getString("adminId");
                                                                           Properies_summery_Repo()
                                                                               .Editunit(rentalsqft: sqft3.text, rentalunitadress: street3.text, rentalbath: bath3.text, rentalbed: bed3.text, unitId: unit?.unitId, adminId: id, rentalId: unit?.rentalId)
                                                                               .then((value) {
@@ -5712,44 +6689,44 @@ class _Summery_pageState extends State<Summery_page>
                                                                         }
                                                                       },
                                                                       child:
-                                                                      Material(
+                                                                          Material(
                                                                         elevation:
-                                                                        3,
+                                                                            3,
                                                                         borderRadius:
-                                                                        const BorderRadius.all(
+                                                                            const BorderRadius.all(
                                                                           Radius.circular(
                                                                               5),
                                                                         ),
                                                                         child:
-                                                                        Container(
+                                                                            Container(
                                                                           height:
-                                                                          30,
+                                                                              30,
                                                                           width:
-                                                                          80,
+                                                                              80,
                                                                           decoration:
-                                                                          const BoxDecoration(
+                                                                              const BoxDecoration(
                                                                             color: Color.fromRGBO(
                                                                                 21,
                                                                                 43,
                                                                                 81,
                                                                                 1),
                                                                             borderRadius:
-                                                                            BorderRadius.all(
+                                                                                BorderRadius.all(
                                                                               Radius.circular(5),
                                                                             ),
                                                                           ),
                                                                           child: const Center(
                                                                               child: Text(
-                                                                                "Save",
-                                                                                style:
+                                                                            "Save",
+                                                                            style:
                                                                                 TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                                                                              )),
+                                                                          )),
                                                                         ),
                                                                       ),
                                                                     ),
                                                                     const SizedBox(
                                                                         width:
-                                                                        10),
+                                                                            10),
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
@@ -5757,35 +6734,35 @@ class _Summery_pageState extends State<Summery_page>
                                                                             context);
                                                                       },
                                                                       child:
-                                                                      Material(
+                                                                          Material(
                                                                         elevation:
-                                                                        3,
+                                                                            3,
                                                                         borderRadius:
-                                                                        const BorderRadius.all(
+                                                                            const BorderRadius.all(
                                                                           Radius.circular(
                                                                               5),
                                                                         ),
                                                                         child:
-                                                                        Container(
+                                                                            Container(
                                                                           height:
-                                                                          30,
+                                                                              30,
                                                                           width:
-                                                                          80,
+                                                                              80,
                                                                           decoration:
-                                                                          const BoxDecoration(
+                                                                              const BoxDecoration(
                                                                             color:
-                                                                            Colors.white,
+                                                                                Colors.white,
                                                                             borderRadius:
-                                                                            BorderRadius.all(
+                                                                                BorderRadius.all(
                                                                               Radius.circular(5),
                                                                             ),
                                                                           ),
                                                                           child: const Center(
                                                                               child: Text(
-                                                                                "Cancel",
-                                                                                style:
+                                                                            "Cancel",
+                                                                            style:
                                                                                 TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
-                                                                              )),
+                                                                          )),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -5793,7 +6770,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ),
                                                                 const SizedBox(
                                                                     height:
-                                                                    8.0),
+                                                                        8.0),
                                                                 if (iserror)
                                                                   const Text(
                                                                     "Please fill in all fields correctly.",
@@ -5811,33 +6788,33 @@ class _Summery_pageState extends State<Summery_page>
                                                 );
                                               }
                                               if (widget
-                                                  .properties
-                                                  .propertyTypeData!
-                                                  .isMultiunit! ==
-                                                  false &&
+                                                          .properties
+                                                          .propertyTypeData!
+                                                          .isMultiunit! ==
+                                                      false &&
                                                   widget
-                                                      .properties
-                                                      .propertyTypeData!
-                                                      .propertyType ==
+                                                          .properties
+                                                          .propertyTypeData!
+                                                          .propertyType ==
                                                       'Commercial') {
                                                 showDialog(
                                                   context: context,
                                                   builder:
                                                       (BuildContext context) {
                                                     bool isChecked =
-                                                    false; // Moved isChecked inside the StatefulBuilder
+                                                        false; // Moved isChecked inside the StatefulBuilder
                                                     return StatefulBuilder(
                                                       builder:
                                                           (BuildContext context,
-                                                          StateSetter
-                                                          setState) {
+                                                              StateSetter
+                                                                  setState) {
                                                         return AlertDialog(
                                                           backgroundColor:
-                                                          Colors.white,
+                                                              Colors.white,
                                                           surfaceTintColor:
-                                                          Colors.white,
+                                                              Colors.white,
                                                           content:
-                                                          SingleChildScrollView(
+                                                              SingleChildScrollView(
                                                             child: Column(
                                                               children: [
                                                                 Row(
@@ -5845,23 +6822,23 @@ class _Summery_pageState extends State<Summery_page>
                                                                     const Text(
                                                                       "Edit Unit Details",
                                                                       style:
-                                                                      TextStyle(
+                                                                          TextStyle(
                                                                         color: Color.fromRGBO(
                                                                             21,
                                                                             43,
                                                                             81,
                                                                             1),
                                                                         fontWeight:
-                                                                        FontWeight.bold,
+                                                                            FontWeight.bold,
                                                                       ),
                                                                     ),
                                                                     const Spacer(),
                                                                     Align(
                                                                       alignment:
-                                                                      Alignment
-                                                                          .centerRight,
+                                                                          Alignment
+                                                                              .centerRight,
                                                                       child:
-                                                                      InkWell(
+                                                                          InkWell(
                                                                         onTap:
                                                                             () {
                                                                           Navigator.pop(
@@ -5871,7 +6848,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                             Icons
                                                                                 .close,
                                                                             color:
-                                                                            Colors.black),
+                                                                                Colors.black),
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5887,7 +6864,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           color: Color(
                                                                               0xFF8A95A8),
                                                                           fontWeight:
-                                                                          FontWeight.bold),
+                                                                              FontWeight.bold),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -5895,48 +6872,48 @@ class _Summery_pageState extends State<Summery_page>
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
                                                                       vertical:
-                                                                      1),
+                                                                          1),
                                                                   child:
-                                                                  Material(
+                                                                      Material(
                                                                     elevation:
-                                                                    3,
+                                                                        3,
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(3),
+                                                                        BorderRadius
+                                                                            .circular(3),
                                                                     child:
-                                                                    TextFormField(
+                                                                        TextFormField(
                                                                       controller:
-                                                                      sqft3,
+                                                                          sqft3,
                                                                       cursorColor:
-                                                                      Colors
-                                                                          .black,
+                                                                          Colors
+                                                                              .black,
                                                                       decoration:
-                                                                      InputDecoration(
+                                                                          InputDecoration(
                                                                         //  hintText: label,
                                                                         // labelText: label,
                                                                         // labelStyle: TextStyle(color: Colors.grey[700]),
                                                                         filled:
-                                                                        true,
+                                                                            true,
                                                                         fillColor:
-                                                                        Colors.white,
+                                                                            Colors.white,
                                                                         border:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          BorderSide.none,
+                                                                              BorderSide.none,
                                                                         ),
                                                                         enabledBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide:
-                                                                          const BorderSide(color: Color(0xFF8A95A8)),
+                                                                              const BorderSide(color: Color(0xFF8A95A8)),
                                                                         ),
                                                                         focusedBorder:
-                                                                        OutlineInputBorder(
+                                                                            OutlineInputBorder(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(3),
+                                                                              BorderRadius.circular(3),
                                                                           borderSide: const BorderSide(
                                                                               color: Color(0xFF8A95A8),
                                                                               width: 2),
@@ -5944,9 +6921,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                         contentPadding: const EdgeInsets
                                                                             .symmetric(
                                                                             vertical:
-                                                                            10.0,
+                                                                                10.0,
                                                                             horizontal:
-                                                                            10.0),
+                                                                                10.0),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -5960,13 +6937,13 @@ class _Summery_pageState extends State<Summery_page>
                                                                       'Photo',
                                                                       style: TextStyle(
                                                                           color:
-                                                                          Colors.black),
+                                                                              Colors.black),
                                                                     ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
                                                                     height:
-                                                                    8.0),
+                                                                        8.0),
                                                                 Row(
                                                                   children: [
                                                                     GestureDetector(
@@ -5975,44 +6952,44 @@ class _Summery_pageState extends State<Summery_page>
                                                                         _pickImage()
                                                                             .then((_) {
                                                                           setState(
-                                                                                  () {}); // Rebuild the widget after selecting the image
+                                                                              () {}); // Rebuild the widget after selecting the image
                                                                         });
                                                                       },
                                                                       child:
-                                                                      const Text(
+                                                                          const Text(
                                                                         '+ Add',
                                                                         style: TextStyle(
                                                                             color:
-                                                                            Colors.green),
+                                                                                Colors.green),
                                                                       ),
                                                                     ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
                                                                     height:
-                                                                    8.0),
+                                                                        8.0),
                                                                 _image != null
                                                                     ? Column(
-                                                                  children: [
-                                                                    Image
-                                                                        .file(
-                                                                      _image!,
-                                                                      height:
-                                                                      80,
-                                                                      width:
-                                                                      80,
-                                                                      fit:
-                                                                      BoxFit.cover,
-                                                                    ),
-                                                                    Text(_uploadedFileName ??
-                                                                        ""),
-                                                                  ],
-                                                                )
+                                                                        children: [
+                                                                          Image
+                                                                              .file(
+                                                                            _image!,
+                                                                            height:
+                                                                                80,
+                                                                            width:
+                                                                                80,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                          Text(_uploadedFileName ??
+                                                                              ""),
+                                                                        ],
+                                                                      )
                                                                     : const Text(
-                                                                    ''),
+                                                                        ''),
                                                                 const SizedBox(
                                                                     height:
-                                                                    8.0),
+                                                                        8.0),
                                                                 Row(
                                                                   children: [
                                                                     const SizedBox(
@@ -6025,30 +7002,30 @@ class _Summery_pageState extends State<Summery_page>
                                                                             .text
                                                                             .isEmpty) {
                                                                           setState(
-                                                                                  () {
-                                                                                iserror =
+                                                                              () {
+                                                                            iserror =
                                                                                 true;
-                                                                              });
+                                                                          });
                                                                         } else {
                                                                           setState(
-                                                                                  () {
-                                                                                isLoading =
+                                                                              () {
+                                                                            isLoading =
                                                                                 true;
-                                                                                iserror =
+                                                                            iserror =
                                                                                 false;
-                                                                              });
+                                                                          });
                                                                           SharedPreferences
-                                                                          prefs =
-                                                                          await SharedPreferences.getInstance();
+                                                                              prefs =
+                                                                              await SharedPreferences.getInstance();
                                                                           String?
-                                                                          id =
-                                                                          prefs.getString("adminId");
+                                                                              id =
+                                                                              prefs.getString("adminId");
                                                                           Properies_summery_Repo()
                                                                               .Editunit(
                                                                             rentalsqft:
-                                                                            sqft3.text,
+                                                                                sqft3.text,
                                                                             unitId:
-                                                                            unit?.unitId,
+                                                                                unit?.unitId,
                                                                           )
                                                                               .then((value) {
                                                                             setState(() {
@@ -6064,44 +7041,44 @@ class _Summery_pageState extends State<Summery_page>
                                                                         }
                                                                       },
                                                                       child:
-                                                                      Material(
+                                                                          Material(
                                                                         elevation:
-                                                                        3,
+                                                                            3,
                                                                         borderRadius:
-                                                                        const BorderRadius.all(
+                                                                            const BorderRadius.all(
                                                                           Radius.circular(
                                                                               5),
                                                                         ),
                                                                         child:
-                                                                        Container(
+                                                                            Container(
                                                                           height:
-                                                                          30,
+                                                                              30,
                                                                           width:
-                                                                          80,
+                                                                              80,
                                                                           decoration:
-                                                                          const BoxDecoration(
+                                                                              const BoxDecoration(
                                                                             color: Color.fromRGBO(
                                                                                 21,
                                                                                 43,
                                                                                 81,
                                                                                 1),
                                                                             borderRadius:
-                                                                            BorderRadius.all(
+                                                                                BorderRadius.all(
                                                                               Radius.circular(5),
                                                                             ),
                                                                           ),
                                                                           child: const Center(
                                                                               child: Text(
-                                                                                "Save",
-                                                                                style:
+                                                                            "Save",
+                                                                            style:
                                                                                 TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                                                                              )),
+                                                                          )),
                                                                         ),
                                                                       ),
                                                                     ),
                                                                     const SizedBox(
                                                                         width:
-                                                                        10),
+                                                                            10),
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
@@ -6109,35 +7086,35 @@ class _Summery_pageState extends State<Summery_page>
                                                                             context);
                                                                       },
                                                                       child:
-                                                                      Material(
+                                                                          Material(
                                                                         elevation:
-                                                                        3,
+                                                                            3,
                                                                         borderRadius:
-                                                                        const BorderRadius.all(
+                                                                            const BorderRadius.all(
                                                                           Radius.circular(
                                                                               5),
                                                                         ),
                                                                         child:
-                                                                        Container(
+                                                                            Container(
                                                                           height:
-                                                                          30,
+                                                                              30,
                                                                           width:
-                                                                          80,
+                                                                              80,
                                                                           decoration:
-                                                                          const BoxDecoration(
+                                                                              const BoxDecoration(
                                                                             color:
-                                                                            Colors.white,
+                                                                                Colors.white,
                                                                             borderRadius:
-                                                                            BorderRadius.all(
+                                                                                BorderRadius.all(
                                                                               Radius.circular(5),
                                                                             ),
                                                                           ),
                                                                           child: const Center(
                                                                               child: Text(
-                                                                                "Cancel",
-                                                                                style:
+                                                                            "Cancel",
+                                                                            style:
                                                                                 TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
-                                                                              )),
+                                                                          )),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -6145,7 +7122,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ),
                                                                 const SizedBox(
                                                                     height:
-                                                                    8.0),
+                                                                        8.0),
                                                                 if (iserror)
                                                                   const Text(
                                                                     "Please fill in all fields correctly.",
@@ -6163,22 +7140,26 @@ class _Summery_pageState extends State<Summery_page>
                                                 );
                                               }
                                             },
-                                            child:  Text(
+                                            child: Text(
                                               'Update unit',
                                               style: TextStyle(
-                                                  fontSize: MediaQuery.of(context).size.width < 500
-                                                      ? 13
-                                                      : 18,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 13
+                                                          : 18,
                                                   color: Colors.white),
                                             ),
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor:
-                                                const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                    const Color.fromRGBO(
+                                                        21, 43, 83, 1),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0))),
+                                                        BorderRadius.circular(
+                                                            12.0))),
                                           ),
                                         ),
                                       ),
@@ -6196,12 +7177,16 @@ class _Summery_pageState extends State<Summery_page>
                                         //  height: screenHeight * 0.30,
                                         //width: screenWidth * 0.8,
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.0),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                           child: Image(
                                             image: NetworkImage(
                                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
                                             fit: BoxFit.cover,
-                                            height: MediaQuery.of(context).size.width < 500
+                                            height: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 150
                                                 : 220,
                                           ),
@@ -6209,17 +7194,22 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                       Spacer(),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(left: 16),
+                                            padding:
+                                                const EdgeInsets.only(left: 16),
                                             child: Text(
                                               'ADDRESS',
                                               style: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context).size.width < 500
-                                                      ? 14
-                                                      : 20,
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 20,
                                                   color: Colors.grey[800],
                                                   fontWeight: FontWeight.bold),
                                             ),
@@ -6228,14 +7218,18 @@ class _Summery_pageState extends State<Summery_page>
                                             height: 5,
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(left: 16),
+                                            padding:
+                                                const EdgeInsets.only(left: 16),
                                             child: Text(
                                               '${widget.properties?.rentalAddress}',
                                               style: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context).size.width < 500
-                                                      ? 13
-                                                      : 18,
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 13
+                                                          : 18,
                                                   color: Colors.grey[800]),
                                             ),
                                           ),
@@ -6243,14 +7237,18 @@ class _Summery_pageState extends State<Summery_page>
                                             height: 5,
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(left: 16),
+                                            padding:
+                                                const EdgeInsets.only(left: 16),
                                             child: Text(
                                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
                                               style: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context).size.width < 500
-                                                      ? 13
-                                                      : 18,
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 13
+                                                          : 18,
                                                   color: Colors.grey[800]),
                                             ),
                                           ),
@@ -6258,21 +7256,26 @@ class _Summery_pageState extends State<Summery_page>
                                             height: 5,
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(left: 16),
+                                            padding:
+                                                const EdgeInsets.only(left: 16),
                                             child: Text(
                                               '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
                                               style: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context).size.width < 500
-                                                      ? 13
-                                                      : 18,
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 13
+                                                          : 18,
                                                   color: Colors.grey[800]),
                                             ),
                                           ),
                                         ],
                                       ),
                                       Spacer(),
-                                      if (MediaQuery.of(context).size.width > 500)
+                                      if (MediaQuery.of(context).size.width >
+                                          500)
                                         Row(
                                           children: [
                                             SizedBox(
@@ -6281,16 +7284,20 @@ class _Summery_pageState extends State<Summery_page>
                                             Container(
                                               width: 250,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(12.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0),
                                                 color: Colors.white,
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(21, 43, 83, 1),
+                                                  color: const Color.fromRGBO(
+                                                      21, 43, 83, 1),
                                                   width: 1,
                                                 ),
                                               ),
                                               child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   SizedBox(
                                                     height: 10,
@@ -6299,49 +7306,67 @@ class _Summery_pageState extends State<Summery_page>
                                                     // width: double.infinity,
                                                     child: Text(
                                                       'Add Lease',
-                                                      textAlign: TextAlign.start,
+                                                      textAlign:
+                                                          TextAlign.start,
                                                       style: TextStyle(
-                                                        fontSize:
-                                                        MediaQuery.of(context).size.width <
-                                                            500
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
                                                             ? 14
                                                             : 18,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Color.fromRGBO(21, 43, 83, 1),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 83, 1),
                                                       ),
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Container(
                                                       height:
-                                                      MediaQuery.of(context).size.width <
-                                                          500
-                                                          ? 36
-                                                          : 48,
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 36
+                                                              : 48,
                                                       // width: double.infinity,
                                                       child: ElevatedButton(
                                                         onPressed: () {},
                                                         child: Text(
                                                           '       Add Lease    ',
                                                           style: TextStyle(
-                                                              fontSize: MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                                  500
+                                                              fontSize: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
                                                                   ? 14
                                                                   : 18,
-                                                              color: Colors.white,
-                                                              fontWeight: FontWeight.bold),
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
                                                         style: ElevatedButton.styleFrom(
                                                             backgroundColor:
-                                                            const Color.fromRGBO(
-                                                                21, 43, 83, 1),
+                                                                const Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
                                                             shape: RoundedRectangleBorder(
                                                                 borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10.0))),
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10.0))),
                                                       ),
                                                     ),
                                                   ),
@@ -6349,55 +7374,72 @@ class _Summery_pageState extends State<Summery_page>
                                                     height: 10,
                                                   ),
                                                   Padding(
-                                                    padding: EdgeInsets.only(left: 10),
+                                                    padding: EdgeInsets.only(
+                                                        left: 10),
                                                     child: SizedBox(
                                                       //  width: double.infinity,
                                                       child: Text(
                                                         'Rental Applicant',
                                                         style: TextStyle(
-                                                          fontSize: MediaQuery.of(context)
-                                                              .size
-                                                              .width <
-                                                              500
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
                                                               ? 14
                                                               : 18,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Color.fromRGBO(21, 43, 83, 1),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 83, 1),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Container(
                                                       height:
-                                                      MediaQuery.of(context).size.width <
-                                                          500
-                                                          ? 36
-                                                          : 48,
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 36
+                                                              : 48,
                                                       //  width: double.infinity,
                                                       child: ElevatedButton(
                                                         onPressed: () {},
                                                         child: Text(
                                                           'Create Applicant',
                                                           style: TextStyle(
-                                                              fontSize: MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                                  500
+                                                              fontSize: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
                                                                   ? 14
                                                                   : 18,
-                                                              color: Colors.white,
-                                                              fontWeight: FontWeight.bold),
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
                                                         style: ElevatedButton.styleFrom(
                                                             backgroundColor:
-                                                            const Color.fromRGBO(
-                                                                21, 43, 83, 1),
+                                                                const Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
                                                             shape: RoundedRectangleBorder(
                                                                 borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10.0))),
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10.0))),
                                                       ),
                                                     ),
                                                   ),
@@ -6478,10 +7520,12 @@ class _Summery_pageState extends State<Summery_page>
                                         // height: screenHeight * 0.26,
                                         width: double.infinity,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           color: Colors.white,
                                           border: Border.all(
-                                            color: const Color.fromRGBO(21, 43, 83, 1),
+                                            color: const Color.fromRGBO(
+                                                21, 43, 83, 1),
                                             width: 1,
                                           ),
                                         ),
@@ -6495,19 +7539,27 @@ class _Summery_pageState extends State<Summery_page>
                                                   'Add Lease',
                                                   style: TextStyle(
                                                     fontSize:
-                                                    MediaQuery.of(context).size.width < 500
-                                                        ? 14
-                                                        : 18,
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 18,
                                                     fontWeight: FontWeight.bold,
-                                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 83, 1),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Container(
-                                                height: MediaQuery.of(context).size.width < 500
+                                                height: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
                                                     ? 36
                                                     : 48,
                                                 width: double.infinity,
@@ -6516,20 +7568,27 @@ class _Summery_pageState extends State<Summery_page>
                                                   child: Text(
                                                     'Add Lease',
                                                     style: TextStyle(
-                                                        fontSize:
-                                                        MediaQuery.of(context).size.width <
-                                                            500
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
                                                             ? 14
                                                             : 18,
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold),
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
                                                   style: ElevatedButton.styleFrom(
                                                       backgroundColor:
-                                                      const Color.fromRGBO(21, 43, 83, 1),
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius.circular(10.0))),
+                                                          const Color.fromRGBO(
+                                                              21, 43, 83, 1),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0))),
                                                 ),
                                               ),
                                             ),
@@ -6541,19 +7600,27 @@ class _Summery_pageState extends State<Summery_page>
                                                   'Rental Applicant',
                                                   style: TextStyle(
                                                     fontSize:
-                                                    MediaQuery.of(context).size.width < 500
-                                                        ? 14
-                                                        : 18,
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 18,
                                                     fontWeight: FontWeight.bold,
-                                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 83, 1),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Container(
-                                                height: MediaQuery.of(context).size.width < 500
+                                                height: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
                                                     ? 36
                                                     : 48,
                                                 width: double.infinity,
@@ -6562,20 +7629,27 @@ class _Summery_pageState extends State<Summery_page>
                                                   child: Text(
                                                     'Create Applicant',
                                                     style: TextStyle(
-                                                        fontSize:
-                                                        MediaQuery.of(context).size.width <
-                                                            500
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
                                                             ? 14
                                                             : 18,
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold),
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
                                                   style: ElevatedButton.styleFrom(
                                                       backgroundColor:
-                                                      const Color.fromRGBO(21, 43, 83, 1),
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius.circular(10.0))),
+                                                          const Color.fromRGBO(
+                                                              21, 43, 83, 1),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0))),
                                                 ),
                                               ),
                                             ),
@@ -6973,19 +8047,33 @@ class _Summery_pageState extends State<Summery_page>
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        _image != null
-                                            ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : Text(''),
+                                        _images.isNotEmpty
+                                            ? Wrap(
+                                          spacing: 8.0, // Horizontal spacing between items
+                                          runSpacing: 8.0, // Vertical spacing between rows
+                                          children: List.generate(
+                                            _images.length,
+                                                (index) {
+                                              return SizedBox(
+                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
+                                                child: Row(
+                                                  children: [
+                                                    Image.file(
+                                                      _images[index],
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                            : Center(
+                                          child: Text("No images selected."),
+                                        ),
                                         SizedBox(height: 8.0),
                                         Row(
                                           children: [
@@ -7023,9 +8111,12 @@ class _Summery_pageState extends State<Summery_page>
                                                     rentalsqft: sqft3.text,
                                                     rentalbath: bath3.text,
                                                     rentalbed: bed3.text,
+                                                    rentalImages: _uploadedFileNames!
                                                   )
                                                       .then((value) {
                                                     setState(() {
+                                                      futureUnitsummery =
+                                                          Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
                                                       isLoading = false;
                                                       data.add(unit_properties(
                                                         adminId: id!,
@@ -7039,8 +8130,10 @@ class _Summery_pageState extends State<Summery_page>
                                                         rentalsqft: sqft3.text,
                                                         rentalbath: bath3.text,
                                                         rentalbed: bed3.text,
+
                                                       ));
                                                     });
+                                                    reload_Screen();
                                                     Navigator.pop(
                                                         context, true);
                                                   }).catchError((e) {
@@ -7371,19 +8464,33 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         ),
                                         SizedBox(height: 8.0),
-                                        _image != null
-                                            ? Column(
-                                                children: [
-                                                  Image.file(
-                                                    _image!,
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                  Text(_uploadedFileName ?? ""),
-                                                ],
-                                              )
-                                            : Text(''),
+                                        _images.isNotEmpty
+                                            ? Wrap(
+                                          spacing: 8.0, // Horizontal spacing between items
+                                          runSpacing: 8.0, // Vertical spacing between rows
+                                          children: List.generate(
+                                            _images.length,
+                                                (index) {
+                                              return SizedBox(
+                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
+                                                child: Row(
+                                                  children: [
+                                                    Image.file(
+                                                      _images[index],
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                            : Center(
+                                          child: Text("No images selected."),
+                                        ),
                                         SizedBox(height: 8.0),
                                         Row(
                                           children: [
@@ -7399,6 +8506,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     iserror = true;
                                                   });
                                                 } else {
+                                                  print("unit calling");
                                                   setState(() {
                                                     isLoading = true;
                                                     iserror = false;
@@ -7417,9 +8525,12 @@ class _Summery_pageState extends State<Summery_page>
                                                         street3.text,
                                                     rentalsqft: sqft3.text,
                                                     rentalunit: unitnum.text,
+                                                    rentalImages: _uploadedFileNames!
                                                   )
                                                       .then((value) {
+                                                        print("valuesss....${value}");
                                                     setState(() {
+
                                                       isLoading = false;
                                                       data.add(unit_properties(
                                                         adminId: id!,
@@ -7433,6 +8544,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             unitnum.text,
                                                       ));
                                                     });
+                                                    reload_Screen();
                                                     Navigator.pop(
                                                         context, true);
                                                   }).catchError((e) {
@@ -7441,6 +8553,9 @@ class _Summery_pageState extends State<Summery_page>
                                                     });
                                                   });
                                                 }
+                                                print("calling.............");
+
+
                                               },
                                               child: Material(
                                                 elevation: 3,
@@ -7551,7 +8666,6 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 ],
               ),
-
             //and this is mutiunit table show this is as it is
             if (!showdetails &&
                 widget.properties.propertyTypeData!.isMultiunit! == true)
@@ -7572,6 +8686,7 @@ class _Summery_pageState extends State<Summery_page>
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(child: Text('No data available'));
                       } else {
+                        print("data update...");
                         var data = snapshot.data!;
                         if (selectedValue == null && searchvalue!.isEmpty) {
                           data = snapshot.data!;
@@ -7594,6 +8709,7 @@ class _Summery_pageState extends State<Summery_page>
                           //       .toList();
                         }
                         // sortData(data);
+                        //countupdateunit(data.length);
                         final totalPages =
                             (data.length / itemsPerPagemulti).ceil();
                         final currentPageData = data
@@ -8726,6 +9842,7 @@ class _Summery_pageState extends State<Summery_page>
                           .toList();
                     }
                     totalrecordsmulti = _tableDatamulti.length;
+
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -9766,10 +10883,14 @@ class _Summery_pageState extends State<Summery_page>
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image(
                             image: NetworkImage(
+                                unit.rentalImages != null ? unit.rentalImages!.length >0 ? "$image_url${unit.rentalImages!.first}" : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU' :
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
                             fit: BoxFit.cover,
                             height: MediaQuery.of(context).size.width < 500
-                                ? 150
+                                ? 140
+                                : 220,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? 160
                                 : 220,
                           ),
                         ),
@@ -9778,6 +10899,19 @@ class _Summery_pageState extends State<Summery_page>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16),
+                            child: Text(
+                              '${unit!.rentalunit}',
+                              style: TextStyle(
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20,
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
@@ -9794,16 +10928,19 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             height: 5,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16),
-                            child: Text(
-                              '${widget.properties?.rentalAddress}',
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Text(
+                                '${widget.properties?.rentalAddress}',
+                                maxLines: 2, // Set maximum number of lines
+                                overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -9812,7 +10949,9 @@ class _Summery_pageState extends State<Summery_page>
                           Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
+                              maxLines: 2,
                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width < 500
@@ -10228,7 +11367,7 @@ class _Summery_pageState extends State<Summery_page>
                   onTap: () async {
                     final result =
                         await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddWorkorder(
+                            builder: (context) => ResponsiveAddWorkOrder(
                                   rentalid: widget.properties.rentalId,
                                 )));
                     if (result == true) {
@@ -10245,7 +11384,7 @@ class _Summery_pageState extends State<Summery_page>
 
                     // height:  MediaQuery.of(context).size.width * 0.07,
                     // height:  40,
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width: MediaQuery.of(context).size.width * 0.29,
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(21, 43, 81, 1),
                       borderRadius: BorderRadius.circular(5),
@@ -10332,7 +11471,7 @@ class _Summery_pageState extends State<Summery_page>
                                   color: Color(0xFF8A95A8),
                                 ),
                                 contentPadding: EdgeInsets.only(
-                                    left: 5, bottom: 13, top: 14)),
+                                    left: 5, bottom: 11, top: 14)),
                           ),
                         ),
                       ],
@@ -10440,8 +11579,6 @@ class _Summery_pageState extends State<Summery_page>
                       color: Colors.black,
                       size: 40.0,
                     ));
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: Text('No data available'));
                   } else {
@@ -11095,7 +12232,10 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   reload_Screen() {
-    setState(() {});
+    setState(() {
+      futureUnitsummery =
+          Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
+    });
   }
 }
 
@@ -12263,7 +13403,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
   }
 
   reload_screen() {
-    setState(() {});
+    setState(() {
+      futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+    });
   }
 
   DateTime? _selectedDate;

@@ -1152,9 +1152,9 @@ class _enterChargeState extends State<enterCharge> {
                       ]),
                       TableRow(children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width < 500 ? 16 : 70,right: MediaQuery.of(context).size.width < 500 ? 16 : 70,top: 10,bottom: 10),
                           child: Container(
-                            height: 34,
+                            height: 40,
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(width: 1),
@@ -1169,9 +1169,10 @@ class _enterChargeState extends State<enterCharge> {
                                   elevation: 0,
                                   backgroundColor: Colors.white),
                               onPressed: addRow,
-                              child: const Text(
+                              child:  Text(
                                 'Add Row',
                                 style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 18,
                                   color:
                                   Color.fromRGBO(21, 43, 83, 1),
                                 ),

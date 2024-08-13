@@ -221,7 +221,7 @@ class WorkOrderRepository {
     }
   }
 
-  Future<Map<String, dynamic>> DeleteWorkOrder({
+  Future<bool> DeleteWorkOrder({
     required String? workOrderid
   }) async {
 
@@ -244,7 +244,7 @@ class WorkOrderRepository {
   //  print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
-      return json.decode(response.body);
+      return true;
 
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);

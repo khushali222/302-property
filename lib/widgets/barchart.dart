@@ -43,8 +43,11 @@ class _BarchartState extends State<Barchart> {
         color: Colors.white,
         surfaceTintColor: Colors.white,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
+              //  color: Colors.red,
               height: 30,
               // width: 120,
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -72,17 +75,17 @@ class _BarchartState extends State<Barchart> {
                   ),
                   items: items
                       .map((String item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ))
+                    value: item,
+                    child: Text(
+                      item,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ))
                       .toList(),
                   value: selectedValue,
                   onChanged: (String? value) {
@@ -92,7 +95,7 @@ class _BarchartState extends State<Barchart> {
                   },
                   buttonStyleData: ButtonStyleData(
                     height: 50,
-                    width: 160,
+                    width: 110,
                     padding: const EdgeInsets.only(left: 14, right: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
@@ -113,12 +116,12 @@ class _BarchartState extends State<Barchart> {
                   ),
                   dropdownStyleData: DropdownStyleData(
                     maxHeight: 200,
-                    width: 200,
+                    width: 110,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(14),
                       color: Color.fromRGBO(50, 75, 119, 1),
                     ),
-                    offset: const Offset(-20, 0),
+                    offset: const Offset(0, -5),
                     scrollbarTheme: ScrollbarThemeData(
                       radius: const Radius.circular(40),
                       thickness: MaterialStateProperty.all<double>(6),
@@ -152,7 +155,7 @@ class _BarchartState extends State<Barchart> {
                 primaryYAxis: NumericAxis(
                   isVisible: false, // Hide Y-axis labels
                   majorGridLines:
-                      MajorGridLines(width: 0), // Remove Y-axis gridlines
+                  MajorGridLines(width: 0), // Remove Y-axis gridlines
                   axisLine: AxisLine(width: 0), // Hide Y-axis line
                 ),
                 plotAreaBorderWidth: 0, // Remove border around plot area

@@ -111,91 +111,148 @@ class WideScreenLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
           titleBar(
             title: 'Reports',
             width: MediaQuery.of(context).size.width * .91,
           ),
-          Row(
-            children: [
-              Expanded(
-                child: ReportCard(
-                  title: "Renter's Insurance",
-                  description: "Produces a list of all insured units",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RentersInsurance()),
-                    );
-                  },
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ReportCard(
+                    title: "Renter's Insurance",
+                    description: "Produces a list of all insured units",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RentersInsurance()),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                child: ReportCard(
-                  title: "Expiring Leases",
-                  description:
-                      "Lists all leases that will end during a specified timeframe",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ExpiringLeases()),
-                    );
-                    // Navigate to the appropriate screen
-                  },
+                SizedBox(width: 16),
+                Expanded(
+                  child: ReportCard(
+                    title: "Completed Work Orders",
+                    description: "Report of all completed Work Orders",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CompletedWorkOrders()),
+                      );
+                      // Navigate to the appropriate screen
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: ReportCard(
-                  title: "Delinquent Tenants",
-                  description:
-                      "Tenants with an outstanding ledger balance as of a specific date",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DelinquentTenants()),
-                    );
-                    // Navigate to the appropriate screen
-                  },
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ReportCard(
+                    title: "Delinquent Tenants",
+                    description:
+                        "Tenants with an outstanding ledger balance as of a specific date",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DelinquentTenants()),
+                      );
+                      // Navigate to the appropriate screen
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                child: ReportCard(
-                  title: "Open Work Orders",
-                  description:
-                      "Report of all Work Orders not yet in a complete state",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => OpenWorkOrders()),
-                    );
-                    // Navigate to the appropriate screen
-                  },
+                SizedBox(width: 16),
+                Expanded(
+                  child: ReportCard(
+                    title: "Open Work Orders",
+                    description:
+                        "Report of all Work Orders not yet in a complete state",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => OpenWorkOrders()),
+                      );
+                      // Navigate to the appropriate screen
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          SizedBox(height: 16),
-          ReportCard(
-            title: "Completed Work Orders",
-            description: "Report of all completed Work Orders",
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CompletedWorkOrders()),
-              );
-              // Navigate to the appropriate screen
-            },
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ReportCard(
+                    title: "Expiring Leases",
+                    description:
+                        "Lists all leases that will end during a specified timeframe",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ExpiringLeases()),
+                      );
+                      // Navigate to the appropriate screen
+                    },
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12.0),
+                              topRight: Radius.circular(12.0),
+                            ),
+                          ),
+                          padding: EdgeInsets.all(17.0),
+                          child: Text(
+                            'title',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            '',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: blueColor,
+                            ),
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -441,31 +498,42 @@ class NarrowScreenLayout extends StatelessWidget {
     int crossAxisCount = screenWidth > 600 ? 3 : 2;
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: 1.0, // Adjust the aspect ratio as needed
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
+      body: Column(
+        children: [
+          titleBar(
+            title: 'Reports',
+            width: MediaQuery.of(context).size.width * .98,
           ),
-          itemCount: reportCards.length,
-          itemBuilder: (context, index) {
-            return ReportCard(
-              title: reportCards[index].title,
-              description: reportCards[index].description,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => reportCards[index].destination,
-                  ),
-                );
-              },
-            );
-          },
-        ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisExtent: 180,
+                  crossAxisCount: crossAxisCount,
+                  childAspectRatio: 1.0, // Adjust the aspect ratio as needed
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: reportCards.length,
+                itemBuilder: (context, index) {
+                  return ReportCard(
+                    title: reportCards[index].title,
+                    description: reportCards[index].description,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => reportCards[index].destination,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -516,7 +584,7 @@ class ReportCard extends StatelessWidget {
               child: Text(
                 description,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: blueColor,
                 ),

@@ -1443,6 +1443,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/Model/tenants.dart';
 
@@ -1460,6 +1461,7 @@ import '../../../../repository/Rental_ownersData.dart';
 import '../../../../repository/properties_summery.dart';
 import '../../../../widgets/drawer_tiles.dart';
 import '../../../model/LeaseSummary.dart';
+import '../../Rental/Properties/moveout/repository.dart';
 import 'Financial.dart';
 
 class SummeryPageLease extends StatefulWidget {
@@ -1482,9 +1484,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
+    moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     super.initState();
   }
-
+  String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -2382,24 +2386,46 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         ],
                                       ),
                                       const Spacer(),
-                                      const Row(
-                                        children: [
-                                          FaIcon(
-                                            FontAwesomeIcons.rightFromBracket,
-                                            size: 17,
-                                            color: Color.fromRGBO(21, 43, 81, 1),
-                                          ),
-                                          SizedBox(width: 5),
-                                          Text(
-                                            "Move out",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
+                                       InkWell(
+                                         onTap: () {
+                                           showDialog(
+                                             context: context,
+                                             builder: (BuildContext context) {
+                                               bool isChecked =
+                                               false; // Moved isChecked inside the StatefulBuilder
+                                               return StatefulBuilder(
+                                                 builder: (BuildContext context,
+                                                     StateSetter setState) {
+                                                   return AlertDialog(
+                                                     backgroundColor: Colors.white,
+                                                     surfaceTintColor: Colors.white,
+                                                     content:
+                                                     buildMoveout(snapshot.data!),
+                                                   );
+                                                 },
+                                               );
+                                             },
+                                           );
+                                         },
+                                         child: Row(
+                                          children: [
+                                            FaIcon(
+                                              FontAwesomeIcons.rightFromBracket,
+                                              size: 17,
                                               color: Color.fromRGBO(21, 43, 81, 1),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              "Move out",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(21, 43, 81, 1),
+                                              ),
+                                            ),
+                                          ],
+                                                                               ),
+                                       ),
                                       const SizedBox(width: 15),
                                     ],
                                   ),
@@ -2563,24 +2589,46 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         ],
                                       ),
                                       const Spacer(),
-                                      const Row(
-                                        children: [
-                                          FaIcon(
-                                            FontAwesomeIcons.rightFromBracket,
-                                            size: 17,
-                                            color: Color.fromRGBO(21, 43, 81, 1),
-                                          ),
-                                          SizedBox(width: 5),
-                                          Text(
-                                            "Move out",
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w500,
+                                       InkWell(
+                                         onTap: () {
+                                           showDialog(
+                                             context: context,
+                                             builder: (BuildContext context) {
+                                               bool isChecked =
+                                               false; // Moved isChecked inside the StatefulBuilder
+                                               return StatefulBuilder(
+                                                 builder: (BuildContext context,
+                                                     StateSetter setState) {
+                                                   return AlertDialog(
+                                                     backgroundColor: Colors.white,
+                                                     surfaceTintColor: Colors.white,
+                                                     content:
+                                                     buildMoveout(snapshot.data!),
+                                                   );
+                                                 },
+                                               );
+                                             },
+                                           );
+                                         },
+                                         child: Row(
+                                          children: [
+                                            FaIcon(
+                                              FontAwesomeIcons.rightFromBracket,
+                                              size: 17,
                                               color: Color.fromRGBO(21, 43, 81, 1),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              "Move out",
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color.fromRGBO(21, 43, 81, 1),
+                                              ),
+                                            ),
+                                          ],
+                                                                               ),
+                                       ),
                                       const SizedBox(width: 15),
                                     ],
                                   ),
@@ -2669,6 +2717,291 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       },
     );
 
+  }
+  Widget buildMoveout(LeaseSummary tenant) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Move out Tenants",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(21, 43, 81, 1),
+                fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
+          ),
+          SizedBox(height: 13),
+          Text(
+            "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+              color: Color(0xFF8A95A8),
+            ),
+          ),
+          SizedBox(height: 15),
+          Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Property Details',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        color: blueColor),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration:  BoxDecoration(
+                  borderRadius:
+                  BorderRadius
+                      .circular(
+                      5),
+
+                  border: Border.all(
+                      color: blueColor),
+                ),
+                child: Table(
+                  //border: TableBorder.all(color:blueColor),
+                  border: TableBorder(
+                    horizontalInside: BorderSide(
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      width: 1.0,
+                    ),
+
+                  ),
+                  columnWidths: {
+                    0: FlexColumnWidth(2),
+                    1: FlexColumnWidth(3),
+                  },
+                  children: [
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Address/Unit',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,),)),
+                        buildTableCell(Text('${tenant.data?.rentalAddress}')),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Lease Type',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                        buildTableCell(Text('${tenant.data?.leaseType}')),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                        buildTableCell(Text('${tenant.data?.startDate} ${tenant.data?.endDate}')),
+                      ],
+                    ),
+
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Tenant Details',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        color: Color.fromRGBO(21, 43, 81, 1)),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Table(
+                border: TableBorder.all(color: blueColor),
+                columnWidths: {
+                  0: FlexColumnWidth(2),
+                  1: FlexColumnWidth(3),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Tenants',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(Text('${tenant.data?.tenantData?.first.tenantFirstName} ${tenant.data?.tenantData?.first.tenantLastName}')),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Notice Given Date',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(buildDateField(startdateController)),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Move-Out Date',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(Column(
+                        children: [
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Material(
+                                elevation:2,
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  height:40,
+                                  width:130,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      moveOutDate,
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Container(
+                    height:  MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Center(
+                        child: Text(
+                          "Close",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                              color: Color.fromRGBO(21, 43, 81, 1)),
+                        )),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              InkWell(
+                onTap: ()async{
+                  String? tenantId = tenant.data?.tenantId != null
+                      ? tenant.data?.tenantId!.first
+                      : null;
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  String? id = prefs.getString("adminId");
+                  LeaseMoveoutRepository()
+                      .addMoveoutTenant(
+                    adminId: id!,
+                    tenantId: tenantId,
+                    leaseId: tenant.data?.leaseId,
+                    moveoutDate: moveOutDate,
+                    moveoutNoticeGivenDate: startdateController.text,
+                  ).then((value) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                    Navigator.pop(context, true);
+                  }).catchError((e) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  });
+                },
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Container(
+                    height:  MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width:  MediaQuery.of(context).size.width < 500 ? 100: 130,
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Center(
+                        child: Text(
+                          "Move Out",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,),
+                        )),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTableCell(Widget child) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildDateField(TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: 'Select Date',
+        suffixIcon: IconButton(
+          icon: Icon(Icons.calendar_today),
+          onPressed: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101),
+            );
+            if (pickedDate != null) {
+              setState(() {
+                controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+              });
+            }
+          },
+        ),
+      ),
+      readOnly: true,
+    );
   }
 }
 
