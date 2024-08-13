@@ -105,7 +105,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

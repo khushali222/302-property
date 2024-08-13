@@ -744,7 +744,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

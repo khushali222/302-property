@@ -1997,7 +1997,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Text("${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",textAlign: TextAlign.center,),
+                                Text("${summery.propertyData!.rentaladress} (${summery.unitData?.unitName})",textAlign: TextAlign.center,),
 
                                 SizedBox(
                                   height: 10,
@@ -3709,7 +3709,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Text("${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",textAlign: TextAlign.center,),
+                                  Text("${summery.propertyData!.rentaladress} (${summery.unitData?.unitName})",textAlign: TextAlign.center,),
 
                                   SizedBox(
                                     height: 10,
@@ -4173,4 +4173,6 @@ class PartWidget extends StatelessWidget {
       ),
     );
   }
+
 }
+

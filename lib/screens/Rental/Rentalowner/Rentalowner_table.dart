@@ -530,7 +530,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",

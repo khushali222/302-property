@@ -628,7 +628,8 @@ class _Summery_pageState extends State<Summery_page>
 
   Widget _buildDataCell(String text) {
     return TableCell(
-      child: Padding(
+      child: Container(
+        height: 60,
         padding: const EdgeInsets.only(top: 20.0, left: 16),
         child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
@@ -1086,8 +1087,9 @@ class _Summery_pageState extends State<Summery_page>
 
   Widget _buildDataCellmulti(String text) {
     return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16, bottom: 10),
+      child: Container(
+        height: 60,
+        padding: const EdgeInsets.only(top: 15.0, left: 16, bottom: 10),
         child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
     );
@@ -1607,7 +1609,7 @@ class _Summery_pageState extends State<Summery_page>
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",

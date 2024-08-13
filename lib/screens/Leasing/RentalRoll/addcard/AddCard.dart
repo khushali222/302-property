@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
 
-import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
@@ -257,7 +257,7 @@ class _AddCardState extends State<AddCard> {
       },
       body: json.encode(requestBody),
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       var customerJson = jsonResponse['data']['customer'];
@@ -439,7 +439,7 @@ class _AddCardState extends State<AddCard> {
                   ),
                   "Rental",
                   ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties"),
+                  selectedSubtopic: "Rent Roll"),
               buildDropdownListTile(
                   context,
                   const FaIcon(
@@ -449,14 +449,14 @@ class _AddCardState extends State<AddCard> {
                   ),
                   "Leasing",
                   ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties"),
+                  selectedSubtopic: "Rent Roll"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties"),
+                  selectedSubtopic: "Rent Roll"),
             ],
           ),
         ),
@@ -970,7 +970,8 @@ class _AddCardState extends State<AddCard> {
                                           Navigator.pop(context);
                                           Fluttertoast.showToast(
                                               msg: 'Add Card Successfully');
-                                        } else {
+                                        }
+                                        else {
                                           CardResponse? cardResponses =
                                           await addCardService
                                               .postCardWithVaultId(cardwithVaultId);
@@ -1016,7 +1017,9 @@ class _AddCardState extends State<AddCard> {
                                         backgroundColor: const Color(0xFFffffff),
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0))),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
                                     child: const Text(
                                       'Cancel',
                                       style: TextStyle(color: Color(0xFF748097)),
@@ -1189,6 +1192,11 @@ class _AddCardState extends State<AddCard> {
                               }
                               return null;
                             },
+                            formatter: [
+                              CardNumberInputFormatter(),
+                              LengthLimitingTextInputFormatter(19),
+                            ],
+                            label: "enter card number",
                             keyboardType: TextInputType.number,
                             hintText: '0000 0000 0000 0000',
                             controller: cardNumber,
@@ -1208,6 +1216,9 @@ class _AddCardState extends State<AddCard> {
                             keyboardType: TextInputType.text,
                             hintText: 'Enter Expiration Date',
                             controller: expirationDate,
+                            formatter: [
+                              ExpiryDateInputFormatter()
+                            ],
                           ),
                           const SizedBox(
                             height: 8,
@@ -1440,7 +1451,7 @@ class _AddCardState extends State<AddCard> {
                                     CardModel cardwithOutVaultId = CardModel(
                                       firstName: firstName.text,
                                       lastName: lastName.text,
-                                      ccnumber: cardNumber.text,
+                                      ccnumber: cardNumber.text.replaceAll(' ', ''),
                                       ccexp: expirationDate.text,
                                       address1: address.text,
                                       address2: '',
@@ -1461,7 +1472,7 @@ class _AddCardState extends State<AddCard> {
                                         company: comapanyName,
                                         firstName: firstName.text,
                                         lastName: lastName.text,
-                                        ccnumber: cardNumber.text,
+                                        ccnumber: cardNumber.text.replaceAll(' ', ''),
                                         ccexp: expirationDate.text,
                                         address1: address.text,
                                         address2: '',
@@ -1523,8 +1534,8 @@ class _AddCardState extends State<AddCard> {
                                         tenantId: selectedTenantId,
                                         billingId: randomNumber,
                                         customerVaultId:
-                                            cardResponses!.customerVaultId,
-                                        responseCode: cardResponses.responseCode,
+                                            cardResponses?.customerVaultId,
+                                        responseCode: cardResponses?.responseCode,
                                       );
                                       await addCardService
                                           .postAddCreditCard(addcards);
@@ -1553,7 +1564,9 @@ class _AddCardState extends State<AddCard> {
                                     backgroundColor: const Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8.0))),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                                 child: const Text(
                                   'Cancel',
                                   style: TextStyle(color: Color(0xFF748097)),
@@ -1774,6 +1787,235 @@ LinearGradient _getCardGradient(String cardType) {
       colors: [Color(0xFF949BA5), Color(0xFF393B3F)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
+    );
+  }
+}
+class CardNumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    // Remove any existing spaces in the input
+    String newText = newValue.text.replaceAll(' ', '');
+
+    // Add a space after every 4 digits
+    if (newText.length > 4) {
+      final StringBuffer buffer = StringBuffer();
+      for (int i = 0; i < newText.length; i++) {
+        buffer.write(newText[i]);
+        if ((i + 1) % 4 == 0 && i + 1 != newText.length) {
+          buffer.write(' ');
+        }
+      }
+      newText = buffer.toString();
+    }
+
+    // Return the new value with the formatting applied
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+class CustomTextField extends StatefulWidget {
+  final String hintText;
+  final TextEditingController? controller;
+  final TextInputType keyboardType;
+  final String? Function(String?)? validator;
+  final bool obscureText;
+  final Function(String)? onChanged;
+  final Function(String)? onChanged2;
+  final Widget? suffixIcon;
+  final IconData? prefixIcon;
+  final void Function()? onSuffixIconPressed;
+  final void Function()? onTap;
+  final String? label;
+  final bool readOnnly;
+  final bool? amount_check;
+  final String? max_amount;
+  final String? error_mess;
+  final List<TextInputFormatter>? formatter;
+
+  CustomTextField({
+    Key? key,
+    this.onChanged,
+    this.controller,
+    required this.hintText,
+    this.obscureText = false,
+    this.keyboardType = TextInputType.emailAddress,
+    this.readOnnly = false,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.validator,
+    this.onSuffixIconPressed,
+    this.label,
+    this.onTap, this.onChanged2,
+    this.amount_check,
+    this.max_amount,
+    this.error_mess,
+    this.formatter
+
+    // Initialize onTap
+  }) : super(key: key);
+
+  @override
+  CustomTextFieldState createState() => CustomTextFieldState();
+}
+
+class CustomTextFieldState extends State<CustomTextField> {
+  String? _errorMessage;
+  TextEditingController _textController =
+  TextEditingController(); // Add this line
+
+  @override
+  void dispose() {
+    _textController.dispose(); // Dispose the controller when not needed anymore
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        FormField<String>(
+          validator: (value) {
+            if (widget.controller!.text.isEmpty) {
+              setState(() {
+                if(widget.label == null)
+                  _errorMessage = 'Please ${widget.hintText}';
+                else
+                  _errorMessage = 'Please ${widget.label}';
+              });
+              return '';
+            }
+            else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          },
+          builder: (FormFieldState<String> state) {
+            return Column(
+              children: <Widget>[
+                Material(
+                  elevation: 2,
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Container(
+                    height: 50,
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                      //border: Border.all(color: blueColor),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: Offset(4, 4),
+                          blurRadius: 3,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      /*    onFieldSubmitted: (value){
+                        if(value.isNotEmpty){
+
+                          if(widget.amount_check != null){
+                            if(int.parse(value) > int.parse(widget.max_amount!)){
+                              setState(() {
+                                _errorMessage = '${widget.error_mess}';
+                              });
+                            }
+                          }
+                          else{
+                            setState(() {
+                              _errorMessage = null;
+                            });
+                          }
+
+                        }
+                        print(value);
+                        widget.onChanged2;
+                      },*/
+
+                      inputFormatters:widget.formatter ?? [],
+                      onFieldSubmitted: widget.onChanged2,
+                      onChanged:(value){
+                        print("object calin $value");
+                        if(value.isNotEmpty){
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+
+                        widget.onChanged;
+                        print("callllll");
+                      },
+
+
+                      onTap: widget.onTap,
+                      obscureText: widget.obscureText,
+                      readOnly: widget.readOnnly,
+                      keyboardType: widget.keyboardType,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          state.validate();
+                        }
+                        return null;
+                      },
+                      controller: widget.controller,
+                      decoration: InputDecoration(
+                        suffixIcon: widget.suffixIcon,
+                        hintStyle:
+                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        border: InputBorder.none,
+                        hintText: widget.hintText,
+                      ),
+                    ),
+                  ),
+                ),
+                if (state.hasError || widget.amount_check != null)
+                  SizedBox(height: 24),
+                // Reserve space for error message
+              ],
+            );
+          },
+        ),
+        if (_errorMessage != null)
+          Positioned(
+            top: 60,
+            left: 8,
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 12.0,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+class ExpiryDateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    String newText = newValue.text.replaceAll('/', '');
+
+    if (newText.length > 6) {
+      newText = newText.substring(0, 6);
+    }
+
+    final StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < newText.length; i++) {
+      if (i == 2) {
+        buffer.write('/');
+      }
+      buffer.write(newText[i]);
+    }
+
+    return newValue.copyWith(
+      text: buffer.toString(),
+      selection: TextSelection.collapsed(offset: buffer.length),
     );
   }
 }

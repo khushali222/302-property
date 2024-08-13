@@ -253,7 +253,7 @@ class _DashboardState extends State<Dashboard> {
                 buildListTile(
                     context,
                     const FaIcon(
-                      FontAwesomeIcons.letterboxd,
+                      FontAwesomeIcons.folderOpen,
                       color: Colors.black,
                     ),
                     "Reports",

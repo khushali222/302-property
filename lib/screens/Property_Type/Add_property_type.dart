@@ -95,7 +95,7 @@ class _Add_propertyState extends State<Add_property> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

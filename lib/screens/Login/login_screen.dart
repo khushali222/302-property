@@ -354,8 +354,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                           Column(
                             children: [
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  SizedBox(
+                                /*  SizedBox(
                                     width: MediaQuery.of(context).size.width * 0.099,
                                   ),
                                   Container(
@@ -377,7 +378,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     style: TextStyle(
                                         fontSize: MediaQuery.of(context).size.width * 0.02,
                                         color: Colors.black),
-                                  ),
+                                  ),*/
 
                                   GestureDetector(
                                     onTap: () {
@@ -579,8 +580,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                           ),
                           // Forgot password
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              SizedBox(
+                            /*  SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.11,
                               ),
                               Container(
@@ -602,7 +604,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 style: TextStyle(
                                     fontSize: MediaQuery.of(context).size.width * 0.02,
                                     color: Colors.black),
-                              ),
+                              ),*/
 
                               GestureDetector(
                                 onTap: () {
@@ -1002,8 +1004,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                           Column(
                             children: [
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  SizedBox(
+                                  /*SizedBox(
                                     width: MediaQuery.of(context).size.width * 0.099,
                                   ),
                                   Container(
@@ -1025,7 +1028,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     style: TextStyle(
                                         fontSize: MediaQuery.of(context).size.width * 0.03,
                                         color: Colors.black),
-                                  ),
+                                  ),*/
 
                                   GestureDetector(
                                     onTap: () {
@@ -1037,7 +1040,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     child: Text(
                                       "Forgot password?",
                                       style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.03,
+                                          fontSize: MediaQuery.of(context).size.width * 0.035,
                                           color: Colors.blue),
                                     ),
                                   ),
@@ -1219,16 +1222,17 @@ class _Login_ScreenState extends State<Login_Screen> {
                           ],
 
 
-                          SizedBox(
+                         /* SizedBox(
                             height: MediaQuery.of(context).size.height * 0.015,
-                          ),
+                          ),*/
                           // Forgot password
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.11,
                               ),
-                              Container(
+                            /*  Container(
                                 height: MediaQuery.of(context).size.height * 0.03,
                                 width: MediaQuery.of(context).size.width * 0.05,
                                 decoration: BoxDecoration(
@@ -1247,7 +1251,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 style: TextStyle(
                                     fontSize: MediaQuery.of(context).size.width * 0.03,
                                     color: Colors.black),
-                              ),
+                              ),*/
 
                               GestureDetector(
                                 onTap: () {
@@ -1259,7 +1263,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 child: Text(
                                   "Forgot password?",
                                   style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width * 0.03,
+                                      fontSize: MediaQuery.of(context).size.width * 0.035,
                                       color: Colors.blue),
                                 ),
                               ),

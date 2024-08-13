@@ -103,6 +103,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         "${fetchedDetails.propertyData!.rental_id}":
             "${fetchedDetails.propertyData!.address}"
       });
+
+      if(fetchedDetails.staffData != null)
       staffs.addAll({
         "${fetchedDetails.staffData!.staffmember_id}":
             "${fetchedDetails.staffData!.staffName}"
@@ -392,6 +394,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   final List<String> _account = [
     'Advertising',
     'Association Fees',
+    //'Association fees',
     'Auto and Travel',
     'Bank Fees',
     'Cleaning and Maintenance',
@@ -517,7 +520,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
             child: DropdownButton2<String>(
               isExpanded: true,
               hint: Text('Select'),
-              value: partsAndLabor[index]['selectedAccount'],
+              value: _account.contains(partsAndLabor[index]['selectedAccount'])
+                  ? partsAndLabor[index]['selectedAccount']
+                  : null,
               items: _account.map((method) {
                 return DropdownMenuItem<String>(
                   value: method,

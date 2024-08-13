@@ -205,7 +205,7 @@ class _AddApplicantState extends State<AddApplicant> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

@@ -542,7 +542,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",

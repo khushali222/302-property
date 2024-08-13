@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class pastPlansHistoryModel {
   int? statusCode;
   String? message;
@@ -108,6 +110,7 @@ class pastPlanData {
       this.subscriptionId});
 
   pastPlanData.fromJson(Map<String, dynamic> json) {
+    log(json.toString());
     sId = json['_id'];
     adminId = json['admin_id'];
     planId = json['plan_id'];

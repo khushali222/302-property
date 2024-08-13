@@ -84,7 +84,7 @@ class _ReportsMainScreenState extends State<ReportsMainScreen> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

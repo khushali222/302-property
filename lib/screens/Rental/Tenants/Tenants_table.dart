@@ -214,7 +214,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Created\nAt",
+                    Text("Created At",
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
@@ -788,7 +788,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",
@@ -1159,7 +1159,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .05),
                                                 Expanded(
                                                   child: Text(
                                                     '${tenants.tenantPhoneNumber}',
@@ -1176,12 +1176,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .05),
                                                 Expanded(
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
-                                                    '${tenants.createdAt ?? ''}',
+                                                    '${formatDate(tenants.createdAt!) ?? ''}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

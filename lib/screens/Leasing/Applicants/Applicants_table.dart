@@ -709,7 +709,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",

@@ -660,7 +660,7 @@ class _PropertyTableState extends State<PropertyTable> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",
@@ -797,7 +797,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding: EdgeInsets.only(
-                                      left: 5, bottom: 13, top: 7)),
+                                      left: 5, bottom: 12, top: 8)),
                             ),
                           ),
                         ],
@@ -1011,7 +1011,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    '   ${Propertytype.propertyType}',
+                                                    ' ${Propertytype.propertyType}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

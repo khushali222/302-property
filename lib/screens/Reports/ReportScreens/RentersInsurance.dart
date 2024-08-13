@@ -1011,7 +1011,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

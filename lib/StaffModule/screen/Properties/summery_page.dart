@@ -15,9 +15,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/screen/RentalRoll/newAddLease.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/rental_widget.dart';
 
 import '../../../Model/unit.dart';
@@ -36,7 +37,7 @@ import '../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 
-
+import '../../widgets/custom_drawer.dart';
 class Summery_page extends StatefulWidget {
   Rentals properties;
   TenantData? tenants;
@@ -86,7 +87,50 @@ class _Summery_pageState extends State<Summery_page>
       });
     }
   }
-
+  void _showDeleteAlert(BuildContext context, String id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this Tenants!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            var data = Properies_summery_Repo()
+                .Deleteunit(unitId: id);
+            // Add your delete logic here
+            setState(() {
+              futureUnitsummery = Properies_summery_Repo()
+                  .fetchunit(widget.properties.rentalId!);
+              showdetails = false;
+            });
+           /* await TenantsRepository().deleteTenant(
+                tenantId: id, companyName: companyName, tenantEmail: '');
+            setState(() {
+              futureTenants = TenantsRepository().fetchTenants();
+            });*/
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
   Future<void> _endDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -1542,78 +1586,7 @@ class _Summery_pageState extends State<Summery_page>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: widget_302.App_Bar(context: context),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(context, Icon(CupertinoIcons.person_add),
-                  "Add Staff Member", false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties",
-                  initvalue: true),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties",
-                  initvalue: false),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties",
-                  initvalue: false),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.letterboxd,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer: CustomDrawer(currentpage: 'Properties',),
       body: Column(
         children: <Widget>[
           const SizedBox(
@@ -3056,7 +3029,10 @@ class _Summery_pageState extends State<Summery_page>
             ),
             const Spacer(),
             InkWell(
-              onTap: () {},
+              onTap: () {
+
+
+              },
               child: Row(
                 children: [
                   FaIcon(
@@ -6439,7 +6415,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  Padding(
+                                                 /* Padding(
                                                     padding: EdgeInsets.only(
                                                         left: 10),
                                                     child: SizedBox(
@@ -6508,7 +6484,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                             10.0))),
                                                       ),
                                                     ),
-                                                  ),
+                                                  ),*/
                                                   SizedBox(
                                                     height: 20,
                                                   ),
@@ -6658,7 +6634,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                               ),
                                             ),
-                                            Padding(
+                                         /*   Padding(
                                               padding: EdgeInsets.all(8.0),
                                               child: SizedBox(
                                                 width: double.infinity,
@@ -6718,7 +6694,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           10.0))),
                                                 ),
                                               ),
-                                            ),
+                                            ),*/
                                             SizedBox(
                                               height: 20,
                                             ),
@@ -9898,12 +9874,12 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(0.0),
                         child: Container(
                           height:
                               MediaQuery.of(context).size.width < 500 ? 36 : 50,
                           width: MediaQuery.of(context).size.width < 500
-                              ? 136
+                              ? 120
                               : 150,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -9912,14 +9888,15 @@ class _Summery_pageState extends State<Summery_page>
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                             onPressed: () async {
-                              var data = Properies_summery_Repo()
+                              _showDeleteAlert(context,unit.unitId!);
+                             /* var data = Properies_summery_Repo()
                                   .Deleteunit(unitId: unit?.unitId!);
                               // Add your delete logic here
                               setState(() {
                                 futureUnitsummery = Properies_summery_Repo()
                                     .fetchunit(widget.properties.rentalId!);
-                              });
-                              Navigator.pop(context);
+                              });*/
+                             // Navigator.pop(context);
                             },
                             child: Text(
                               'Delete unit',
@@ -9930,6 +9907,37 @@ class _Summery_pageState extends State<Summery_page>
                                           : 20,
                                   color: Colors.white),
                             ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: MediaQuery.of(context).size.width < 500
+                              ? 36
+                              : 48,
+                          width: 120,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>addLease3()));
+                            },
+                            child: Text(
+                              'Add Lease',
+                              style: TextStyle(
+                                  fontSize:
+                                  MediaQuery.of(context).size.width <
+                                      500
+                                      ? 14
+                                      : 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                const Color.fromRGBO(21, 43, 83, 1),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10.0))),
                           ),
                         ),
                       ),
@@ -10125,7 +10133,7 @@ class _Summery_pageState extends State<Summery_page>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Padding(
+                                /*  Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: SizedBox(
                                       //  width: double.infinity,
@@ -10177,7 +10185,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         10.0))),
                                       ),
                                     ),
-                                  ),
+                                  ),*/
                                   SizedBox(
                                     height: 20,
                                   ),
@@ -10190,6 +10198,9 @@ class _Summery_pageState extends State<Summery_page>
                         width: 15,
                       ),
                     ],
+                  ),
+                  SizedBox(
+                    height: 25,
                   ),
                   // Padding(
                   //   padding: const EdgeInsets.all(16.0),
@@ -10249,120 +10260,7 @@ class _Summery_pageState extends State<Summery_page>
                   //   ),
                   // ),
                   if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Container(
-                        // height: screenHeight * 0.26,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.0),
-                          color: Colors.white,
-                          border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: Text(
-                                  'Add Lease',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 14
-                                            : 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 36
-                                    : 48,
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    'Add Lease',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 14
-                                                : 18,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0))),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: Text(
-                                  'Rental Applicant',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 14
-                                            : 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 36
-                                    : 48,
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    'Create Applicant',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 14
-                                                : 18,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0))),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(
                       height: 20,

@@ -76,12 +76,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
 
 
-      Navigator.pushReplacement(
+     /* Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => isAuthenticated == true ? Dashboard() : Login_Screen(),
         ),
-      );
+      );*/
     } else if(role == "Staffmember"){
       await Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
       Navigator.pushReplacement(

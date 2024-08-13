@@ -739,7 +739,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

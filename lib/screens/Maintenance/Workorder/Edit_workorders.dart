@@ -550,7 +550,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
             child: DropdownButton2<String>(
               isExpanded: true,
               hint: Text('Select'),
-              value: partsAndLabor[index]['selectedAccount'],
+              value: _account.contains(partsAndLabor[index]['selectedAccount'])
+                  ? partsAndLabor[index]['selectedAccount']
+                  : null,
               items: _account.map((method) {
                 return DropdownMenuItem<String>(
                   value: method,
@@ -909,7 +911,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             );
                                           }).toList(),
-                                          value: _selectedPropertyId,
+                                          value: properties.containsKey(_selectedPropertyId)
+                                              ? _selectedPropertyId
+                                              : null,
                                           onChanged: (value) {
                                             setState(() {
                                               _selectedUnitId = null;
@@ -1395,108 +1399,98 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      DropdownButtonHideUnderline(
-                                        child: DropdownButtonFormField2<String>(
-                                          decoration: InputDecoration(
-                                              border: InputBorder.none),
-                                          isExpanded: true,
-                                          hint: const Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  'Select here',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Color(0xFFb0b6c3),
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          items:
-                                              staffs.keys.map((staffmember_id) {
-                                            return DropdownMenuItem<String>(
-                                              value: staffmember_id,
-                                              child: Text(
-                                                staffs[staffmember_id]!,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Colors.black87,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            );
-                                          }).toList(),
-                                          value: _selectedstaffId,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              // _selectedUnitId = null;
-                                              _selectedstaffId = value;
-                                              _selectedStaffs = staffs[
-                                                  value]; // Store selected rental_adress
+                            DropdownButtonHideUnderline(
+                            child: DropdownButtonFormField2<String>(
+                              decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                        isExpanded: true,
+                        hint: const Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Select here',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFFb0b6c3),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        items: staffs.keys.map((staffmember_id) {
+                          return DropdownMenuItem<String>(
+                            value: staffmember_id,
+                            child: Text(
+                              staffs[staffmember_id]!,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black87,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }).toList(),
+                        value: staffs.containsKey(_selectedstaffId) ? _selectedstaffId : null,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedstaffId = value;
+                            _selectedStaffs = staffs[value]; // Store selected staff
 
-                                              StaffId = value.toString();
-                                              print(
-                                                  'Selected Staffs: $_selectedStaffs');
-                                              _loadUnits(
-                                                  value!); // Fetch units for the selected property
-                                            });
-                                          },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 45,
-                                            width: 160,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 2,
-                                          ),
-                                          iconStyleData: const IconStyleData(
-                                            icon: Icon(
-                                              Icons.arrow_drop_down,
-                                            ),
-                                            iconSize: 24,
-                                            iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(6),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                            height: 40,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please select an option';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ],
+                            StaffId = value.toString();
+                            print('Selected Staffs: $_selectedStaffs');
+
+                            if (value != null) {
+                              _loadUnits(value); // Fetch units for the selected staff
+                            }
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 45,
+                          width: 160,
+                          padding: const EdgeInsets.only(left: 14, right: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                          elevation: 2,
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                          ),
+                          iconSize: 24,
+                          iconEnabledColor: Color(0xFFb0b6c3),
+                          iconDisabledColor: Colors.grey,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(6),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 14, right: 14),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select an option';
+                          }
+                          return null;
+                        },
+                      ),
+                    )
+
+                    ],
                                   ),
                             SizedBox(
                               height: 10,

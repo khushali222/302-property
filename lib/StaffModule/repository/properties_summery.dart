@@ -291,7 +291,7 @@ class Properies_summery_Repo{
     print('hello 123 ${unitId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
     final http.Response response = await http.delete(
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{

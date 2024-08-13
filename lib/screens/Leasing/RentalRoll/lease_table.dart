@@ -185,7 +185,7 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Lease Start",
+                    Text("  Lease Start",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width < 350
@@ -193,7 +193,7 @@ class _Lease_tableState extends State<Lease_table> {
                               : 14.0,
                         )),
                     SizedBox(width: 5),
-                    ascending2
+                  /*  ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -209,7 +209,7 @@ class _Lease_tableState extends State<Lease_table> {
                               size: 20,
                               color: Colors.white,
                             ),
-                          ),
+                          ),*/
                   ],
                 ),
               ),
@@ -240,7 +240,7 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Lease End",
+                    Text(" Lease End",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width < 350
@@ -248,7 +248,7 @@ class _Lease_tableState extends State<Lease_table> {
                               : 14.0,
                         )),
                     SizedBox(width: 5),
-                    ascending3
+                  /*  ascending3
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -264,7 +264,7 @@ class _Lease_tableState extends State<Lease_table> {
                               size: 20,
                               color: Colors.white,
                             ),
-                          ),
+                          ),*/
                   ],
                 ),
               ),
@@ -583,7 +583,7 @@ class _Lease_tableState extends State<Lease_table> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",
@@ -927,7 +927,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .02),
                                                 Expanded(
                                                   flex:
                                                       2, // Smaller size for the second field
@@ -947,7 +947,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .03),
                                                 Expanded(
                                                   flex:
                                                       2, // Smaller size for the third field

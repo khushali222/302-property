@@ -29,8 +29,8 @@ class AddCardService {
         headers: headers,
         body: body,
       );
-
-      if (response.statusCode == 200) {
+        print(response.body);
+              if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
         String responseCode = jsonResponse['response_code'];

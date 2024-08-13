@@ -1537,7 +1537,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ),
                   "Rental",
                   ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties"),
+                  selectedSubtopic: "Rent Roll"),
               buildDropdownListTile(
                   context,
                   const FaIcon(
@@ -1547,14 +1547,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ),
                   "Leasing",
                   ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties"),
+                  selectedSubtopic: "Rent Roll"),
               buildDropdownListTile(
                   context,
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
                   ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties"),
+                  selectedSubtopic: "Rent Roll"),
             ],
           ),
         ),
@@ -1833,14 +1833,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   .isNotEmpty)
                                             Row(
                                               children: [
-                                                Text(
-                                                  '${tenant.tenantFirstName}  ${tenant.tenantLastName}' ??
-                                                      'N/A',
-                                                  style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                SizedBox(
+                                                  width:130,
+                                                  child: Text(
+                                                    '${tenant.tenantFirstName}  ${tenant.tenantLastName}' ??
+                                                        'N/A',
+                                                    style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                    ),
                                                   ),
                                                 ),
                                               ],

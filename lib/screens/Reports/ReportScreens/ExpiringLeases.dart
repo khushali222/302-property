@@ -716,7 +716,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   color: Colors.black,
                 ),
                 "Dashboard",
-                true,
+                false,
               ),
               buildListTile(
                 context,
@@ -766,7 +766,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
               buildListTile(
                 context,
                 const FaIcon(
-                  FontAwesomeIcons.letterboxd,
+                  FontAwesomeIcons.folderOpen,
                   color: Colors.white,
                 ),
                 "Reports",

@@ -154,7 +154,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -178,7 +178,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Property", style: TextStyle(color: Colors.white)),
+                    Text(" Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -227,7 +227,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Status", style: TextStyle(color: Colors.white)),
+                    Text("Status", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -1113,9 +1113,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .03),
                                                 Expanded(
-                                                  flex: 2,
+                                                  flex: 3,
                                                   child: Text(
                                                     '${workorder.rentalAddress}',
                                                     style: TextStyle(
@@ -1131,7 +1131,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .02),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(

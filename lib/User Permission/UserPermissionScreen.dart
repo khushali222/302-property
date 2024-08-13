@@ -166,10 +166,10 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   context,
                   const Icon(
                     CupertinoIcons.circle_grid_3x3,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   "Dashboard",
-                  true),
+                  false),
               buildListTile(
                   context,
                   const Icon(
@@ -213,11 +213,11 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
-                    color: Colors.white,
+                    FontAwesomeIcons.folderOpen,
+                    color: Colors.black,
                   ),
                   "Reports",
-                  true),
+                  false),
             ],
           ),
         ),
@@ -695,116 +695,245 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        String? adminId = prefs.getString("adminId");
+              LayoutBuilder(
+                builder: (context,contranit) {
+                  if(contranit.maxWidth > 500){
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width:100,
+                          height: 50,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                                String? adminId = prefs.getString("adminId");
 
-                        UserPermissionData userPermissionData =
-                            UserPermissionData(
-                          adminId: adminId,
-                          tenantPermission: TenantPermission(
-                            propertyView: tenantPropertyView,
-                            financialView: tenantFinancialView,
-                            financialAdd: tenantFinancialAdd,
-                            financialEdit: tenantFinancialEdit,
-                            documentsAdd: tenantDocumentsAdd,
-                            workorderView: tenantWorkorderView,
-                            workorderAdd: tenantWorkorderAdd,
-                            workorderEdit: tenantWorkorderEdit,
-                            workorderDelete: tenantWorkorderDelete,
-                            documentsView: tenantDocumentsView,
-                            documentsEdit: tenantDocumentsEdit,
-                            documentsDelete: tenantDocumentsDelete,
-                          ),
-                          staffPermission: StaffPermission(
-                            propertydetailView: staffPropertydetailView,
-                            workorderdetailView: staffWorkorderdetailView,
-                            paymentView: staffPaymentView,
-                            paymentAdd: staffPaymentAdd,
-                            paymentEdit: staffPaymentEdit,
-                            paymentDelete: staffPaymentDelete,
-                            propertyView: staffPropertyView,
-                            leaseAdd: staffLeaseAdd,
-                            workorderEdit: staffWorkorderEdit,
-                            propertyAdd: staffPropertyAdd,
-                            propertyEdit: staffPropertyEdit,
-                            propertyDelete: staffPropertyDelete,
-                            tenantView: staffTenantView,
-                            tenantAdd: staffTenantAdd,
-                            tenantEdit: staffTenantEdit,
-                            tenantDelete: staffTenantDelete,
-                            leaseView: staffLeaseView,
-                            leaseEdit: staffLeaseEdit,
-                            leaseDelete: staffLeaseDelete,
-                            leasedetailView: staffLeasedetailView,
-                            workorderView: staffWorkorderView,
-                            workorderAdd: staffWorkorderAdd,
-                            workorderDelete: staffWorkorderDelete,
-                          ),
-                          vendorPermission: VendorPermission(
-                            workorderEdit: vendorWorkorderEdit,
-                            workorderView: vendorWorkorderView,
-                          ),
-                        );
-                        print(userPermissionData.toJson());
-                        PermissionService service = PermissionService();
-                        int statusCode = await service
-                            .postUserPermissionData(userPermissionData);
-                        if (statusCode == 200) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          Fluttertoast.showToast(
-                              msg: 'Permissions updated successfully');
-                          Navigator.pop(context);
+                                UserPermissionData userPermissionData =
+                                UserPermissionData(
+                                  adminId: adminId,
+                                  tenantPermission: TenantPermission(
+                                    propertyView: tenantPropertyView,
+                                    financialView: tenantFinancialView,
+                                    financialAdd: tenantFinancialAdd,
+                                    financialEdit: tenantFinancialEdit,
+                                    documentsAdd: tenantDocumentsAdd,
+                                    workorderView: tenantWorkorderView,
+                                    workorderAdd: tenantWorkorderAdd,
+                                    workorderEdit: tenantWorkorderEdit,
+                                    workorderDelete: tenantWorkorderDelete,
+                                    documentsView: tenantDocumentsView,
+                                    documentsEdit: tenantDocumentsEdit,
+                                    documentsDelete: tenantDocumentsDelete,
+                                  ),
+                                  staffPermission: StaffPermission(
+                                    propertydetailView: staffPropertydetailView,
+                                    workorderdetailView: staffWorkorderdetailView,
+                                    paymentView: staffPaymentView,
+                                    paymentAdd: staffPaymentAdd,
+                                    paymentEdit: staffPaymentEdit,
+                                    paymentDelete: staffPaymentDelete,
+                                    propertyView: staffPropertyView,
+                                    leaseAdd: staffLeaseAdd,
+                                    workorderEdit: staffWorkorderEdit,
+                                    propertyAdd: staffPropertyAdd,
+                                    propertyEdit: staffPropertyEdit,
+                                    propertyDelete: staffPropertyDelete,
+                                    tenantView: staffTenantView,
+                                    tenantAdd: staffTenantAdd,
+                                    tenantEdit: staffTenantEdit,
+                                    tenantDelete: staffTenantDelete,
+                                    leaseView: staffLeaseView,
+                                    leaseEdit: staffLeaseEdit,
+                                    leaseDelete: staffLeaseDelete,
+                                    leasedetailView: staffLeasedetailView,
+                                    workorderView: staffWorkorderView,
+                                    workorderAdd: staffWorkorderAdd,
+                                    workorderDelete: staffWorkorderDelete,
+                                  ),
+                                  vendorPermission: VendorPermission(
+                                    workorderEdit: vendorWorkorderEdit,
+                                    workorderView: vendorWorkorderView,
+                                  ),
+                                );
+                                print(userPermissionData.toJson());
+                                PermissionService service = PermissionService();
+                                int statusCode = await service
+                                    .postUserPermissionData(userPermissionData);
+                                if (statusCode == 200) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Fluttertoast.showToast(
+                                      msg: 'Permissions updated successfully');
+                                  Navigator.pop(context);
 
-                          print('Permissions updated successfully.');
-                        } else {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          Fluttertoast.showToast(
-                              msg:
-                                  'Failed to update permissions. Try Again later');
-                          print(
-                              'Failed to update permissions. Status code: $statusCode');
-                        }
-                      },
-                      child: _isLoading
-                          ? Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 20.0,
+                                  print('Permissions updated successfully.');
+                                } else {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Fluttertoast.showToast(
+                                      msg:
+                                      'Failed to update permissions. Try Again later');
+                                  print(
+                                      'Failed to update permissions. Status code: $statusCode');
+                                }
+                              },
+                              child: _isLoading
+                                  ? Center(
+                                child: SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 20.0,
+                                ),
+                              )
+                                  : Text('Save',style: TextStyle(
+                                fontSize: 20
+                              ),),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
                               ),
-                            )
-                          : Text('Save'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blueColor,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          SizedBox(
+                            width: 120,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cancel',style: TextStyle(
+                                fontSize: 20
+                              ),),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                    );
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            String? adminId = prefs.getString("adminId");
+
+                            UserPermissionData userPermissionData =
+                                UserPermissionData(
+                              adminId: adminId,
+                              tenantPermission: TenantPermission(
+                                propertyView: tenantPropertyView,
+                                financialView: tenantFinancialView,
+                                financialAdd: tenantFinancialAdd,
+                                financialEdit: tenantFinancialEdit,
+                                documentsAdd: tenantDocumentsAdd,
+                                workorderView: tenantWorkorderView,
+                                workorderAdd: tenantWorkorderAdd,
+                                workorderEdit: tenantWorkorderEdit,
+                                workorderDelete: tenantWorkorderDelete,
+                                documentsView: tenantDocumentsView,
+                                documentsEdit: tenantDocumentsEdit,
+                                documentsDelete: tenantDocumentsDelete,
+                              ),
+                              staffPermission: StaffPermission(
+                                propertydetailView: staffPropertydetailView,
+                                workorderdetailView: staffWorkorderdetailView,
+                                paymentView: staffPaymentView,
+                                paymentAdd: staffPaymentAdd,
+                                paymentEdit: staffPaymentEdit,
+                                paymentDelete: staffPaymentDelete,
+                                propertyView: staffPropertyView,
+                                leaseAdd: staffLeaseAdd,
+                                workorderEdit: staffWorkorderEdit,
+                                propertyAdd: staffPropertyAdd,
+                                propertyEdit: staffPropertyEdit,
+                                propertyDelete: staffPropertyDelete,
+                                tenantView: staffTenantView,
+                                tenantAdd: staffTenantAdd,
+                                tenantEdit: staffTenantEdit,
+                                tenantDelete: staffTenantDelete,
+                                leaseView: staffLeaseView,
+                                leaseEdit: staffLeaseEdit,
+                                leaseDelete: staffLeaseDelete,
+                                leasedetailView: staffLeasedetailView,
+                                workorderView: staffWorkorderView,
+                                workorderAdd: staffWorkorderAdd,
+                                workorderDelete: staffWorkorderDelete,
+                              ),
+                              vendorPermission: VendorPermission(
+                                workorderEdit: vendorWorkorderEdit,
+                                workorderView: vendorWorkorderView,
+                              ),
+                            );
+                            print(userPermissionData.toJson());
+                            PermissionService service = PermissionService();
+                            int statusCode = await service
+                                .postUserPermissionData(userPermissionData);
+                            if (statusCode == 200) {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                              Fluttertoast.showToast(
+                                  msg: 'Permissions updated successfully');
+                              Navigator.pop(context);
+
+                              print('Permissions updated successfully.');
+                            } else {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                              Fluttertoast.showToast(
+                                  msg:
+                                      'Failed to update permissions. Try Again later');
+                              print(
+                                  'Failed to update permissions. Status code: $statusCode');
+                            }
+                          },
+                          child: _isLoading
+                              ? Center(
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 20.0,
+                                  ),
+                                )
+                              : Text('Save'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Cancel'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blueColor,
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                }
               ),
             ],
           ),

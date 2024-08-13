@@ -153,7 +153,7 @@ class widget_302 {
                     PopupMenuItem(
                       child: const Row(
                         children: [
-                          Icon(Icons.person),
+                          Icon(Icons.note_alt_outlined),
                           SizedBox(
                             width: 10,
                           ),

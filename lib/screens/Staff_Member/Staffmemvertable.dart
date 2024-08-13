@@ -509,7 +509,7 @@ class _StaffTableState extends State<StaffTable> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.black,
                   ),
                   "Reports",
@@ -670,7 +670,7 @@ class _StaffTableState extends State<StaffTable> {
                                   ? 14
                                   : 18),
                           contentPadding:
-                              (EdgeInsets.only(left: 5, bottom: 13, top: 7)),
+                              (EdgeInsets.only(left: 5, bottom: 10, top: 10)),
                         ),
                       ),
                     ),

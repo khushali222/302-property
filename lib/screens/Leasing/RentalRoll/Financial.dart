@@ -1816,7 +1816,13 @@ class _FinancialTableState extends State<FinancialTable> {
                       } else if (!snapshot.hasData) {
                         return Center(child: Text('No data found'));
                       } else {
+
+
                         final leaseLedger = snapshot.data!;
+                        if(leaseLedger.data == null || leaseLedger.data!.length == 0){
+                          return Container(child: Text("No data found"),);
+                        }
+
                         return SingleChildScrollView(
                           child: Column(
                             children: [

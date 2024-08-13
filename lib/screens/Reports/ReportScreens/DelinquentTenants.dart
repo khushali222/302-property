@@ -930,7 +930,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
               buildListTile(
                   context,
                   const FaIcon(
-                    FontAwesomeIcons.letterboxd,
+                    FontAwesomeIcons.folderOpen,
                     color: Colors.white,
                   ),
                   "Reports",

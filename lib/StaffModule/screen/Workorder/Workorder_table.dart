@@ -167,7 +167,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                   });
                 },
                 child: Row(
-                  children: [ SizedBox(width: 25),
+                  children: [ SizedBox(width: 45),
                     Text("    Status", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                    /* ascending2
@@ -216,7 +216,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 25),
+                    SizedBox(width: 35),
                     Text("    Billable ", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                    /* ascending3
@@ -1034,12 +1034,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
+                                              /*  SizedBox(
                                                     width:
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .05),
+                                                        .05),*/
                                                 Expanded(
                                                   child:
                                                  Row(

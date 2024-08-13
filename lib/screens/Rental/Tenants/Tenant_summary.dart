@@ -837,7 +837,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                         children: [
                           SizedBox(
                               width: MediaQuery.of(context).size.width * 0.065),
-                          GestureDetector(
+                         /* GestureDetector(
                             onTap: () async {
                               // Navigator.push(
                               //     context,
@@ -876,7 +876,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 ),
                               ),
                             ),
-                          ),
+                          ),*/
                           const SizedBox(
                             width: 10,
                           ),
