@@ -796,7 +796,7 @@ class _RentalownersSummeryForMobileState
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Text(
-                                       formatDate3( '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}'),
+                                       '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -1064,6 +1064,7 @@ class _RentalownersSummeryForTabletState
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           Text(
                             '${rentalownersummery.first.rentalOwnername}',
                             style: TextStyle(
@@ -1198,7 +1199,6 @@ class _RentalownersSummeryForTabletState
                     ),
                   ),
                   //Personal information
-
                   Row(
                     children: [
                       Padding(
@@ -1624,7 +1624,6 @@ class _RentalownersSummeryForTabletState
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
                             width: screenWidth * 0.45,
-
                             // width: 350,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -1722,7 +1721,6 @@ class _RentalownersSummeryForTabletState
                           ),
                         ),
                       ),
-
                       //Personal information
                       Expanded(
                         child: Padding(

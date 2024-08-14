@@ -1432,7 +1432,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             );
                                           }).toList(),
-                                          value: _selectedstaffId,
+                                          value: staffs.containsKey(_selectedstaffId)
+                                              ? _selectedstaffId
+                                              : null,
                                           onChanged: (value) {
                                             setState(() {
                                               // _selectedUnitId = null;
@@ -2631,7 +2633,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             child: DropdownButton2<String>(
               isExpanded: true,
               hint: Text('Select'),
-              value: partsAndLabor[index]['selectedAccount'],
+              value: _account.contains(partsAndLabor[index]['selectedAccount'])
+                  ? partsAndLabor[index]['selectedAccount']
+                  : null,
               items: _account.map((method) {
                 return DropdownMenuItem<String>(
                   value: method,
@@ -4029,7 +4033,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                 child: DropdownButton2<String>(
                                                   isExpanded: true,
                                                   hint: Text('Select'),
-                                                  value: partsAndLabor[index]['selectedAccount'],
+                                                  value:_account.contains(partsAndLabor[index]['selectedAccount'])
+                                                      ? partsAndLabor[index]['selectedAccount']
+                                                      : null,
                                                   items: _account.map((method) {
                                                     return DropdownMenuItem<String>(
                                                       value: method,
