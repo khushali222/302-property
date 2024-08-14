@@ -1791,36 +1791,34 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         ),
                         child: Column(
                           children: [
-                            Expanded(
-                              flex: 3, // 40%
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  // color: Colors.blue,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  /*   boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],*/
+                            Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                // color: Colors.blue,
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10),
                                 ),
-                                child: Material(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'Contacts',
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                /*   boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                                                        ],*/
+                              ),
+                              child: Material(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Contactses',
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),

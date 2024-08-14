@@ -1330,46 +1330,51 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                            DropdownButtonHideUnderline(
-                            child: DropdownButtonFormField2<String>(
-                              decoration: const InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Select here',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFFb0b6c3),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: staffs.keys.map((staffmember_id) {
-                          return DropdownMenuItem<String>(
-                            value: staffmember_id,
-                            child: Text(
-                              staffs[staffmember_id]!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black87,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        }).toList(),
-                        value: staffs.containsKey(_selectedstaffId) ? _selectedstaffId : null,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedstaffId = value;
-                            _selectedStaffs = staffs[value]; // Store selected staff
+                                      DropdownButtonHideUnderline(
+                                        child: DropdownButtonFormField2<String>(
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none),
+                                          isExpanded: true,
+                                          hint: const Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  'Select here',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Color(0xFFb0b6c3),
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          items:
+                                              staffs.keys.map((staffmember_id) {
+                                            return DropdownMenuItem<String>(
+                                              value: staffmember_id,
+                                              child: Text(
+                                                staffs[staffmember_id]!,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black87,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList(),
+                                          value: staffs.containsKey(_selectedstaffId)
+                                              ? _selectedstaffId
+                                              : null,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              // _selectedUnitId = null;
+                                              _selectedstaffId = value;
+                                              _selectedStaffs = staffs[
+                                                  value]; // Store selected rental_adress
 
                             StaffId = value.toString();
                             print('Selected Staffs: $_selectedStaffs');
@@ -2555,7 +2560,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             child: DropdownButton2<String>(
               isExpanded: true,
               hint: Text('Select'),
-              value: partsAndLabor[index]['selectedAccount'],
+              value: _account.contains(partsAndLabor[index]['selectedAccount'])
+                  ? partsAndLabor[index]['selectedAccount']
+                  : null,
               items: _account.map((method) {
                 return DropdownMenuItem<String>(
                   value: method,
@@ -3887,7 +3894,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                 child: DropdownButton2<String>(
                                                   isExpanded: true,
                                                   hint: Text('Select'),
-                                                  value: partsAndLabor[index]['selectedAccount'],
+                                                  value:_account.contains(partsAndLabor[index]['selectedAccount'])
+                                                      ? partsAndLabor[index]['selectedAccount']
+                                                      : null,
                                                   items: _account.map((method) {
                                                     return DropdownMenuItem<String>(
                                                       value: method,
