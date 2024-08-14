@@ -18,9 +18,9 @@ import '../../../widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
-
+import '../../../widgets/custom_drawer.dart';
 import '../../Rental/Tenants/add_tenants.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class ResponsiveAddWorkOrder extends StatefulWidget {
   String? rentalid;
   ResponsiveAddWorkOrder({super.key, this.rentalid});
@@ -577,73 +577,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       child: Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: Drawer(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Image.asset("assets/images/logo.png"),
-                ),
-                SizedBox(height: 40),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.circle_grid_3x3,
-                      color: Colors.black,
-                    ),
-                    "Dashboard",
-                    false),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.house,
-                      color: Colors.black,
-                    ),
-                    "Add Property Type",
-                    false),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.person_add,
-                      color: Colors.black,
-                    ),
-                    "Add Staff Member",
-                    false),
-                buildDropdownListTile(
-                    context,
-                    FaIcon(
-                      FontAwesomeIcons.key,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Rental",
-                    ["Properties", "RentalOwner", "Tenants"],
-                    selectedSubtopic: "Work Order"),
-                buildDropdownListTile(
-                    context,
-                    FaIcon(
-                      FontAwesomeIcons.thumbsUp,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Leasing",
-                    ["Rent Roll", "Applicants"],
-                    selectedSubtopic: "Work Order"),
-                buildDropdownListTile(
-                    context,
-                    Image.asset("assets/icons/maintence.png",
-                        height: 20, width: 20),
-                    "Maintenance",
-                    ["Vendor", "Work Order"],
-                    selectedSubtopic: "Work Order"),
-              ],
-            ),
-          ),
-        ),
+        drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
         body: Form(
           key: _formkey,
           child: Container(
@@ -2540,73 +2474,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
       child: Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: Drawer(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Image.asset("assets/images/logo.png"),
-                ),
-                SizedBox(height: 40),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.circle_grid_3x3,
-                      color: Colors.black,
-                    ),
-                    "Dashboard",
-                    false),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.house,
-                      color: Colors.black,
-                    ),
-                    "Add Property Type",
-                    false),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.person_add,
-                      color: Colors.black,
-                    ),
-                    "Add Staff Member",
-                    false),
-                buildDropdownListTile(
-                    context,
-                    FaIcon(
-                      FontAwesomeIcons.key,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Rental",
-                    ["Properties", "RentalOwner", "Tenants"],
-                    selectedSubtopic: "Work Order"),
-                buildDropdownListTile(
-                    context,
-                    FaIcon(
-                      FontAwesomeIcons.thumbsUp,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Leasing",
-                    ["Rent Roll", "Applicants"],
-                    selectedSubtopic: "Work Order"),
-                buildDropdownListTile(
-                    context,
-                    Image.asset("assets/icons/maintence.png",
-                        height: 20, width: 20),
-                    "Maintenance",
-                    ["Vendor", "Work Order"],
-                    selectedSubtopic: "Work Order"),
-              ],
-            ),
-          ),
-        ),
+        drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
         body: Form(
           key: _formkey,
           child: Container(
@@ -2626,7 +2494,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                     height: 15,
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.only(left: 35,right: 35),
                     child: Container(
                       width: double.infinity,
                       // height: !form_valid ? 860 : 830,
@@ -3554,7 +3422,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.only(left: 35,right: 35,top: 15),
                     child: Container(
                       width: double.infinity,
                       // height: !form_valid ? 860 : 830,
@@ -3637,12 +3505,310 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                             SizedBox(
                               height: 10,
                             ),
+                          //   Table(
+                          //     border: TableBorder.all(width: 1),
+                          //     columnWidths: const {
+                          //       0: FlexColumnWidth(1),
+                          //       1: FlexColumnWidth(2),
+                          //       2: FlexColumnWidth(2),
+                          //       3: FlexColumnWidth(2),
+                          //       4: FlexColumnWidth(2),
+                          //     },
+                          //     children: [
+                          //       const TableRow(children: [
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('QTY',
+                          //               style: TextStyle(
+                          //                   color:
+                          //                       Color.fromRGBO(21, 43, 83, 1),
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('Account',
+                          //               style: TextStyle(
+                          //                   color:
+                          //                       Color.fromRGBO(21, 43, 83, 1),
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('Description',
+                          //               style: TextStyle(
+                          //                   color:
+                          //                       Color.fromRGBO(21, 43, 83, 1),
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('Price',
+                          //               style: TextStyle(
+                          //                   color:
+                          //                       Color.fromRGBO(21, 43, 83, 1),
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('Amount',
+                          //               style: TextStyle(
+                          //                   color:
+                          //                       Color.fromRGBO(21, 43, 83, 1),
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('',
+                          //               style: TextStyle(
+                          //                   color:
+                          //                       Color.fromRGBO(21, 43, 83, 1),
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //       ]),
+                          //       /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
+                          //                 int index = entry.key;
+                          //                 PartsandchargeData row = entry.value;
+                          //                 grandTotal += (row.partsQuantity! * row.partsPrice!);
+                          //                 return TableRow(children: [
+                          //                   Padding(
+                          //                     padding: const EdgeInsets.all(8.0),
+                          //                     child:Text("${row.partsQuantity}"),
+                          //                   ),
+                          //                   Padding(
+                          //                     padding: const EdgeInsets.all(8.0),
+                          //                     child:Text("${row.account}"),
+                          //                   ),
+                          //                   Padding(
+                          //                     padding: const EdgeInsets.all(8.0),
+                          //                     child:Text("${row.description}"),
+                          //                   ),
+                          //                   Padding(
+                          //                     padding: const EdgeInsets.all(8.0),
+                          //                     child:Text("\$${row.partsPrice}"),
+                          //                   ),
+                          //                   Padding(
+                          //                     padding: const EdgeInsets.all(8.0),
+                          //                     child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
+                          //                   ),
+                          //                 ]);
+                          //               }).toList(),*/
+                          //       ...partsAndLabor.asMap().entries.map((entry) {
+                          //         int index = entry.key;
+                          //         return TableRow(children: [
+                          //           Padding(
+                          //             padding: EdgeInsets.all(8.0),
+                          //             child: CustomTextField(
+                          //               hintText: 'Quantity',
+                          //               controller: partsAndLabor[index]
+                          //                   ['qtyController'],
+                          //               keyboardType: TextInputType.number,
+                          //             ),
+                          //           ),
+                          //           Padding(
+                          //             padding: EdgeInsets.all(8.0),
+                          //             child: DropdownButtonHideUnderline(
+                          //               child: DropdownButton2<String>(
+                          //                 isExpanded: true,
+                          //                 hint: Text('Select'),
+                          //                 value: partsAndLabor[index]
+                          //                     ['selectedAccount'],
+                          //                 items: _account.map((method) {
+                          //                   return DropdownMenuItem<String>(
+                          //                     value: method,
+                          //                     child: Text(method),
+                          //                   );
+                          //                 }).toList(),
+                          //                 onChanged: (String? newValue) {
+                          //                   setState(() {
+                          //                     partsAndLabor[index]
+                          //                             ['selectedAccount'] =
+                          //                         newValue;
+                          //                   });
+                          //                   print(
+                          //                       'Selected account: ${partsAndLabor[index]['selectedAccount']}');
+                          //                 },
+                          //                 buttonStyleData: ButtonStyleData(
+                          //                   height: 45,
+                          //                   // width: 300,
+                          //                   padding: const EdgeInsets.only(
+                          //                       left: 14, right: 14),
+                          //                   decoration: BoxDecoration(
+                          //                     borderRadius:
+                          //                         BorderRadius.circular(6),
+                          //                     color: Colors.white,
+                          //                   ),
+                          //                   elevation: 2,
+                          //                 ),
+                          //                 iconStyleData: const IconStyleData(
+                          //                   icon: Icon(
+                          //                     Icons.arrow_drop_down,
+                          //                   ),
+                          //                   iconSize: 24,
+                          //                   iconEnabledColor: Color(0xFFb0b6c3),
+                          //                   iconDisabledColor: Colors.grey,
+                          //                 ),
+                          //                 dropdownStyleData: DropdownStyleData(
+                          //                   decoration: BoxDecoration(
+                          //                     borderRadius:
+                          //                         BorderRadius.circular(6),
+                          //                     color: Colors.white,
+                          //                   ),
+                          //                   scrollbarTheme: ScrollbarThemeData(
+                          //                     radius: const Radius.circular(6),
+                          //                     thickness:
+                          //                         MaterialStateProperty.all(6),
+                          //                     thumbVisibility:
+                          //                         MaterialStateProperty.all(
+                          //                             true),
+                          //                   ),
+                          //                 ),
+                          //                 menuItemStyleData:
+                          //                     const MenuItemStyleData(
+                          //                   height: 50,
+                          //                   padding: EdgeInsets.only(
+                          //                       left: 14, right: 14),
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           Padding(
+                          //             padding: EdgeInsets.all(8.0),
+                          //             child: CustomTextField(
+                          //               hintText: 'Description',
+                          //               controller: partsAndLabor[index]
+                          //                   ['descriptionController'],
+                          //               keyboardType: TextInputType.text,
+                          //             ),
+                          //           ),
+                          //           Padding(
+                          //             padding: EdgeInsets.all(8.0),
+                          //             child: CustomTextField(
+                          //               hintText: 'Price',
+                          //               controller: partsAndLabor[index]
+                          //                   ['priceController'],
+                          //               keyboardType: TextInputType.number,
+                          //             ),
+                          //           ),
+                          //           Padding(
+                          //             padding: EdgeInsets.all(8.0),
+                          //             child: CustomTextField(
+                          //               hintText: 'Total',
+                          //               controller: partsAndLabor[index]
+                          //                   ['totalController'],
+                          //               keyboardType: TextInputType.number,
+                          //               readOnnly: true,
+                          //             ),
+                          //           ),
+                          //           Padding(
+                          //             padding: EdgeInsets.all(8.0),
+                          //             child: IconButton(
+                          //               icon: Icon(Icons.close,
+                          //                   color: Colors.black),
+                          //               onPressed: () {
+                          //                 deleteRow(index);
+                          //               },
+                          //             ),
+                          //           ),
+                          //           /* Padding(
+                          //                   padding: EdgeInsets.all(8.0),
+                          //                   child: Text("\$${grandTotal.toString()}",style: TextStyle(
+                          //                       fontWeight: FontWeight.bold)),
+                          //                 ),*/
+                          //
+                          //           /* Padding(
+                          //     padding: const EdgeInsets.all(8.0),
+                          //     child: Text(
+                          //         '\$${totalAmount.toStringAsFixed(2)}'),
+                          //   ),*/
+                          //         ]);
+                          //       }).toList(),
+                          //       TableRow(children: [
+                          //         const Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('Total',
+                          //               style: TextStyle(
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         const Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('',
+                          //               style: TextStyle(
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         const Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('',
+                          //               style: TextStyle(
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         const Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text('',
+                          //               style: TextStyle(
+                          //                   fontWeight: FontWeight.bold)),
+                          //         ),
+                          //         /* const Padding(
+                          //                   padding: EdgeInsets.all(8.0),
+                          //                   child: Text('',
+                          //                       style: TextStyle(
+                          //                           fontWeight: FontWeight.bold)),
+                          //                 ),*/
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text(
+                          //               '\$${totalAmount.toStringAsFixed(2)}'),
+                          //         ),
+                          //         Padding(
+                          //           padding: EdgeInsets.all(8.0),
+                          //           child: Text(''),
+                          //         ),
+                          //
+                          //         /* Padding(
+                          //     padding: const EdgeInsets.all(8.0),
+                          //     child: Text(
+                          //         '\$${totalAmount.toStringAsFixed(2)}'),
+                          //   ),*/
+                          //       ]),
+                          //       /*TableRow(children: [
+                          //   Padding(
+                          //     padding: const EdgeInsets.all(8.0),
+                          //     child: Container(
+                          //       height: 34,
+                          //       decoration: BoxDecoration(
+                          //           color: Colors.white,
+                          //           border: Border.all(width: 1),
+                          //           borderRadius:
+                          //           BorderRadius.circular(10.0)),
+                          //       child: ElevatedButton(
+                          //         style: ElevatedButton.styleFrom(
+                          //             shape: RoundedRectangleBorder(
+                          //                 borderRadius:
+                          //                 BorderRadius.circular(
+                          //                     10.0)),
+                          //             elevation: 0,
+                          //             backgroundColor: Colors.white),
+                          //         onPressed: addRow,
+                          //         child: const Text(
+                          //           'Add Row',
+                          //           style: TextStyle(
+                          //             color:
+                          //             Color.fromRGBO(21, 43, 83, 1),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          //   const SizedBox.shrink(),
+                          //   const SizedBox.shrink(),
+                          // ]),*/
+                          //     ],
+                          //   ),
                             Table(
                               border: TableBorder.all(width: 1),
                               columnWidths: const {
-                                0: FlexColumnWidth(1),
-                                1: FlexColumnWidth(2),
-                                2: FlexColumnWidth(2),
+                                0: FlexColumnWidth(2),
+                                1: FlexColumnWidth(3),
+                                2: FlexColumnWidth(3),
                                 3: FlexColumnWidth(2),
                                 4: FlexColumnWidth(2),
                               },
@@ -3653,7 +3819,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     child: Text('QTY',
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   Padding(
@@ -3661,7 +3827,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     child: Text('Account',
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   Padding(
@@ -3669,7 +3835,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     child: Text('Description',
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   Padding(
@@ -3677,7 +3843,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     child: Text('Price',
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   Padding(
@@ -3685,7 +3851,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     child: Text('Amount',
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   Padding(
@@ -3693,57 +3859,55 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     child: Text('',
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                            Color.fromRGBO(21, 43, 83, 1),
                                             fontWeight: FontWeight.bold)),
                                   ),
                                 ]),
                                 /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
-                                          int index = entry.key;
-                                          PartsandchargeData row = entry.value;
-                                          grandTotal += (row.partsQuantity! * row.partsPrice!);
-                                          return TableRow(children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("${row.partsQuantity}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("${row.account}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("${row.description}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("\$${row.partsPrice}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
-                                            ),
-                                          ]);
-                                        }).toList(),*/
+                                        int index = entry.key;
+                                        PartsandchargeData row = entry.value;
+                                        grandTotal += (row.partsQuantity! * row.partsPrice!);
+                                        return TableRow(children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("${row.partsQuantity}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("${row.account}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("${row.description}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("\$${row.partsPrice}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
+                                          ),
+                                        ]);
+                                      }).toList(),*/
                                 ...partsAndLabor.asMap().entries.map((entry) {
                                   int index = entry.key;
-                                  return TableRow(children: [
+                                  return  TableRow(children: [
                                     Padding(
                                       padding: EdgeInsets.all(8.0),
                                       child: CustomTextField(
                                         hintText: 'Quantity',
-                                        controller: partsAndLabor[index]
-                                            ['qtyController'],
+                                        controller: partsAndLabor[index]['qtyController'],
                                         keyboardType: TextInputType.number,
                                       ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.all(8.0),
-                                      child: DropdownButtonHideUnderline(
+                                      child:   DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
                                           hint: Text('Select'),
-                                          value: partsAndLabor[index]
-                                              ['selectedAccount'],
+                                          value: partsAndLabor[index]['selectedAccount'],
                                           items: _account.map((method) {
                                             return DropdownMenuItem<String>(
                                               value: method,
@@ -3752,21 +3916,16 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                           }).toList(),
                                           onChanged: (String? newValue) {
                                             setState(() {
-                                              partsAndLabor[index]
-                                                      ['selectedAccount'] =
-                                                  newValue;
+                                              partsAndLabor[index]['selectedAccount'] = newValue;
                                             });
-                                            print(
-                                                'Selected account: ${partsAndLabor[index]['selectedAccount']}');
+                                            print('Selected account: ${partsAndLabor[index]['selectedAccount']}');
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
                                             // width: 300,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
+                                            //  padding: const EdgeInsets.only(left: 14, right: 14),
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
+                                              borderRadius: BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             elevation: 2,
@@ -3781,24 +3940,18 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
+                                              borderRadius: BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
+                                              thickness: MaterialStateProperty.all(6),
+                                              thumbVisibility: MaterialStateProperty.all(true),
                                             ),
                                           ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
+                                          menuItemStyleData: const MenuItemStyleData(
                                             height: 50,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
+                                            padding: EdgeInsets.only(left: 14, right: 14),
                                           ),
                                         ),
                                       ),
@@ -3807,53 +3960,51 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                       padding: EdgeInsets.all(8.0),
                                       child: CustomTextField(
                                         hintText: 'Description',
-                                        controller: partsAndLabor[index]
-                                            ['descriptionController'],
+                                        controller: partsAndLabor[index]['descriptionController'],
                                         keyboardType: TextInputType.text,
                                       ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.all(8.0),
-                                      child: CustomTextField(
+                                      child:  CustomTextField(
                                         hintText: 'Price',
-                                        controller: partsAndLabor[index]
-                                            ['priceController'],
+                                        controller: partsAndLabor[index]['priceController'],
                                         keyboardType: TextInputType.number,
                                       ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.all(8.0),
-                                      child: CustomTextField(
+                                      child:  CustomTextField(
                                         hintText: 'Total',
-                                        controller: partsAndLabor[index]
-                                            ['totalController'],
+                                        controller: partsAndLabor[index]['totalController'],
                                         keyboardType: TextInputType.number,
                                         readOnnly: true,
                                       ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.all(8.0),
-                                      child: IconButton(
-                                        icon: Icon(Icons.close,
-                                            color: Colors.black),
+                                      child:  IconButton(
+                                        icon: Icon(Icons.close, color:Colors.black),
                                         onPressed: () {
                                           deleteRow(index);
                                         },
                                       ),
                                     ),
                                     /* Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text("\$${grandTotal.toString()}",style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                          ),*/
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text("\$${grandTotal.toString()}",style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                        ),*/
 
                                     /* Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                  '\$${totalAmount.toStringAsFixed(2)}'),
-                            ),*/
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                '\$${totalAmount.toStringAsFixed(2)}'),
+                          ),*/
+
                                   ]);
                                 }).toList(),
+
                                 TableRow(children: [
                                   const Padding(
                                     padding: EdgeInsets.all(8.0),
@@ -3867,6 +4018,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                   ),
+
                                   const Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text('',
@@ -3880,59 +4032,59 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   /* const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold)),
-                                          ),*/
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text('',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
+                                        ),*/
                                   Padding(
                                     padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                        '\$${totalAmount.toStringAsFixed(2)}'),
+                                    child:Text('\$${totalAmount.toStringAsFixed(2)}'),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.all(8.0),
-                                    child: Text(''),
+                                    child:Text(''),
                                   ),
 
                                   /* Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                  '\$${totalAmount.toStringAsFixed(2)}'),
-                            ),*/
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                '\$${totalAmount.toStringAsFixed(2)}'),
+                          ),*/
+
                                 ]),
                                 /*TableRow(children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                height: 34,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(width: 1),
-                                    borderRadius:
-                                    BorderRadius.circular(10.0)),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                              10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: addRow,
-                                  child: const Text(
-                                    'Add Row',
-                                    style: TextStyle(
-                                      color:
-                                      Color.fromRGBO(21, 43, 83, 1),
-                                    ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 34,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(width: 1),
+                                  borderRadius:
+                                  BorderRadius.circular(10.0)),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(
+                                            10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: addRow,
+                                child: const Text(
+                                  'Add Row',
+                                  style: TextStyle(
+                                    color:
+                                    Color.fromRGBO(21, 43, 83, 1),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox.shrink(),
-                            const SizedBox.shrink(),
-                          ]),*/
+                          ),
+                          const SizedBox.shrink(),
+                          const SizedBox.shrink(),
+                        ]),*/
                               ],
                             ),
                             ElevatedButton(
@@ -4317,7 +4469,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(left: 35,right: 35,top: 15),
                     child: Row(
                       children: [
                         Container(
@@ -4370,6 +4522,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                 )))
                       ],
                     ),
+                  ),
+                  SizedBox(
+                    height: 15,
                   ),
                 ],
               ),

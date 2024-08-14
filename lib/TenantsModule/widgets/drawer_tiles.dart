@@ -52,6 +52,7 @@ Widget buildListTile(
       leading: leadingIcon,
       title: Text(
         title,
+
         style: TextStyle(
           color: active ? Colors.white : Colors.black,
         ),

@@ -14,7 +14,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../repository/profile_repository.dart';
 import '../../widgets/drawer_tiles.dart';
-
+import '../../widgets/custom_drawer.dart';
 class Profile_screen extends StatefulWidget {
   const Profile_screen({Key? key}) : super(key: key);
 
@@ -82,70 +82,7 @@ class _Profile_screenState extends State<Profile_screen> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context, isProfilePageActive: true),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
       body: _isLoading
           ? const ProfileShimmer()
           : _hasError
@@ -154,10 +91,10 @@ class _Profile_screenState extends State<Profile_screen> {
                 )
               : SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding:  EdgeInsets.all(MediaQuery.of(context).size.width < 500 ? 16 : 30),
                     child: Column(
                       children: [
-                        const SizedBox(height: 20),
+                        // const SizedBox(height: 20),
                         Container(
                           height: 220,
                           width: double.infinity,
@@ -192,8 +129,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                 const SizedBox(height: 8.0),
                                 Text(
                                   '${_profile?.firstName} ${_profile?.lastName}',
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 22,
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -201,8 +138,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                 const SizedBox(height: 8.0),
                                 Text(
                                   '${_profile?.email}',
-                                  style: const TextStyle(
-                                    fontSize: 13.0,
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 :  18,
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -210,8 +147,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                 const SizedBox(height: 8.0),
                                 Text(
                                   '${_profile?.adminId}',
-                                  style: const TextStyle(
-                                    fontSize: 13.0,
+                                  style: TextStyle(
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -269,10 +206,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                     ),
                                     const SizedBox(height: 16.0),
-                                    const Text(
+                                     Text(
                                       "User information",
                                       style: TextStyle(
-                                          fontSize: 17,
+                                          fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 20,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -488,7 +425,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       color: Colors.white,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 16,
+                                                      fontSize:
+                                                      MediaQuery.of(context).size.width < 500 ? 16 : 20
                                                     ),
                                                   ),
                                                 ],

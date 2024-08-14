@@ -21,7 +21,7 @@ import '../../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Rental/Tenants/add_tenants.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class ResponsiveEditWorkOrder extends StatefulWidget {
   EditData? property;
   final String workorderId;
@@ -151,9 +151,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       _selectedstaffId = fetchedDetails.staffmemberId ?? null;
       _selectedtenantId = fetchedDetails.tenantId ?? null;
       _selectedEntry = entryAllowedString;
-
-
-
       partsAndLabor =
           fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
             TextEditingController qtyController = TextEditingController(text:data.partsQuantity!.toString() );
@@ -344,7 +341,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           staffnames[data['staffmember_id'].toString()] =
               data['staffmember_name'].toString();
         });
-
         setState(() {
           staffs = staffnames;
           _isLoadingstaff = false;
@@ -424,6 +420,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   final List<String> _account = [
     'Advertising',
     'Association Fees',
+    'Bank Fees',
     'Auto and Travel',
     'Cleaning and Maintenance',
     'Commissions',
@@ -694,73 +691,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       child: Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: Drawer(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Image.asset("assets/images/logo.png"),
-                ),
-                SizedBox(height: 40),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.circle_grid_3x3,
-                      color: Colors.black,
-                    ),
-                    "Dashboard",
-                    false),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.house,
-                      color: Colors.black,
-                    ),
-                    "Add Property Type",
-                    false),
-                buildListTile(
-                    context,
-                    Icon(
-                      CupertinoIcons.person_add,
-                      color: Colors.black,
-                    ),
-                    "Add Staff Member",
-                    false),
-                buildDropdownListTile(
-                    context,
-                    FaIcon(
-                      FontAwesomeIcons.key,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Rental",
-                    ["Properties", "RentalOwner", "Tenants"],
-                    selectedSubtopic: "Work Order"),
-                buildDropdownListTile(
-                    context,
-                    FaIcon(
-                      FontAwesomeIcons.thumbsUp,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Leasing",
-                    ["Rent Roll", "Applicants"],
-                    selectedSubtopic: "Work Order"),
-                buildDropdownListTile(
-                    context,
-                    Image.asset("assets/icons/maintence.png",
-                        height: 20, width: 20),
-                    "Maintenance",
-                    ["Vendor", "Work Order"],
-                    selectedSubtopic: "Work Order"),
-              ],
-            ),
-          ),
-        ),
+        drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
         body: Form(
           key: _formkey,
           child: Container(
@@ -2182,6 +2113,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     _loadProperties();
     _loadVendor();
     _loadStaff();
+    if (_selectedPropertyId != null && _selectedUnitId != null) {
+      _loadTenant(_selectedPropertyId!, _selectedUnitId!);
+    }
     // _loadTenant();
     fetchWorkordersDetails(widget.workorderId);
     partsAndLabor.clear();
@@ -2216,17 +2150,17 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       vendornote.text = fetchedDetails.vendorNotes ?? "";
       _dateController.text = fetchedDetails.date!;
       _selectedOption = fetchedDetails.priority ?? "";
-      _selectedPropertyId = fetchedDetails.rentalId;
+      _selectedPropertyId = fetchedDetails.rentalId?.isEmpty ?? true ? null : fetchedDetails.rentalId;
       renderId = fetchedDetails.rentalId!;
       _selectedUnitId = fetchedDetails.unitId;
       isChecked = fetchedDetails.isBillable!;
       _selectedvendorsId = fetchedDetails.vendorId!.isEmpty
           ? null
           : fetchedDetails.vendorId ?? null;
-      _selectedstaffId = fetchedDetails.staffmemberId ?? null;
+      //_selectedstaffId = fetchedDetails.staffmemberId ?? null;
+      _selectedstaffId = fetchedDetails.staffmemberId?.isEmpty ?? true ? null : fetchedDetails.staffmemberId;
       _selectedtenantId = fetchedDetails.tenantId ?? null;
       _selectedEntry = entryAllowedString;
-
       partsAndLabor =
           fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
             TextEditingController qtyController = TextEditingController(text:data.partsQuantity!.toString() );
@@ -2253,7 +2187,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             };
           }).toList() ??
               [];
-
 
       updateTotalAmount();
 
@@ -2496,6 +2429,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   final List<String> _account = [
     'Advertising',
     'Association Fees',
+    'Bank Fees',
     'Auto and Travel',
     'Cleaning and Maintenance',
     'Commissions',
@@ -2763,73 +2697,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       child: Scaffold(
           appBar: widget_302.App_Bar(context: context),
           backgroundColor: Colors.white,
-          drawer: Drawer(
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 40),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Image.asset("assets/images/logo.png"),
-                  ),
-                  SizedBox(height: 40),
-                  buildListTile(
-                      context,
-                      Icon(
-                        CupertinoIcons.circle_grid_3x3,
-                        color: Colors.black,
-                      ),
-                      "Dashboard",
-                      false),
-                  buildListTile(
-                      context,
-                      Icon(
-                        CupertinoIcons.house,
-                        color: Colors.black,
-                      ),
-                      "Add Property Type",
-                      false),
-                  buildListTile(
-                      context,
-                      Icon(
-                        CupertinoIcons.person_add,
-                        color: Colors.black,
-                      ),
-                      "Add Staff Member",
-                      false),
-                  buildDropdownListTile(
-                      context,
-                      FaIcon(
-                        FontAwesomeIcons.key,
-                        size: 20,
-                        color: Colors.black,
-                      ),
-                      "Rental",
-                      ["Properties", "RentalOwner", "Tenants"],
-                      selectedSubtopic: "Work Order"),
-                  buildDropdownListTile(
-                      context,
-                      FaIcon(
-                        FontAwesomeIcons.thumbsUp,
-                        size: 20,
-                        color: Colors.black,
-                      ),
-                      "Leasing",
-                      ["Rent Roll", "Applicants"],
-                      selectedSubtopic: "Work Order"),
-                  buildDropdownListTile(
-                      context,
-                      Image.asset("assets/icons/maintence.png",
-                          height: 20, width: 20),
-                      "Maintenance",
-                      ["Vendor", "Work Order"],
-                      selectedSubtopic: "Work Order"),
-                ],
-              ),
-            ),
-          ),
+          drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
           body: Form(
             key: _formkey,
             child: Container(
@@ -2987,7 +2855,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       ),
                                                     );
                                                   }).toList(),
-                                                  value: _selectedPropertyId,
+                                                  value:  properties.containsKey(_selectedPropertyId)
+                                                      ? _selectedPropertyId
+                                                      : null,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       _selectedUnitId = null;
@@ -2999,6 +2869,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
                                                       renderId =
                                                           value.toString();
+
                                                       print(
                                                           'Selected Property: $_selectedProperty');
                                                       // _loadUnits(
@@ -3914,9 +3785,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     Table(
                                       border: TableBorder.all(width: 1),
                                       columnWidths: const {
-                                        0: FlexColumnWidth(1),
-                                        1: FlexColumnWidth(2),
-                                        2: FlexColumnWidth(2),
+                                        0: FlexColumnWidth(2),
+                                        1: FlexColumnWidth(3),
+                                        2: FlexColumnWidth(3),
                                         3: FlexColumnWidth(2),
                                         4: FlexColumnWidth(2),
                                       },
@@ -3926,179 +3797,141 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('QTY',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                    color:
+                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                    fontWeight: FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Account',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                    color:
+                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                    fontWeight: FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Description',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                    color:
+                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                    fontWeight: FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Price',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                    color:
+                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                    fontWeight: FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Amount',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                    color:
+                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                    fontWeight: FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                    color:
+                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                    fontWeight: FontWeight.bold)),
                                           ),
                                         ]),
                                         /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
+                                        int index = entry.key;
+                                        PartsandchargeData row = entry.value;
+                                        grandTotal += (row.partsQuantity! * row.partsPrice!);
+                                        return TableRow(children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("${row.partsQuantity}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("${row.account}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("${row.description}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("\$${row.partsPrice}"),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
+                                          ),
+                                        ]);
+                                      }).toList(),*/
+                                        ...partsAndLabor.asMap().entries.map((entry) {
                                           int index = entry.key;
-                                          PartsandchargeData row = entry.value;
-                                          grandTotal += (row.partsQuantity! * row.partsPrice!);
-                                          return TableRow(children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("${row.partsQuantity}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("${row.account}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("${row.description}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("\$${row.partsPrice}"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
-                                            ),
-                                          ]);
-                                        }).toList(),*/
-                                        ...partsAndLabor
-                                            .asMap()
-                                            .entries
-                                            .map((entry) {
-                                          int index = entry.key;
-                                          return TableRow(children: [
+                                          return  TableRow(children: [
+
                                             Padding(
                                               padding: EdgeInsets.all(8.0),
                                               child: CustomTextField(
                                                 hintText: 'Quantity',
-                                                controller: partsAndLabor[index]
-                                                    ['qtyController'],
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                controller: partsAndLabor[index]['qtyController'],
+                                                keyboardType: TextInputType.number,
                                               ),
                                             ),
                                             Padding(
                                               padding: EdgeInsets.all(8.0),
-                                              child:
-                                                  DropdownButtonHideUnderline(
+                                              child:   DropdownButtonHideUnderline(
                                                 child: DropdownButton2<String>(
                                                   isExpanded: true,
                                                   hint: Text('Select'),
-                                                  value: partsAndLabor[index]
-                                                      ['selectedAccount'],
+                                                  value: partsAndLabor[index]['selectedAccount'],
                                                   items: _account.map((method) {
-                                                    return DropdownMenuItem<
-                                                        String>(
+                                                    return DropdownMenuItem<String>(
                                                       value: method,
                                                       child: Text(method),
                                                     );
                                                   }).toList(),
-                                                  onChanged:
-                                                      (String? newValue) {
+                                                  onChanged: (String? newValue) {
                                                     setState(() {
-                                                      partsAndLabor[index][
-                                                              'selectedAccount'] =
-                                                          newValue;
+                                                      partsAndLabor[index]['selectedAccount'] = newValue;
                                                     });
-                                                    print(
-                                                        'Selected account: ${partsAndLabor[index]['selectedAccount']}');
+                                                    print('Selected account: ${partsAndLabor[index]['selectedAccount']}');
                                                   },
-                                                  buttonStyleData:
-                                                      ButtonStyleData(
+                                                  buttonStyleData: ButtonStyleData(
                                                     height: 45,
                                                     // width: 300,
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
+                                                    //  padding: const EdgeInsets.only(left: 14, right: 14),
                                                     decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      borderRadius: BorderRadius.circular(6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
-                                                  iconStyleData:
-                                                      const IconStyleData(
+                                                  iconStyleData: const IconStyleData(
                                                     icon: Icon(
                                                       Icons.arrow_drop_down,
                                                     ),
                                                     iconSize: 24,
-                                                    iconEnabledColor:
-                                                        Color(0xFFb0b6c3),
-                                                    iconDisabledColor:
-                                                        Colors.grey,
+                                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                                    iconDisabledColor: Colors.grey,
                                                   ),
-                                                  dropdownStyleData:
-                                                      DropdownStyleData(
+                                                  dropdownStyleData: DropdownStyleData(
                                                     decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      borderRadius: BorderRadius.circular(6),
                                                       color: Colors.white,
                                                     ),
-                                                    scrollbarTheme:
-                                                        ScrollbarThemeData(
-                                                      radius:
-                                                          const Radius.circular(
-                                                              6),
-                                                      thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
-                                                      thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      radius: const Radius.circular(6),
+                                                      thickness: MaterialStateProperty.all(6),
+                                                      thumbVisibility: MaterialStateProperty.all(true),
                                                     ),
                                                   ),
-                                                  menuItemStyleData:
-                                                      const MenuItemStyleData(
+                                                  menuItemStyleData: const MenuItemStyleData(
                                                     height: 50,
-                                                    padding: EdgeInsets.only(
-                                                        left: 14, right: 14),
+                                                    padding: EdgeInsets.only(left: 14, right: 14),
                                                   ),
                                                 ),
                                               ),
@@ -4107,139 +3940,131 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                               padding: EdgeInsets.all(8.0),
                                               child: CustomTextField(
                                                 hintText: 'Description',
-                                                controller: partsAndLabor[index]
-                                                    ['descriptionController'],
-                                                keyboardType:
-                                                    TextInputType.text,
+                                                controller: partsAndLabor[index]['descriptionController'],
+                                                keyboardType: TextInputType.text,
                                               ),
                                             ),
                                             Padding(
                                               padding: EdgeInsets.all(8.0),
-                                              child: CustomTextField(
+                                              child:  CustomTextField(
                                                 hintText: 'Price',
-                                                controller: partsAndLabor[index]
-                                                    ['priceController'],
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                controller: partsAndLabor[index]['priceController'],
+                                                keyboardType: TextInputType.number,
                                               ),
                                             ),
                                             Padding(
                                               padding: EdgeInsets.all(8.0),
-                                              child: CustomTextField(
+                                              child:  CustomTextField(
                                                 hintText: 'Total',
-                                                controller: partsAndLabor[index]
-                                                    ['totalController'],
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                controller: partsAndLabor[index]['totalController'],
+                                                keyboardType: TextInputType.number,
                                                 readOnnly: true,
                                               ),
                                             ),
                                             Padding(
                                               padding: EdgeInsets.all(8.0),
-                                              child: IconButton(
-                                                icon: Icon(Icons.close,
-                                                    color: Colors.black),
+                                              child:  IconButton(
+                                                icon: Icon(Icons.close, color:Colors.black),
                                                 onPressed: () {
                                                   deleteRow(index);
                                                 },
                                               ),
                                             ),
                                             /* Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text("\$${grandTotal.toString()}",style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                          ),*/
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text("\$${grandTotal.toString()}",style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                        ),*/
 
                                             /* Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                  '\$${totalAmount.toStringAsFixed(2)}'),
-                            ),*/
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                '\$${totalAmount.toStringAsFixed(2)}'),
+                          ),*/
+
                                           ]);
                                         }).toList(),
+
                                         TableRow(children: [
                                           const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Total',
                                                 style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                                    fontWeight: FontWeight.bold)),
                                           ),
                                           const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                          /* const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold)),
-                                          ),*/
+                                          ),
+
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text('',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold)),
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text('',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold)),
+                                          ),
+                                          /* const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text('',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
+                                        ),*/
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                                '\$${totalAmount.toStringAsFixed(2)}'),
+                                            child:Text('\$${totalAmount.toStringAsFixed(2)}'),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
-                                            child: Text(''),
+                                            child:Text(''),
                                           ),
 
                                           /* Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                  '\$${totalAmount.toStringAsFixed(2)}'),
-                            ),*/
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                '\$${totalAmount.toStringAsFixed(2)}'),
+                          ),*/
+
                                         ]),
                                         /*TableRow(children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                height: 34,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(width: 1),
-                                    borderRadius:
-                                    BorderRadius.circular(10.0)),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                              10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: addRow,
-                                  child: const Text(
-                                    'Add Row',
-                                    style: TextStyle(
-                                      color:
-                                      Color.fromRGBO(21, 43, 83, 1),
-                                    ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 34,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(width: 1),
+                                  borderRadius:
+                                  BorderRadius.circular(10.0)),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(
+                                            10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: addRow,
+                                child: const Text(
+                                  'Add Row',
+                                  style: TextStyle(
+                                    color:
+                                    Color.fromRGBO(21, 43, 83, 1),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox.shrink(),
-                            const SizedBox.shrink(),
-                          ]),*/
+                          ),
+                          const SizedBox.shrink(),
+                          const SizedBox.shrink(),
+                        ]),*/
                                       ],
                                     ),
                                     ElevatedButton(

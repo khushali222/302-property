@@ -36,9 +36,10 @@ import '../../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../Leasing/Applicants/addApplicant.dart';
+import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/newAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class Summery_page extends StatefulWidget {
   Rentals properties;
   TenantData? tenants;
@@ -71,7 +72,6 @@ class _Summery_pageState extends State<Summery_page>
   TextEditingController sqft3 = TextEditingController();
   TextEditingController bath3 = TextEditingController();
   TextEditingController bed3 = TextEditingController();
-
   bool isLoading = false;
   bool iserror = false;
   Future<void> _startDate(BuildContext context) async {
@@ -118,17 +118,19 @@ class _Summery_pageState extends State<Summery_page>
     _tabController = TabController(length: 4, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
     _fetchData();
-
+   // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
-
+    displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
     // fetchunits1();
     //fetchLeases();
     // fetchAndSetCounts(context);
     //workorder
     // fetchAndSetCounts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
-  }
 
+  }
+  String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   Future<Map<String, dynamic>> fetchDataOfCountWork(String rentalId) async {
     final response = await http
         .get(Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'));
@@ -1546,78 +1548,7 @@ class _Summery_pageState extends State<Summery_page>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: widget_302.App_Bar(context: context),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(context, Icon(CupertinoIcons.person_add),
-                  "Add Staff Member", false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties",
-                  initvalue: true),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties",
-                  initvalue: false),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties",
-                  initvalue: false),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Properties",dropdown: true,),
       body: Column(
         children: <Widget>[
           const SizedBox(
@@ -2945,7 +2876,8 @@ class _Summery_pageState extends State<Summery_page>
                             (index) => Material(
                               elevation: 3,
                               borderRadius: BorderRadius.circular(10),
-                              child: Container(
+                              child:
+                              Container(
                                 height: 220,
                                 width: MediaQuery.of(context).size.width * .44,
                                 decoration: BoxDecoration(
@@ -3060,7 +2992,26 @@ class _Summery_pageState extends State<Summery_page>
             ),
             const Spacer(),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    bool isChecked =
+                    false; // Moved isChecked inside the StatefulBuilder
+                    return StatefulBuilder(
+                      builder: (BuildContext context,
+                          StateSetter setState) {
+                        return AlertDialog(
+                          backgroundColor: Colors.white,
+                          surfaceTintColor: Colors.white,
+                          content:
+                          buildMoveout(tenant),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
               child: Row(
                 children: [
                   FaIcon(
@@ -3153,6 +3104,916 @@ class _Summery_pageState extends State<Summery_page>
         ),
         const SizedBox(height: 10),
       ],
+    );
+  }
+
+  // Widget buildMoveout(TenantData tenant){
+  //   return  SingleChildScrollView(
+  //     child:
+  //     Column(
+  //       children: [
+  //         Row(
+  //           children: [
+  //             SizedBox(
+  //               width: 0,
+  //             ),
+  //             Text(
+  //               "Move out Tenants",
+  //               style: TextStyle(
+  //                   fontWeight:
+  //                   FontWeight.bold,
+  //                   color: Color.fromRGBO(
+  //                       21, 43, 81, 1),
+  //                   fontSize: 15),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(
+  //           height: 10,
+  //         ),
+  //         Row(
+  //           children: [
+  //             SizedBox(
+  //               width: 0,
+  //             ),
+  //             Expanded(
+  //               child: Text(
+  //                 "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+  //                 style: TextStyle(
+  //                   fontWeight:
+  //                   FontWeight.w500,
+  //                   fontSize: 13,
+  //                   color:
+  //                   Color(0xFF8A95A8),
+  //                 ),
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 0,
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(
+  //           height: 15,
+  //         ),
+  //         Material(
+  //           elevation: 3,
+  //           borderRadius:
+  //           BorderRadius.circular(10),
+  //           child: Container(
+  //             // height: 280,
+  //             width: MediaQuery.of(context)
+  //                 .size
+  //                 .width *
+  //                 .65,
+  //             decoration: BoxDecoration(
+  //               border: Border.all(
+  //                   color: Color.fromRGBO(
+  //                       21, 43, 81, 1)),
+  //               // color: Colors.blue,
+  //               borderRadius:
+  //               BorderRadius.circular(
+  //                   5),
+  //             ),
+  //             child: Column(
+  //               children: [
+  //                 SizedBox(
+  //                   height: 10,
+  //                 ),
+  //                 Padding(
+  //                   padding:
+  //                   const EdgeInsets
+  //                       .only(
+  //                       left: 5,
+  //                       right: 5),
+  //                   child: Table(
+  //                     border:
+  //                     TableBorder.all(
+  //                         color: Color
+  //                             .fromRGBO(
+  //                             21,
+  //                             43,
+  //                             81,
+  //                             1)),
+  //                     children: [
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Address/Unit',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Lease Type',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Start End',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ]),
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               '${widget.properties.rentalAddress}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               ' ${tenant.leaseType}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               ' ${tenant.createdAt} ${tenant.updatedAt}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ])
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 SizedBox(
+  //                   height: 10,
+  //                 ),
+  //                 Padding(
+  //                   padding:
+  //                   const EdgeInsets
+  //                       .only(
+  //                       left: 5,
+  //                       right: 5),
+  //                   child: Table(
+  //                     border:
+  //                     TableBorder.all(
+  //                         color: Color
+  //                             .fromRGBO(
+  //                             21,
+  //                             43,
+  //                             81,
+  //                             1)),
+  //                     children: [
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Tenants',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Notice Given Date',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               'Move-Out Date',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .bold,
+  //                                   fontSize:
+  //                                   13),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ]),
+  //                       TableRow(children: [
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Text(
+  //                               ' ${tenant.firstName} ${tenant.lastName}',
+  //                               style: TextStyle(
+  //                                   color: Color.fromRGBO(
+  //                                       21,
+  //                                       43,
+  //                                       81,
+  //                                       1),
+  //                                   fontWeight:
+  //                                   FontWeight
+  //                                       .w500,
+  //                                   fontSize:
+  //                                   12),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Row(
+  //                               children: [
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                                 Expanded(
+  //                                   child:
+  //                                   Material(
+  //                                     elevation:
+  //                                     4,
+  //                                     child:
+  //                                     Container(
+  //                                       height:
+  //                                       50,
+  //                                       width:
+  //                                       MediaQuery.of(context).size.width * .4,
+  //                                       decoration:
+  //                                       BoxDecoration(
+  //                                         borderRadius: BorderRadius.circular(2),
+  //                                         border: Border.all(
+  //                                           color: Color(0xFF8A95A8),
+  //                                         ),
+  //                                       ),
+  //                                       child:
+  //                                       Stack(
+  //                                         children: [
+  //                                           Positioned.fill(
+  //                                             child: TextField(
+  //                                               onChanged: (value) {
+  //                                                 setState(() {
+  //                                                   // startdatederror = false;
+  //                                                   // _selectDate(context);
+  //                                                 });
+  //                                               },
+  //                                               controller: startdateController,
+  //                                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
+  //                                               decoration: InputDecoration(
+  //                                                 hintText: "mm/dd/yyyy",
+  //                                                 hintStyle: TextStyle(
+  //                                                   fontSize: MediaQuery.of(context).size.width * .037,
+  //                                                   color: Color(0xFF8A95A8),
+  //                                                 ),
+  //                                                 // enabledBorder: startdatederror
+  //                                                 //     ? OutlineInputBorder(
+  //                                                 //   borderRadius:
+  //                                                 //   BorderRadius.circular(3),
+  //                                                 //   borderSide: BorderSide(
+  //                                                 //     color: Colors.red,
+  //                                                 //   ),
+  //                                                 // )
+  //                                                 //     : InputBorder.none,
+  //                                                 border: InputBorder.none,
+  //                                                 contentPadding: EdgeInsets.all(12),
+  //                                                 suffixIcon: IconButton(
+  //                                                   icon: Icon(Icons.calendar_today),
+  //                                                   onPressed: () => _startDate(context),
+  //                                                 ),
+  //                                               ),
+  //                                               readOnly: true,
+  //                                               onTap: () {
+  //                                                 _startDate(context);
+  //                                                 setState(() {
+  //                                                   //startdatederror = false;
+  //                                                 });
+  //                                               },
+  //                                             ),
+  //                                           ),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                               ],
+  //                             ),
+  //                             // Text(
+  //                             //   '${widget.properties.staffMemberData!.staffmemberName}',
+  //                             //   style: TextStyle(color: Color.fromRGBO(21, 43, 81, 1),fontWeight: FontWeight.w500,fontSize: 12),
+  //                             // ),
+  //                           ),
+  //                         ),
+  //                         TableCell(
+  //                           child: Padding(
+  //                             padding:
+  //                             const EdgeInsets
+  //                                 .all(
+  //                                 8.0),
+  //                             child: Row(
+  //                               children: [
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                                 Expanded(
+  //                                   child:
+  //                                   Material(
+  //                                     elevation:
+  //                                     4,
+  //                                     child:
+  //                                     Container(
+  //                                       height:
+  //                                       50,
+  //                                       //width: MediaQuery.of(context).size.width * .6,
+  //                                       decoration:
+  //                                       BoxDecoration(
+  //                                         borderRadius: BorderRadius.circular(2),
+  //                                         border: Border.all(
+  //                                           color: Color(0xFF8A95A8),
+  //                                         ),
+  //                                       ),
+  //                                       child:
+  //                                       Stack(
+  //                                         children: [
+  //                                           Positioned.fill(
+  //                                             child: TextField(
+  //                                               onChanged: (value) {
+  //                                                 setState(() {
+  //                                                   // startdatederror = false;
+  //                                                   // _selectDate(context);
+  //                                                 });
+  //                                               },
+  //                                               controller: enddateController,
+  //                                               cursorColor: Color.fromRGBO(21, 43, 81, 1),
+  //                                               decoration: InputDecoration(
+  //                                                 hintText: "mm/dd/yyyy",
+  //                                                 hintStyle: TextStyle(
+  //                                                   fontSize: MediaQuery.of(context).size.width * .037,
+  //                                                   color: Color(0xFF8A95A8),
+  //                                                 ),
+  //                                                 // enabledBorder: startdatederror
+  //                                                 //     ? OutlineInputBorder(
+  //                                                 //   borderRadius:
+  //                                                 //   BorderRadius.circular(3),
+  //                                                 //   borderSide: BorderSide(
+  //                                                 //     color: Colors.red,
+  //                                                 //   ),
+  //                                                 // )
+  //                                                 //     : InputBorder.none,
+  //                                                 border: InputBorder.none,
+  //                                                 contentPadding: EdgeInsets.all(12),
+  //                                                 suffixIcon: IconButton(
+  //                                                   icon: Icon(Icons.calendar_today),
+  //                                                   onPressed: () => _endDate(context),
+  //                                                 ),
+  //                                               ),
+  //                                               readOnly: true,
+  //                                               onTap: () {
+  //                                                 _endDate(context);
+  //                                                 setState(() {
+  //                                                   //startdatederror = false;
+  //                                                 });
+  //                                               },
+  //                                             ),
+  //                                           ),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 SizedBox(
+  //                                     width:
+  //                                     2),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ])
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 SizedBox(
+  //                   height: 10,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           height: 20,
+  //         ),
+  //         Row(
+  //           mainAxisAlignment:
+  //           MainAxisAlignment.end,
+  //           crossAxisAlignment:
+  //           CrossAxisAlignment.end,
+  //           children: [
+  //             GestureDetector(
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //               },
+  //               child: Material(
+  //                 elevation: 3,
+  //                 borderRadius:
+  //                 BorderRadius.all(
+  //                   Radius.circular(5),
+  //                 ),
+  //                 child: Container(
+  //                   height: 30,
+  //                   width: 60,
+  //                   decoration:
+  //                   BoxDecoration(
+  //                     color: Colors.white,
+  //                     borderRadius:
+  //                     BorderRadius.all(
+  //                       Radius.circular(5),
+  //                     ),
+  //                   ),
+  //                   child: Center(
+  //                       child: Text(
+  //                         "Close",
+  //                         style: TextStyle(
+  //                             fontWeight:
+  //                             FontWeight
+  //                                 .w500,
+  //                             color: Color
+  //                                 .fromRGBO(
+  //                                 21,
+  //                                 43,
+  //                                 81,
+  //                                 1)),
+  //                       )),
+  //                 ),
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 10,
+  //             ),
+  //             Material(
+  //               elevation: 3,
+  //               borderRadius:
+  //               BorderRadius.all(
+  //                 Radius.circular(5),
+  //               ),
+  //               child: Container(
+  //                 height: 30,
+  //                 width: 80,
+  //                 decoration: BoxDecoration(
+  //                   color: Color.fromRGBO(
+  //                       21, 43, 81, 1),
+  //                   borderRadius:
+  //                   BorderRadius.all(
+  //                     Radius.circular(5),
+  //                   ),
+  //                 ),
+  //                 child: Center(
+  //                     child: Text(
+  //                       "Move Out",
+  //                       style: TextStyle(
+  //                           fontWeight:
+  //                           FontWeight.bold,
+  //                           color: Colors.white,
+  //                           fontSize: 13),
+  //                     )),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(
+  //           height: 15,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  //
+  // }
+
+  Widget buildMoveout(TenantData tenant) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Move out Tenants",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(21, 43, 81, 1),
+                fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
+          ),
+          SizedBox(height: 13),
+          Text(
+            "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+              color: Color(0xFF8A95A8),
+            ),
+          ),
+          SizedBox(height: 15),
+          Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Property Details',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        color: blueColor),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration:  BoxDecoration(
+                  borderRadius:
+                  BorderRadius
+                      .circular(
+                      5),
+
+                  border: Border.all(
+                      color: blueColor),
+                ),
+                child: Table(
+                  //border: TableBorder.all(color:blueColor),
+                  border: TableBorder(
+                    horizontalInside: BorderSide(
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      width: 1.0,
+                    ),
+
+                  ),
+                  columnWidths: {
+                    0: FlexColumnWidth(2),
+                    1: FlexColumnWidth(3),
+                  },
+                  children: [
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Address/Unit',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,),)),
+                        buildTableCell(Text('${widget.properties.rentalAddress}')),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Lease Type',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                        buildTableCell(Text('${tenant.leaseType}')),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                        buildTableCell(Text('${tenant.createdAt} ${tenant.updatedAt}')),
+                      ],
+                    ),
+
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Tenant Details',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                        color: Color.fromRGBO(21, 43, 81, 1)),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Table(
+                border: TableBorder.all(color: blueColor),
+                columnWidths: {
+                  0: FlexColumnWidth(2),
+                  1: FlexColumnWidth(3),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Tenants',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(Text('${tenant.firstName} ${tenant.lastName}')),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Notice Given Date',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(buildDateField(startdateController)),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      buildTableCell(Text('Move-Out Date',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                      buildTableCell(
+                        Column(
+                          children: [
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Material(
+                                  elevation:2,
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    height:40,
+                                    width:130,
+                                    decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      displayDate,
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                                      ),
+                                    ),
+                                  ),
+                                                        ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ), ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Container(
+                    height:  MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Center(
+                        child: Text(
+                          "Close",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                              color: Color.fromRGBO(21, 43, 81, 1)),
+                        )),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              InkWell(
+                onTap: () async {
+                  // if (selectedValue == null ||
+                  //     subtype.text.isEmpty) {
+                  //   setState(() {
+                  //     iserror = true;
+                  //   });
+                  // } else {
+                  //   setState(() {
+                  //     isLoading = true;
+                  //     iserror = false;
+                  //   });
+                  String? tenantId = tenant.tenantId != null && tenant.tenantId!.isNotEmpty
+                      ? tenant.tenantId!.first
+                      : null;
+                    SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                    String? id = prefs.getString("adminId");
+                    print(moveOutDate);
+                    LeaseMoveoutRepository()
+                        .addMoveoutTenant(
+                      adminId: id!,
+                      tenantId: tenantId,
+                      leaseId: widget.tenants?.leaseId!,
+                      moveoutDate: moveOutDate,
+                      moveoutNoticeGivenDate: startdateController.text,
+                    ).then((value) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      Navigator.pop(context, true);
+                    }).catchError((e) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    });
+                  },
+                  child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Container(
+                    height:  MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width:  MediaQuery.of(context).size.width < 500 ? 100: 130,
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Center(
+                        child: Text(
+                          "Move Out",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,),
+                        )),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15),
+        ],
+      ),
+    );
+  }
+
+
+  Widget buildTableCell(Widget child) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildDateField(TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: 'Select Date',
+        suffixIcon: IconButton(
+          icon: Icon(Icons.calendar_today),
+          onPressed: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101),
+            );
+            if (pickedDate != null) {
+              setState(() {
+                controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+              });
+            }
+          },
+        ),
+      ),
+      readOnly: true,
     );
   }
 
@@ -7736,7 +8597,6 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 ],
               ),
-
             //and this is mutiunit table show this is as it is
             if (!showdetails &&
                 widget.properties.propertyTypeData!.isMultiunit! == true)
@@ -9955,7 +10815,6 @@ class _Summery_pageState extends State<Summery_page>
                           child: Image(
                             image: NetworkImage(
                                 unit.rentalImages != null ? unit.rentalImages!.length >0 ? "$image_url${unit.rentalImages!.first}" : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU' :
-
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
                             fit: BoxFit.cover,
                             height: MediaQuery.of(context).size.width < 500

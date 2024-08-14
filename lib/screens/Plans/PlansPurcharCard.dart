@@ -13,7 +13,7 @@ import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/PreminumPlanForm.dart';
 import 'package:three_zero_two_property/screens/Plans/planform.dart';
 import '../../widgets/appbar.dart';
-import '../../widgets/drawer_tiles.dart';
+
 
 class PlanPurchaseCard extends StatefulWidget {
   bool isappbarShow = true;

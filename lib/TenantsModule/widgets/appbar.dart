@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
+import '../../constant/constant.dart';
 import '../screen/change_password.dart';
 
 class widget_302  {
@@ -133,6 +134,9 @@ class widget_302  {
                         PopupMenuItem(
                           child: Text(
                             "WELCOME",
+                            style: TextStyle(
+                                color: blueColor
+                            ),
                           ),
                         ),
                      /*   PopupMenuItem(
@@ -161,12 +165,14 @@ class widget_302  {
                               FaIcon(
                                 FontAwesomeIcons.cog,
                                 size: 20,
-                                color: Colors.black,
+                                color: blueColor,
                               ),
                               SizedBox(
                                 width: 10,
                               ),
-                              Text("Change Password"),
+                              Text("Change Password", style: TextStyle(
+                                  color: blueColor
+                              ),),
                             ],
                           ),
                           onTap: () {
@@ -177,7 +183,7 @@ class widget_302  {
                         PopupMenuItem(
                           child: Row(
                             children: [
-                              Icon(Icons.directions_run_rounded),
+                              Icon(Icons.directions_run_rounded,color: blueColor,),
                               //  FaIcon(
                               //    FontAwesomeIcons,
                               //    size: 20,
@@ -186,7 +192,9 @@ class widget_302  {
                               SizedBox(
                                 width: 10,
                               ),
-                              Text("Logout"),
+                              Text("Logout", style: TextStyle(
+                                  color: blueColor
+                              ),),
                             ],
                           ),
                           onTap: () async {

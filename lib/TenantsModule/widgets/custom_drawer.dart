@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
@@ -52,89 +53,95 @@ class _CustomDrawerState extends State<CustomDrawer> {
 */
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
-    return Drawer(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Image.asset("assets/images/logo.png"),
-            ),
-            const SizedBox(height: 40),
-            buildListTile(
-              context,
-              SvgPicture.asset(
-                "assets/images/tenants/dashboard.svg",
-                fit: BoxFit.cover,
-                height: 20,
-                width: 20,
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topRight: Radius.circular(80),
+        bottomRight: Radius.circular(80),
+      ),
+      child: Drawer(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 80),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset("assets/images/logo.png"),
               ),
-              "Dashboard",
-              widget.currentpage == "Dashboard",
-            ),
-            buildListTile(
-              context,
-              SvgPicture.asset(
-                "assets/images/tenants/Admin.svg",
-                fit: BoxFit.cover,
-                height: 20,
-                width: 20,
-              ),
-              "Profile",
-              widget.currentpage == "Profile",
-            ),
-            if (permissions!.propertyView)
+              const SizedBox(height: 40),
               buildListTile(
                 context,
                 SvgPicture.asset(
-                  "assets/images/tenants/Property.svg",
+                  "assets/images/tenants/dashboard.svg",
                   fit: BoxFit.cover,
                   height: 20,
                   width: 20,
                 ),
-                "Properties",
-                widget.currentpage == "Properties",
+                "Dashboard",
+                widget.currentpage == "Dashboard",
               ),
-            if (permissions!.financialView)
               buildListTile(
                 context,
                 SvgPicture.asset(
-                  "assets/images/tenants/Financial.svg",
+                  "assets/images/tenants/Admin.svg",
                   fit: BoxFit.cover,
                   height: 20,
                   width: 20,
                 ),
-                "Financial",
-                widget.currentpage == "Financial",
+                "Profile",
+                widget.currentpage == "Profile",
               ),
-            if (permissions!.workorderView)
-              buildListTile(
-                context,
-                SvgPicture.asset(
-                  "assets/images/tenants/Work.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
+              if (permissions!.propertyView)
+                buildListTile(
+                  context,
+                  SvgPicture.asset(
+                    "assets/images/tenants/Property.svg",
+                    fit: BoxFit.cover,
+                    height: 20,
+                    width: 20,
+                  ),
+                  "Properties",
+                  widget.currentpage == "Properties",
                 ),
-                "Work Order",
-                widget.currentpage == "Work Order",
-              ),
-            if (permissions!.documentsView)
-              buildListTile(
-                context,
-                SvgPicture.asset(
-                  "assets/images/tenants/tenantdoc1.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
+              if (permissions!.financialView)
+                buildListTile(
+                  context,
+                  SvgPicture.asset(
+                    "assets/images/tenants/Financial.svg",
+                    fit: BoxFit.cover,
+                    height: 20,
+                    width: 20,
+                  ),
+                  "Financial",
+                  widget.currentpage == "Financial",
                 ),
-                "Documents",
-                widget.currentpage == "Documents",
-              ),
-          ],
+              if (permissions!.workorderView)
+                buildListTile(
+                  context,
+                  SvgPicture.asset(
+                    "assets/images/tenants/Work.svg",
+                    fit: BoxFit.cover,
+                    height: 20,
+                    width: 20,
+                  ),
+                  "Work Order",
+                  widget.currentpage == "Work Order",
+                ),
+              if (permissions!.documentsView)
+                buildListTile(
+                  context,
+                  SvgPicture.asset(
+                    "assets/images/tenants/tenantdoc1.svg",
+                    fit: BoxFit.cover,
+                    height: 20,
+                    width: 20,
+                  ),
+                  "Documents",
+                  widget.currentpage == "Documents",
+                ),
+            ],
+          ),
         ),
       ),
     );
