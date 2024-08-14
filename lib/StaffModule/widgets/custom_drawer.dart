@@ -77,7 +77,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
                 "Properties",
               widget.currentpage == "Properties",),
-            if(permissions!.leaseView!)
+           /* if(permissions!.leaseView!)
             buildListTile(
                 context,
                  Icon(
@@ -103,7 +103,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   color: widget.currentpage == "Work Order" ?Colors.white:Colors.black,
                 ),
                 "Work Order",
-              widget.currentpage == "Work Order",),
+              widget.currentpage == "Work Order",),*/
 
           ],
         ),

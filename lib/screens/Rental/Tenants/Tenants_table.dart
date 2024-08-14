@@ -1181,7 +1181,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
-                                                    '${formatDate(tenants.createdAt!) ?? ''}',
+                                                    '${tenants.createdAt! ?? ''}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

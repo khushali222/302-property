@@ -10543,7 +10543,7 @@ class _Summery_pageState extends State<Summery_page>
                                   color: Color(0xFF8A95A8),
                                 ),
                                 contentPadding: EdgeInsets.only(
-                                    left: 5, bottom: 13, top: 14)),
+                                    left: 5, bottom: 10, top: 14)),
                           ),
                         ),
                       ],
