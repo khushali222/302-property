@@ -1182,7 +1182,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                           hintText: "Search here...",
                                           hintStyle: TextStyle(
                                               color: Color(0xFF8A95A8)),
-                                          // contentPadding: EdgeInsets.all(10),
+                                           contentPadding: EdgeInsets.all(10),
                                         ),
                                       ),
                                     ),
@@ -1718,7 +1718,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                 border: InputBorder.none,
                                 hintText: "Search here...",
                                 hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                                // contentPadding: EdgeInsets.all(10),
+                                 contentPadding: EdgeInsets.all(10),
                               ),
                             ),
                           ),

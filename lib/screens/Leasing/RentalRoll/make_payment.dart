@@ -1380,7 +1380,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           : SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
                                               child: DataTable(
-                                                dataRowHeight: 65,
+                                                dataRowHeight: 75,
                                                 horizontalMargin: 0.0,
                                                 // columnSpacing: 40.0,
                                                 columns: const [

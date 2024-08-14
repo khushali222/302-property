@@ -94,6 +94,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -146,6 +147,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
+              flex: 1,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -169,7 +171,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("    Status",
+                    const Text("Status",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending2
@@ -218,10 +220,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("   Billable ",
+                    const Text("     Billable ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    ascending3
+                    /*ascending3
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -237,7 +239,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                               size: 20,
                               color: Colors.white,
                             ),
-                          ),
+                          ),*/
                   ],
                 ),
               ),
@@ -1111,6 +1113,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex:3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       Navigator.push(
@@ -1140,8 +1143,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .099),
+                                                            .05),
                                                 Expanded(
+                                                  flex:2,
                                                   child: Text(
                                                     '${workOrder.workOrderData?.status}',
                                                     style: TextStyle(
@@ -1157,7 +1161,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .05),
                                                 Expanded(
                                                   child: Row(
                                                     mainAxisAlignment:

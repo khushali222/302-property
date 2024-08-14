@@ -86,7 +86,7 @@ import 'TenantsModule/repository/permission_provider.dart';
 void main() {
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       tools: [
         ...DevicePreview.defaultTools,
       ],
