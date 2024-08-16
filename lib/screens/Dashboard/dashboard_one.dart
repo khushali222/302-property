@@ -391,7 +391,7 @@ class _DashboardState extends State<Dashboard> {
                                 MediaQuery.of(context).size.width *
                                     0.02,
                                 childAspectRatio:
-                                .85, // Adjust as needed for your design
+                                .8, // Adjust as needed for your design
                               ),
                               itemBuilder: (context, index) {
                                 return Material(
@@ -461,7 +461,7 @@ class _DashboardState extends State<Dashboard> {
                                                 color: Colors.white,
                                                 fontWeight:
                                                 FontWeight.bold,
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               ),
                                             ),
                                           ],

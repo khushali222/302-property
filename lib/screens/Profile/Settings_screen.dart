@@ -27,11 +27,16 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController flat = TextEditingController();
   TextEditingController late_fee = TextEditingController();
   TextEditingController duration = TextEditingController();
+  TextEditingController email_duration = TextEditingController();
+  bool rentDueReminderEmail = false;
+
   String surge_id = "";
   String latefee_id = "";
   bool isupdate = false;
   bool islatefeeupdate = false;
   bool issurge = true;
+  bool ismail = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -91,10 +96,12 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Future<void> updateSurcharge() async {
     print("calling");
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
-        "admin_id": "1714649182536",
+        "admin_id": id,
         "surcharge_percent":
             credit.text.isNotEmpty ? int.parse(credit.text) : null,
         "surcharge_percent_debit":
@@ -125,11 +132,14 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> AddSurgedata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     print("calling");
 
     try {
       Map<String, dynamic> data = {
-        "admin_id": "1714649182536",
+        "admin_id": id,
         "surcharge_percent":
             credit.text.isNotEmpty ? int.parse(credit.text) : null,
         "surcharge_percent_debit":
@@ -161,10 +171,12 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Future<void> updateLatefee() async {
     print("calling");
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
-        "admin_id": "1714649182536",
+        "admin_id": id,
         "duration":
             duration.text.isNotEmpty ? double.parse(duration.text) : null,
         "late_fee":
@@ -187,13 +199,44 @@ class _TabBarExampleState extends State<TabBarExample> {
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
-
-  Future<void> AddLatefeedata() async {
+  Future<void> updatemailreminder() async {
     print("calling");
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
-        "admin_id": "1714649182536",
+        "admin_id": id,
+        "remindermail":rentDueReminderEmail,
+        "duration":
+        rentDueReminderEmail ? double.parse(email_duration.text) : 0,
+      };
+
+      bool success =
+      await latefeerepository.updateLatefeesData('$latefee_id', data);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Latefee Updated Successfully')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
+      }
+    } catch (e) {
+      print('Failed to update surcharge data: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+  Future<void> AddLatefeedata() async {
+
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    try {
+      Map<String, dynamic> data = {
+        "admin_id": id,
         "duration": duration.text.isNotEmpty ? int.parse(duration.text) : null,
         "late_fee": late_fee.text.isNotEmpty ? int.parse(late_fee.text) : null,
       };
@@ -218,7 +261,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Number of tabs
+      length: 3, // Number of tabs
       child: Scaffold(
         appBar: widget_302.App_Bar(context: context, isSettingPageActive: true),
         backgroundColor: Colors.white,
@@ -289,6 +332,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 onTap: () {
                                   setState(() {
                                     issurge = true;
+                                    ismail = false;
                                   });
                                 },
                                 child: Container(
@@ -326,13 +370,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 onTap: () {
                                   setState(() {
                                     issurge = false;
+                                    ismail = false;
                                   });
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                         color: Color.fromRGBO(21, 43, 81, 1)),
-                                    color: issurge
+                                    color: issurge || ismail
                                         ? Colors.white
                                         : Color.fromRGBO(21, 43, 81, 1),
                                   ),
@@ -340,7 +385,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     child: Text(
                                       "Late Fee",
                                       style: TextStyle(
-                                          color: !issurge
+                                          color: !issurge && !ismail
                                               ? Colors.white
                                               : Color.fromRGBO(21, 43, 81, 1),
                                           fontSize: MediaQuery.of(context)
@@ -354,6 +399,40 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ),
                               ),
                             ),
+                          /*  Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    issurge = false;
+                                    ismail = true;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Color.fromRGBO(21, 43, 81, 1)),
+                                    color:  !ismail
+                                        ? Colors.white
+                                        : Color.fromRGBO(21, 43, 81, 1),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Mail Service",
+                                      style: TextStyle(
+                                          color: !issurge&& ismail
+                                              ? Colors.white
+                                              : Color.fromRGBO(21, 43, 81, 1),
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 14
+                                              : 20),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -1149,7 +1228,234 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ),
                           ],
                         ),
-                      if (!issurge)
+                      if (!issurge && ismail)
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Mail Service",
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _buildRentDueReminderSwitch(),
+                          /*  SizedBox(
+                              height: 10,
+                            ),*/
+
+
+                            if (rentDueReminderEmail)
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "You can set a duration for send reminder email before rent due date to tenant",
+                                          style: TextStyle(
+                                              fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                  500
+                                                  ? 15
+                                                  : 20,
+                                              color: Color(0xFF8A95A8),
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "Duration",
+                                        style: TextStyle(
+                                            fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                .035,
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 5),
+                                      Expanded(
+                                        child: Material(
+                                          elevation: 4,
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: Container(
+                                            height: 50,
+                                            width:
+                                            MediaQuery.of(context).size.width *
+                                                .6,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                Positioned.fill(
+                                                  child: TextFormField(
+                                                    controller: email_duration,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        //  passworderror = false;
+                                                      });
+                                                    },
+                                                    //  controller: password,
+                                                    cursorColor: Color.fromRGBO(
+                                                        21, 43, 81, 1),
+                                                    decoration: InputDecoration(
+                                                      // hintText: "Enter password",
+                                                      hintStyle: TextStyle(
+                                                        fontSize:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                            .037,
+                                                        color: Color(0xFF8A95A8),
+                                                      ),
+
+                                                      border: InputBorder.none,
+                                                      contentPadding:
+                                                      EdgeInsets.all(13),
+
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 90),
+                                    ],
+                                  ),
+                                ],
+                              ),
+
+
+
+
+
+                            SizedBox(height: 20),
+                            Row(
+                              children: [
+                                if (MediaQuery.of(context).size.width < 500)
+                                  SizedBox(width: 5),
+                                if (MediaQuery.of(context).size.width > 500)
+                                  SizedBox(width: 2),
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (islatefeeupdate)
+                                      await updateLatefee();
+                                    else
+                                      await AddLatefeedata();
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    child: Container(
+                                      height:
+                                      MediaQuery.of(context).size.width <
+                                          500
+                                          ? 45
+                                          : 50,
+                                      width: MediaQuery.of(context).size.width <
+                                          500
+                                          ? 100
+                                          : 150,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(5.0),
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            offset: Offset(0.0, 1.0), //(x,y)
+                                            blurRadius: 6.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Update",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 16
+                                                  : 20),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                      height:
+                                      MediaQuery.of(context).size.width <
+                                          500
+                                          ? 45
+                                          : 50,
+                                      width: MediaQuery.of(context).size.width <
+                                          500
+                                          ? 100
+                                          : 120,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                          child: Text(
+                                            "Cancel",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width <
+                                                    500
+                                                    ? 16
+                                                    : 20),
+                                          ))),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      if (!issurge && !ismail)
                         Column(
                           children: [
                             SizedBox(
@@ -1678,4 +1984,35 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
     );
   }
+  Widget _buildRentDueReminderSwitch() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        children: [
+          Switch(
+            value: rentDueReminderEmail,
+            onChanged: (value) {
+              setState(() {
+                rentDueReminderEmail = value;
+              });
+            },
+            activeColor: blueColor, // Color when switch is on
+            inactiveThumbColor: Colors.grey, // Color when switch is off
+          ),
+          Spacer(),
+          Text(
+            'Rent Due Reminder Email',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: blueColor,
+            ),
+          ),
+
+
+        ],
+      ),
+    );
+  }
+
 }

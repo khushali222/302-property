@@ -9601,7 +9601,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             .toList();*/
                         RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
 
-                        String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist!;
+                        String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
                         List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
                           return {
                             'processor_id': processor.processorId ?? "",
