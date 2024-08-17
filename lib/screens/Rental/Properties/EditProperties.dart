@@ -791,7 +791,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
     final countyController = TextEditingController(text: ownerDetails?.country);
     final codeController = TextEditingController(text: ownerDetails?.postalCode);
     return Scaffold(
-
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: Drawer(
@@ -8290,17 +8289,19 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                               );
                                             },
                                             child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Icon(
                                                   Icons.add,
                                                   size: 16,
                                                 ),
-                                                SizedBox(width: 4),
+                                                SizedBox(width: 2),
                                                 Text(
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                                      MediaQuery.of(context).size.width < 500 ? 11 : 18),
                                                 ),
                                               ],
                                             ),

@@ -12367,15 +12367,31 @@ class _LeasesTableState extends State<LeasesTable> {
     //}
   }
 
+  // String getStatus(String startDate, String endDate) {
+  //   final now = DateTime.now();
+  //   final start = DateTime.parse(startDate);
+  //   final end = DateTime.parse(endDate);
+  //   return (now.isAfter(start) && now.isBefore(end)) ? 'Active' : 'Inactive';
+  // }
+
   String getStatus(String startDate, String endDate) {
     final now = DateTime.now();
-    final start = DateTime.parse(startDate);
-    final end = DateTime.parse(endDate);
+
+    // Custom parsing for the MM/dd/yyyy format
+    DateTime parseDate(String date) {
+      final parts = date.split('/');
+      final month = int.parse(parts[0]);
+      final day = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      return DateTime(year, month, day);
+    }
+
+    final start = parseDate(startDate);
+    final end = parseDate(endDate);
+
     return (now.isAfter(start) && now.isBefore(end)) ? 'Active' : 'Inactive';
   }
-
   //for table
-
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(unit_lease d)? getField) {
     return TableCell(

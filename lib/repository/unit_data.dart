@@ -37,8 +37,9 @@ class UnitData {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('${baseUrl}leases/unit_leases/$unitId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
-
+    final response = await http.get(Uri.parse('${baseUrl}leases/unit_leases/$unitId'),
+      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body)["data"];
       List<unit_lease> leases = body.map((dynamic item) => unit_lease.fromJson(item)).toList();

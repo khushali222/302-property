@@ -1167,39 +1167,33 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 ],
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Updated At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${rentals.updatedAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
+
+                                                            // Text.rich(
+                                                            //   TextSpan(
+                                                            //     children: [
+                                                            //       TextSpan(
+                                                            //         text:
+                                                            //             'Updated At : ',
+                                                            //         style: TextStyle(
+                                                            //             fontWeight:
+                                                            //                 FontWeight
+                                                            //                     .bold,
+                                                            //             color:
+                                                            //                 blueColor), // Bold and black
+                                                            //       ),
+                                                            //       TextSpan(
+                                                            //         text: formatDate(
+                                                            //             '${rentals.updatedAt}'),
+                                                            //         style: TextStyle(
+                                                            //             fontWeight:
+                                                            //                 FontWeight
+                                                            //                     .w700,
+                                                            //             color: Colors
+                                                            //                 .grey), // Light and grey
+                                                            //       ),
+                                                            //     ],
+                                                            //   ),
+                                                            // ),
                                                           ],
                                                         ),
                                                       ),
@@ -1210,6 +1204,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: <Widget>[
+
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
