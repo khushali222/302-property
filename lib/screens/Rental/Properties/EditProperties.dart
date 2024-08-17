@@ -497,7 +497,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
     print(imageFile.path!);
     // API URL
     //   final String uploadUrl = 'http://192.168.1.17:4000/api/images/upload';
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     if (imageFile != null) {
@@ -9157,7 +9157,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           );
                           RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
 
-                          String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist!;
+                          String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
+
                           List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
                             return {
                               'processor_id': processor.processorId ?? "",

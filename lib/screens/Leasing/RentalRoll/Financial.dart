@@ -1724,9 +1724,7 @@ class _FinancialTableState extends State<FinancialTable> {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-              height: 40,
-              child: Center(child: Text(content))),
+          child: Container(height: 40, child: Center(child: Text(content,style:  TextStyle(fontSize: 18, color: Colors.black),))),
         ),
       ),
     );
@@ -2968,7 +2966,292 @@ class _FinancialTableState extends State<FinancialTable> {
                   }
                 },
               ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<LeaseLedger?>(
+                future: _leaseLedgerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ColabShimmerLoadingWidget();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.data!.isEmpty) {
+                    return const Center(child: Text('No data available'));
+                  } else {
+                    _tableData = snapshot.data!.data!;
+                    totalrecords = _tableData.length;
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 5),
+                        child: Column(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Table(
+                                defaultColumnWidth:
+                                    const IntrinsicColumnWidth(),
+                                //border: TableBorder.all(),
+                                children: [
+                                  // Header Row
+                                  TableRow(
+                                    decoration:
+                                        BoxDecoration(border: Border.all()),
+                                    children: List.generate(7, (index) {
+                                      switch (index) {
+                                        case 0:
+                                          return _buildHeader(
+                                              'Type',
+                                              0,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 1:
+                                          return _buildHeader(
+                                              'Tenant',
+                                              1,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 2:
+                                          return _buildHeader(
+                                              'Transaction', 2, null);
+                                        case 3:
+                                          return _buildHeader(
+                                              'Increase', 3, null);
+                                        case 4:
+                                          return _buildHeader(
+                                              'Decrease', 4, null);
+                                        case 5:
+                                          return _buildHeader(
+                                              'Balance', 5, null);
+                                        case 6:
+                                          return _buildHeader('Date', 6, null);
+                                        default:
+                                          return Container();
+                                      }
+                                    }),
+                                  ),
+                                  // Empty Row for spacing
+                                  TableRow(
+                                    decoration: const BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide.none)),
+                                    children: List.generate(
+                                        7,
+                                        (index) => TableCell(
+                                            child: Container(height: 20))),
+                                  ),
+                                  // Data Rows
+                                  for (var i = 0;
+                                      i < _pagedData.length;
+                                      i++) ...[
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          right: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          top: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          bottom: i == _pagedData.length - 1
+                                              ? const BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1))
+                                              : BorderSide.none,
+                                        ),
+                                      ),
+                                      children: List.generate(7, (index) {
+                                        switch (index) {
+                                          case 0:
+                                            return _buildInteractiveCells(
+                                                _pagedData[i]!.type.toString(),
+                                                () => _toggleExpansion(i));
+                                          case 1:
+                                            return _buildInteractiveCells(
+                                              '${_pagedData[i]!.tenantData["tenant_firstName"]} ${_pagedData[i]!.tenantData["tenant_lastName"]}',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 2:
+                                            return _buildInteractiveCells(
+                                              'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 3:
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type ==
+                                                          "Refund" ||
+                                                      _pagedData[i]!.type ==
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 4:
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type !=
+                                                          "Refund" &&
+                                                      _pagedData[i]!.type !=
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 5:
+                                            return _buildInteractiveCells(
+                                              _pagedData[i]!
+                                                  .balance!
+                                                  .abs()
+                                                  .toStringAsFixed(2),
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 6:
+                                            return _buildInteractiveCells(
+                                              formatDate3(_pagedData[i]!
+                                                  .createdAt
+                                                  .toString()),
+                                              () => _toggleExpansion(i),
+                                            );
+                                          default:
+                                            return Container();
+                                        }
+                                      }),
+                                    ),
+                                    // Expanded Row (if any)
+                                    if (_expandedIndex != null &&
+                                        _expandedIndex == i)
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide(
+                                              color:
+                                                  Color.fromRGBO(21, 43, 81, 1),
+                                              width: 1.0,
+                                            ),
+                                            bottom: (i == _pagedData.length - 1)
+                                                ? BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1),
+                                                    width: 1.0,
+                                                  )
+                                                : BorderSide.none,
+                                          ),
+                                        ),
+                                        children: List.generate(7, (index) {
+                                          if (index == 1) {
+                                            return TableCell(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                             crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text('Account',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize: 16,
+                                                                        color:
+                                                                            blueColor)),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
 
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Text('${entry.account ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey,fontSize: 16)),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: const EdgeInsets.only(left: 30),
+                                                                  child: Text('Amount',
+                                                                      style: TextStyle(
+                                                                        fontSize: 16,
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color:
+                                                                              blueColor)),
+                                                                ),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.only(left: 5),
+                                                                                    child: Center(
+                                                                                      child: Text('${entry.amount ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey,fontSize: 15,)),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return TableCell(
+                                                child:
+                                                    Container()); // Empty cells for alignment
+                                          }
+                                        }),
+                                      ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
             SizedBox(
               height: 20,
             ),

@@ -229,7 +229,8 @@ class _enterChargeState extends State<enterCharge> {
 
   Future<String?> uploadPdf(File pdfFile) async {
     print(pdfFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    //final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
@@ -1214,7 +1215,7 @@ class _enterChargeState extends State<enterCharge> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Upload Files (Maximum of 10)',
+                          const Text('Upload Files',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -1239,21 +1240,51 @@ class _enterChargeState extends State<enterCharge> {
                               child: const Text('Upload'),
                             ),
                           ),
-                          const SizedBox(height: 20),
+
                           const SizedBox(height: 10),
-                          Flexible(
-                            fit: FlexFit.loose,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: _uploadedFileNames.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(_uploadedFileNames[index],
+                          // Flexible(
+                          //   fit: FlexFit.loose,
+                          //   child: ListView.builder(
+                          //     shrinkWrap: true,
+                          //     itemCount: _uploadedFileNames.length,
+                          //     itemBuilder: (context, index) {
+                          //       return ListTile(
+                          //         title: Text(_uploadedFileNames[index],
+                          //             style: const TextStyle(
+                          //                 fontSize: 16,
+                          //                 fontWeight: FontWeight.w500,
+                          //                 color: Color(0xFF748097))),
+                          //         trailing: IconButton(
+                          //             onPressed: () {
+                          //               setState(() {
+                          //                 _uploadedFileNames.removeAt(index);
+                          //               });
+                          //             },
+                          //             icon: const FaIcon(
+                          //               FontAwesomeIcons.remove,
+                          //               color: Color(0xFF748097),
+                          //             )),
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
+                          if (_uploadedFileNames.isNotEmpty) ...[
+                            const SizedBox(height: 10),
+                            Flexible(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _uploadedFileNames.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(
+                                      _uploadedFileNames[index],
                                       style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF748097))),
-                                  trailing: IconButton(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF748097),
+                                      ),
+                                    ),
+                                    trailing: IconButton(
                                       onPressed: () {
                                         setState(() {
                                           _uploadedFileNames.removeAt(index);
@@ -1262,12 +1293,14 @@ class _enterChargeState extends State<enterCharge> {
                                       icon: const FaIcon(
                                         FontAwesomeIcons.remove,
                                         color: Color(0xFF748097),
-                                      )),
-                                );
-                              },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 5),
+                          ],
+
                         ],
                       ),
                     ),
@@ -1325,6 +1358,7 @@ class _enterChargeState extends State<enterCharge> {
                                     uploadedFile: _uploadedFileNames,
                                     entry: entryList,
                                   );
+                               print('file ${_uploadedFileNames}');
 
                                   LeaseRepository apiService =
                                       LeaseRepository();

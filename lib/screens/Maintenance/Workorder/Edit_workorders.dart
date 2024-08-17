@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -683,6 +685,60 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   }
   //for tenants
 
+  File? _image;
+  List<File> _images = [];
+  String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+          uploadUrl,
+        ));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+        _images.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        _uploadedFileNames.add(fileName!);
+        _uploadedFileName = fileName;
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -835,7 +891,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
-                                onPressed: () async {},
+                                onPressed: () async {
+                                  _pickImage().then((_) {
+                                    setState(
+                                            () {}); // Rebuild the widget after selecting the image
+                                  });
+                                },
                                 child: isLoading
                                     ? Center(
                                         child: SpinKitFadingCircle(
@@ -849,6 +910,77 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             TextStyle(color: Color(0xFFf7f8f9)),
                                       ),
                               ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            _images.isNotEmpty
+                                ? Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    //color: Colors.blue,
+                                    child: Wrap(
+
+
+                                      spacing: 8.0, // Horizontal spacing between items
+                                      runSpacing: 8.0, // Vertical spacing between rows
+                                      children: List.generate(
+                                        _images.length,
+                                            (index) {
+                                          return Container(
+                                            // color: Colors.green,
+                                            width: 85,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 60,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _images.removeAt(index);
+                                                        });
+                                                      },
+                                                      child: Icon(
+                                                        Icons.close,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      // color:Colors.blue,
+                                                      child: Image.file(
+                                                        _images[index],
+                                                        height: 80,
+                                                        width: 80,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                                : Center(
+                              child: Text("No images selected."),
                             ),
                             SizedBox(
                               height: 10,
@@ -2768,6 +2900,59 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     }
   }
   //for tenants
+  File? _image;
+  List<File> _images = [];
+  String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+          uploadUrl,
+        ));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+        _images.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        _uploadedFileNames.add(fileName!);
+        _uploadedFileName = fileName;
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2904,43 +3089,117 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    /*  Text('Photo ',
+                                      Text('Photo ',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
                                     SizedBox(
                                       height: 10,
-                                    ),*/
-                                    // Container(
-                                    //   height: 50,
-                                    //   width: 150,
-                                    //   decoration: BoxDecoration(
-                                    //     borderRadius: BorderRadius.circular(8.0),
-                                    //   ),
-                                    //   child: ElevatedButton(
-                                    //     style: ElevatedButton.styleFrom(
-                                    //       backgroundColor: Color.fromRGBO(21, 43, 83, 1),
-                                    //       shape: RoundedRectangleBorder(
-                                    //         borderRadius: BorderRadius.circular(8.0),
-                                    //       ),
-                                    //     ),
-                                    //     onPressed: () async {
-                                    //
-                                    //     },
-                                    //     child: isLoading
-                                    //         ? Center(
-                                    //       child: SpinKitFadingCircle(
-                                    //         color: Colors.white,
-                                    //         size: 55.0,
-                                    //       ),
-                                    //     )
-                                    //         : Text(
-                                    //       'Upload here',
-                                    //       style: TextStyle(color: Color(0xFFf7f8f9)),
-                                    //     ),
-                                    //   ),
-                                    // ),
+                                    ),
+                                    Container(
+                                      height: 50,
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          _pickImage().then((_) {
+                                            setState(
+                                                    () {}); // Rebuild the widget after selecting the image
+                                          });
+                                        },
+                                        child: isLoading
+                                            ? Center(
+                                          child: SpinKitFadingCircle(
+                                            color: Colors.white,
+                                            size: 55.0,
+                                          ),
+                                        )
+                                            : Text(
+                                          'Upload here',
+                                          style: TextStyle(color: Color(0xFFf7f8f9)),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    _images.isNotEmpty
+                                        ? Row(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            //color: Colors.blue,
+                                            child: Wrap(
+
+
+                                              spacing: 8.0, // Horizontal spacing between items
+                                              runSpacing: 8.0, // Vertical spacing between rows
+                                              children: List.generate(
+                                                _images.length,
+                                                    (index) {
+                                                  return Container(
+                                                    // color: Colors.green,
+                                                    width: 85,
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 60,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _images.removeAt(index);
+                                                                });
+                                                              },
+                                                              child: Icon(
+                                                                Icons.close,
+                                                                color: Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Container(
+                                                              // color:Colors.blue,
+                                                              child: Image.file(
+                                                                _images[index],
+                                                                height: 80,
+                                                                width: 80,
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                        : Center(
+                                      child: Text("No images selected."),
+                                    ),
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -3255,7 +3514,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     SizedBox(
                                       height: 2,
                                     ),
-
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -3874,7 +4132,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                         ),
                                       ],
                                     ),
-
                                     SizedBox(
                                       height: 10,
                                     ),

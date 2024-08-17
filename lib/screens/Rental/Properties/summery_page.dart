@@ -8048,28 +8048,69 @@ class _Summery_pageState extends State<Summery_page>
                                           height: 10,
                                         ),
                                         _images.isNotEmpty
-                                            ? Wrap(
-                                          spacing: 8.0, // Horizontal spacing between items
-                                          runSpacing: 8.0, // Vertical spacing between rows
-                                          children: List.generate(
-                                            _images.length,
-                                                (index) {
-                                              return SizedBox(
-                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
-                                                child: Row(
-                                                  children: [
-                                                    Image.file(
-                                                      _images[index],
-                                                      height: 80,
-                                                      width: 80,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                            ? Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                //color: Colors.blue,
+                                                child: Wrap(
 
-                                                  ],
+
+                                                  spacing: 8.0, // Horizontal spacing between items
+                                                  runSpacing: 8.0, // Vertical spacing between rows
+                                                  children: List.generate(
+                                                    _images.length,
+                                                        (index) {
+                                                      return Container(
+                                                        // color: Colors.green,
+                                                        width: 85,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 60,
+                                                                ),
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(() {
+                                                                      _images.removeAt(index);
+                                                                    });
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.close,
+                                                                    color: Colors.grey,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Container(
+                                                                  // color:Colors.blue,
+                                                                  child: Image.file(
+                                                                    _images[index],
+                                                                    height: 80,
+                                                                    width: 80,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                ),
+
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                          ),
+                                              ),
+                                            ),
+                                          ],
                                         )
                                             : Center(
                                           child: Text("No images selected."),
@@ -8465,29 +8506,70 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                         SizedBox(height: 8.0),
                                         _images.isNotEmpty
-                                            ? Wrap(
-                                          spacing: 8.0, // Horizontal spacing between items
-                                          runSpacing: 8.0, // Vertical spacing between rows
-                                          children: List.generate(
-                                            _images.length,
-                                                (index) {
-                                              return SizedBox(
-                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
-                                                child: Row(
-                                                  children: [
-                                                    Image.file(
-                                                      _images[index],
-                                                      height: 80,
-                                                      width: 80,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                            ? Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                                                            //color: Colors.blue,
+                                                    child: Wrap(
 
-                                                  ],
+                                                  
+                                                                                              spacing: 8.0, // Horizontal spacing between items
+                                                                                              runSpacing: 8.0, // Vertical spacing between rows
+                                                                                              children: List.generate(
+                                                    _images.length,
+                                                        (index) {
+                                                      return Container(
+                                                        // color: Colors.green,
+                                                        width: 85,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 60,
+                                                                ),
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(() {
+                                                                      _images.removeAt(index);
+                                                                    });
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.close,
+                                                                    color: Colors.grey,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Container(
+                                                                 // color:Colors.blue,
+                                                                  child: Image.file(
+                                                                    _images[index],
+                                                                    height: 80,
+                                                                    width: 80,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                ),
+                                                  
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                                                              ),
+                                                                                            ),
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                          ),
-                                        )
+                                              ],
+                                            )
                                             : Center(
                                           child: Text("No images selected."),
                                         ),

@@ -558,7 +558,7 @@ class _StaffTableState extends State<StaffTable> {
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 40
                           : MediaQuery.of(context).size.width * 0.062,
-                      width:  (MediaQuery.of(context).size.width < 500)
+                      width: (MediaQuery.of(context).size.width < 500)
                           ? MediaQuery.of(context).size.width * 0.35
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
@@ -879,195 +879,330 @@ class _StaffTableState extends State<StaffTable> {
                                             ),
                                           ),
                                         ),
+                                        // if (isExpanded)
+                                        //   Container(
+                                        //     padding: EdgeInsets.symmetric(
+                                        //         horizontal: 8.0),
+                                        //     margin: EdgeInsets.only(bottom: 20),
+                                        //     child: SingleChildScrollView(
+                                        //       child: Column(
+                                        //         children: [
+                                        //           Row(
+                                        //             mainAxisAlignment:
+                                        //                 MainAxisAlignment.start,
+                                        //             children: [
+                                        //               FaIcon(
+                                        //                 isExpanded
+                                        //                     ? FontAwesomeIcons
+                                        //                         .sortUp
+                                        //                     : FontAwesomeIcons
+                                        //                         .sortDown,
+                                        //                 size: 50,
+                                        //                 color:
+                                        //                     Colors.transparent,
+                                        //               ),
+                                        //               Expanded(
+                                        //                 child: Column(
+                                        //                   crossAxisAlignment:
+                                        //                       CrossAxisAlignment
+                                        //                           .start,
+                                        //                   children: <Widget>[
+                                        //                     Text.rich(
+                                        //                       TextSpan(
+                                        //                         children: [
+                                        //                           TextSpan(
+                                        //                             text:
+                                        //                                 'Mail-Id : ',
+                                        //                             style: TextStyle(
+                                        //                                 fontWeight:
+                                        //                                     FontWeight
+                                        //                                         .bold,
+                                        //                                 color:
+                                        //                                     blueColor), // Bold and black
+                                        //                           ),
+                                        //                           TextSpan(
+                                        //                             text:
+                                        //                                 '${staffmembers.staffmemberEmail}',
+                                        //                             style: TextStyle(
+                                        //                                 fontWeight:
+                                        //                                     FontWeight
+                                        //                                         .w700,
+                                        //                                 color: Colors
+                                        //                                     .grey), // Light and grey
+                                        //                           ),
+                                        //                         ],
+                                        //                       ),
+                                        //                     ),
+                                        //                     Text.rich(
+                                        //                       TextSpan(
+                                        //                         children: [
+                                        //                           TextSpan(
+                                        //                             text:
+                                        //                                 'Updated At : ',
+                                        //                             style: TextStyle(
+                                        //                                 fontWeight:
+                                        //                                     FontWeight
+                                        //                                         .bold,
+                                        //                                 color:
+                                        //                                     blueColor), // Bold and black
+                                        //                           ),
+                                        //                           TextSpan(
+                                        //                             text: formatDate(
+                                        //                                 '${staffmembers.updatedAt}'),
+                                        //                             style: TextStyle(
+                                        //                                 fontWeight:
+                                        //                                     FontWeight
+                                        //                                         .w700,
+                                        //                                 color: Colors
+                                        //                                     .grey), // Light and grey
+                                        //                           ),
+                                        //                         ],
+                                        //                       ),
+                                        //                     ),
+                                        //                   ],
+                                        //                 ),
+                                        //               ),
+                                        //               SizedBox(width: 7),
+                                        //               Expanded(
+                                        //                 child: Column(
+                                        //                   crossAxisAlignment:
+                                        //                       CrossAxisAlignment
+                                        //                           .start,
+                                        //                   children: <Widget>[
+                                        //                     Text.rich(
+                                        //                       TextSpan(
+                                        //                         children: [
+                                        //                           TextSpan(
+                                        //                             text:
+                                        //                                 'Created At: ',
+                                        //                             style: TextStyle(
+                                        //                                 fontWeight:
+                                        //                                     FontWeight
+                                        //                                         .bold,
+                                        //                                 color:
+                                        //                                     blueColor), // Bold and black
+                                        //                           ),
+                                        //                           TextSpan(
+                                        //                             text: formatDate(
+                                        //                                 '${staffmembers.createdAt}'),
+                                        //                             style: TextStyle(
+                                        //                                 fontWeight:
+                                        //                                     FontWeight
+                                        //                                         .w700,
+                                        //                                 color: Colors
+                                        //                                     .grey), // Light and grey
+                                        //                           ),
+                                        //                         ],
+                                        //                       ),
+                                        //                     ),
+                                        //                   ],
+                                        //                 ),
+                                        //               ),
+                                        //               Container(
+                                        //                 width: 40,
+                                        //                 child: Column(
+                                        //                   children: [
+                                        //                     IconButton(
+                                        //                       icon: FaIcon(
+                                        //                         FontAwesomeIcons
+                                        //                             .edit,
+                                        //                         size: 20,
+                                        //                         color: Color
+                                        //                             .fromRGBO(
+                                        //                                 21,
+                                        //                                 43,
+                                        //                                 83,
+                                        //                                 1),
+                                        //                       ),
+                                        //                       onPressed:
+                                        //                           () async {
+                                        //                         // handleEdit(Propertytype);
+                                        //
+                                        //                         var check = await Navigator.push(
+                                        //                             context,
+                                        //                             MaterialPageRoute(
+                                        //                                 builder: (context) => Edit_staff_member(
+                                        //                                       staff: staffmembers,
+                                        //                                     )));
+                                        //                         if (check ==
+                                        //                             true) {
+                                        //                           setState(
+                                        //                               () {});
+                                        //                         }
+                                        //                       },
+                                        //                     ),
+                                        //                     IconButton(
+                                        //                       icon: FaIcon(
+                                        //                         FontAwesomeIcons
+                                        //                             .trashCan,
+                                        //                         size: 20,
+                                        //                         color: Color
+                                        //                             .fromRGBO(
+                                        //                                 21,
+                                        //                                 43,
+                                        //                                 83,
+                                        //                                 1),
+                                        //                       ),
+                                        //                       onPressed: () {
+                                        //                         //handleDelete(Propertytype);
+                                        //                         _showDeleteAlert(
+                                        //                             context,
+                                        //                             staffmembers
+                                        //                                 .staffmemberId!);
+                                        //                       },
+                                        //                     ),
+                                        //                   ],
+                                        //                 ),
+                                        //               ),
+                                        //             ],
+                                        //           ),
+                                        //         ],
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        //SizedBox(height: 13,),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
+                                            padding: EdgeInsets.only(left: 2,right: 2),
                                             margin: EdgeInsets.only(bottom: 20),
                                             child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Mail-Id : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${staffmembers.staffmemberEmail}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
+                                              child: Container(
+                                                //color: Colors.blue,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment.start,
+                                                            children: [
+                                                              FaIcon(
+                                                                isExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 50,
+                                                                color:
+                                                                    Colors.transparent,
                                                               ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Updated At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${staffmembers.updatedAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 7),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Created At: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${staffmembers.createdAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
-
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_staff_member(
-                                                                              staff: staffmembers,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
-                                                                      () {});
-                                                                }
-                                                              },
-                                                            ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showDeleteAlert(
-                                                                    context,
-                                                                    staffmembers
-                                                                        .staffmemberId!);
-                                                              },
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ],
+                                              ),
+                                                    Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: 'Mail-Id: ',
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: blueColor, // Bold and blue
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: '${staffmembers.staffmemberEmail}',
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.w700,
+                                                                  color: Colors.grey, // Light and grey
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height:
+                                                                5),
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: 'Created At: ',
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: blueColor, // Bold and blue
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: formatDate('${staffmembers.createdAt}'),
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.w700,
+                                                                  color: Colors.grey, // Light and grey
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height:
+                                                            5),
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: 'Updated At: ',
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: blueColor, // Bold and blue
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: formatDate('${staffmembers.updatedAt}'),
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.w700,
+                                                                  color: Colors.grey, // Light and grey
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Spacer(),
+                                                    Container(
+                                                      width: 40,
+                                                      child: Column(
+                                                        children: [
+                                                          IconButton(
+                                                            icon: FaIcon(
+                                                              FontAwesomeIcons.edit,
+                                                              size: 20,
+                                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                                            ),
+                                                            onPressed: () async {
+                                                              var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => Edit_staff_member(
+                                                                    staff: staffmembers,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                              if (check == true) {
+                                                                setState(() {});
+                                                              }
+                                                            },
+                                                          ),
+                                                          IconButton(
+                                                            icon: FaIcon(
+                                                              FontAwesomeIcons.trashCan,
+                                                              size: 20,
+                                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                                            ),
+                                                            onPressed: () {
+                                                              _showDeleteAlert(context, staffmembers.staffmemberId!);
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        //SizedBox(height: 13,),
                                       ],
                                     ),
                                   );

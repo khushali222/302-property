@@ -397,7 +397,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
     print(imageFile.path!);
     // API URL
     //   final String uploadUrl = 'http://192.168.1.17:4000/api/images/upload';
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     if (imageFile != null) {
@@ -503,7 +503,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   Row(
                     children: [
                       SizedBox(
-                        width: 30,
+                        width: 80,
                       ),
                       GestureDetector(
                         onTap: () {
@@ -522,11 +522,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 5),
+                        padding: const EdgeInsets.only(top: 8,bottom: 8),
                         child: Image.file(
                           propertyGroupImages[index]!,
-                          height: 50,
-                          width: 50,
+                          height: 100,
+                          width: 100,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -9667,7 +9667,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             .toList();*/
                         RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
 
-                        String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist!;
+                        String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
                         List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
                           return {
                             'processor_id': processor.processorId ?? "",

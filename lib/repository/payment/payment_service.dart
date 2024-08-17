@@ -24,6 +24,7 @@ class PaymentService {
     required String leaseid,
     required String company_name,
     required bool future_Date,
+    required List<String>? uploadedFile,
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -65,7 +66,7 @@ class PaymentService {
         if(jsonData["statusCode"] == 100){
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
+          storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
           return "Payment Success";
         }
         else{
@@ -78,7 +79,7 @@ class PaymentService {
     }
     else{
       try{
-        storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: "", responseText: "PENDING",surcharge: surcharge);
+        storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: "", responseText: "PENDING",surcharge: surcharge);
         return "Payment Scheduled Successfully";
       }
       catch(e){
@@ -104,7 +105,7 @@ class PaymentService {
    required List<Map<String,dynamic>> entries,
     required String totalAmount,
     required bool isLeaseAdded,
-    required String uploadedFile,
+    required List<String>? uploadedFile,
     required String transactionId,
     required String responseText,
     required String surcharge,
@@ -166,6 +167,7 @@ class PaymentService {
     required String checkaba,
     required String checkname,
     required bool future_Date,
+    required List<String>? uploadedFile,
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -210,7 +212,7 @@ class PaymentService {
         if(jsonData["statusCode"] == 100){
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
+          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
           return "Payment Success";
         }
         else{
@@ -223,7 +225,7 @@ class PaymentService {
     }
     else{
       try{
-        storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card",  entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: "", responseText: "PENDING",surcharge: surcharge);
+        storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card",  entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: "", responseText: "PENDING",surcharge: surcharge);
         return "Payment Scheduled Successfully";
       }
       catch(e){
@@ -246,7 +248,7 @@ class PaymentService {
     required List<Map<String,dynamic>> entries,
     required String totalAmount,
     required bool isLeaseAdded,
-    required String uploadedFile,
+    required List<String>? uploadedFile,
     required String transactionId,
     required String responseText,
     required String surcharge,
@@ -310,6 +312,7 @@ class PaymentService {
     required bool future_Date,
     required String Check_number,
     required bool Check,
+    required List<String>? uploadedFile,
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -352,7 +355,7 @@ class PaymentService {
         if(jsonData["statusCode"] == 100){
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
+          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
           return "Payment Success";
         }
         else{
