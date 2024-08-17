@@ -535,7 +535,7 @@ class _addLease3State extends State<addLease3>
 
   Future<String?> uploadPdf(File pdfFile) async {
     print(pdfFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));

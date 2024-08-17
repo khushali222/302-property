@@ -324,7 +324,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   Future<String?> uploadPdf(File pdfFile) async {
     print(pdfFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
@@ -2807,11 +2807,11 @@ class _MakePaymentState extends State<MakePayment> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                const Text('Upload Files (Maximum of 10)',
+                                 Text('Upload Files',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                        color: Color(0xFF152b51))),
+                                        color: blueColor)),
                                 const SizedBox(
                                   height: 10,
                                 ),
@@ -2833,102 +2833,130 @@ class _MakePaymentState extends State<MakePayment> {
                                     child: Text('Upload'),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        // border: Border.all(
-                                        //   color: const Color.fromRGBO(21, 43, 83, 1),
-                                        // ),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
-                                    child: Column(
-                                      children: [
-                                        if (_selectedPaymentMethod == "Card" ||
-                                            _selectedPaymentMethod == "ACH")
-                                          buildAmountContainer(
-                                              'Amount',
-                                              amountController.text.isNotEmpty
-                                                  ? double.parse(
-                                                      amountController.text)
-                                                  : 0.0),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        if (_selectedPaymentMethod == "Card")
-                                          buildAmountContainer(
-                                              'Surcharge included',
-                                              amountController.text.isNotEmpty
-                                                  ? double.parse(
-                                                          amountController
-                                                              .text) *
-                                                      (surCharge ?? 0.0) /
-                                                      100
-                                                  : 0.0),
-                                        if (_selectedPaymentMethod == "ACH")
-                                          buildAmountContainer(
-                                              'Surcharge included',
-                                              surchargecount!),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        buildAmountContainer(
-                                            'Total Amount',
-                                            amountController.text.isNotEmpty &&
-                                                    (_selectedPaymentMethod ==
-                                                        "Card")
-                                                ? (double.parse(amountController
-                                                            .text) *
-                                                        (surCharge ?? 0.0) /
-                                                        100) +
-                                                    double.parse(
-                                                        amountController.text)
-                                                : amountController
-                                                            .text.isNotEmpty &&
-                                                        (_selectedPaymentMethod ==
-                                                            "ACH")
-                                                    ? finaltotal!
-                                                    : amountController
-                                                            .text.isNotEmpty
-                                                        ? double.parse(
-                                                            amountController
-                                                                .text)
-                                                        : 0.0),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                const SizedBox(height: 10),
-                                Flexible(
-                                  fit: FlexFit.loose,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _uploadedFileNames.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Text(_uploadedFileNames[index],
+                                 SizedBox(height: 10),
+                                // Flexible(
+                                //   //fit: FlexFit.loose,
+                                //   child: ListView.builder(
+                                //     shrinkWrap: true,
+                                //     itemCount: _uploadedFileNames.length,
+                                //     itemBuilder: (context, index) {
+                                //       return ListTile(
+                                //         title: Text(_uploadedFileNames[index],
+                                //             style: const TextStyle(
+                                //                 fontSize: 16,
+                                //                 fontWeight: FontWeight.w500,
+                                //                 color: Color(0xFF748097))),
+                                //         trailing: IconButton(
+                                //             onPressed: () {
+                                //               setState(() {
+                                //                 _uploadedFileNames
+                                //                     .removeAt(index);
+                                //               });
+                                //             },
+                                //             icon: const FaIcon(
+                                //               FontAwesomeIcons.remove,
+                                //               color: Color(0xFF748097),
+                                //             )),
+                                //       );
+                                //     },
+                                //   ),
+                                // ),
+                                if (_uploadedFileNames.isNotEmpty) ...[
+                                  const SizedBox(height: 10),
+                                  Flexible(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: _uploadedFileNames.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: Text(
+                                            _uploadedFileNames[index],
                                             style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                                color: Color(0xFF748097))),
-                                        trailing: IconButton(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xFF748097),
+                                            ),
+                                          ),
+                                          trailing: IconButton(
                                             onPressed: () {
                                               setState(() {
-                                                _uploadedFileNames
-                                                    .removeAt(index);
+                                                _uploadedFileNames.removeAt(index);
                                               });
                                             },
                                             icon: const FaIcon(
                                               FontAwesomeIcons.remove,
                                               color: Color(0xFF748097),
-                                            )),
-                                      );
-                                    },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      // border: Border.all(
+                                      //   color: const Color.fromRGBO(21, 43, 83, 1),
+                                      // ),
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  child: Column(
+                                    children: [
+                                      if (_selectedPaymentMethod == "Card" ||
+                                          _selectedPaymentMethod == "ACH")
+                                        buildAmountContainer(
+                                            'Amount',
+                                            amountController.text.isNotEmpty
+                                                ? double.parse(
+                                                    amountController.text)
+                                                : 0.0),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      if (_selectedPaymentMethod == "Card")
+                                        buildAmountContainer(
+                                            'Surcharge included',
+                                            amountController.text.isNotEmpty
+                                                ? double.parse(
+                                                        amountController
+                                                            .text) *
+                                                    (surCharge ?? 0.0) /
+                                                    100
+                                                : 0.0),
+                                      if (_selectedPaymentMethod == "ACH")
+                                        buildAmountContainer(
+                                            'Surcharge included',
+                                            surchargecount!),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      buildAmountContainer(
+                                          'Total Amount',
+                                          amountController.text.isNotEmpty &&
+                                                  (_selectedPaymentMethod ==
+                                                      "Card")
+                                              ? (double.parse(amountController
+                                                          .text) *
+                                                      (surCharge ?? 0.0) /
+                                                      100) +
+                                                  double.parse(
+                                                      amountController.text)
+                                              : amountController
+                                                          .text.isNotEmpty &&
+                                                      (_selectedPaymentMethod ==
+                                                          "ACH")
+                                                  ? finaltotal!
+                                                  : amountController
+                                                          .text.isNotEmpty
+                                                      ? double.parse(
+                                                          amountController
+                                                              .text)
+                                                      : 0.0),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 5),
+                                SizedBox(height: 5),
                               ],
                             ),
                           ),
@@ -3013,7 +3041,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         leaseid: widget.leaseId,
                                         company_name: companyName,
                                         entries: rows,
-                                        future_Date: futuredate!)
+                                        future_Date: futuredate!, uploadedFile: _uploadedFileNames)
                                         .then((value) {
                                       Fluttertoast.showToast(msg: "$value");
                                       setState(() {
@@ -3062,7 +3090,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               _selectedHoldertype!,
                                           checkaccount: accountnum.text,
                                           checkaba: bankrountingnum.text,
-                                          checkname: achname.text)
+                                          checkname: achname.text, uploadedFile: _uploadedFileNames)
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
@@ -3103,9 +3131,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     entries: rows,
                                     future_Date: true,
                                     Check_number: checknumber.text,
-                                    Check: true,
-                                  )
-                                      .then((value) {
+                                    Check: true, uploadedFile: _uploadedFileNames,
+                                  ).then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
                                       _isLoading = false;
@@ -3145,9 +3172,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     entries: rows,
                                     future_Date: true,
                                     Check_number: "",
-                                    Check: false,
-                                  )
-                                      .then((value) {
+                                    Check: false, uploadedFile: _uploadedFileNames,
+                                  ).then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
                                       _isLoading = false;
@@ -3163,7 +3189,6 @@ class _MakePaymentState extends State<MakePayment> {
                                 }
                                 //print(_selectedPaymentMethod);
                               }
-
                               /* print(cardDetails[selectedcardindex!].ccNumber);
                               print(cardDetails[selectedcardindex!].firstName);
                               print(cardDetails[selectedcardindex!].lastName);

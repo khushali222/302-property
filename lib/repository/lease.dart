@@ -145,7 +145,7 @@ class LeaseRepository {
       print('Request complete');
 
       var responseData = jsonDecode(response.body);
-      print('Response Data: $responseData');
+      print('Response Data for update : $responseData');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
@@ -511,7 +511,7 @@ class LeaseRepository {
       },
       body: jsonEncode(charge.toJson()),
     );
-
+     print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
       print('Charge posted successfully');

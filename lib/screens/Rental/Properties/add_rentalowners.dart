@@ -181,7 +181,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
     proid.text = widget.OwnersDetails?.postalCode ?? "";
 
 
-    if(widget.isEdit != null &&  widget.OwnersDetails!.processorList!.length > 0){
+    if(widget.isEdit != null && widget.OwnersDetails!.processorList != null&&   widget.OwnersDetails!.processorList!.length > 0){
       for(var i=0;i<widget.OwnersDetails!.processorList!.length;i++)
         {
           _processorGroups.add(ProcessorGroup(

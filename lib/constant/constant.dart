@@ -11,17 +11,20 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String Api_url = "http://192.168.1.14:4000";
 //String Api_url = "http://192.168.1.40:4000";
 //String Api_url = "http://192.168.38.213:4000";
+//String Api_url = "http://192.168.1.40:4000";
+
 
 String Api_url = "https://saas.cloudrentalmanager.com";
 
 String image_upload_url = "https://saas.cloudrentalmanager.com";
 
 String formatDate(String dateTime) {
+  //print(dateTime);
   List<String> dateFormats = [
-    'dd-MM-yyyy',
-    'd-M-yyyy',
     'yyyy-MM-dd',
     'yyyy-M-d',
+    'dd-MM-yyyy',
+    'd-M-yyyy',
     'M/d/yyyy',
     'MM/dd/yyyy',
     'M/d/yyyy, h:mm:ss a',
@@ -44,7 +47,7 @@ String formatDate(String dateTime) {
     return dateTime;
   //  throw FormatException("Date format not recognized: $dateTime");
   }
-
+ // print(parsedDate);
   return DateFormat('dd-MM-yyyy').format(parsedDate);
 }
 

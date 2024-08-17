@@ -6202,7 +6202,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       .size
                                                       .width <
                                                   500
-                                              ? 100
+                                              ? 120
                                               : 150,
                                           child: ElevatedButton(
                                             onPressed: () {
@@ -7979,28 +7979,69 @@ class _Summery_pageState extends State<Summery_page>
                                           height: 10,
                                         ),
                                         _images.isNotEmpty
-                                            ? Wrap(
-                                          spacing: 8.0, // Horizontal spacing between items
-                                          runSpacing: 8.0, // Vertical spacing between rows
-                                          children: List.generate(
-                                            _images.length,
-                                                (index) {
-                                              return SizedBox(
-                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
-                                                child: Row(
-                                                  children: [
-                                                    Image.file(
-                                                      _images[index],
-                                                      height: 80,
-                                                      width: 80,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                            ? Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                //color: Colors.blue,
+                                                child: Wrap(
 
-                                                  ],
+
+                                                  spacing: 8.0, // Horizontal spacing between items
+                                                  runSpacing: 8.0, // Vertical spacing between rows
+                                                  children: List.generate(
+                                                    _images.length,
+                                                        (index) {
+                                                      return Container(
+                                                        // color: Colors.green,
+                                                        width: 85,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 60,
+                                                                ),
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(() {
+                                                                      _images.removeAt(index);
+                                                                    });
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.close,
+                                                                    color: Colors.grey,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Container(
+                                                                  // color:Colors.blue,
+                                                                  child: Image.file(
+                                                                    _images[index],
+                                                                    height: 80,
+                                                                    width: 80,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                ),
+
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                          ),
+                                              ),
+                                            ),
+                                          ],
                                         )
                                             : Center(
                                           child: Text("No images selected."),
@@ -8396,29 +8437,70 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                         SizedBox(height: 8.0),
                                         _images.isNotEmpty
-                                            ? Wrap(
-                                          spacing: 8.0, // Horizontal spacing between items
-                                          runSpacing: 8.0, // Vertical spacing between rows
-                                          children: List.generate(
-                                            _images.length,
-                                                (index) {
-                                              return SizedBox(
-                                                width: MediaQuery.of(context).size.width / 3 - 24, // Half of screen width minus padding
-                                                child: Row(
-                                                  children: [
-                                                    Image.file(
-                                                      _images[index],
-                                                      height: 80,
-                                                      width: 80,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                            ? Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                                                            //color: Colors.blue,
+                                                    child: Wrap(
 
-                                                  ],
+                                                  
+                                                                                              spacing: 8.0, // Horizontal spacing between items
+                                                                                              runSpacing: 8.0, // Vertical spacing between rows
+                                                                                              children: List.generate(
+                                                    _images.length,
+                                                        (index) {
+                                                      return Container(
+                                                        // color: Colors.green,
+                                                        width: 85,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 60,
+                                                                ),
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(() {
+                                                                      _images.removeAt(index);
+                                                                    });
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.close,
+                                                                    color: Colors.grey,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Container(
+                                                                 // color:Colors.blue,
+                                                                  child: Image.file(
+                                                                    _images[index],
+                                                                    height: 80,
+                                                                    width: 80,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                ),
+                                                  
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                                                              ),
+                                                                                            ),
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                          ),
-                                        )
+                                              ],
+                                            )
                                             : Center(
                                           child: Text("No images selected."),
                                         ),
@@ -10808,21 +10890,19 @@ class _Summery_pageState extends State<Summery_page>
                         width: 15,
                       ),
                       SizedBox(
-                        //  height: screenHeight * 0.30,
-                        //width: screenWidth * 0.8,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
-                          child: Image(
-                            image: NetworkImage(
-                                unit.rentalImages != null ? unit.rentalImages!.length >0 ? "$image_url${unit.rentalImages!.first}" : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU' :
-                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
+                          child: CachedNetworkImage(
+                            imageUrl: unit.rentalImages != null && unit.rentalImages!.length > 0
+                                ? "$image_url${unit.rentalImages!.first}"
+                                : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU',
                             fit: BoxFit.cover,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 140
-                                : 220,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? 160
-                                : 220,
+                            height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
+                            width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(), // Shows a loader while the image is loading
+                            ),
+                            errorWidget: (context, url, error) => SizedBox.shrink(), // Hides the error widget
                           ),
                         ),
                       ),
@@ -12218,8 +12298,8 @@ class _LeasesTableState extends State<LeasesTable> {
 
   String getStatus(String startDate, String endDate) {
     final now = DateTime.now();
-    final start = DateTime.parse(startDate);
-    final end = DateTime.parse(endDate);
+    final start = DateTime.parse(reverseFormatDate(formatDate(startDate)));
+    final end = DateTime.parse(reverseFormatDate(formatDate(endDate)));
     return (now.isAfter(start) && now.isBefore(end)) ? 'Active' : 'Inactive';
   }
 
