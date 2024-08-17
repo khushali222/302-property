@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
@@ -54,7 +55,7 @@ Widget buildListTile(
         title,
 
         style: TextStyle(
-          color: active ? Colors.white : Colors.black,
+          color: active ? Colors.white : blueColor,
         ),
       ),
     ),
@@ -114,7 +115,7 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
               title: Text(
                 subTopic,
                 style: TextStyle(
-                  color: active ? Colors.white : Colors.black,
+                  color: active ? Colors.white : blueColor,
                 ),
               ),
               onTap: () {

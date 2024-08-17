@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../constant/constant.dart';
 import '../repository/permission_provider.dart';
 import 'drawer_tiles.dart';
 import '../model/permission.dart';
@@ -72,7 +74,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
               const SizedBox(height: 40),
               buildListTile(
                 context,
-                SvgPicture.asset(
+                widget.currentpage == "Dashboard"
+                    ? SvgPicture.asset(
+                  "assets/images/tenants/dashboard1.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                )
+                    : SvgPicture.asset(
                   "assets/images/tenants/dashboard.svg",
                   fit: BoxFit.cover,
                   height: 20,
@@ -83,11 +92,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               buildListTile(
                 context,
-                SvgPicture.asset(
-                  "assets/images/tenants/Admin.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
+                FaIcon(
+                  FontAwesomeIcons.user,
+                  size: 20,
+                  color: widget.currentpage == "Profile"
+                      ? Colors.white
+                      : blueColor,
                 ),
                 "Profile",
                 widget.currentpage == "Profile",
@@ -95,11 +105,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               if (permissions!.propertyView)
                 buildListTile(
                   context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/Property.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
+                  FaIcon(
+                    FontAwesomeIcons.house,
+                    size: 20,
+                    color: widget.currentpage == "Properties"
+                        ? Colors.white
+                        : blueColor,
                   ),
                   "Properties",
                   widget.currentpage == "Properties",
@@ -107,11 +118,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               if (permissions!.financialView)
                 buildListTile(
                   context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/Financial.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
+                  FaIcon(
+                    FontAwesomeIcons.chartColumn,
+                    size: 20,
+                    color: widget.currentpage == "Financial"
+                        ? Colors.white
+                        : blueColor,
                   ),
                   "Financial",
                   widget.currentpage == "Financial",
@@ -119,8 +131,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
               if (permissions!.workorderView)
                 buildListTile(
                   context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/Work.svg",
+                  widget.currentpage == "Work Order"
+                      ? SvgPicture.asset(
+                    "assets/images/tenants/Work Light.svg",
+                    fit: BoxFit.cover,
+                    height: 20,
+                    width: 20,
+                  )
+                      : SvgPicture.asset(
+                    "assets/images/tenants/workorder.svg",
                     fit: BoxFit.cover,
                     height: 20,
                     width: 20,
@@ -131,11 +150,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               if (permissions!.documentsView)
                 buildListTile(
                   context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/tenantdoc1.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
+                  FaIcon(
+                    FontAwesomeIcons.fileInvoice,
+                    size: 20,
+                    color: widget.currentpage == "Documents"
+                        ? Colors.white
+                        : blueColor,
                   ),
                   "Documents",
                   widget.currentpage == "Documents",

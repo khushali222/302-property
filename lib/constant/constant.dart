@@ -18,38 +18,14 @@ String image_upload_url = "https://saas.cloudrentalmanager.com";
 
 String formatDate(String dateTime) {
   List<String> dateFormats = [
-    // Common date formats
-    'dd-MM-yyyy',         // 31-12-2024
-    'd-M-yyyy',           // 5-3-2024
-    'yyyy-MM-dd',         // 2024-12-31
-    'yyyy-M-d',           // 2024-3-5
-    'MM/dd/yyyy',         // 12/31/2024
-    'M/d/yyyy',           // 3/5/2024
-    'd/M/yyyy',           // 5/3/2024
-    'MM/dd/yy',           // 12/31/24
-    'M/d/yy',             // 3/5/24
-    'd-M-yy',             // 5-3-24
-    'dd-MM-yy',           // 05-03-24
-    'dd/MM/yyyy',         // 05/03/2024
-    'd/M/yy',             // 5/3/24
-    'MM-dd-yyyy',         // 03-05-2024
-    'yyyy/MM/dd',         // 2024/05/03
-
-    // Date with time formats
-    'd/M/yyyy, h:mm a',   // 5/3/2024, 3:55 PM
-    'M/d/yyyy, h:mm:ss a',// 5/3/2024, 3:55:28 PM
-    'yyyy-MM-dd HH:mm:ss',// 2024-05-03 15:55:28
-    'yyyy-MM-dd hh:mm:ss a',// 2024-05-03 03:55:28 PM
-    'MM/dd/yyyy, hh:mm a',// 03/05/2024, 03:55 PM
-    'yyyy-MM-ddTHH:mm:ss',// 2024-05-03T15:55:28 (ISO 8601)
-
-    // Full date and time formats
-    'EEE, d MMM yyyy HH:mm:ss Z', // Tue, 5 May 2024 15:55:28 +0000
-    'EEEE, MMMM d, yyyy',         // Tuesday, May 5, 2024
-    'd MMM yyyy',                 // 5 May 2024
-    'dd MMM yyyy',                // 05 May 2024
-    'yyyyMMdd',                   // 20240503 (no separators)
-    'ddMMyyyy',                   // 05032024 (no separators)
+    'dd-MM-yyyy',
+    'd-M-yyyy',
+    'yyyy-MM-dd',
+    'yyyy-M-d',
+    'M/d/yyyy',
+    'MM/dd/yyyy',
+    'M/d/yyyy, h:mm:ss a',
+    'M/d/yyyy, h:mm a'        // 05032024 (no separators)
   ];
 
 
