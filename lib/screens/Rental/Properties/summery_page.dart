@@ -6271,7 +6271,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       .size
                                                       .width <
                                                   500
-                                              ? 100
+                                              ? 120
                                               : 150,
                                           child: ElevatedButton(
                                             onPressed: () {
