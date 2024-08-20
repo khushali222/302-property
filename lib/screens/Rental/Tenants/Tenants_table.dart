@@ -731,10 +731,14 @@ class _Tenants_tableState extends State<Tenants_table> {
             ),
             //add propertytype
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+               // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Tenants',
+                  ),
                   GestureDetector(
                     onTap: () async {
                       if (rentalCount < propertyCountLimit) {
@@ -753,12 +757,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.05,
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.30
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -769,13 +773,13 @@ class _Tenants_tableState extends State<Tenants_table> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Tenants",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
-                                    ? 14
+                                    ? 16
                                     : 20,
                               ),
                             ),
@@ -828,10 +832,7 @@ class _Tenants_tableState extends State<Tenants_table> {
             //     ),
             //   ),
             // ),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Tenants',
-            ),
+
             SizedBox(height: 10),
             //search
             Padding(

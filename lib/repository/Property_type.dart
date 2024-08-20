@@ -49,6 +49,7 @@ class PropertyTypeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
      String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
+
     final response = await http.get(Uri.parse('${Api_url}/api/propertytype/property_type/$id'),
         headers: {
           "authorization": "CRM $token",

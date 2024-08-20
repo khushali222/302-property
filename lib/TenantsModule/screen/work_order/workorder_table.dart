@@ -643,15 +643,20 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
             //add propertytype
             if(permissions!.workorderAdd)
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+               // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Work Orders',
+                  ),
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (context) => Add_Workorder()));
+
                       if (result == true) {
                         setState(() {
                           futureworkorder =
@@ -661,13 +666,13 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.065,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width > 500)
-                          ? MediaQuery.of(context).size.width * 0.3 :MediaQuery.of(context).size.width * 0.4,
+                          ? MediaQuery.of(context).size.width * 0.3 :MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -677,12 +682,12 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Work Order",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: (MediaQuery.of(context).size.width > 500)
-                                    ? MediaQuery.of(context).size.width * 0.028 :  MediaQuery.of(context).size.width * 0.034,
+                                    ? MediaQuery.of(context).size.width * 0.028 :  16,
 
                               ),
                             ),
@@ -699,10 +704,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
               ),
             ),
             SizedBox(height: 10),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Work Orders',
-            ),
+
             SizedBox(height: 10),
             //search
 
@@ -867,7 +869,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No data available'));
+                      return Container(
+                          height: 60,
+                          child: Center(child: Text('No data available')));
                     } else {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {

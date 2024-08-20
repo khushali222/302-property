@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../model/propertytype.dart';
+import '../../../Model/propertytype.dart';
 import '../../constant/constant.dart';
 
 class PropertyTypeRepository {
@@ -84,14 +84,14 @@ class PropertyTypeRepository {
    // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
      String? token = prefs.getString('token');
-    String?  id = prefs.getString('staff_id');
+    String?  stff_id = prefs.getString('staff_id');
     String?  admin_id = prefs.getString('adminId');
 
     final http.Response response = await http.put(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM $stff_id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -108,21 +108,21 @@ class PropertyTypeRepository {
     }
   }
   Future<Map<String, dynamic>> DeletePropertyType({
-    required String? id
+    required String? pro_id
   }) async {
 
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-     String? token = prefs.getString('token');
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+    String?  stff_id = prefs.getString('staff_id');
+    String?  adminid = prefs.getString('adminId');
 
     final http.Response response = await http.delete(
-      Uri.parse('$apiUrl/$id'),
+      Uri.parse('$apiUrl/$pro_id'),
       headers: <String, String>{
 
-          "authorization": "CRM $token",
-        "id":"CRM $id",
+        "authorization": "CRM $token",
+        "id":"CRM $stff_id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -134,7 +134,7 @@ class PropertyTypeRepository {
 
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add property type');
+      throw Exception('Failed to delete property type');
     }
   }
 }

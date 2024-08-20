@@ -466,10 +466,15 @@ class _StaffTableState extends State<StaffTable> {
           children: [
             SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.all(13),
+              padding: const EdgeInsets.all(0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Staff Members',
+                  ),
                   GestureDetector(
                     onTap: () async {
                       print(rentalCount);
@@ -499,10 +504,10 @@ class _StaffTableState extends State<StaffTable> {
                     child: Container(
                       // height: 40,
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.062,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -510,12 +515,12 @@ class _StaffTableState extends State<StaffTable> {
                       ),
                       child: Center(
                         child: Text(
-                          "Add Staff Member",
+                          "+ Add",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: MediaQuery.of(context).size.width < 500
-                                ? 14
+                                ? 16
                                 : 20,
                           ),
                         ),
@@ -531,43 +536,7 @@ class _StaffTableState extends State<StaffTable> {
               ),
             ),
             SizedBox(height: 10),
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 13, right: 13),
-            //   child: ClipRRect(
-            //     borderRadius: BorderRadius.circular(5.0),
-            //     child: Container(
-            //       // height: 50.0,
-            //       height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-            //       padding: EdgeInsets.only(top: 12, left: 10),
-            //       width: MediaQuery.of(context).size.width * .91,
-            //       margin: const EdgeInsets.only(bottom: 6.0),
-            //       decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.circular(5.0),
-            //         color: Color.fromRGBO(21, 43, 81, 1),
-            //         boxShadow: [
-            //           BoxShadow(
-            //             color: Colors.grey,
-            //             offset: Offset(0.0, 1.0),
-            //             blurRadius: 6.0,
-            //           ),
-            //         ],
-            //       ),
-            //       child: Text(
-            //         "Staff Members",
-            //         style: TextStyle(
-            //             color: Colors.white,
-            //             fontWeight: FontWeight.bold,
-            //             fontSize: MediaQuery.of(context).size.width < 500
-            //                 ? 22
-            //                 : MediaQuery.of(context).size.width * 0.035),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Staff Members',
-            ),
+
             SizedBox(height: 10),
             //search
             Padding(

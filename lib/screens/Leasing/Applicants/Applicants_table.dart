@@ -661,11 +661,14 @@ class _Applicants_tableState extends State<Applicants_table> {
             ),
             //add propertytype
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+               // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  GestureDetector(
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Applicants',
+                  ),                  GestureDetector(
                     onTap: () async {
                       print(applicantCount);
                       print(applicantCountLimit);
@@ -693,13 +696,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 35
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.063,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width:  (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(21, 43, 81, 1),
@@ -710,13 +713,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Applicant",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
-                                    ? 14
+                                    ? 16
                                     : 20,
                               ),
                             ),
@@ -734,10 +737,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             ),
             const SizedBox(height: 10),
 
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Applicants',
-            ),
+
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(left: 19, right: 13),

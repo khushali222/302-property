@@ -637,15 +637,20 @@ class _Workorder_tableState extends State<Workorder_table> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(
-              height: 20,
-            ),
+
             //add Data
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Works Orders',
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
@@ -660,13 +665,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.062,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(21, 43, 81, 1),
@@ -677,13 +682,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Work Order",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                     MediaQuery.of(context).size.width < 500
-                                        ? 14
+                                        ? 16
                                         : 20,
                               ),
                             ),
@@ -700,10 +705,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             const SizedBox(height: 10),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Works Orders',
-            ),
+
             const SizedBox(height: 10),
             //search
             Padding(

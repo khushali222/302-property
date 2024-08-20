@@ -6,10 +6,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import '../../Model/propertytype.dart';
-import '../../constant/constant.dart';
+import '../../../Model/propertytype.dart';
+import '../../../constant/constant.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'Edit_property_type.dart';
@@ -22,7 +22,7 @@ class PropertyTable extends StatefulWidget {
 
 class _PropertyTableState extends State<PropertyTable> {
   int totalrecords = 0;
-  late Future<List<propertytype>> futurePropertyTypes;
+   Future<List<propertytype>>? futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -603,7 +603,7 @@ class _PropertyTableState extends State<PropertyTable> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
+      drawer:CustomDrawer(currentpage: "Add Property Type",),
       body: SingleChildScrollView(
         child: Column(
           children: [

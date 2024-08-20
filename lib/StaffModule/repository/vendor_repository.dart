@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-import '../Model/vendor.dart';
+import '../../Model/vendor.dart';
 
 
 class VendorRepository {
@@ -14,7 +14,7 @@ class VendorRepository {
 
   Future<bool> addVendor(Vendor vendor) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     final url = Uri.parse('$Api_url/api/vendor/vendor');
     print("$Api_url/api/vendor/vendor");
@@ -35,12 +35,13 @@ class VendorRepository {
   }
   Future<List<Vendor>> getVendors() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminid = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     print("$Api_url/api/vendor/vendors/$id");
     print("CRM $token");
     print("CRM $id");
-    final url = Uri.parse('$Api_url/api/vendor/vendors/$id');
+    final url = Uri.parse('$Api_url/api/vendor/vendors/$adminid');
     final response = await http.get(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
     if (response.statusCode == 200) {
@@ -53,7 +54,8 @@ class VendorRepository {
   }
   Future<Vendor> getVendor(String vender_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminid = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     print("$Api_url/api/vendor/vendors/$vender_id");
     print("CRM $token");
@@ -71,7 +73,7 @@ class VendorRepository {
   }
   Future<bool> update_vendor(Vendor vendor,String vender_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     final url = Uri.parse('$Api_url/api/vendor/update_vendor/${vender_id}');
     print('$Api_url/api/vendor/update_vendor/${vender_id}');
@@ -94,7 +96,7 @@ class VendorRepository {
     required String? vender_id
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     print('$Api_url/api/vendor/update_vendor/${vender_id}');
 

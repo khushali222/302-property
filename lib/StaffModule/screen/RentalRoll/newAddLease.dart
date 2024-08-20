@@ -374,7 +374,7 @@ class _addLease3State extends State<addLease3>
                   } else {
                     // Add new item
                     formDataOneTimeList.add(data);
-                    print("hello yash :${data}");
+
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);

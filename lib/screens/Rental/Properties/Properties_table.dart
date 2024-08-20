@@ -487,10 +487,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
               height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Properties',
+                  ),
                   GestureDetector(
                     onTap: () async {
                       if (rentalCount < propertyCountLimit) {
@@ -513,10 +517,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     child: Container(
                       // height: 40,
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 35
+                          ? 50
                           : 45,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -527,13 +531,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Property",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
-                                    ? 14
+                                    ? 16
                                     : 20,
                               ),
                             ),
@@ -550,10 +554,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               ),
             ),
             SizedBox(height: 10),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Properties',
-            ),
+
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(

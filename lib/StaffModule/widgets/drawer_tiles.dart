@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
+import '../screen/Vendor/Vendor_table.dart';
+import '../../constant/constant.dart';
+import '../screen/Rentalowner/Rentalowner_table.dart';
 import "../screen/Properties/Properties_table.dart";
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/Tenants/Tenants_table.dart';
 import '../screen/RentalRoll/lease_table.dart';
 import '../screen/Workorder/Workorder_table.dart';
-
+import '../screen/Property_Type/Property_type_table.dart';
+import '../screen/Applicants/Applicants_table.dart';
 Widget buildListTile(
   BuildContext context,
   Widget leadingIcon,
@@ -27,10 +31,11 @@ Widget buildListTile(
 
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => PropertiesTable()));
-        }/* else if (title == "Add Property Type") {
+        } else if (title == "Add Property Type") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => PropertyTable()));
-        } else if (title == "Add Staff Member") {
+        }
+        /*} else if (title == "Add Staff Member") {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => StaffTable()));
         }*/
@@ -45,6 +50,10 @@ Widget buildListTile(
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Tenants_table()));
         }
+        else if (title == "Applicants") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Applicants_table()));
+        }
         else if (title == "Rent Roll") {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Lease_table()));
@@ -53,16 +62,20 @@ Widget buildListTile(
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Workorder_table()));
         }
-       /* else if (title == "Documents") {
+        else if (title == "Vendor") {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ReportsMainScreen()));
-        }*/
+              context, MaterialPageRoute(builder: (context) => Vendor_table()));
+        }
+        else if (title == "Rental Owner") {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Rentalowner_table()));
+        }
       },
       leading: leadingIcon,
       title: Text(
         title,
         style: TextStyle(
-          color: active ? Colors.white : Colors.black,
+          color: active ? Colors.white : blueColor,
         ),
       ),
     ),
@@ -122,7 +135,7 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
               title: Text(
                 subTopic,
                 style: TextStyle(
-                  color: active ? Colors.white : Colors.black,
+                  color: active ? Colors.white : blueColor,
                 ),
               ),
               onTap: () {

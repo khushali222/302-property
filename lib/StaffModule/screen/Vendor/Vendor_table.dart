@@ -1,28 +1,31 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
-import '../../Model/propertytype.dart';
-import '../../constant/constant.dart';
-import '../../repository/Property_type.dart';
-import '../../widgets/drawer_tiles.dart';
-import 'Edit_property_type.dart';
-import 'Add_property_type.dart';
+import '../../widgets/appbar.dart';
+import '../../../Model/vendor.dart';
+import '../../../constant/constant.dart';
+import '../../repository/vendor_repository.dart';
+import '../../../widgets/drawer_tiles.dart';
+import '../../../widgets/titleBar.dart';
+import 'add_vendor.dart';
+import 'edit_vendor.dart';
+
+
 import '../../widgets/custom_drawer.dart';
-class PropertyTable extends StatefulWidget {
+class Vendor_table extends StatefulWidget {
+  const Vendor_table({super.key});
+
   @override
-  _PropertyTableState createState() => _PropertyTableState();
+  State<Vendor_table> createState() => _Vendor_tableState();
 }
 
-class _PropertyTableState extends State<PropertyTable> {
+class _Vendor_tableState extends State<Vendor_table> {
+  String searchvalue = "";
   int totalrecords = 0;
-  late Future<List<propertytype>> futurePropertyTypes;
+  late Future<List<Vendor>> futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -35,19 +38,19 @@ class _PropertyTableState extends State<PropertyTable> {
     100,
   ]; // Options for items per page
 
-  void sortData(List<propertytype> data) {
+  void sortData(List<Vendor> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.propertyType!.compareTo(b.propertyType!)
-          : b.propertyType!.compareTo(a.propertyType!));
+          ? a.vendorName!.compareTo(b.vendorName!)
+          : b.vendorName!.compareTo(a.vendorName!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.propertysubType!.compareTo(b.propertysubType!)
-          : b.propertysubType!.compareTo(a.propertysubType!));
+          ? a.vendorPhoneNumber!.compareTo(b.vendorPhoneNumber!)
+          : b.vendorPhoneNumber!.compareTo(a.vendorPhoneNumber!));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.createdAt!.compareTo(b.createdAt!)
-          : b.createdAt!.compareTo(a.createdAt!));
+          ? a.vendorName!.compareTo(b.vendorName!)
+          : b.vendorName!.compareTo(a.vendorName!));
     }
   }
 
@@ -88,6 +91,7 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -112,10 +116,8 @@ class _PropertyTableState extends State<PropertyTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Main Type ",
-                            style: TextStyle(color: Colors.white))
-                        : Text("Main Type",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("Name ", style: TextStyle(color: Colors.white))
+                        : Text("Name", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -140,6 +142,7 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             Expanded(
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -163,7 +166,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Subtypes", style: TextStyle(color: Colors.white)),
+                    Text("PhoneNumber", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -187,6 +190,7 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -211,25 +215,25 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Created At", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    Text("Action", style: TextStyle(color: Colors.white)),
+                    /* SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),*/
                   ],
                 ),
               ),
@@ -240,27 +244,32 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 
-  final List<String> items = ['Residential', "Commercial", "All"];
-  String? selectedValue;
-  String searchvalue = "";
-  @override
   void initState() {
     super.initState();
-    futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+    futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
   }
 
-  void handleEdit(propertytype property) async {
-    // Handle edit action
-    print('Edit ${property.sId}');
+  void handleEdit(Vendor property) async {
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Edit_property_type(
-                  property: property,
+            builder: (context) => edit_vendor(
+                  vender_id: property.vendorId,
                 )));
     if (check == true) {
       setState(() {});
     }
+    // Handle edit action
+    //print('Edit ${property.sId}');
+    /* var check = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Edit_property_type(
+              property: property,
+            )));*/
+    /* if (check == true) {
+      setState(() {});
+    }*/
     // final result = await Navigator.push(
     //     context,
     //     MaterialPageRoute(
@@ -279,7 +288,7 @@ class _PropertyTableState extends State<PropertyTable> {
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this property!",
+      desc: "Once deleted, you will not be able to recover this vendor!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -298,12 +307,16 @@ class _PropertyTableState extends State<PropertyTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id);
-            // Add your delete logic here
-            setState(() {
-              futurePropertyTypes =
-                  PropertyTypeRepository().fetchPropertyTypes();
+            var data = await VendorRepository(baseUrl: '')
+                .DeleteVender(vender_id: id)
+                .then((value) {
+              setState(() {
+                futurePropertyTypes =
+                    VendorRepository(baseUrl: '').getVendors();
+              });
             });
+            // Add your delete logic here
+
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -312,13 +325,13 @@ class _PropertyTableState extends State<PropertyTable> {
     ).show();
   }
 
-  List<propertytype> _tableData = [];
+  List<Vendor> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<propertytype> get _pagedData {
+  List<Vendor> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
@@ -332,8 +345,8 @@ class _PropertyTableState extends State<PropertyTable> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(propertytype d) getField,
-      int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(Vendor d) getField, int columnIndex,
+      bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -346,45 +359,17 @@ class _PropertyTableState extends State<PropertyTable> {
     });
   }
 
-  void handleDelete(propertytype property) {
-    _showAlert(context, property.propertyId!);
-    // Handle delete action
-    print('Delete ${property.sId}');
+  Widget _buildDataCell(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
+      ),
+    );
   }
 
-  // Widget _buildHeader<T>(String text, int columnIndex,
-  //     Comparable<T> Function(propertytype d)? getField) {
-  //   return Container(
-  //     height: 70,
-  //     // color: Colors.blue,
-  //     child: TableCell(
-  //       child: InkWell(
-  //         onTap: getField != null
-  //             ? () {
-  //                 _sort(getField, columnIndex, !_sortAscending);
-  //               }
-  //             : null,
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(14.0),
-  //           child: Row(
-  //             children: [
-  //               SizedBox(width: 10),
-  //               Text(text,
-  //                   style:
-  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-  //               if (_sortColumnIndex == columnIndex)
-  //                 Icon(_sortAscending
-  //                     ? Icons.arrow_drop_down_outlined
-  //                     : Icons.arrow_drop_up_outlined),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(propertytype d)? getField) {
+      Comparable<T> Function(Vendor d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -410,70 +395,13 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 
-  // Widget _buildDataCell(String text) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(5.0),
-  //     child: Container(
-  //       height: 50,
-  //       // color: Colors.blue,
-  //       child: TableCell(
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(10.0),
-  //           child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-  Widget _buildDataCell(String text) {
-    return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
-      ),
-    );
+  void handleDelete(Vendor property) {
+    _showAlert(context, property.vendorId!);
+    // Handle delete action
+    print('Delete ${property.vendorId}');
   }
 
-  // Widget _buildActionsCell(propertytype data) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(5.0),
-  //     child: Container(
-  //       height: 50,
-  //       // color: Colors.blue,
-  //       child: TableCell(
-  //         child: Row(
-  //           children: [
-  //             SizedBox(
-  //               width: 20,
-  //             ),
-  //             InkWell(
-  //               onTap: () {
-  //                 handleEdit(data);
-  //               },
-  //               child: FaIcon(
-  //                 FontAwesomeIcons.edit,
-  //                 size: 30,
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               width: 15,
-  //             ),
-  //             InkWell(
-  //               onTap: () {
-  //                 handleDelete(data);
-  //               },
-  //               child: FaIcon(
-  //                 FontAwesomeIcons.trashCan,
-  //                 size: 30,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-  Widget _buildActionsCell(propertytype data) {
+  Widget _buildActionsCell(Vendor data) {
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -597,51 +525,51 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 
-  final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
+      drawer:CustomDrawer(currentpage: "Vendor"),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: 20,
-            ),
+
             //add propertytype
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
+              //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
-                    title: 'Property Type',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Vendor',
+                    ),
                   ),
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) => Add_property()));
+                              builder: (context) => Add_vendor()));
                       if (result == true) {
                         setState(() {
                           futurePropertyTypes =
-                              PropertyTypeRepository().fetchPropertyTypes();
+                              VendorRepository(baseUrl: '').getVendors();
                         });
                       }
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 50
-                          : MediaQuery.of(context).size.width * 0.062,
+                          : MediaQuery.of(context).size.width * 0.058,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width < 500)
                           ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.25,
+                          : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
@@ -656,9 +584,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 16
-                                    : 20,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 16
+                                        : 20,
                               ),
                             ),
                           ],
@@ -674,6 +602,7 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             SizedBox(height: 10),
+
 
             SizedBox(height: 10),
             //search
@@ -733,7 +662,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding: EdgeInsets.only(
-                                      left: 5, bottom: 12, top: 8)),
+                                      left: 5, bottom: 10, top: 14)),
                             ),
                           ),
                         ],
@@ -741,7 +670,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     ),
                   ),
                   SizedBox(width: 15),
-                  DropdownButtonHideUnderline(
+                  /*  DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
                       child: DropdownButton2<String>(
@@ -766,17 +695,17 @@ class _PropertyTableState extends State<PropertyTable> {
                         ),
                         items: items
                             .map((String item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ))
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
                             .toList(),
                         value: selectedValue,
                         onChanged: (value) {
@@ -786,7 +715,7 @@ class _PropertyTableState extends State<PropertyTable> {
                         },
                         buttonStyleData: ButtonStyleData(
                           height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
                           // width: 180,
                           width: MediaQuery.of(context).size.width < 500
                               ? MediaQuery.of(context).size.width * .35
@@ -822,7 +751,7 @@ class _PropertyTableState extends State<PropertyTable> {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -830,7 +759,7 @@ class _PropertyTableState extends State<PropertyTable> {
             if (MediaQuery.of(context).size.width < 500)
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<propertytype>>(
+                child: FutureBuilder<List<Vendor>>(
                   future: futurePropertyTypes,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -841,24 +770,15 @@ class _PropertyTableState extends State<PropertyTable> {
                       return Center(child: Text('No data available'));
                     } else {
                       var data = snapshot.data!;
-                      if (selectedValue == null && searchvalue!.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (selectedValue == "All") {
-                        data = snapshot.data!;
-                      } else if (searchvalue!.isNotEmpty) {
+                      if (searchvalue != "") {
                         data = snapshot.data!
                             .where((property) =>
-                                property.propertyType!
+                                property.vendorName!
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()) ||
-                                property.propertysubType!
+                                property.vendorPhoneNumber!
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()))
-                            .toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((property) =>
-                                property.propertyType == selectedValue)
                             .toList();
                       }
                       sortData(data);
@@ -883,7 +803,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                     .map((entry) {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
-                                  propertytype Propertytype = entry.value;
+                                  Vendor Propertytype = entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
@@ -946,8 +866,28 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0),
+                                                    child: Text(
+                                                      '${Propertytype.vendorName}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
+                                                Expanded(
                                                   child: Text(
-                                                    ' ${Propertytype.propertyType}',
+                                                    '${Propertytype.vendorPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -963,33 +903,67 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                 .width *
                                                             .08),
                                                 Expanded(
-                                                  child: Text(
-                                                    '${Propertytype.propertysubType}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${Propertytype.createdAt}'),
-
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: Container(
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            var check = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            edit_vendor(
+                                                                              vender_id: Propertytype.vendorId,
+                                                                            )));
+                                                            if (check == true) {
+                                                              setState(() {
+                                                                futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+                                                              });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .edit,
+                                                              size: 20,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      83,
+                                                                      1),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            _showAlert(
+                                                                context,
+                                                                Propertytype
+                                                                    .vendorId!);
+                                                          },
+                                                          child: Container(
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .trashCan,
+                                                              size: 20,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      83,
+                                                                      1),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
@@ -1036,7 +1010,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Updated At : ',
+                                                                        'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1045,8 +1019,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate(
-                                                                        '${Propertytype.updatedAt}'),
+                                                                    text:
+                                                                        '${Propertytype.vendorEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1144,62 +1118,14 @@ class _PropertyTableState extends State<PropertyTable> {
                                                       //     ],
                                                       //   ),
                                                       // ),
-                                                      Container(
+                                                      /* Container(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
 
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_property_type(
-                                                                              property: Propertytype,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
-                                                                      () {});
-                                                                }
-                                                              },
-                                                            ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .propertyId!);
-                                                              },
-                                                            ),
                                                           ],
                                                         ),
-                                                      ),
+                                                      ),*/
                                                     ],
                                                   ),
                                                 ],
@@ -1320,7 +1246,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 ),
               ),
             if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<propertytype>>(
+              FutureBuilder<List<Vendor>>(
                 future: futurePropertyTypes,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -1331,24 +1257,15 @@ class _PropertyTableState extends State<PropertyTable> {
                     return Center(child: Text('No data available'));
                   } else {
                     _tableData = snapshot.data!;
-                    if (selectedValue == null && searchvalue.isEmpty) {
-                      _tableData = snapshot.data!;
-                    } else if (selectedValue == "All") {
-                      _tableData = snapshot.data!;
-                    } else if (searchvalue.isNotEmpty) {
+                    if (searchvalue != "") {
                       _tableData = snapshot.data!
                           .where((property) =>
-                              property.propertyType!
+                              property.vendorName!
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()) ||
-                              property.propertysubType!
+                              property.vendorPhoneNumber!
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()))
-                          .toList();
-                    } else {
-                      _tableData = snapshot.data!
-                          .where((property) =>
-                              property.propertyType == selectedValue)
                           .toList();
                     }
                     totalrecords = _tableData.length;
@@ -1358,7 +1275,7 @@ class _PropertyTableState extends State<PropertyTable> {
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 24.0, vertical: 5),
+                                  horizontal: 22.0, vertical: 5),
                               child: Column(
                                 children: [
                                   SingleChildScrollView(
@@ -1377,25 +1294,19 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                             ),
                                             children: [
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
-                                              // TableCell(child: Text('yash')),
+
                                               _buildHeader(
-                                                  'Main Type',
+                                                  'Name',
                                                   0,
                                                   (property) =>
-                                                      property.propertyType!),
+                                                      property.vendorName!),
                                               _buildHeader(
-                                                  'Subtype',
+                                                  'PhoneNumber',
                                                   1,
                                                   (property) => property
-                                                      .propertysubType!),
-                                              _buildHeader(
-                                                  'Created At', 2, null),
-                                              _buildHeader(
-                                                  'Updated At', 3, null),
+                                                      .vendorPhoneNumber!),
+                                              _buildHeader('Email', 2, null),
+
                                               _buildHeader('Actions', 4, null),
                                             ],
                                           ),
@@ -1405,7 +1316,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   horizontal: BorderSide.none),
                                             ),
                                             children: List.generate(
-                                                5,
+                                                4,
                                                 (index) => TableCell(
                                                     child:
                                                         Container(height: 20))),
@@ -1447,21 +1358,13 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 //     '${formatDate(_pagedData[i].createdAt!)}'),
                                                 // Text(
                                                 //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertyType!),
-
-                                                _buildDataCell(_pagedData[i]
-                                                    .propertysubType!),
-
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].createdAt!),
-                                                ),
-
+                                                    _pagedData[i].vendorName!),
+                                                _buildDataCell(_pagedData[i]
+                                                    .vendorPhoneNumber!),
                                                 _buildDataCell(
-                                                  formatDate(
-                                                      _pagedData[i].updatedAt!),
-                                                ),
+                                                    _pagedData[i].vendorEmail!),
+
                                                 _buildActionsCell(
                                                     _pagedData[i]),
                                               ],
@@ -1489,5 +1392,3 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 }
-
-void main() => runApp(MaterialApp(home: PropertyTable()));

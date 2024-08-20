@@ -9,10 +9,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../Model/RentalOwnersData.dart';
@@ -20,15 +19,12 @@ import '../../../constant/constant.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
 import '../../../model/staffmember.dart';
-import '../../../repository/Rental_ownersData.dart';
-import '../../../repository/Staffmember.dart';
-import '../../../repository/rentalowner.dart';
-import '../../../widgets/drawer_tiles.dart';
-import '../../Staff_Member/Add_staffmember.dart';
-import '../../Staff_Member/Edit_staff_member.dart';
+import '../../repository/Rental_ownersData.dart';
+
+import 'Edit_RentalOwners.dart';
 import 'Add_RentalOwners.dart';
 import 'package:http/http.dart' as http;
-import '../../../widgets/custom_drawer.dart';
+import '../../widgets/custom_drawer.dart';
 class Rentalowner_table extends StatefulWidget {
   // RentalOwner? rentalownersummery;
   // Rentalowner_table({super.key,this.rentalownersummery});
@@ -224,24 +220,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 child: Row(
                   children: [
                     Text("   Action", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+
                   ],
                 ),
               ),
@@ -393,10 +372,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   Future<void> fetchRentalOwneradded() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? admin_id = prefs.getString("adminId");
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     final response = await http.get(
-      Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
+      Uri.parse('${Api_url}/api/rental_owner/limitation/$admin_id'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
@@ -464,7 +444,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: true,),
+      drawer:CustomDrawer(currentpage: "RentalOwner",),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -561,7 +541,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             //   ),
             // ),
 
-            SizedBox(height: 10),
+
             Padding(
               padding: EdgeInsets.only(left: 19, right: 13),
               child: Row(
@@ -683,7 +663,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
@@ -771,13 +751,16 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                             .rentalownerId!,
                                                                   )));
                                                     },
-                                                    child: Text(
-                                                      '   ${rentals.rentalOwnername}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      child: Text(
+                                                        '${rentals.rentalOwnername}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -787,7 +770,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .05),
                                                 Expanded(
                                                   child: Text(
                                                     '${rentals.rentalOwnerPhoneNumber}',
@@ -804,7 +787,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .03),
                                                 Expanded(
                                                   child: Container(
                                                     child: Row(
