@@ -29,15 +29,15 @@ class MyApp extends StatelessWidget {
 class PieCharts extends StatelessWidget {
   final Map<String, double> dataMap;
   final colorList = <Color>[
-    Color.fromRGBO(50, 75, 119, 1),
+    Color.fromRGBO(21, 43, 81, 1),
     Colors.transparent, // Gap1
     Color.fromRGBO(40, 60, 95, 1),
     Colors.transparent, // Gap2
-    Color.fromRGBO(21, 43, 81, 1),
+    Color.fromRGBO(50, 75, 119, 1),
     Colors.transparent, // Gap3
-    Color.fromRGBO(90, 134, 213, 1),
-    Colors.transparent, // Gap4
     Color.fromRGBO(60, 89, 142, 1),
+    Colors.transparent, // Gap4
+    Color.fromRGBO(90, 134, 213, 1),
     Colors.transparent, // Gap5
   ];
   PieCharts({Key? key, required this.dataMap}) : super(key: key);
@@ -162,21 +162,24 @@ class PieCharts extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: legendDataMap.keys.map((key) {
-                        return Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 15,
-                              height: 15,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: colorList[dataMap.keys.toList().indexOf(key)],
+                        return Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 15,
+                                height: 15,
+                                decoration: BoxDecoration(
+                                  // shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(3),
+                                  color: colorList[dataMap.keys.toList().indexOf(key)],
+                                ),
                               ),
-
-                            ),
-                            SizedBox(width: 10),
-                            Text(key,maxLines: 3,),
-                          ],
+                              SizedBox(width: 10),
+                              Text(key,maxLines: 3),
+                            ],
+                          ),
                         );
                       }).toList(),
                     ),

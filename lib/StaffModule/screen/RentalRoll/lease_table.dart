@@ -504,10 +504,17 @@ class _Lease_tableState extends State<Lease_table> {
             SizedBox(height: 10),
             if(permissions!.leaseAdd!)
             Padding(
-              padding: const EdgeInsets.all(13),
+              padding: const EdgeInsets.all(0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'RentRoll',
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () async {
                       Provider.of<SelectedTenantsProvider>(context,listen: false).clearTenant();
@@ -528,10 +535,10 @@ class _Lease_tableState extends State<Lease_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.063,
                       width:  (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.30
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -539,7 +546,7 @@ class _Lease_tableState extends State<Lease_table> {
                       ),
                       child: Center(
                         child: Text(
-                          "Add Lease",
+                          "+ Add",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -591,10 +598,7 @@ class _Lease_tableState extends State<Lease_table> {
             //     ),
             //   ),
             // ),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'RentRoll',
-            ),
+
             SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.only(left: 19, right: 13),

@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:three_zero_two_property/model/propertytype.dart';
+import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../../repository/Property_type.dart';
 import '../../repository/lease.dart';

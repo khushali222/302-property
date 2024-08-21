@@ -17,7 +17,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 import '../../../model/workordr.dart';
 import '../../../widgets/drawer_tiles.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class Workorder_table extends StatefulWidget {
   const Workorder_table({super.key});
 
@@ -633,93 +633,24 @@ class _Workorder_tableState extends State<Workorder_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Work Order"),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Work Order"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Work Order"),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(
-              height: 20,
-            ),
+
             //add Data
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Works Orders',
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
@@ -734,13 +665,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.062,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(21, 43, 81, 1),
@@ -751,13 +682,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Work Order",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                     MediaQuery.of(context).size.width < 500
-                                        ? 14
+                                        ? 16
                                         : 20,
                               ),
                             ),
@@ -774,10 +705,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             const SizedBox(height: 10),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Works Orders',
-            ),
+
             const SizedBox(height: 10),
             //search
             Padding(

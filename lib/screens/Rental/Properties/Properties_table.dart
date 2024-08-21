@@ -26,7 +26,7 @@ import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 
 import 'EditProperties.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class _Dessert {
   _Dessert(
     this.name,
@@ -479,78 +479,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(context, Icon(CupertinoIcons.person_add),
-                  "Add Staff Member", false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties",
-                  initvalue: true),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties",
-                  initvalue: false),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties",
-                  initvalue: false),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Properties",dropdown: true,),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -558,10 +487,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
               height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Properties',
+                  ),
                   GestureDetector(
                     onTap: () async {
                       if (rentalCount < propertyCountLimit) {
@@ -584,10 +517,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     child: Container(
                       // height: 40,
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 35
+                          ? 50
                           : 45,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -598,13 +531,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Property",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
-                                    ? 14
+                                    ? 16
                                     : 20,
                               ),
                             ),
@@ -621,10 +554,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               ),
             ),
             SizedBox(height: 10),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Properties',
-            ),
+
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(
@@ -960,12 +890,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
+                                                // SizedBox(
+                                                //     width:
+                                                //         MediaQuery.of(context)
+                                                //                 .size
+                                                //                 .width *
+                                                //             .08),
                                                 Expanded(
                                                   child: Text(
                                                     '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A':rentals.propertyTypeData!.propertyType}',
@@ -977,12 +907,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
+                                                // SizedBox(
+                                                //     width:
+                                                //         MediaQuery.of(context)
+                                                //                 .size
+                                                //                 .width *
+                                                //             .08),
                                                 Expanded(
                                                   child: Text(
                                                     '${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' :rentals.propertyTypeData!.propertySubType}',
@@ -994,12 +924,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
+                                                // SizedBox(
+                                                //     width:
+                                                //         MediaQuery.of(context)
+                                                //                 .size
+                                                //                 .width *
+                                                //             .02),
                                               ],
                                             ),
                                           ),
@@ -1012,6 +942,49 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                    children: [
+                                                     SizedBox(width: 31,),
+                                                      Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                              'Primery E-mail: ',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  color:
+                                                                  blueColor), // Bold and black
+                                                            ),
+                                                            TextSpan(
+                                                              text:
+                                                              '${(rentals.rentalOwnerData!.rentalOwnerPrimaryEmail ?? "").isEmpty?'N/A' : rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                                  color: Colors
+                                                                      .grey), // Light and grey
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      // SizedBox(
+                                                      //   height: MediaQuery.of(
+                                                      //       context)
+                                                      //       .size
+                                                      //       .height *
+                                                      //       .01,
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
@@ -1131,32 +1104,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                       .height *
                                                                   .01,
                                                             ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Updated At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${rentals.updatedAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
+
                                                           ],
                                                         ),
                                                       ),
@@ -1205,39 +1153,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Primery E-mail: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${(rentals.rentalOwnerData!.rentalOwnerPrimaryEmail ?? "").isEmpty?'N/A' : rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
                                                                         'Created At: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
@@ -1253,6 +1168,39 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w700,
+                                                                        color: Colors
+                                                                            .grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                  context)
+                                                                  .size
+                                                                  .height *
+                                                                  .01,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Updated At : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: formatDate(
+                                                                        '${rentals.updatedAt}'),
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
                                                                         color: Colors
                                                                             .grey), // Light and grey
                                                                   ),
@@ -1281,8 +1229,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               onPressed:
                                                                   () async {
                                                                 // handleEdit(Propertytype);
-
-                                                                var check = await Navigator.push(
+                                                                    var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => Edit_properties(

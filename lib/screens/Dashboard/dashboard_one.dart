@@ -13,11 +13,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
+import 'package:three_zero_two_property/screens/Maintenance/Vendor/Vendor_table.dart';
+import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
+import 'package:three_zero_two_property/screens/Rental/Properties/Properties_table.dart';
+import 'package:three_zero_two_property/screens/Rental/Tenants/Tenants_table.dart';
 import 'package:three_zero_two_property/widgets/pie_chart.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
+import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../Rental/Properties/add_new_property.dart';
 import '../../widgets/barchart.dart';
@@ -46,6 +52,14 @@ class DashboardData {
     "Applicants",
     "Vendors",
     "Work Orders"
+  ];
+
+  final List<Widget> pages = [
+    PropertiesTable(),
+    Tenants_table(),
+    Applicants_table(),
+    Vendor_table(),
+    Workorder_table(),
   ];
 
   List<Color> colorc = [
@@ -78,6 +92,13 @@ class _DashboardState extends State<Dashboard> {
   String firstname = '';
   String lastname = '';
   bool loading = false;
+  final List<Widget> pages = [
+    PropertiesTable(),
+    Tenants_table(),
+    Applicants_table(),
+    Vendor_table(),
+    Workorder_table(),
+  ];
   Future<void> fetchDatacount() async {
     setState(() {
       loading = true;
@@ -96,10 +117,10 @@ class _DashboardState extends State<Dashboard> {
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
-          countList[0] = jsonData['tenantCount'];
-          countList[1] = jsonData['rentalCount'];
-          countList[2] = jsonData['vendorCount'];
-          countList[3] = jsonData['applicantCount'];
+          countList[1] = jsonData['tenantCount'];
+          countList[0] = jsonData['rentalCount'];
+          countList[3] = jsonData['vendorCount'];
+          countList[2] = jsonData['applicantCount'];
           countList[4] = jsonData['workOrderCount'];
           loading = false;
         });
@@ -190,78 +211,7 @@ class _DashboardState extends State<Dashboard> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        drawer: Drawer(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Image.asset("assets/images/logo.png"),
-                ),
-                const SizedBox(height: 40),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.circle_grid_3x3,
-                      color: Colors.white,
-                    ),
-                    "Dashboard",
-                    true),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.home,
-                      color: Colors.black,
-                    ),
-                    "Add Property Type",
-                    false),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.person_add,
-                      color: Colors.black,
-                    ),
-                    "Add Staff Member",
-                    false),
-                buildDropdownListTile(
-                    context,
-                    const FaIcon(
-                      FontAwesomeIcons.key,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Rental",
-                    ["Properties", "RentalOwner", "Tenants"]),
-                buildDropdownListTile(
-                    context,
-                    const FaIcon(
-                      FontAwesomeIcons.thumbsUp,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Leasing",
-                    ["Rent Roll", "Applicants"]),
-                buildDropdownListTile(
-                    context,
-                    Image.asset("assets/icons/maintence.png",
-                        height: 20, width: 20),
-                    "Maintenance",
-                    ["Vendor", "Work Order"]),
-                buildListTile(
-                    context,
-                    const FaIcon(
-                      FontAwesomeIcons.folderOpen,
-                      color: Colors.black,
-                    ),
-                    "Reports",
-                    false),
-              ],
-            ),
-          ),
-        ),
+        drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
         appBar: widget_302.App_Bar(context: context),
         body: Center(
             child: loading
@@ -329,7 +279,7 @@ class _DashboardState extends State<Dashboard> {
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontSize: 22,
                                   ),
                                 ),
                               ],
@@ -453,7 +403,7 @@ class _DashboardState extends State<Dashboard> {
                               gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount:
-                                3, // Number of items per row
+                                2, // Number of items per row
                                 crossAxisSpacing:
                                 MediaQuery.of(context).size.width *
                                     0.02,
@@ -461,85 +411,101 @@ class _DashboardState extends State<Dashboard> {
                                 MediaQuery.of(context).size.width *
                                     0.02,
                                 childAspectRatio:
-                                .85, // Adjust as needed for your design
+                                .99, // Adjust as needed for your design
                               ),
                               itemBuilder: (context, index) {
-                                return Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: dashboardData.colorc[index],
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        const SizedBox(height: 10),
-                                        Row(
+                                return
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => pages[index]),
+                                      );
+                                    },
+                                    child: Material(
+                                    elevation: 3,
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: dashboardData.colorc[index],
+                                        borderRadius:
+                                        BorderRadius.circular(8),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Column(
                                           children: [
-                                            const SizedBox(width: 10),
-                                            Material(
-                                              elevation: 5,
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  20),
-                                              child: Container(
-                                                  height: 40,
-                                                  width: 40,
-                                                  padding:
-                                                  const EdgeInsets
-                                                      .all(10),
-                                                  decoration:
-                                                  BoxDecoration(
-                                                    color: dashboardData
-                                                        .colors[index],
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(20),
+                                            const SizedBox(height: 15),
+                                            Row(
+                                              children: [
+                                                const SizedBox(width: 10),
+                                                Material(
+                                                  elevation: 5,
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      15),
+                                                  child: Container(
+                                                      height: 50,
+                                                      width: 50,
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(10),
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        color: dashboardData
+                                                            .colors[index],
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(15),
+                                                      ),
+                                                      child: SvgPicture.asset(
+                                                        "${dashboardData.icons[index]}",
+                                                        fit: BoxFit.cover,
+                                                        height: 30,
+                                                        width: 30,
+                                                      )),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Row(
+                                              children: [
+                                                const SizedBox(width: 10),
+                                                Text(
+                                                  countList[index].toString(),
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize: 20,
                                                   ),
-                                                  child: SvgPicture.asset(
-                                                    "${dashboardData.icons[index]}",
-                                                    fit: BoxFit.cover,
-                                                    height: 27,
-                                                    width: 27,
-                                                  )),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Row(
+                                              children: [
+                                                const SizedBox(width: 10),
+                                                Text(
+                                                  dashboardData.titles[index],
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 5,),
+                                                Icon(Icons.arrow_forward_rounded,color: Colors.white,),
+
+                                              ],
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 10),
-                                            Text(
-                                              countList[index].toString(),
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 10),
-                                            Text(
-                                              dashboardData.titles[index],
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                );
+                                                                    ),
+                                  );
                               },
                               shrinkWrap:
                               true, // If you want the GridView to take only the space it needs

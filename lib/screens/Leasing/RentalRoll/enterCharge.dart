@@ -17,7 +17,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../model/EnterChargeModel.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class enterCharge extends StatefulWidget {
   final String leaseId;
 
@@ -229,7 +229,8 @@ class _enterChargeState extends State<enterCharge> {
 
   Future<String?> uploadPdf(File pdfFile) async {
     print(pdfFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    //final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
@@ -253,73 +254,7 @@ class _enterChargeState extends State<enterCharge> {
     return Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: Drawer(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Image.asset("assets/images/logo.png"),
-                ),
-                const SizedBox(height: 40),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.circle_grid_3x3,
-                      color: Colors.black,
-                    ),
-                    "Dashboard",
-                    false),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.house,
-                      color: Colors.black,
-                    ),
-                    "Add Property Type",
-                    false),
-                buildListTile(
-                    context,
-                    const Icon(
-                      CupertinoIcons.person_add,
-                      color: Colors.black,
-                    ),
-                    "Add Staff Member",
-                    false),
-                buildDropdownListTile(
-                    context,
-                    const FaIcon(
-                      FontAwesomeIcons.key,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Rental",
-                    ["Properties", "RentalOwner", "Tenants"],
-                    selectedSubtopic: "Properties"),
-                buildDropdownListTile(
-                    context,
-                    const FaIcon(
-                      FontAwesomeIcons.thumbsUp,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    "Leasing",
-                    ["Rent Roll", "Applicants"],
-                    selectedSubtopic: "Properties"),
-                buildDropdownListTile(
-                    context,
-                    Image.asset("assets/icons/maintence.png",
-                        height: 20, width: 20),
-                    "Maintenance",
-                    ["Vendor", "Work Order"],
-                    selectedSubtopic: "Properties"),
-              ],
-            ),
-          ),
-        ),
+        drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -1152,9 +1087,9 @@ class _enterChargeState extends State<enterCharge> {
                       ]),
                       TableRow(children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width < 500 ? 16 : 70,right: MediaQuery.of(context).size.width < 500 ? 16 : 70,top: 10,bottom: 10),
                           child: Container(
-                            height: 34,
+                            height: 40,
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(width: 1),
@@ -1169,9 +1104,10 @@ class _enterChargeState extends State<enterCharge> {
                                   elevation: 0,
                                   backgroundColor: Colors.white),
                               onPressed: addRow,
-                              child: const Text(
+                              child:  Text(
                                 'Add Row',
                                 style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 18,
                                   color:
                                   Color.fromRGBO(21, 43, 83, 1),
                                 ),
@@ -1213,7 +1149,7 @@ class _enterChargeState extends State<enterCharge> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Upload Files (Maximum of 10)',
+                          const Text('Upload Files',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -1238,21 +1174,51 @@ class _enterChargeState extends State<enterCharge> {
                               child: const Text('Upload'),
                             ),
                           ),
-                          const SizedBox(height: 20),
+
                           const SizedBox(height: 10),
-                          Flexible(
-                            fit: FlexFit.loose,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: _uploadedFileNames.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(_uploadedFileNames[index],
+                          // Flexible(
+                          //   fit: FlexFit.loose,
+                          //   child: ListView.builder(
+                          //     shrinkWrap: true,
+                          //     itemCount: _uploadedFileNames.length,
+                          //     itemBuilder: (context, index) {
+                          //       return ListTile(
+                          //         title: Text(_uploadedFileNames[index],
+                          //             style: const TextStyle(
+                          //                 fontSize: 16,
+                          //                 fontWeight: FontWeight.w500,
+                          //                 color: Color(0xFF748097))),
+                          //         trailing: IconButton(
+                          //             onPressed: () {
+                          //               setState(() {
+                          //                 _uploadedFileNames.removeAt(index);
+                          //               });
+                          //             },
+                          //             icon: const FaIcon(
+                          //               FontAwesomeIcons.remove,
+                          //               color: Color(0xFF748097),
+                          //             )),
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
+                          if (_uploadedFileNames.isNotEmpty) ...[
+                            const SizedBox(height: 10),
+                            Flexible(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _uploadedFileNames.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(
+                                      _uploadedFileNames[index],
                                       style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF748097))),
-                                  trailing: IconButton(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF748097),
+                                      ),
+                                    ),
+                                    trailing: IconButton(
                                       onPressed: () {
                                         setState(() {
                                           _uploadedFileNames.removeAt(index);
@@ -1261,12 +1227,14 @@ class _enterChargeState extends State<enterCharge> {
                                       icon: const FaIcon(
                                         FontAwesomeIcons.remove,
                                         color: Color(0xFF748097),
-                                      )),
-                                );
-                              },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 5),
+                          ],
+
                         ],
                       ),
                     ),
@@ -1324,6 +1292,7 @@ class _enterChargeState extends State<enterCharge> {
                                     uploadedFile: _uploadedFileNames,
                                     entry: entryList,
                                   );
+                               print('file ${_uploadedFileNames}');
 
                                   LeaseRepository apiService =
                                       LeaseRepository();

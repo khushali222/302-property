@@ -19,7 +19,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import 'CardModel.dart';
 import 'Service.dart';
-
+import '../../../../widgets/custom_drawer.dart';
 class AddCard extends StatefulWidget {
   final String leaseId;
   AddCard({required this.leaseId});
@@ -394,73 +394,7 @@ class _AddCardState extends State<AddCard> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Rent Roll"),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Rent Roll"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Rent Roll"),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
       body: LayoutBuilder(
         builder: (context, constraints) {
       bool isTablet = constraints.maxWidth > 600;
@@ -987,8 +921,8 @@ class _AddCardState extends State<AddCard> {
                                             tenantId: selectedTenantId,
                                             billingId: randomNumber,
                                             customerVaultId:
-                                            cardResponses!.customerVaultId,
-                                            responseCode: cardResponses.responseCode,
+                                            cardResponses?.customerVaultId,
+                                            responseCode: cardResponses?.responseCode,
                                           );
                                           await addCardService
                                               .postAddCreditCard(addcards);

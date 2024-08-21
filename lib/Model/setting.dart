@@ -90,7 +90,34 @@ class Setting2 {
     );
   }
 }
+class Setting3 {
+  String id;
+  String adminId;
+  String latefeeId;
 
+  String duration;
+  String late_fee;
+
+  Setting3({
+    required this.id,
+    required this.adminId,
+    required this.latefeeId,
+    required this.duration,
+    required this.late_fee,
+
+  });
+
+  factory Setting3.fromJson(Map<String, dynamic> json) {
+    return Setting3(
+
+      id: json['_id'],
+      adminId: json['admin_id'],
+      latefeeId: json['latefee_id'],
+      duration: json['duration'].toString(),
+      late_fee: json['late_fee'].toString(),
+    );
+  }
+}
 class ApiResponse {
   List<Setting1> data;
   int statusCode;

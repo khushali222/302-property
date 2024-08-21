@@ -13,6 +13,8 @@ import '../../../widgets/titleBar.dart';
 import 'add_vendor.dart';
 import 'edit_vendor.dart';
 
+
+import '../../../widgets/custom_drawer.dart';
 class Vendor_table extends StatefulWidget {
   const Vendor_table({super.key});
 
@@ -528,93 +530,24 @@ class _Vendor_tableState extends State<Vendor_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Vendor"),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Vendor"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Vendor"),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Vendor",dropdown: true,),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: 20,
-            ),
+
             //add propertytype
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Vendor',
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
@@ -629,13 +562,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 35
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.058,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.3
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -646,13 +579,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add vendor",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                     MediaQuery.of(context).size.width < 500
-                                        ? 14
+                                        ? 16
                                         : 20,
                               ),
                             ),
@@ -670,10 +603,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
             SizedBox(height: 10),
 
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Vendor',
-            ),
+
             SizedBox(height: 10),
             //search
             Padding(

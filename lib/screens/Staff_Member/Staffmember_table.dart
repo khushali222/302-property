@@ -9,7 +9,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'Add_staffmember.dart';
 import 'Staffmemvertable.dart';
-
+import '../../widgets/custom_drawer.dart';
 class Staffmember_table extends StatefulWidget {
   const Staffmember_table({super.key});
 
@@ -156,64 +156,7 @@ class _Staffmember_tableState extends State<Staffmember_table>
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.white,
-                  ),
-                  "Add Staff Member",
-                  true),
-              buildDropdownListTile(context, Icon(Icons.key), "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(context, Icon(Icons.thumb_up_alt_outlined),
-                  "Leasing", ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Add Staff Member",dropdown: false,),
       body: Scrollbar(
         child: ListView(
           restorationId: 'data_table_list_view',

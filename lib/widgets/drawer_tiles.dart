@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
@@ -63,7 +64,8 @@ Widget buildListTile(
       title: Text(
         title,
         style: TextStyle(
-          color: active ? Colors.white : Colors.black,
+          fontSize: 15,
+          color: active ? Colors.white : blueColor,
         ),
       ),
     ),
@@ -85,17 +87,20 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
 
   };
 
-  if (isActive != true) {
+ // if (isActive != true) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: routes[option]!),
     );
-  }
+ // }
 }
 
 Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     String title, List<String> subTopics,
     {String? selectedSubtopic, bool? initvalue}) {
+  // Check if the selectedSubtopic is in the list of subTopics
+  bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
+
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     padding: EdgeInsets.symmetric(horizontal: 16),
@@ -104,9 +109,12 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     //   borderRadius: BorderRadius.circular(10),
     // ),
     child: ExpansionTile(
+     // backgroundColor: Color(value),
+      initiallyExpanded: isExpanded,
+      //initiallyExpanded: true,
       // initiallyExpanded: initvalue!,
       leading: leadingIcon,
-      title: Text(title),
+      title: Text(title,style: TextStyle(color: blueColor),),
       children: subTopics.map((
         subTopic,
       ) {
@@ -124,7 +132,8 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
               title: Text(
                 subTopic,
                 style: TextStyle(
-                  color: active ? Colors.white : Colors.black,
+                  fontSize: 15,
+                  color: active ? Colors.white : blueColor,
                 ),
               ),
               onTap: () {

@@ -141,349 +141,347 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Form(
-          key: formkey,
-          child: ListView(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Form(
+        key: formkey,
+        child: ListView(
 
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+            ),
+            Image(
+              image: AssetImage('assets/images/logo.png'),
+              height: MediaQuery.of(context).size.height * 0.05,
+              width: MediaQuery.of(context).size.width * 0.9,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.02,
+            ),
+            // Welcome
+            Center(
+              child: Text(
+                "Welcome to 302 Rentals",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                ),
               ),
-              Image(
-                image: AssetImage('assets/images/logo.png'),
-                height: MediaQuery.of(context).size.height * 0.05,
-                width: MediaQuery.of(context).size.width * 0.9,
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              // Welcome
-              Center(
-                child: Text(
-                  "Welcome to 302 Rentals",
-                  style: TextStyle(
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+            ),
+            // Login text
+            Center(
+              child: Text(
+                "Forgot Your Password ?",
+                style: TextStyle(
                     color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                    fontSize: MediaQuery.of(context).size.width * 0.034),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.06,
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.099,
+                ),
+                Expanded(
+                  child: Text(
+                    "Enter your email address below, and we'll sent you the link to reset your password",
+                    style: TextStyle(
+                        color: Colors.black38,
+                        fontSize:
+                            MediaQuery.of(context).size.width * 0.034),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
-              ),
-              // Login text
-              Center(
-                child: Text(
-                  "Forgot Your Password ?",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: MediaQuery.of(context).size.width * 0.034),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.099,
                 ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.06,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.099,
-                  ),
-                  Expanded(
-                    child: Text(
-                      "Enter your email address below, and we'll sent you the link to reset your password",
-                      style: TextStyle(
-                          color: Colors.black38,
-                          fontSize:
-                              MediaQuery.of(context).size.width * 0.034),
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.099,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.028,
-              ),
+              ],
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.028,
+            ),
 
-              Row(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.099,
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color.fromRGBO(196, 196, 196, .3),
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              keyboardType: TextInputType.emailAddress,
-                              onChanged: (value) {
-                                setState(() {
-                                  emailerror = false;
-                                  _isEmailSubmitted = false;
-                                });
-                              },
-                              controller: email,
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                              decoration: InputDecoration(
-                                enabledBorder: emailerror
-                                    ? OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                            color: Colors
-                                                .red), // Set border color here
-                                      )
-                                    : InputBorder.none,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(14),
-                                prefixIcon: Container(
-                                  height: 20,
-                                  width: 20,
-                                  padding: EdgeInsets.all(13),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.envelope,
-                                    size: 20,
-                                    color: Colors.grey[600],
-                                  ),
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.099,
+                ),
+                Expanded(
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromRGBO(196, 196, 196, .3),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: TextField(
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (value) {
+                              setState(() {
+                                emailerror = false;
+                                _isEmailSubmitted = false;
+                              });
+                            },
+                            controller: email,
+                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            decoration: InputDecoration(
+                              enabledBorder: emailerror
+                                  ? OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
+                                  : InputBorder.none,
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.all(14),
+                              prefixIcon: Container(
+                                height: 20,
+                                width: 20,
+                                padding: EdgeInsets.all(13),
+                                child: FaIcon(
+                                  FontAwesomeIcons.envelope,
+                                  size: 20,
+                                  color: Colors.grey[600],
                                 ),
-                                hintText: "Email",
-                                hintStyle: TextStyle(
-                                    color: Colors.grey[600], fontSize: 15),
                               ),
+                              hintText: "Email",
+                              hintStyle: TextStyle(
+                                  color: Colors.grey[600], fontSize: 15),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.099,
-                  ),
-                ],
-              ),
-              emailerror
-                  ? Center(
-                      child: Text(
-                      emailmessage,
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ))
-                  : Container(),
-              if (isEmailSubmitted)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    if (hasMultipleCompanies) ...[
-                      SingleSelectionButtons(
-                        buttonOptions: companies,
-                        onSelected: (index) {
-                          selectCompany(
-                              companies[index]["company"]!,
-                              companies[index]["role"]!,
-                              companies[index]["admin_id"]!);
-                        },
-                      ),
-                    ],
-
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    // Login button
-                  ],
-                ),
-
-              if (isEmailSubmitted)
-                Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (email.text.isEmpty) {
-                            setState(() {
-                              emailerror = true;
-                              emailmessage = "Email is required";
-                            });
-                          } else if (!EmailValidator.validate(email.text)) {
-                            setState(() {
-                              emailerror = true;
-                              emailmessage = "Email is not valid";
-                            });
-                          } else {
-                            setState(() {
-                              emailerror = false;
-                              //firstnamemessage = "Firstname is required";
-                            });
-                          }
-                        });
-                        if (selectedrole == "") {
-                          // If email is valid, send OTP
-                          Fluttertoast.showToast(msg: "Please select the company");
-                        }
-                        else if (!emailerror) {
-                          // If email is valid, send OTP
-                          sendOTP(email.text);
-                        }
-                      },
-                      child: Center(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.06,
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: loading
-                                ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 40.0,
-                                  )
-                                : Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Submit",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.045),
-                                      ),
-                                    ],
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              if (!isEmailSubmitted)
-                Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.06,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (email.text.isEmpty) {
-                            setState(() {
-                              emailerror = true;
-                              emailmessage = "Email is required";
-                            });
-                          } else if (!EmailValidator.validate(email.text)) {
-                            setState(() {
-                              emailerror = true;
-                              emailmessage = "Email is not valid";
-                            });
-                          } else {
-                            setState(() {
-                              emailerror = false;
-                              //firstnamemessage = "Firstname is required";
-                            });
-                          }
-                        });
-                        if (!emailerror) {
-                          // If email is valid, send OTP
-                          submitEmail();
-                        }
-                      },
-                      child: Center(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.06,
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: loading
-                                ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 40.0,
-                                  )
-                                : Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Submit",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.045),
-                                      ),
-                                    ],
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Center(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.06,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.black)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Cancel",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.045),
                         ),
                       ],
                     ),
                   ),
                 ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.099,
+                ),
+              ],
+            ),
+            emailerror
+                ? Center(
+                    child: Text(
+                    emailmessage,
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ))
+                : Container(),
+            if (isEmailSubmitted)
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.025,
+                  ),
+                  if (hasMultipleCompanies) ...[
+                    SingleSelectionButtons(
+                      buttonOptions: companies,
+                      onSelected: (index) {
+                        selectCompany(
+                            companies[index]["company"]!,
+                            companies[index]["role"]!,
+                            companies[index]["admin_id"]!);
+                      },
+                    ),
+                  ],
+
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.025,
+                  ),
+                  // Login button
+                ],
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
+
+            if (isEmailSubmitted)
+              Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (email.text.isEmpty) {
+                          setState(() {
+                            emailerror = true;
+                            emailmessage = "Email is required";
+                          });
+                        } else if (!EmailValidator.validate(email.text)) {
+                          setState(() {
+                            emailerror = true;
+                            emailmessage = "Email is not valid";
+                          });
+                        } else {
+                          setState(() {
+                            emailerror = false;
+                            //firstnamemessage = "Firstname is required";
+                          });
+                        }
+                      });
+                      if (selectedrole == "") {
+                        // If email is valid, send OTP
+                        Fluttertoast.showToast(msg: "Please select the company");
+                      }
+                      else if (!emailerror) {
+                        // If email is valid, send OTP
+                        sendOTP(email.text);
+                      }
+                    },
+                    child: Center(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.06,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: loading
+                              ? SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 40.0,
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Submit",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.045),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            if (!isEmailSubmitted)
+              Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.06,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (email.text.isEmpty) {
+                          setState(() {
+                            emailerror = true;
+                            emailmessage = "Email is required";
+                          });
+                        } else if (!EmailValidator.validate(email.text)) {
+                          setState(() {
+                            emailerror = true;
+                            emailmessage = "Email is not valid";
+                          });
+                        } else {
+                          setState(() {
+                            emailerror = false;
+                            //firstnamemessage = "Firstname is required";
+                          });
+                        }
+                      });
+                      if (!emailerror) {
+                        // If email is valid, send OTP
+                        submitEmail();
+                      }
+                    },
+                    child: Center(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.06,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: loading
+                              ? SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 40.0,
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Submit",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.045),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.02,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Center(
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Cancel",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize:
+                                MediaQuery.of(context).size.width * 0.045),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+            ),
+          ],
         ),
       ),
     );

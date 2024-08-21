@@ -11,6 +11,8 @@ import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 
+import '../constant/constant.dart';
+
 class widget_302 {
   static App_Bar({
     var suffixIcon,
@@ -128,19 +130,24 @@ class widget_302 {
                     ),
                   ),
                   itemBuilder: (ctx) => [
-                    const PopupMenuItem(
+                     PopupMenuItem(
                       child: Text(
                         "WELCOME",
+                        style: TextStyle(
+                          color: blueColor
+                        ),
                       ),
                     ),
                     PopupMenuItem(
-                      child: const Row(
+                      child:  Row(
                         children: [
-                          Icon(Icons.person),
+                          Icon(Icons.person,color: blueColor,),
                           SizedBox(
                             width: 10,
                           ),
-                          Text("My Profile"),
+                          Text("My Profile", style: TextStyle(
+                              color: blueColor
+                          ),),
                         ],
                       ),
                       onTap: () {
@@ -151,13 +158,15 @@ class widget_302 {
                       },
                     ),
                     PopupMenuItem(
-                      child: const Row(
+                      child:  Row(
                         children: [
-                          Icon(Icons.note_alt_outlined),
-                          SizedBox(
+                          Icon(Icons.note_alt_outlined,color: blueColor),
+                          const SizedBox(
                             width: 10,
                           ),
-                          Text("User Permission"),
+                          Text("User Permission", style: TextStyle(
+                              color: blueColor
+                          ),),
                         ],
                       ),
                       onTap: () {
@@ -169,17 +178,19 @@ class widget_302 {
                       },
                     ),
                     PopupMenuItem(
-                      child: const Row(
+                      child:  Row(
                         children: [
                           FaIcon(
                             FontAwesomeIcons.cog,
                             size: 20,
-                            color: Colors.black,
+                            color:blueColor,
                           ),
                           SizedBox(
                             width: 10,
                           ),
-                          Text("Settings"),
+                          Text("Settings", style: TextStyle(
+                              color: blueColor
+                          ),),
                         ],
                       ),
                       onTap: () {
@@ -190,13 +201,15 @@ class widget_302 {
                       },
                     ),
                     PopupMenuItem(
-                      child: const Row(
+                      child:  Row(
                         children: [
-                          Icon(Icons.directions_run_rounded),
+                          Icon(Icons.directions_run_rounded,color: blueColor,),
                           SizedBox(
                             width: 10,
                           ),
-                          Text("Logout"),
+                          Text("Logout", style: TextStyle(
+                              color: blueColor
+                          ),),
                         ],
                       ),
                       onTap: () async {

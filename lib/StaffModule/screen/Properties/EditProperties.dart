@@ -18,7 +18,7 @@ import 'package:three_zero_two_property/repository/rental_properties.dart';
 import 'Edit_Rentalowners.dart';
 import 'add_rentalowners.dart';
 import '../../widgets/appbar.dart';
-import '../../../model/propertytype.dart';
+import '../../../Model/propertytype.dart';
 import '../../../constant/constant.dart';
 import '../../../model/add_property.dart';
 import '../../../model/properties.dart';

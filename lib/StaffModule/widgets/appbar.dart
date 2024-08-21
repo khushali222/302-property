@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -122,6 +123,7 @@ class widget_302 {
                       PopupMenuItem(
                         child: Text(
                           "WELCOME",
+                          style: TextStyle(color: blueColor),
                         ),
                       ),
                     /*  PopupMenuItem(
@@ -166,7 +168,7 @@ class widget_302 {
                       PopupMenuItem(
                         child: Row(
                           children: [
-                            Icon(Icons.directions_run_rounded),
+                            Icon(Icons.directions_run_rounded,color: blueColor,),
                             //  FaIcon(
                             //    FontAwesomeIcons,
                             //    size: 20,
@@ -175,7 +177,7 @@ class widget_302 {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("Logout"),
+                            Text("Logout",style: TextStyle(color: blueColor),),
                           ],
                         ),
                         onTap: () async {

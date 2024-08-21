@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -1287,9 +1289,9 @@ class _FinancialTableState extends State<FinancialTable> {
                   children: [
                     width < 400
                         ? const Text("Type",
-                        style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: Colors.white))
                         : const Text("Type",
-                        style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     /* ascending1
@@ -1386,7 +1388,8 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("      Date", style: TextStyle(color: Colors.white)),
+                    const Text("      Date",
+                        style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     /* ascending3
                         ? const Padding(
@@ -1419,11 +1422,12 @@ class _FinancialTableState extends State<FinancialTable> {
   String? selectedValue;
   String searchvalue = "";
   late Future<LeaseLedger?> _leaseLedgerFuture;
-
+  List<bool> _expanded = [];
   @override
   void initState() {
     super.initState();
     _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+    _expanded = List.generate(_pagedData.length, (_) => false);
   }
   // @override
   // void initState() {
@@ -1504,8 +1508,8 @@ class _FinancialTableState extends State<FinancialTable> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(Data? d) getField,
-      int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(Data? d) getField, int columnIndex,
+      bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -1524,14 +1528,14 @@ class _FinancialTableState extends State<FinancialTable> {
     // print('Delete ${property.sId}');
   }
 
-  Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(Data? d)? getField) {
+  Widget _buildHeader<T>(
+      String text, int columnIndex, Comparable<T> Function(Data? d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -1656,10 +1660,10 @@ class _FinancialTableState extends State<FinancialTable> {
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -1672,21 +1676,65 @@ class _FinancialTableState extends State<FinancialTable> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : const Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
   }
 
+  int? _expandedIndex; // Track the expanded row index
+
+  Future<LeaseLedger?> fetchLeaseLedgerData() async {
+    // Implement your data fetching logic
+    return null; // Replace with actual data fetching
+  }
+
+  void _toggleExpansion(int index) {
+    setState(() {
+      _expandedIndex = _expandedIndex == index ? null : index;
+    });
+  }
+
   final _scrollController = ScrollController();
+  Widget _buildHeaderss(
+      String title, int index, String? Function(Data?)? valueFormatter) {
+    // Build your header cells here
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInteractiveCells(String content, VoidCallback onTap) {
+    return TableCell(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(height: 40, child: Center(child: Text(content,style:  TextStyle(fontSize: 18, color: Colors.black),))),
+        ),
+      ),
+    );
+  }
+
+  String formatDate3(String date) {
+    // Format your date here
+    return date;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1698,104 +1746,125 @@ class _FinancialTableState extends State<FinancialTable> {
             ),
             widget.status == 'Active'
                 ? Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      height: MediaQuery.of(context).size.width < 500 ? 36 :45,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(width: 1),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(10.0)),
-                              elevation: 0,
-                              backgroundColor: Colors.white),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AddCard(
-                                      leaseId: widget.leaseId,
-                                    )));
-                          },
-                          child: Text(
-                            'Add Cards',
-                            style: TextStyle(
-                                fontSize: MediaQuery.of(context).size.width < 500 ? 12 :18,
-                                color: Color.fromRGBO(21, 43, 83, 1)),
-                          ))),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.width < 500 ? 36 : 45,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(width: 1),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(10.0)),
-                              elevation: 0,
-                              backgroundColor: Colors.white),
-                          onPressed: () async{
-                            final value = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MakePayment(leaseId: widget.leaseId, tenantId: widget.tenantId,)));
-                            if(value== true){
-                              setState(() {
-                                _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
-                              });
-
-                            }
-                          },
-                          child: Text(
-                            'Make Payment',
-                            style: TextStyle(
-                                fontSize: MediaQuery.of(context).size.width < 500 ? 12 :18,
-                                color: Color.fromRGBO(21, 43, 83, 1)),
-                          ))),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.width < 500 ? 34 : 45,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(width: 1),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(10.0)),
-                              elevation: 0,
-                              backgroundColor: Colors.white),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => enterCharge(
-                                      leaseId: widget.leaseId,
-                                    )));
-                          },
-                          child: Text(
-                            'Enter Charge',
-                            style: TextStyle(
-                                fontSize: MediaQuery.of(context).size.width < 500 ? 12 :18,
-                                color: Color.fromRGBO(21, 43, 83, 1)),
-                          ))),
-                ],
-              ),
-            )
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 36
+                                : 45,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => AddCard(
+                                                leaseId: widget.leaseId,
+                                              )));
+                                },
+                                child: Text(
+                                  'Add Cards',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 12
+                                              : 18,
+                                      color: Color.fromRGBO(21, 43, 83, 1)),
+                                ))),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 36
+                                : 45,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: () async {
+                                  final value = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MakePayment(
+                                                leaseId: widget.leaseId,
+                                                tenantId: widget.tenantId,
+                                              )));
+                                  if (value == true) {
+                                    setState(() {
+                                      _leaseLedgerFuture = LeaseRepository()
+                                          .fetchLeaseLedger(widget.leaseId);
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  'Make Payment',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 12
+                                              : 18,
+                                      color: Color.fromRGBO(21, 43, 83, 1)),
+                                ))),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 34
+                                : 45,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    elevation: 0,
+                                    backgroundColor: Colors.white),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => enterCharge(
+                                                leaseId: widget.leaseId,
+                                              )));
+                                },
+                                child: Text(
+                                  'Enter Charge',
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 12
+                                              : 18,
+                                      color: Color.fromRGBO(21, 43, 83, 1)),
+                                ))),
+                      ],
+                    ),
+                  )
                 : Container(),
             const SizedBox(
               height: 6,
@@ -1803,395 +1872,946 @@ class _FinancialTableState extends State<FinancialTable> {
             if (MediaQuery.of(context).size.width > 500)
               const SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
+              // Padding(
+              //     padding: const EdgeInsets.only(
+              //         left: 10.0, right: 10.0, bottom: 10.0),
+              //     child: FutureBuilder<LeaseLedger?>(
+              //       future: _leaseLedgerFuture,
+              //       builder: (context, snapshot) {
+              //         if (snapshot.connectionState == ConnectionState.waiting) {
+              //           return ColabShimmerLoadingWidget();
+              //         } else if (snapshot.hasError) {
+              //           return Center(child: Text('Error: ${snapshot.error}'));
+              //         } else if (!snapshot.hasData) {
+              //           return Center(child: Text('No data found'));
+              //         } else {
+              //           final leaseLedger = snapshot.data!;
+              //           return SingleChildScrollView(
+              //             child: Column(
+              //               children: [
+              //                 const SizedBox(height: 5),
+              //                 _buildHeaders(),
+              //                 const SizedBox(height: 20),
+              //                 Container(
+              //                   decoration: BoxDecoration(
+              //                     border: Border.all(color: blueColor),
+              //                   ),
+              //                   child: Column(
+              //                     children: leaseLedger.data!
+              //                         .asMap()
+              //                         .entries
+              //                         .map((entry) {
+              //                       int index = entry.key;
+              //                       bool isExpanded = expandedIndex == index;
+              //                       Data data = entry.value;
+              //                       return Container(
+              //                         decoration: BoxDecoration(
+              //                           border: Border.all(color: blueColor),
+              //                         ),
+              //                         child: Column(
+              //                           children: <Widget>[
+              //                             ListTile(
+              //                               contentPadding: EdgeInsets.zero,
+              //                               title: Padding(
+              //                                 padding:
+              //                                 const EdgeInsets.all(2.0),
+              //                                 child: Row(
+              //                                   mainAxisAlignment:
+              //                                   MainAxisAlignment.start,
+              //                                   crossAxisAlignment:
+              //                                   CrossAxisAlignment.center,
+              //                                   children: <Widget>[
+              //                                     InkWell(
+              //                                       onTap: () {
+              //                                         setState(() {
+              //                                           if (expandedIndex ==
+              //                                               index) {
+              //                                             expandedIndex = null;
+              //                                           } else {
+              //                                             expandedIndex = index;
+              //                                           }
+              //                                         });
+              //                                       },
+              //                                       child: Container(
+              //                                         margin:
+              //                                         const EdgeInsets.only(
+              //                                             left: 5),
+              //                                         padding: !isExpanded
+              //                                             ? const EdgeInsets
+              //                                             .only(bottom: 10)
+              //                                             : const EdgeInsets
+              //                                             .only(top: 10),
+              //                                         child: FaIcon(
+              //                                           isExpanded
+              //                                               ? FontAwesomeIcons
+              //                                               .sortUp
+              //                                               : FontAwesomeIcons
+              //                                               .sortDown,
+              //                                           size: 20,
+              //                                           color: const Color
+              //                                               .fromRGBO(
+              //                                               21, 43, 83, 1),
+              //                                         ),
+              //                                       ),
+              //                                     ),
+              //                                     Expanded(
+              //                                       child: Padding(
+              //                                         padding:
+              //                                         const EdgeInsets.all(
+              //                                             8.0),
+              //                                         child: Text(
+              //                                           ' ${data.type}'??"", // Assuming you want to show the charge type here
+              //                                           style: TextStyle(
+              //                                             color: blueColor,
+              //                                             fontWeight:
+              //                                             FontWeight.bold,
+              //                                             fontSize: 13,
+              //                                           ),
+              //                                         ),
+              //                                       ),
+              //                                     ),
+              //                                     SizedBox(
+              //                                         width:
+              //                                         MediaQuery.of(context)
+              //                                             .size
+              //                                             .width *
+              //                                             .08),
+              //                                     Expanded(
+              //                                       child: Text(
+              //                                         ' \$${data.balance!.toStringAsFixed(2)}', // Show total amount
+              //                                         style: TextStyle(
+              //                                           color: blueColor,
+              //                                           fontWeight:
+              //                                           FontWeight.bold,
+              //                                           fontSize: 13,
+              //                                         ),
+              //                                       ),
+              //                                     ),
+              //                                     SizedBox(
+              //                                         width:
+              //                                         MediaQuery.of(context)
+              //                                             .size
+              //                                             .width *
+              //                                             .08),
+              //                                     Expanded(
+              //                                       child: Text(
+              //                                         formatDate(
+              //                                             '${data.createdAt}'), // Format and show created date
+              //                                         style: TextStyle(
+              //                                           color: blueColor,
+              //                                           fontWeight:
+              //                                           FontWeight.bold,
+              //                                           fontSize: 13,
+              //                                         ),
+              //                                       ),
+              //                                     ),
+              //                                     SizedBox(
+              //                                         width:
+              //                                         MediaQuery.of(context)
+              //                                             .size
+              //                                             .width *
+              //                                             .02),
+              //                                   ],
+              //                                 ),
+              //                               ),
+              //                             ),
+              //                             if (isExpanded)
+              //                               Container(
+              //                                 padding:
+              //                                 const EdgeInsets.symmetric(
+              //                                     horizontal: 8.0),
+              //                                 margin: const EdgeInsets.only(
+              //                                     bottom: 20),
+              //                                 child: SingleChildScrollView(
+              //                                   child: Column(
+              //                                     children: [
+              //                                       Row(
+              //                                         mainAxisAlignment:
+              //                                         MainAxisAlignment
+              //                                             .start,
+              //                                         children: [
+              //                                           FaIcon(
+              //                                             isExpanded
+              //                                                 ? FontAwesomeIcons
+              //                                                 .sortUp
+              //                                                 : FontAwesomeIcons
+              //                                                 .sortDown,
+              //                                             size: 50,
+              //                                             color: Colors
+              //                                                 .transparent,
+              //                                           ),
+              //                                           Expanded(
+              //                                             child: Column(
+              //                                               crossAxisAlignment:
+              //                                               CrossAxisAlignment
+              //                                                   .start,
+              //                                               children: <Widget>[
+              //                                                 Text.rich(
+              //                                                   TextSpan(
+              //                                                     children: [
+              //                                                       const TextSpan(
+              //                                                         text:
+              //                                                         'Increase : ',
+              //                                                         style: TextStyle(
+              //                                                             fontWeight: FontWeight
+              //                                                                 .bold,
+              //                                                             color: Color.fromRGBO(
+              //                                                                 21,
+              //                                                                 43,
+              //                                                                 83,
+              //                                                                 1)),
+              //                                                       ),
+              //                                                       TextSpan(
+              //                                                         text: (data.type == "Refund" || data.type == "Charge")
+              //                                                             ? '${data.totalAmount}'
+              //                                                             : 'N/A',
+              //                                                         style: const TextStyle(
+              //                                                             fontWeight: FontWeight
+              //                                                                 .w700,
+              //                                                             color:
+              //                                                             Colors.grey),
+              //                                                       ),
+              //                                                     ],
+              //                                                   ),
+              //                                                 ),
+              //                                                 Text.rich(
+              //                                                   TextSpan(
+              //                                                     children: [
+              //                                                       const TextSpan(
+              //                                                         text:
+              //                                                         'Tenant : ',
+              //                                                         style: TextStyle(
+              //                                                             fontWeight: FontWeight
+              //                                                                 .bold,
+              //                                                             color: Color.fromRGBO(
+              //                                                                 21,
+              //                                                                 43,
+              //                                                                 83,
+              //                                                                 1)),
+              //                                                       ),
+              //                                                       TextSpan(
+              //                                                         text:data.tenantData != null
+              //                                                             ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
+              //                                                             : 'N/A',
+              //                                                         style: const TextStyle(
+              //                                                             fontWeight: FontWeight
+              //                                                                 .w700,
+              //                                                             color:
+              //                                                             Colors.grey),
+              //                                                       ),
+              //                                                     ],
+              //                                                   ),
+              //                                                 ),
+              //                                               ],
+              //                                             ),
+              //                                           ),
+              //                                           SizedBox(
+              //                                             width: 40,
+              //                                             child: Column(
+              //                                               children: [
+              //                                                 IconButton(
+              //                                                   icon:
+              //                                                   const FaIcon(
+              //                                                     FontAwesomeIcons
+              //                                                         .edit,
+              //                                                     size: 20,
+              //                                                     color: Color
+              //                                                         .fromRGBO(
+              //                                                         21,
+              //                                                         43,
+              //                                                         83,
+              //                                                         1),
+              //                                                   ),
+              //                                                   onPressed:
+              //                                                       () async {
+              //                                                     // handleEdit(applicant);
+              //                                                     // var check = await Navigator.push(
+              //                                                     //     context,
+              //                                                     //     MaterialPageRoute(
+              //                                                     //         builder: (context) => EditApplicant(
+              //                                                     //               applicant: applicant,
+              //                                                     //               applicantId: applicant.applicantId!,
+              //                                                     //             )));
+              //                                                     // if (check ==
+              //                                                     //     true) {
+              //                                                     //   setState(
+              //                                                     //       () {});
+              //                                                     // }
+              //                                                   },
+              //                                                 ),
+              //                                                 IconButton(
+              //                                                   icon:
+              //                                                   const FaIcon(
+              //                                                     FontAwesomeIcons
+              //                                                         .trashCan,
+              //                                                     size: 20,
+              //                                                     color: Color
+              //                                                         .fromRGBO(
+              //                                                         21,
+              //                                                         43,
+              //                                                         83,
+              //                                                         1),
+              //                                                   ),
+              //                                                   onPressed: () {
+              //                                                     // handleDelete(applicant);
+              //                                                     // _showDeleteAlert(
+              //                                                     //     context,
+              //                                                     //     applicant
+              //                                                     //         .applicantId!);
+              //                                                   },
+              //                                                 ),
+              //                                               ],
+              //                                             ),
+              //                                           ),
+              //                                         ],
+              //                                       ),
+              //                                       Column(
+              //                                         children: data.entry!
+              //                                             .map((entry) {
+              //                                           return Row(
+              //                                             mainAxisAlignment:
+              //                                             MainAxisAlignment
+              //                                                 .start,
+              //                                             children: [
+              //                                               FaIcon(
+              //                                                 isExpanded
+              //                                                     ? FontAwesomeIcons
+              //                                                     .sortUp
+              //                                                     : FontAwesomeIcons
+              //                                                     .sortDown,
+              //                                                 size: 50,
+              //                                                 color: Colors
+              //                                                     .transparent,
+              //                                               ),
+              //                                               Expanded(
+              //                                                 child: Column(
+              //                                                   crossAxisAlignment:
+              //                                                   CrossAxisAlignment
+              //                                                       .start,
+              //                                                   children: <Widget>[
+              //                                                     // Text.rich(
+              //                                                     //   TextSpan(
+              //                                                     //     children: [
+              //                                                     //       TextSpan(
+              //                                                     //         text:
+              //                                                     //         'Transaction: ',
+              //                                                     //         style: TextStyle(
+              //                                                     //             fontWeight: FontWeight.bold,
+              //                                                     //             color: blueColor),
+              //                                                     //       ),
+              //                                                     //       TextSpan(
+              //                                                     //         text:
+              //                                                     //         "Manual ${data.type} FOR ${data.response} ${data.paymenttype} (#${data.transactionid})   ",
+              //                                                     //         style: const TextStyle(
+              //                                                     //             fontWeight: FontWeight.w700,
+              //                                                     //             color: Colors.grey),
+              //                                                     //       ),
+              //                                                     //
+              //                                                     //     ],
+              //                                                     //   ),
+              //                                                     // ),
+              //                                                     data.type != 'Charge'
+              //                                                         ? Text.rich(
+              //                                                       TextSpan(
+              //                                                         children: [
+              //                                                           TextSpan(
+              //                                                             text: 'Transaction: ',
+              //                                                             style: TextStyle(
+              //                                                               fontWeight: FontWeight.bold,
+              //                                                               color: blueColor,
+              //                                                             ),
+              //                                                           ),
+              //                                                           TextSpan(
+              //                                                             text: "Manual ${data.type} FOR ${data.response} ${data.paymenttype} (#${data.transactionid})   ",
+              //                                                             style: const TextStyle(
+              //                                                               fontWeight: FontWeight.w700,
+              //                                                               color: Colors.grey,
+              //                                                             ),
+              //                                                           ),
+              //                                                         ],
+              //                                                       ),
+              //                                                     )
+              //                                                         : Container(),
+              //                                                     // Text.rich(
+              //                                                     //   TextSpan(
+              //                                                     //     children: [
+              //                                                     //       TextSpan(
+              //                                                     //         text:
+              //                                                     //         'Decrease: ',
+              //                                                     //         style: TextStyle(
+              //                                                     //             fontWeight: FontWeight.bold,
+              //                                                     //             color: blueColor),
+              //                                                     //       ),
+              //                                                     //       TextSpan(
+              //                                                     //         text:(data.type != "Refund" && data.type != "Charge")
+              //                                                     //             ? '${data.totalAmount}'
+              //                                                     //             : 'N/A',
+              //                                                     //         style: const TextStyle(
+              //                                                     //             fontWeight: FontWeight.w700,
+              //                                                     //             color: Colors.grey),
+              //                                                     //       ),
+              //                                                     //
+              //                                                     //     ],
+              //                                                     //   ),
+              //                                                     // ),
+              //                                                     (data.type != 'Charge')
+              //                                                         ? Text.rich(
+              //                                                       TextSpan(
+              //                                                         children: [
+              //                                                           TextSpan(
+              //                                                             text: 'Decrease: ',
+              //                                                             style: TextStyle(
+              //                                                               fontWeight: FontWeight.bold,
+              //                                                               color: blueColor,
+              //                                                             ),
+              //                                                           ),
+              //                                                           TextSpan(
+              //                                                             text: (data.type != "Refund" && data.type != "Charge")
+              //                                                                 ? '${data.totalAmount}'
+              //                                                                 : 'N/A',
+              //                                                             style: const TextStyle(
+              //                                                               fontWeight: FontWeight.w700,
+              //                                                               color: Colors.grey,
+              //                                                             ),
+              //                                                           ),
+              //                                                         ],
+              //                                                       ),
+              //                                                     )
+              //                                                         : Container(),
+              //
+              //                                                   ],
+              //                                                 ),
+              //                                               ),
+              //                                             ],
+              //                                           );
+              //                                         }).toList(),
+              //                                       ),
+              //                                     ],
+              //                                   ),
+              //                                 ),
+              //                               ),
+              //                             // SizedBox(height: 13,),
+              //                           ],
+              //                         ),
+              //                       );
+              //                     }).toList(),
+              //                   ),
+              //                 ),
+              //                 const SizedBox(height: 20),
+              //               ],
+              //             ),
+              //           );
+              //         }
+              //       },
+              //     )),
               Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10.0, right: 10.0, bottom: 10.0),
-                  child: FutureBuilder<LeaseLedger?>(
-                    future: _leaseLedgerFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return ColabShimmerLoadingWidget();
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData) {
-                        return Center(child: Text('No data found'));
-                      } else {
-
-
-                        final leaseLedger = snapshot.data!;
-                        if(leaseLedger.data == null || leaseLedger.data!.length == 0){
-                          return Container(child: Text("No data found"),);
-                        }
-
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 5),
-                              _buildHeaders(),
-                              const SizedBox(height: 20),
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor),
-                                ),
-                                child: Column(
-                                  children: leaseLedger.data!
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    int index = entry.key;
-                                    bool isExpanded = expandedIndex == index;
-                                    Data data = entry.value;
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: blueColor),
-                                      ),
-                                      child: Column(
-                                        children: <Widget>[
-                                          ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            title: Padding(
-                                              padding:
-                                              const EdgeInsets.all(2.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                      const EdgeInsets.only(
-                                                          left: 5),
-                                                      padding: !isExpanded
-                                                          ? const EdgeInsets
-                                                          .only(bottom: 10)
-                                                          : const EdgeInsets
-                                                          .only(top: 10),
-                                                      child: FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                            .sortUp
-                                                            : FontAwesomeIcons
-                                                            .sortDown,
-                                                        size: 20,
-                                                        color: const Color
-                                                            .fromRGBO(
-                                                            21, 43, 83, 1),
+                padding: const EdgeInsets.only(
+                    left: 10.0, right: 10.0, bottom: 10.0),
+                child: FutureBuilder<LeaseLedger?>(
+                  future: _leaseLedgerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return ColabShimmerLoadingWidget();
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData) {
+                      return Center(child: Text('No data found'));
+                    } else {
+                      final leaseLedger = snapshot.data!;
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 5),
+                            _buildHeaders(),
+                            const SizedBox(height: 20),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: blueColor),
+                              ),
+                              child: Column(
+                                children: leaseLedger.data!
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded = expandedIndex == index;
+                                  Data data = entry.value;
+                                  final uniqueEntries =
+                                      data.entry?.toSet().toList() ?? [];
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                    ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex = null;
+                                                      } else {
+                                                        expandedIndex = index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    padding: !isExpanded
+                                                        ? const EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : const EdgeInsets.only(
+                                                            top: 10),
+                                                    child: FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                              .sortUp
+                                                          : FontAwesomeIcons
+                                                              .sortDown,
+                                                      size: 20,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              21, 43, 83, 1),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      ' ${data.type}' ?? "",
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
                                                       ),
                                                     ),
                                                   ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                      const EdgeInsets.all(
-                                                          8.0),
-                                                      child: Text(
-                                                        ' ${data.type}'??"", // Assuming you want to show the charge type here
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .08,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    ' \$${data.balance!.abs().toStringAsFixed(2)}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
                                                           FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
+                                                      fontSize: 13,
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                      width:
-                                                      MediaQuery.of(context)
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                          .08),
-                                                  Expanded(
-                                                    child: Text(
-                                                      ' \$${data.balance!.toStringAsFixed(2)}', // Show total amount
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
+                                                      .08,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    formatDate(
+                                                        '${data.createdAt}'),
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                      width:
-                                                      MediaQuery.of(context)
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                          .08),
-                                                  Expanded(
-                                                    child: Text(
-                                                      formatDate(
-                                                          '${data.createdAt}'), // Format and show created date
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                      width:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .02),
-                                                ],
-                                              ),
+                                                      .02,
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          if (isExpanded)
-                                            Container(
-                                              padding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 8.0),
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 20),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                              .sortUp
-                                                              : FontAwesomeIcons
-                                                              .sortDown,
-                                                          size: 50,
-                                                          color: Colors
-                                                              .transparent,
-                                                        ),
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                            children: <Widget>[
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    const TextSpan(
-                                                                      text:
-                                                                      'Increase : ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
+                                        ),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 20),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 50,
+                                                        color:
+                                                            Colors.transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  const TextSpan(
+                                                                    text:
+                                                                        'Increase : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
                                                                               .bold,
-                                                                          color: Color.fromRGBO(
+                                                                      color: Color
+                                                                          .fromRGBO(
                                                                               21,
                                                                               43,
                                                                               83,
-                                                                              1)),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text: (data.type == "Refund" || data.type == "Charge")
-                                                                          ? '${data.totalAmount}'
-                                                                          : 'N/A',
-                                                                      style: const TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                          Colors.grey),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    const TextSpan(
-                                                                      text:
-                                                                      'Tenant : ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1)),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text: '${data.tenantData["tenant_firstName"]} ${data.tenantData["tenant_lastName"]}',
-                                                                      style: const TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                          Colors.grey),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 40,
-                                                          child: Column(
-                                                            children: [
-                                                              IconButton(
-                                                                icon:
-                                                                const FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .edit,
-                                                                  size: 20,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                                ),
-                                                                onPressed:
-                                                                    () async {
-                                                                  // handleEdit(applicant);
-                                                                  // var check = await Navigator.push(
-                                                                  //     context,
-                                                                  //     MaterialPageRoute(
-                                                                  //         builder: (context) => EditApplicant(
-                                                                  //               applicant: applicant,
-                                                                  //               applicantId: applicant.applicantId!,
-                                                                  //             )));
-                                                                  // if (check ==
-                                                                  //     true) {
-                                                                  //   setState(
-                                                                  //       () {});
-                                                                  // }
-                                                                },
-                                                              ),
-                                                              IconButton(
-                                                                icon:
-                                                                const FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .trashCan,
-                                                                  size: 20,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                                ),
-                                                                onPressed: () {
-                                                                  // handleDelete(applicant);
-                                                                  // _showDeleteAlert(
-                                                                  //     context,
-                                                                  //     applicant
-                                                                  //         .applicantId!);
-                                                                },
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: data.entry!
-                                                          .map((entry) {
-                                                        return Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                  .sortUp
-                                                                  : FontAwesomeIcons
-                                                                  .sortDown,
-                                                              size: 50,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                          'Transaction: ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                          "Manual ${data.type} FOR ${data.response} ${data.paymenttype} (#${data.transactionid})   ",
-                                                                          style: const TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: Colors.grey),
-                                                                        ),
-
-                                                                      ],
+                                                                              1),
                                                                     ),
                                                                   ),
-                                                                  Text.rich(
+                                                                  TextSpan(
+                                                                    text: (data.type ==
+                                                                                "Refund" ||
+                                                                            data.type ==
+                                                                                "Charge")
+                                                                        ? '${data.totalAmount}'
+                                                                        : 'N/A',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .grey,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  const TextSpan(
+                                                                    text:
+                                                                        'Tenant : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: data.tenantData !=
+                                                                            null
+                                                                        ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
+                                                                        : 'N/A',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .grey,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            (data.type !=
+                                                                    'Charge')
+                                                                ? Text.rich(
                                                                     TextSpan(
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                          'Decrease: ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor),
+                                                                              'Decrease: ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color:
+                                                                                blueColor,
+                                                                          ),
                                                                         ),
                                                                         TextSpan(
-                                                                          text:(data.type != "Refund" && data.type != "Charge")
+                                                                          text: (data.type != "Refund" && data.type != "Charge")
                                                                               ? '${data.totalAmount}'
                                                                               : 'N/A',
-                                                                          style: const TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: Colors.grey),
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color:
+                                                                                Colors.grey,
+                                                                          ),
                                                                         ),
-
                                                                       ],
+                                                                    ),
+                                                                  )
+                                                                : Container(),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 40,
+                                                        child: Column(
+                                                          children: [
+                                                            IconButton(
+                                                              icon:
+                                                                  const FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 20,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
+                                                              ),
+                                                              onPressed:
+                                                                  () async {
+                                                                // handleEdit(applicant);
+                                                                // var check = await Navigator.push(
+                                                                //     context,
+                                                                //     MaterialPageRoute(
+                                                                //         builder: (context) => EditApplicant(
+                                                                //               applicant: applicant,
+                                                                //               applicantId: applicant.applicantId!,
+                                                                //             )));
+                                                                // if (check == true) {
+                                                                //   setState(() {});
+                                                                // }
+                                                              },
+                                                            ),
+                                                            IconButton(
+                                                              icon:
+                                                                  const FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .trashCan,
+                                                                size: 20,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
+                                                              ),
+                                                              onPressed: () {
+                                                                // handleDelete(applicant);
+                                                                // _showDeleteAlert(context, applicant.applicantId!);
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 50,
+                                                        color:
+                                                            Colors.transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  const TextSpan(
+                                                                    text:
+                                                                        'Account : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
                                                           ],
-                                                        );
-                                                      }).toList(),
-                                                    ),
-                                                  ],
-                                                ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  const TextSpan(
+                                                                    text:
+                                                                        'Amount : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              21,
+                                                                              43,
+                                                                              83,
+                                                                              1),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    children: uniqueEntries
+                                                        .map((entry) {
+                                                      return Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 50,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${entry.account ?? "N/A"}',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              Colors.grey,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            ' \$ ${entry.amount ?? "N/A"}',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              Colors.grey,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                // Add additional fields if needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          // SizedBox(height: 13,),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
                               ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                  )),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
             if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<LeaseLedger?>(
                 future: _leaseLedgerFuture,
@@ -2225,20 +2845,20 @@ class _FinancialTableState extends State<FinancialTable> {
                                     child: Container(
                                       child: Table(
                                         defaultColumnWidth:
-                                        const IntrinsicColumnWidth(),
+                                            const IntrinsicColumnWidth(),
                                         children: [
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                // color: blueColor
-                                              ),
+                                                  // color: blueColor
+                                                  ),
                                             ),
                                             children: [
                                               _buildHeader(
                                                   'Type',
                                                   0,
                                                   (property) => property!
-                                                     .totalAmount
+                                                      .totalAmount
                                                       .toString()),
                                               _buildHeader(
                                                   'Tenant',
@@ -2248,10 +2868,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       .toString()),
                                               _buildHeader(
                                                   'Transaction', 2, null),
-                                              _buildHeader(
-                                                  'Increase', 3, null),
-                                              _buildHeader(
-                                                  'Decrease', 3, null),
+                                              _buildHeader('Increase', 3, null),
+                                              _buildHeader('Decrease', 3, null),
                                               _buildHeader('Balance', 4, null),
                                               _buildHeader('Date', 4, null),
                                             ],
@@ -2265,11 +2883,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 7,
                                                 (index) => TableCell(
                                                     child:
-                                                    Container(height: 20))),
+                                                        Container(height: 20))),
                                           ),
                                           for (var i = 0;
-                                          i < _pagedData.length;
-                                          i++)
+                                              i < _pagedData.length;
+                                              i++)
                                             TableRow(
                                               decoration: BoxDecoration(
                                                 border: Border(
@@ -2283,10 +2901,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       color: Color.fromRGBO(
                                                           21, 43, 81, 1)),
                                                   bottom: i ==
-                                                      _pagedData.length - 1
+                                                          _pagedData.length - 1
                                                       ? const BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1))
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 81, 1))
                                                       : BorderSide.none,
                                                 ),
                                               ),
@@ -2294,27 +2912,40 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 _buildDataCell(_pagedData[i]!
                                                     .type
                                                     .toString()),
-                                                _buildDataCell('${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
                                                 _buildDataCell(
-                                                 'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})'
-                                                ),
+                                                    '${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
                                                 _buildDataCell(
-                                                  _pagedData[i]!.type == "Refund" && _pagedData[i]!.type == "Charge"
-                                                      ? _pagedData[i]!.totalAmount.toString()
+                                                    'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})'),
+                                                _buildDataCell(
+                                                  _pagedData[i]!.type ==
+                                                              "Refund" &&
+                                                          _pagedData[i]!.type ==
+                                                              "Charge"
+                                                      ? _pagedData[i]!
+                                                          .totalAmount
+                                                          .toString()
                                                       : 'N/A',
                                                 ),
                                                 _buildDataCell(
-                                                  _pagedData[i]!.type != "Refund" && _pagedData[i]!.type != "Charge"
-                                                      ? _pagedData[i]!.totalAmount.toString()
+                                                  _pagedData[i]!.type !=
+                                                              "Refund" &&
+                                                          _pagedData[i]!.type !=
+                                                              "Charge"
+                                                      ? _pagedData[i]!
+                                                          .totalAmount
+                                                          .toString()
                                                       : 'N/A',
                                                 ),
                                                 _buildDataCell(
-                                                  _pagedData[i]!.balance.toString(),
+                                                  _pagedData[i]!
+                                                      .balance!
+                                                      .abs()
+                                                      .toStringAsFixed(2),
                                                 ),
                                                 _buildDataCell(
-                                                 formatDate3( _pagedData[i]!
-                                                      .createdAt.toString()),
-
+                                                  formatDate3(_pagedData[i]!
+                                                      .createdAt
+                                                      .toString()),
                                                 ),
                                               ],
                                             ),
@@ -2335,7 +2966,308 @@ class _FinancialTableState extends State<FinancialTable> {
                   }
                 },
               ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<LeaseLedger?>(
+                future: _leaseLedgerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ColabShimmerLoadingWidget();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.data!.isEmpty) {
+                    return const Center(child: Text('No data available'));
+                  } else {
+                    _tableData = snapshot.data!.data!;
+                    totalrecords = _tableData.length;
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 5),
+                        child: Column(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Table(
+                                defaultColumnWidth:
+                                    const IntrinsicColumnWidth(),
+                                //border: TableBorder.all(),
+                                children: [
+                                  // Header Row
+                                  TableRow(
+                                    decoration:
+                                        BoxDecoration(border: Border.all()),
+                                    children: List.generate(7, (index) {
+                                      switch (index) {
+                                        case 0:
+                                          return _buildHeader(
+                                              'Type',
+                                              0,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 1:
+                                          return _buildHeader(
+                                              'Tenant',
+                                              1,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 2:
+                                          return _buildHeader(
+                                              'Transaction', 2, null);
+                                        case 3:
+                                          return _buildHeader(
+                                              'Increase', 3, null);
+                                        case 4:
+                                          return _buildHeader(
+                                              'Decrease', 4, null);
+                                        case 5:
+                                          return _buildHeader(
+                                              'Balance', 5, null);
+                                        case 6:
+                                          return _buildHeader('Date', 6, null);
+                                        default:
+                                          return Container();
+                                      }
+                                    }),
+                                  ),
+                                  // Empty Row for spacing
+                                  TableRow(
+                                    decoration: const BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide.none)),
+                                    children: List.generate(
+                                        7,
+                                        (index) => TableCell(
+                                            child: Container(height: 20))),
+                                  ),
+                                  // Data Rows
+                                  for (var i = 0;
+                                      i < _pagedData.length;
+                                      i++) ...[
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          right: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          top: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          bottom: i == _pagedData.length - 1
+                                              ? const BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1))
+                                              : BorderSide.none,
+                                        ),
+                                      ),
+                                      children: List.generate(7, (index) {
+                                        switch (index) {
+                                          case 0:
+                                            return _buildInteractiveCells(
+                                                _pagedData[i]!.type.toString(),
+                                                () => _toggleExpansion(i));
+                                          case 1:
+                                            return _buildInteractiveCells(
+                                              '${_pagedData[i]!.tenantData["tenant_firstName"]} ${_pagedData[i]!.tenantData["tenant_lastName"]}',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 2:
+                                            return _buildInteractiveCells(
+                                              'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 3:
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type ==
+                                                          "Refund" ||
+                                                      _pagedData[i]!.type ==
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 4:
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type !=
+                                                          "Refund" &&
+                                                      _pagedData[i]!.type !=
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 5:
+                                            return _buildInteractiveCells(
+                                              _pagedData[i]!
+                                                  .balance!
+                                                  .abs()
+                                                  .toStringAsFixed(2),
+                                              () => _toggleExpansion(i),
+                                            );
+                                          case 6:
+                                            return _buildInteractiveCells(
+                                              formatDate3(_pagedData[i]!
+                                                  .createdAt
+                                                  .toString()),
+                                              () => _toggleExpansion(i),
+                                            );
+                                          default:
+                                            return Container();
+                                        }
+                                      }),
+                                    ),
+                                    // Expanded Row (if any)
+                                    if (_expandedIndex != null &&
+                                        _expandedIndex == i)
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide(
+                                              color:
+                                                  Color.fromRGBO(21, 43, 81, 1),
+                                              width: 1.0,
+                                            ),
+                                            bottom: (i == _pagedData.length - 1)
+                                                ? BorderSide(
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1),
+                                                    width: 1.0,
+                                                  )
+                                                : BorderSide.none,
+                                          ),
+                                        ),
+                                        children: List.generate(7, (index) {
+                                          if (index == 1) {
+                                            return TableCell(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                             crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text('Account',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize: 16,
+                                                                        color:
+                                                                            blueColor)),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
+
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Text('${entry.account ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey,fontSize: 16)),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: const EdgeInsets.only(left: 30),
+                                                                  child: Text('Amount',
+                                                                      style: TextStyle(
+                                                                        fontSize: 16,
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          color:
+                                                                              blueColor)),
+                                                                ),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.only(left: 5),
+                                                                                    child: Center(
+                                                                                      child: Text('${entry.amount ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey,fontSize: 15,)),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return TableCell(
+                                                child:
+                                                    Container()); // Empty cells for alignment
+                                          }
+                                        }),
+                                      ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            SizedBox(
+              height: 20,
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInteractiveCell(String text, VoidCallback onTap) {
+    return TableCell(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(text),
         ),
       ),
     );

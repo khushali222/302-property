@@ -33,6 +33,7 @@ import '../../../model/lease.dart';
 
 import '../../../provider/lease_provider.dart';
 import '../../../repository/tenants.dart';
+import '../../../widgets/custom_drawer.dart';
 
 class Edit_lease extends StatefulWidget {
   Lease1 lease;
@@ -626,7 +627,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
   Future<String?> uploadPdf(File pdfFile) async {
     print(pdfFile.path);
-    final String uploadUrl = '${Api_url}/api/images/upload';
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
@@ -707,73 +708,7 @@ class _Edit_leaseState extends State<Edit_lease>
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties"),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -998,7 +933,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                           ),
                                         );
                                       }).toList(),
-                                      value: _selectedUnit,
+                                      value:  units.isNotEmpty && units.any((unit) => unit['unit_id'] == _selectedUnit)
+                                          ? _selectedUnit
+                                          : null,
                                       onChanged: (value) {
                                         setState(() {
                                           unitId = value.toString();
@@ -2964,7 +2901,6 @@ class _Edit_leaseState extends State<Edit_lease>
                                     const SizedBox(
                                       height: 10,
                                     ),
-
                                   if (formDataOneTimeList.isNotEmpty)
                                     const SizedBox(
                                       height: 5,
@@ -3247,6 +3183,137 @@ class _Edit_leaseState extends State<Edit_lease>
                       const SizedBox(
                         height: 10,
                       ),
+                      // Container(
+                      //   width: double.infinity,
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(
+                      //         color: const Color.fromRGBO(21, 43, 83, 1),
+                      //       ),
+                      //       borderRadius: BorderRadius.circular(10.0)),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(12.0),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       mainAxisSize: MainAxisSize.min,
+                      //       children: [
+                      //         const SizedBox(
+                      //           height: 10,
+                      //         ),
+                      //         const Text('Upload Files (Maximum of 10)',
+                      //             style: TextStyle(
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.w500,
+                      //                 color: Color(0xFF152b51))),
+                      //         const SizedBox(
+                      //           height: 20,
+                      //         ),
+                      //         // Container(
+                      //         // height: 50,
+                      //         // width: 95,
+                      //         // decoration: BoxDecoration(
+                      //         //   borderRadius: BorderRadius.circular(8.0),
+                      //         // ),
+                      //         //   child: ElevatedButton(
+                      //         // style: ElevatedButton.styleFrom(
+                      //         //   backgroundColor: const Color(0xFF152b51),
+                      //         //   shape: RoundedRectangleBorder(
+                      //         //     borderRadius: BorderRadius.circular(8.0),
+                      //         //   ),
+                      //         // ),
+                      //         //     onPressed: () async {
+                      //         //       await _pickPdfFiles();
+                      //         //     },
+                      //         //     child: const Text(
+                      //         //       'Upload',
+                      //         //       style: TextStyle(color: Color(0xFFf7f8f9)),
+                      //         //     ),
+                      //         //   ),
+                      //         // ),
+                      //         // const SizedBox(height: 10),
+                      //         // Flexible(
+                      //         //   fit: FlexFit.loose,
+                      //         //   child: ListView.builder(
+                      //         //     shrinkWrap: true,
+                      //         //     itemCount: _pdfFiles.length,
+                      //         //     itemBuilder: (context, index) {
+                      //         //       return ListTile(
+                      //         //         title: Text(
+                      //         //             _pdfFiles[index].path.split('/').last,
+                      //         //             style: const TextStyle(
+                      //         //                 fontSize: 16,
+                      //         //                 fontWeight: FontWeight.w500,
+                      //         //                 color: Color(0xFF748097))),
+                      //         //         trailing: IconButton(
+                      //         //             onPressed: () {
+                      //         //               setState(() {
+                      //         //                 _pdfFiles.removeAt(index);
+                      //         //               });
+                      //         //             },
+                      //         //             icon: const FaIcon(
+                      //         //               FontAwesomeIcons.remove,
+                      //         //               color: Color(0xFF748097),
+                      //         //             )),
+                      //         //       );
+                      //         //     },
+                      //         //   ),
+                      //         // ),
+                      //         Container(
+                      //           height: 50,
+                      //           width: 95,
+                      //           decoration: BoxDecoration(
+                      //             borderRadius: BorderRadius.circular(8.0),
+                      //           ),
+                      //           child: ElevatedButton(
+                      //             style: ElevatedButton.styleFrom(
+                      //               backgroundColor: const Color(0xFF152b51),
+                      //               shape: RoundedRectangleBorder(
+                      //                 borderRadius: BorderRadius.circular(8.0),
+                      //               ),
+                      //             ),
+                      //             onPressed: _pickPdfFiles,
+                      //             child: const Text('Upload'),
+                      //           ),
+                      //         ),
+                      //
+                      //         const SizedBox(height: 20),
+                      //         const SizedBox(height: 10),
+                      //         Flexible(
+                      //           fit: FlexFit.loose,
+                      //           child: ListView.builder(
+                      //             shrinkWrap: true,
+                      //             itemCount: _uploadedFileNames.length,
+                      //             itemBuilder: (context, index) {
+                      //               return ListTile(
+                      //                 title: Text(_uploadedFileNames[index],
+                      //                     style: const TextStyle(
+                      //                         fontSize: 16,
+                      //                         fontWeight: FontWeight.w500,
+                      //                         color: Color(0xFF748097))),
+                      //                 trailing: IconButton(
+                      //                     onPressed: () {
+                      //                       setState(() {
+                      //                         _uploadedFileNames.removeAt(index);
+                      //                       });
+                      //                     },
+                      //                     icon: const FaIcon(
+                      //                       FontAwesomeIcons.remove,
+                      //                       color: Color(0xFF748097),
+                      //                     )),
+                      //               );
+                      //             },
+                      //           ),
+                      //         ),
+                      //         // _uploadedFileNames.isNotEmpty
+                      //         //     ? Text('Uploaded PDFs:')
+                      //         //     : Container(),
+                      //         // ..._uploadedFileNames
+                      //         //     .map((fileName) => Text(fileName))
+                      //         //     .toList(),
+                      //         const SizedBox(height: 5),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -3335,38 +3402,42 @@ class _Edit_leaseState extends State<Edit_lease>
                                     ),
                                   ),
                                   onPressed: _pickPdfFiles,
-                                  child: const Text('Upload'),
+                                  child: Text('Upload'),
                                 ),
                               ),
 
-                              const SizedBox(height: 20),
-                              const SizedBox(height: 10),
-                              Flexible(
-                                fit: FlexFit.loose,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: _uploadedFileNames.length,
-                                  itemBuilder: (context, index) {
+                              /*  SizedBox(height: 20),
+                                const SizedBox(height: 10),*/
+                              SingleChildScrollView(
+                                child: Column(
+                                  children: _uploadedFileNames.map((fileName) {
+                                    int index =
+                                    _uploadedFileNames.indexOf(fileName);
                                     return ListTile(
-                                      title: Text(_uploadedFileNames[index],
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF748097))),
+                                      title: Text(
+                                        fileName,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF748097),
+                                        ),
+                                      ),
                                       trailing: IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              _uploadedFileNames.removeAt(index);
-                                            });
-                                          },
-                                          icon: const FaIcon(
-                                            FontAwesomeIcons.remove,
-                                            color: Color(0xFF748097),
-                                          )),
+                                        onPressed: () {
+                                          setState(() {
+                                            _uploadedFileNames.removeAt(index);
+                                          });
+                                        },
+                                        icon: const FaIcon(
+                                          FontAwesomeIcons.remove,
+                                          color: Color(0xFF748097),
+                                        ),
+                                      ),
                                     );
-                                  },
+                                  }).toList(),
                                 ),
                               ),
+
                               // _uploadedFileNames.isNotEmpty
                               //     ? Text('Uploaded PDFs:')
                               //     : Container(),
@@ -3720,7 +3791,7 @@ class _Edit_leaseState extends State<Edit_lease>
                         ),
                       ),*/
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.only(top: 16,right: 16,bottom: 16),
                         child: Row(
                           children: [
                             Container(
@@ -3730,7 +3801,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF67758e),
+                                        backgroundColor:blueColor,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                             BorderRadius.circular(8.0))),

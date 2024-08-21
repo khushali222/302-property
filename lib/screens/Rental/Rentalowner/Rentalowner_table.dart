@@ -28,7 +28,7 @@ import '../../Staff_Member/Add_staffmember.dart';
 import '../../Staff_Member/Edit_staff_member.dart';
 import 'Add_RentalOwners.dart';
 import 'package:http/http.dart' as http;
-
+import '../../../widgets/custom_drawer.dart';
 class Rentalowner_table extends StatefulWidget {
   // RentalOwner? rentalownersummery;
   // Rentalowner_table({super.key,this.rentalownersummery});
@@ -464,90 +464,20 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "RentalOwner"),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "RentalOwner"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "RentalOwner"),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: true,),
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.all(13),
+              padding: const EdgeInsets.all(0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+               // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Rental Owner',
+                  ),
                   GestureDetector(
                     onTap: () async {
                       if (rentalownerCount < rentalOwnerCountLimit) {
@@ -567,10 +497,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.065,
                       width:  (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -578,12 +508,12 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       ),
                       child: Center(
                         child: Text(
-                          "Add Rental Owner",
+                          "+ Add",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: MediaQuery.of(context).size.width < 500
-                                ? 14
+                                ? 16
                                 : 20,
                           ),
                         ),
@@ -630,10 +560,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             //     ),
             //   ),
             // ),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Rental Owner',
-            ),
+
             SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.only(left: 19, right: 13),

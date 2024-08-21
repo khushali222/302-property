@@ -23,7 +23,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/ApplicantModel.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class Applicants_table extends StatefulWidget {
   @override
   _Applicants_tableState createState() => _Applicants_tableState();
@@ -652,72 +652,7 @@ class _Applicants_tableState extends State<Applicants_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.white,
-                  ),
-                  "Add Property Type",
-                  true),
-              buildListTile(context, const Icon(CupertinoIcons.person_add),
-                  "Add Staff Member", false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Applicants",dropdown: true,),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -726,11 +661,14 @@ class _Applicants_tableState extends State<Applicants_table> {
             ),
             //add propertytype
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+               // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  GestureDetector(
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Applicants',
+                  ),                  GestureDetector(
                     onTap: () async {
                       print(applicantCount);
                       print(applicantCountLimit);
@@ -758,13 +696,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 35
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.063,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width:  (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(21, 43, 81, 1),
@@ -775,13 +713,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Applicant",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
-                                    ? 14
+                                    ? 16
                                     : 20,
                               ),
                             ),
@@ -799,10 +737,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             ),
             const SizedBox(height: 10),
 
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Applicants',
-            ),
+
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(left: 19, right: 13),

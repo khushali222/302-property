@@ -1,5 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 
@@ -17,6 +18,7 @@ import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart
 
 import 'StaffModule/repository/staffpermission_provider.dart';
 import 'TenantsModule/repository/permission_provider.dart';
+import 'constant/constant.dart';
 
 // void main() {
 //   runApp(
@@ -84,7 +86,13 @@ import 'TenantsModule/repository/permission_provider.dart';
 // }
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(
+
     DevicePreview(
       enabled: false,
       tools: [
@@ -151,7 +159,7 @@ class MyApp extends StatelessWidget {
       // navigatorKey: navigatorKey,
       theme: ThemeData(
         fontFamily: "Poppins",
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme:  IconThemeData(color: blueColor),
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromRGBO(21, 43, 83, 1)),
         useMaterial3: false,

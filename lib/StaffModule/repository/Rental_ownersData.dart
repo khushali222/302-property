@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 
-import '../Model/RentalOwnersData.dart';
+import '../../Model/RentalOwnersData.dart';
 import 'package:http/http.dart'as http;
 
 import '../../constant/constant.dart';
@@ -16,8 +16,9 @@ class RentalOwnerService {
 
   Future<List<RentalOwnerData>> fetchRentalOwners(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     adminId = prefs.getString("adminId");
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
@@ -57,7 +58,7 @@ class RentalOwnerService {
     final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
     print(url);
     print(jsonEncode(rentalOwner.toJson()));
     try {
@@ -166,6 +167,7 @@ class RentalOwnerService {
     String? state,
     String? country,
     String? postalCode,
+    List<ProcessorList>? processorList,
   }) async {
     final Map<String, dynamic> data = {
       "admin_id": adminId,
@@ -185,6 +187,7 @@ class RentalOwnerService {
       "state":state,
       "country": country,
       "postal_code": postalCode,
+      "processor_list": processorList?.map((e) => e.toJson()).toList()
     };
     print(data);
     String apiUrl = "${Api_url}/api/rental_owner/rental_owner/$rentalownerId";
@@ -192,7 +195,7 @@ class RentalOwnerService {
     print(apiUrl);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
     final http.Response response = await
     http.put(
        Uri.parse(apiUrl),
@@ -220,7 +223,7 @@ class RentalOwnerService {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
     final http.Response response = await http.delete(
       Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
       headers: <String, String>{
@@ -243,7 +246,7 @@ class RentalOwnerService {
 
   Future<List<RentalOwnerData>> fetchRentalOwnerssummery(String rentalOwnerId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
    // adminId = prefs.getString("adminId");
    //  rentalOwnerId = "1718715476950"

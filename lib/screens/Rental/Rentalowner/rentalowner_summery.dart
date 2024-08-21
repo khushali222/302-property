@@ -11,7 +11,7 @@ import '../../../model/rentalowners_summery.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'Edit_RentalOwners.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class ResponsiveRentalSummary extends StatefulWidget {
   String rentalOwnersid;
   ResponsiveRentalSummary({super.key, required this.rentalOwnersid});
@@ -57,73 +57,7 @@ class _RentalownersSummeryForMobileState
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties"),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: false,),
       body: Center(
         child: FutureBuilder<List<RentalOwnerData>>(
           future: RentalOwnerService()
@@ -796,7 +730,7 @@ class _RentalownersSummeryForMobileState
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Text(
-                                       formatDate3( '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}'),
+                                       '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -820,7 +754,7 @@ class _RentalownersSummeryForMobileState
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Text(
-                                        formatDate3('${(rentalownersummery.first.endDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.endDate}'),
+                                        formatDate('${(rentalownersummery.first.endDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.endDate}'),
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -964,73 +898,7 @@ class _RentalownersSummeryForTabletState
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  const Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Properties"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Properties"),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: true,),
       body: Center(
         child: FutureBuilder<List<RentalOwnerData>>(
           future: RentalOwnerService()
@@ -1064,6 +932,7 @@ class _RentalownersSummeryForTabletState
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           Text(
                             '${rentalownersummery.first.rentalOwnername}',
                             style: TextStyle(
@@ -1198,7 +1067,6 @@ class _RentalownersSummeryForTabletState
                     ),
                   ),
                   //Personal information
-
                   Row(
                     children: [
                       Padding(
@@ -1624,7 +1492,6 @@ class _RentalownersSummeryForTabletState
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
                             width: screenWidth * 0.45,
-
                             // width: 350,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -1722,7 +1589,6 @@ class _RentalownersSummeryForTabletState
                           ),
                         ),
                       ),
-
                       //Personal information
                       Expanded(
                         child: Padding(

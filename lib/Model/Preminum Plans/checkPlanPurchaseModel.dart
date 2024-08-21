@@ -41,28 +41,28 @@ class checkPlanPurchaseData {
   String? subscriptionId;
   String? createdAt;
   String? updatedAt;
-  int? iV;
+
   PlanDetail? planDetail;
 
   checkPlanPurchaseData(
       {this.sId,
-      this.adminId,
-      this.planId,
-      this.purchaseId,
-      this.planAmount,
-      this.purchaseDate,
-      this.expirationDate,
-      this.status,
-      this.city,
-      this.state,
-      this.postalCode,
-      this.country,
-      this.isActive,
-      this.subscriptionId,
-      this.createdAt,
-      this.updatedAt,
-      this.iV,
-      this.planDetail});
+        this.adminId,
+        this.planId,
+        this.purchaseId,
+        this.planAmount,
+        this.purchaseDate,
+        this.expirationDate,
+        this.status,
+        this.city,
+        this.state,
+        this.postalCode,
+        this.country,
+        this.isActive,
+        this.subscriptionId,
+        this.createdAt,
+        this.updatedAt,
+
+        this.planDetail});
 
   checkPlanPurchaseData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -81,7 +81,7 @@ class checkPlanPurchaseData {
     subscriptionId = json['subscription_id'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+
     planDetail = json['plan_detail'] != null
         ? new PlanDetail.fromJson(json['plan_detail'])
         : null;
@@ -105,7 +105,7 @@ class checkPlanPurchaseData {
     data['subscription_id'] = this.subscriptionId;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+
     if (this.planDetail != null) {
       data['plan_detail'] = this.planDetail!.toJson();
     }
@@ -120,9 +120,9 @@ class PlanDetail {
   int? planPrice;
   String? billingInterval;
   List<Features>? features;
-  Null? planDays;
+  var planDays;
   int? dayOfMonth;
-  Null? planPeriods;
+  var planPeriods;
   String? billingOption;
   bool? isAnnualDiscount;
   int? propertyCount;
@@ -132,36 +132,36 @@ class PlanDetail {
   int? applicantCount;
   int? staffmemberCount;
   bool? paymentFunctionality;
-  Null? annualDiscount;
+  int? annualDiscount;
   String? createdAt;
   String? updatedAt;
-  int? iV;
+
   int? vendorCount;
 
   PlanDetail(
       {this.sId,
-      this.planId,
-      this.planName,
-      this.planPrice,
-      this.billingInterval,
-      this.features,
-      this.planDays,
-      this.dayOfMonth,
-      this.planPeriods,
-      this.billingOption,
-      this.isAnnualDiscount,
-      this.propertyCount,
-      this.tenantCount,
-      this.leaseCount,
-      this.rentalownerCount,
-      this.applicantCount,
-      this.staffmemberCount,
-      this.paymentFunctionality,
-      this.annualDiscount,
-      this.createdAt,
-      this.updatedAt,
-      this.iV,
-      this.vendorCount});
+        this.planId,
+        this.planName,
+        this.planPrice,
+        this.billingInterval,
+        this.features,
+        this.planDays,
+        this.dayOfMonth,
+        this.planPeriods,
+        this.billingOption,
+        this.isAnnualDiscount,
+        this.propertyCount,
+        this.tenantCount,
+        this.leaseCount,
+        this.rentalownerCount,
+        this.applicantCount,
+        this.staffmemberCount,
+        this.paymentFunctionality,
+        this.annualDiscount,
+        this.createdAt,
+        this.updatedAt,
+
+        this.vendorCount});
 
   PlanDetail.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -190,7 +190,7 @@ class PlanDetail {
     annualDiscount = json['annual_discount'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+
     vendorCount = json['vendor_count'];
   }
 
@@ -219,7 +219,7 @@ class PlanDetail {
     data['annual_discount'] = this.annualDiscount;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+
     data['vendor_count'] = this.vendorCount;
     return data;
   }

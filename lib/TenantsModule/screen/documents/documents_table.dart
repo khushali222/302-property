@@ -641,10 +641,14 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
             //add propertytype
             if(permissions!.documentsAdd)
               Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+               // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Insurance',
+                  ),
                   GestureDetector(
                     onTap: () async {
               final result = await Navigator.of(context).push(
@@ -658,13 +662,13 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.055,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ?  MediaQuery.of(context).size.width * 0.4
+                          ?  MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.3,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -675,14 +679,14 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Insurance",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 (MediaQuery.of(context).size.width < 500)
-                                    ? MediaQuery.of(context).size.width * 0.034
-                                    : MediaQuery.of(context).size.width * 0.025,
+                                    ? 16
+                                    :20,
 
                               ),
                             ),
@@ -700,10 +704,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
             ),
             SizedBox(height: 10),
 
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Insurance',
-            ),
+
             SizedBox(height: 10),
             //search
             Padding(

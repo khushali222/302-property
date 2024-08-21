@@ -14,7 +14,7 @@ import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'Edit_property_type.dart';
 import 'Add_property_type.dart';
-
+import '../../widgets/custom_drawer.dart';
 class PropertyTable extends StatefulWidget {
   @override
   _PropertyTableState createState() => _PropertyTableState();
@@ -603,72 +603,7 @@ class _PropertyTableState extends State<PropertyTable> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.white,
-                  ),
-                  "Add Property Type",
-                  true),
-              buildListTile(context, Icon(CupertinoIcons.person_add),
-                  "Add Staff Member", false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),
-              buildListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.folderOpen,
-                    color: Colors.black,
-                  ),
-                  "Reports",
-                  false),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -677,10 +612,14 @@ class _PropertyTableState extends State<PropertyTable> {
             ),
             //add propertytype
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .65,
+                    title: 'Property Type',
+                  ),
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
@@ -695,13 +634,13 @@ class _PropertyTableState extends State<PropertyTable> {
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
-                          ? 35
+                          ? 50
                           : MediaQuery.of(context).size.width * 0.062,
 
                       // height:  MediaQuery.of(context).size.width * 0.07,
                       // height:  40,
                       width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.35
+                          ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
@@ -712,13 +651,13 @@ class _PropertyTableState extends State<PropertyTable> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Add Property Type",
+                              "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
-                                    ? 14
+                                    ? 16
                                     : 20,
                               ),
                             ),
@@ -735,10 +674,7 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             SizedBox(height: 10),
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Property Type',
-            ),
+
             SizedBox(height: 10),
             //search
             Padding(

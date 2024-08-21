@@ -21,7 +21,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../model/summery_workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
-
+import '../../../widgets/custom_drawer.dart';
 class Workorder_summery extends StatefulWidget {
   String? workorder_id;
   Workorder_summery({super.key, this.workorder_id});
@@ -127,73 +127,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
       key: key,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color: Colors.black,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.house,
-                    color: Colors.black,
-                  ),
-                  "Add Property Type",
-                  false),
-              buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.person_add,
-                    color: Colors.black,
-                  ),
-                  "Add Staff Member",
-                  false),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"],
-                  selectedSubtopic: "Work Order"),
-              buildDropdownListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"],
-                  selectedSubtopic: "Work Order"),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"],
-                  selectedSubtopic: "Work Order"),
-            ],
-          ),
-        ),
-      ),
+      drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
       body: Column(
         children: [
           SizedBox(
@@ -1857,36 +1791,34 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         ),
                         child: Column(
                           children: [
-                            Expanded(
-                              flex: 3, // 40%
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  // color: Colors.blue,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  /*   boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],*/
+                            Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                // color: Colors.blue,
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10),
                                 ),
-                                child: Material(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'Contacts',
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                /*   boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                                                        ],*/
+                              ),
+                              child: Material(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Contactses',
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
