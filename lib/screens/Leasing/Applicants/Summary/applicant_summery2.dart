@@ -147,10 +147,6 @@ class _applicant_summeryState extends State<applicant_summery>
                   size: 55.0,
                 ),
               );
-            } else if (snapshot.hasError) {
-              // print('Error: ${snapshot.error}');
-              // log('Error: ${snapshot.error}');
-              return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data == null) {
               return const Center(child: Text('No data found.'));
             } else {

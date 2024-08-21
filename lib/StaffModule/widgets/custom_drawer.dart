@@ -53,7 +53,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 30),
+              const SizedBox(height: 70),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Image.asset("assets/images/logo.png"),
@@ -75,7 +75,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   "Profile",
                 widget.currentpage == "Profile",),
-              if(permissions!.propertyView!)
+             /* if(permissions!.propertyView!)
                 buildListTile(
                   context,
                   Icon(
@@ -83,7 +83,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     color: widget.currentpage == "Add Property Type" ?Colors.white:blueColor,
                   ),
                   "Add Property Type",
-                  widget.currentpage == "Add Property Type",),
+                  widget.currentpage == "Add Property Type",),*/
               if(permissions!.propertyView!)
               buildListTile(
                   context,
@@ -102,7 +102,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   "Rental Owner",
                   widget.currentpage == "RentalOwner",),
-              if(permissions!.tenantView!)
+             /* if(permissions!.tenantView!)
                 buildListTile(
                   context,
                   Icon(
@@ -148,7 +148,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   "Work Order",
                 widget.currentpage == "Work Order",),
-
+*/
             ],
           ),
         ),

@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
+import 'rentalowner_summery.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';

@@ -230,36 +230,40 @@ class _Profile_screenState extends State<Profile_screen> {
                       ),
                     ),
                   ),
-                  titleBar(title: 'Lease Details', width: MediaQuery.of(context).size.width * 0.91,),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Card(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: blueColor),
-                            borderRadius: BorderRadius.circular(6)
+                  if(profiledata['leaseData'] != null) ...[
+                    titleBar(title: 'Lease Details', width: MediaQuery.of(context).size.width * 0.91,),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InfoRow(label: 'Lease Type', value: "${profiledata['leaseData']['lease_type']}"),
-                            InfoRow(label: 'Property', value: profiledata['leaseData']['rental_adress'] ?? "N/A"),
-                            InfoRow(label: 'Start Date', value: formatDate4(profiledata['leaseData']['start_date']) ?? "N/A"),
-                            InfoRow(label: 'End Date', value: formatDate4(profiledata['leaseData']['end_date']) ?? "N/A"),
-                            InfoRow(label: 'Rent Cycle', value: profiledata['leaseData']['rent_cycle'] ?? "N/A"),
-                            InfoRow(label: 'Rent Amount', value: profiledata['leaseData']['amount'].toString()),
-                            InfoRow(label: 'Next Due Date', value: formatDate4(profiledata['leaseData']['date']) ?? "N/A"),
-                          ],
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: blueColor),
+                              borderRadius: BorderRadius.circular(6)
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InfoRow(label: 'Lease Type', value: "${profiledata['leaseData']['lease_type']}"),
+                              InfoRow(label: 'Property', value: profiledata['leaseData']['rental_adress'] ?? "N/A"),
+                              InfoRow(label: 'Start Date', value: formatDate4(profiledata['leaseData']['start_date']) ?? "N/A"),
+                              InfoRow(label: 'End Date', value: formatDate4(profiledata['leaseData']['end_date']) ?? "N/A"),
+                              InfoRow(label: 'Rent Cycle', value: profiledata['leaseData']['rent_cycle'] ?? "N/A"),
+                              InfoRow(label: 'Rent Amount', value: profiledata['leaseData']['amount'].toString()),
+                              InfoRow(label: 'Next Due Date', value: formatDate4(profiledata['leaseData']['date']) ?? "N/A"),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ]
+
+
                 ],
               );
             }

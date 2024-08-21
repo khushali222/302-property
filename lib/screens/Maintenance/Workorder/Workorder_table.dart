@@ -932,14 +932,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
+
+
                         data = snapshot.data!
                             .where((workorder) =>
                                 workorder.workOrderData!.workSubject!
                                     .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                workorder.rentalAddress!.rentalAdress!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
+                                    .contains(searchvalue!.toLowerCase()) )
                             .toList();
                       } else {
                         data = snapshot.data!

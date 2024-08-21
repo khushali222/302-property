@@ -3669,7 +3669,7 @@ class _addLease3State extends State<addLease3>
                                           // print(ne)
 
                                           chargeEntries.add(Entry(
-                                            account: "Last Month's Rent",
+                                            account: "Rent Income",
                                             amount:
                                             double.tryParse(rentAmount.text) ??
                                                 0.0,
@@ -3682,11 +3682,11 @@ class _addLease3State extends State<addLease3>
                                             _selectedRent, // Set default value or adjust as needed
                                           ));
                                           chargeEntries.add(Entry(
-                                            account: "Security Deposite",
+                                            account: "Security Deposit",
                                             amount: double.tryParse(
                                                 securityDepositeAmount.text) ??
                                                 0.0,
-                                            chargeType: 'Security Deposite',
+                                            chargeType: 'Security Deposit',
                                             date: rentNextDueDate.text,
                                             isRepeatable:
                                             false, // Set to false if it's not repeatable, adjust as needed
@@ -3867,10 +3867,7 @@ class _addLease3State extends State<addLease3>
                                           }
 
                                           print('valid');
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                                content: Text('Processing Data')),
-                                          );
+
                                         } else {
                                           SharedPreferences prefs =
                                               await SharedPreferences.getInstance();

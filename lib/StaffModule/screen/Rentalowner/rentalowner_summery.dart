@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../widgets/appbar.dart';
 
 import '../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
-import '../../../repository/Rental_ownersData.dart';
+import '../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'Edit_RentalOwners.dart';
-import '../../../widgets/custom_drawer.dart';
+import '../../widgets/custom_drawer.dart';
 class ResponsiveRentalSummary extends StatefulWidget {
   String rentalOwnersid;
   ResponsiveRentalSummary({super.key, required this.rentalOwnersid});
@@ -57,7 +57,7 @@ class _RentalownersSummeryForMobileState
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: false,),
+      drawer:CustomDrawer(currentpage: "RentalOwner"),
       body: Center(
         child: FutureBuilder<List<RentalOwnerData>>(
           future: RentalOwnerService()
@@ -898,7 +898,7 @@ class _RentalownersSummeryForTabletState
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: true,),
+      drawer:CustomDrawer(currentpage: "RentalOwner"),
       body: Center(
         child: FutureBuilder<List<RentalOwnerData>>(
           future: RentalOwnerService()

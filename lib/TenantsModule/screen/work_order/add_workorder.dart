@@ -775,8 +775,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                 print('Selected category: $_selectedCategory');
                               },
                               buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                width: 200,
+                                height: 50,
+                                width: 250,
                                 padding: const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
@@ -1020,7 +1020,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           adminId: admin_id,
           workOrder_images: uploaded_images,
           workSubject: subject.text,
-          staffMemberName: "",
+
           workCategory: _selectedCategory!,
           workPerformed: perform.text,
           status: 'Pending',

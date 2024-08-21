@@ -808,8 +808,8 @@ class _AddCardState extends State<AddCard> {
                                     tenantId: selectedTenantId,
                                     billingId: randomNumber,
                                     customerVaultId:
-                                        cardResponse!.customerVaultId,
-                                    responseCode: cardResponse.responseCode,
+                                        cardResponse?.customerVaultId,
+                                    responseCode: cardResponse?.responseCode,
                                   );
 
                                   await addCardService

@@ -806,7 +806,7 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantHomeNumber!.isEmpty ? 'N/A' : widget.summery.applicantHomeNumber}",
+                            "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber??"N/A"}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(21, 43, 83, 1),
@@ -827,7 +827,7 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantBusinessNumber!.isEmpty ? 'N/A' : widget.summery.applicantBusinessNumber}",
+                            "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber??"N/A"}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(21, 43, 83, 1),

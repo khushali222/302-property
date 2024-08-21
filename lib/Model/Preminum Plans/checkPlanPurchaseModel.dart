@@ -46,23 +46,23 @@ class checkPlanPurchaseData {
 
   checkPlanPurchaseData(
       {this.sId,
-      this.adminId,
-      this.planId,
-      this.purchaseId,
-      this.planAmount,
-      this.purchaseDate,
-      this.expirationDate,
-      this.status,
-      this.city,
-      this.state,
-      this.postalCode,
-      this.country,
-      this.isActive,
-      this.subscriptionId,
-      this.createdAt,
-      this.updatedAt,
+        this.adminId,
+        this.planId,
+        this.purchaseId,
+        this.planAmount,
+        this.purchaseDate,
+        this.expirationDate,
+        this.status,
+        this.city,
+        this.state,
+        this.postalCode,
+        this.country,
+        this.isActive,
+        this.subscriptionId,
+        this.createdAt,
+        this.updatedAt,
 
-      this.planDetail});
+        this.planDetail});
 
   checkPlanPurchaseData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -140,28 +140,28 @@ class PlanDetail {
 
   PlanDetail(
       {this.sId,
-      this.planId,
-      this.planName,
-      this.planPrice,
-      this.billingInterval,
-      this.features,
-      this.planDays,
-      this.dayOfMonth,
-      this.planPeriods,
-      this.billingOption,
-      this.isAnnualDiscount,
-      this.propertyCount,
-      this.tenantCount,
-      this.leaseCount,
-      this.rentalownerCount,
-      this.applicantCount,
-      this.staffmemberCount,
-      this.paymentFunctionality,
-      this.annualDiscount,
-      this.createdAt,
-      this.updatedAt,
+        this.planId,
+        this.planName,
+        this.planPrice,
+        this.billingInterval,
+        this.features,
+        this.planDays,
+        this.dayOfMonth,
+        this.planPeriods,
+        this.billingOption,
+        this.isAnnualDiscount,
+        this.propertyCount,
+        this.tenantCount,
+        this.leaseCount,
+        this.rentalownerCount,
+        this.applicantCount,
+        this.staffmemberCount,
+        this.paymentFunctionality,
+        this.annualDiscount,
+        this.createdAt,
+        this.updatedAt,
 
-      this.vendorCount});
+        this.vendorCount});
 
   PlanDetail.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

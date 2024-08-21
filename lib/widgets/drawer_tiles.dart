@@ -87,12 +87,12 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
 
   };
 
-  if (isActive != true) {
+ // if (isActive != true) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: routes[option]!),
     );
-  }
+ // }
 }
 
 Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
