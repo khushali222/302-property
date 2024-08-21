@@ -117,10 +117,10 @@ class _DashboardState extends State<Dashboard> {
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
-          countList[0] = jsonData['tenantCount'];
-          countList[1] = jsonData['rentalCount'];
-          countList[2] = jsonData['vendorCount'];
-          countList[3] = jsonData['applicantCount'];
+          countList[1] = jsonData['tenantCount'];
+          countList[0] = jsonData['rentalCount'];
+          countList[3] = jsonData['vendorCount'];
+          countList[2] = jsonData['applicantCount'];
           countList[4] = jsonData['workOrderCount'];
           loading = false;
         });

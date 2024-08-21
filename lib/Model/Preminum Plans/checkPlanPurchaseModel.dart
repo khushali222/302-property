@@ -41,7 +41,7 @@ class checkPlanPurchaseData {
   String? subscriptionId;
   String? createdAt;
   String? updatedAt;
-  int? iV;
+
   PlanDetail? planDetail;
 
   checkPlanPurchaseData(
@@ -61,7 +61,7 @@ class checkPlanPurchaseData {
       this.subscriptionId,
       this.createdAt,
       this.updatedAt,
-      this.iV,
+
       this.planDetail});
 
   checkPlanPurchaseData.fromJson(Map<String, dynamic> json) {
@@ -81,7 +81,7 @@ class checkPlanPurchaseData {
     subscriptionId = json['subscription_id'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+
     planDetail = json['plan_detail'] != null
         ? new PlanDetail.fromJson(json['plan_detail'])
         : null;
@@ -105,7 +105,7 @@ class checkPlanPurchaseData {
     data['subscription_id'] = this.subscriptionId;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+
     if (this.planDetail != null) {
       data['plan_detail'] = this.planDetail!.toJson();
     }
@@ -120,9 +120,9 @@ class PlanDetail {
   int? planPrice;
   String? billingInterval;
   List<Features>? features;
-  Null? planDays;
+  var planDays;
   int? dayOfMonth;
-  Null? planPeriods;
+  var planPeriods;
   String? billingOption;
   bool? isAnnualDiscount;
   int? propertyCount;
@@ -132,10 +132,10 @@ class PlanDetail {
   int? applicantCount;
   int? staffmemberCount;
   bool? paymentFunctionality;
-  Null? annualDiscount;
+  int? annualDiscount;
   String? createdAt;
   String? updatedAt;
-  int? iV;
+
   int? vendorCount;
 
   PlanDetail(
@@ -160,7 +160,7 @@ class PlanDetail {
       this.annualDiscount,
       this.createdAt,
       this.updatedAt,
-      this.iV,
+
       this.vendorCount});
 
   PlanDetail.fromJson(Map<String, dynamic> json) {
@@ -190,7 +190,7 @@ class PlanDetail {
     annualDiscount = json['annual_discount'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+
     vendorCount = json['vendor_count'];
   }
 
@@ -219,7 +219,7 @@ class PlanDetail {
     data['annual_discount'] = this.annualDiscount;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+
     data['vendor_count'] = this.vendorCount;
     return data;
   }
