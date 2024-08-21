@@ -89,19 +89,7 @@ class _Edit_leaseState extends State<Edit_lease>
     // print();
 
     // print(fetchedDetails.re);
-    print(leaseId);
-    print('rental id ${fetchedDetails.rental.rentalId}');
-    print('property id ${fetchedDetails.rental.propertyId}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
-    print('Rent lease type ${fetchedDetails.lease.leaseType}');
-    print('Rent start ${fetchedDetails.lease.startDate}');
-    print('Rent end ${fetchedDetails.lease.endDate}');
-    print('Rent cycle ${fetchedDetails.rentCharges!.first!.rentCycle}');
-    print('Rent memo ${fetchedDetails.rentCharges!.first!.memo}');
-    print('Rent date ${fetchedDetails.rentCharges!.first!.date}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -3848,7 +3836,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                         }).toList();
 
                                         chargeEntries.add(Entry(
-                                          account: "Last Month's Rent",
+
+                                          account: "Rent Income",
                                           amount:
                                           double.tryParse(rentAmount.text) ??
                                               0.0,
@@ -3858,14 +3847,17 @@ class _Edit_leaseState extends State<Edit_lease>
                                           false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Last Month\'s Rent',
                                           rentCycle:
-                                          _selectedRent, // Set default value or adjust as needed
+                                          _selectedRent,
+
+
+                                          // Set default value or adjust as needed
                                         ));
                                         chargeEntries.add(Entry(
-                                          account: "Security Deposite",
+                                          account: "Security Deposit",
                                           amount: double.tryParse(
                                               securityDepositeAmount.text) ??
                                               0.0,
-                                          chargeType: 'Security Deposite',
+                                          chargeType: 'Security Deposit',
                                           date: rentNextDueDate.text,
                                           isRepeatable:
                                           false, // Set to false if it's not repeatable, adjust as needed
@@ -5137,6 +5129,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         'amount': _amountController.text,
         'memo': _memoController.text,
         'charge_type': 'One Time Charge',
+        'date':DateTime.now().toString()
+
       };
       widget.onSave(formData);
       setState(() {
@@ -5830,6 +5824,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         'amount': _amountController.text,
         'memo': _memoController.text,
         'charge_type': 'Recurring Charge',
+        'date':DateTime.now().toString()
       };
       widget.onSave(formData);
       setState(() {
