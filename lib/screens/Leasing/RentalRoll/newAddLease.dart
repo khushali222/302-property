@@ -4030,7 +4030,7 @@ class _addLease3State extends State<addLease3>
     bool success = await LeaseRepository().postLease(lease);
 
     if (success) {
-      Navigator.pop(context); // Replace with the actual navigation logic
+      Navigator.pop(context,true); // Replace with the actual navigation logic
     } else {
       // Handle the failure case, maybe show a message
     }

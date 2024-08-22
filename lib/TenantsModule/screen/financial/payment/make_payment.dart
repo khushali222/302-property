@@ -18,7 +18,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/repository/lease.dart';
 
-import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/drawer_tiles.dart';
