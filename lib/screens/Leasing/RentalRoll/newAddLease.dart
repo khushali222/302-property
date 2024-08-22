@@ -3598,9 +3598,7 @@ class _addLease3State extends State<addLease3>
                                               await SharedPreferences.getInstance();
                                           String adminId =
                                               prefs.getString("adminId")!;
-
                                           bool _isLeaseAdded = false;
-
                                           // // Printing ChargeData object
                                           //Changes
                                           List<Map<String, String>>
@@ -3608,7 +3606,6 @@ class _addLease3State extends State<addLease3>
                                             ...formDataOneTimeList,
                                             ...formDataRecurringList,
                                           ];
-
                                           String leaseStartDate =
                                               startDateController.text;
                                           String leaseEndDate =
@@ -3694,7 +3691,6 @@ class _addLease3State extends State<addLease3>
                                             rentCycle:
                                             _selectedRent, // Set default value or adjust as needed
                                           ));
-
                                           ChargeData chargeData = ChargeData(
                                             adminId: adminId,
                                             entry: chargeEntries,
@@ -3854,9 +3850,10 @@ class _addLease3State extends State<addLease3>
                                               uploadedFile: _uploadedFileNames,
                                             ),
                                             tenantData: tenantDataList,
-                                          );
-                                          addLeaseAndNavigate(lease);
 
+                                          );
+
+                                          addLeaseAndNavigate(context,lease);
                                           if (widget.applicantId != null &&
                                               widget.applicantId!.isNotEmpty) {
                                             print(
@@ -3987,6 +3984,8 @@ class _addLease3State extends State<addLease3>
                                           //print( _selectedRent ??"");
                                           print(_selectedRent);
                                         }
+
+
                                       },
                                       child: const Text(
                                         'Create Lease',
@@ -4026,15 +4025,37 @@ class _addLease3State extends State<addLease3>
     );
   }
 
-  Future<void> addLeaseAndNavigate(Lease lease) async {
-    bool success = await LeaseRepository().postLease(lease);
-
-    if (success) {
-      Navigator.pop(context); // Replace with the actual navigation logic
-    } else {
-      // Handle the failure case, maybe show a message
-    }
+  // Future<void> addLeaseAndNavigate(Lease lease) async {
+  //   bool success = await LeaseRepository().postLease(lease);
+  //
+  //   if (success) {
+  //     Navigator.pop(context); // Replace with the actual navigation logic
+  //   } else {
+  //     // Handle the failure case, maybe show a message
+  //   }
+  // }
+  Future<void> addLeaseAndNavigate(BuildContext context, Lease lease) async {
+    LeaseRepository().postLease(lease).then((success) {
+      if (success) {
+        Navigator.pop(context); // Navigate back if successful
+      } else {
+        // Handle the failure case
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add lease. Please try again.'),
+          ),
+        );
+      }
+    }).catchError((error) {
+      // Handle any errors that might occur during the lease posting
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: $error'),
+        ),
+      );
+    });
   }
+
 
   Future<void> ifApplicantMoveIn(String applicantId) async {
     bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);
