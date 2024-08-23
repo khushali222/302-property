@@ -3652,7 +3652,7 @@ class _addLease3State extends State<addLease3>
                                                       data['amount'] ?? '0.0') ??
                                                   0.0,
                                               chargeType: data['charge_type'] ?? '',
-                                              date: rentNextDueDate.text,
+                                              date:  reverseFormatDate(rentNextDueDate.text),
                                               isRepeatable: data['is_repeatable']
                                                       ?.toLowerCase() ==
                                                   'true',
@@ -3671,7 +3671,7 @@ class _addLease3State extends State<addLease3>
                                             double.tryParse(rentAmount.text) ??
                                                 0.0,
                                             chargeType: 'Rent',
-                                            date: rentNextDueDate.text,
+                                            date:  reverseFormatDate(rentNextDueDate.text),
                                             isRepeatable:
                                             false, // Set to false if it's not repeatable, adjust as needed
                                             memo: rentMemo.text,
@@ -3684,7 +3684,7 @@ class _addLease3State extends State<addLease3>
                                                 securityDepositeAmount.text) ??
                                                 0.0,
                                             chargeType: 'Security Deposit',
-                                            date: rentNextDueDate.text,
+                                            date:  reverseFormatDate(rentNextDueDate.text),
                                             isRepeatable:
                                             false, // Set to false if it's not repeatable, adjust as needed
                                             memo: 'Last Month\'s Rent',
@@ -3891,7 +3891,7 @@ class _addLease3State extends State<addLease3>
                                                       data['amount'] ?? '0.0') ??
                                                   0.0,
                                               chargeType: data['charge_type'] ?? '',
-                                              date: data['date'] ?? '',
+                                              date: reverseFormatDate(rentNextDueDate.text),
                                               isRepeatable: data['is_repeatable']
                                                       ?.toLowerCase() ==
                                                   'true',

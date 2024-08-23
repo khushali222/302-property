@@ -4253,10 +4253,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         updateLeaseAndNavigate(lease);
 
                                         print('valid');
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
-                                              content: Text('Processing Data')),
-                                        );
+
                                       } else {
                                         SharedPreferences prefs =
                                         await SharedPreferences.getInstance();

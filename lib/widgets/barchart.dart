@@ -1,6 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class Barchart extends StatefulWidget {
   @override
@@ -8,38 +13,91 @@ class Barchart extends StatefulWidget {
 }
 
 class _BarchartState extends State<Barchart> {
-  final List<RevenueData> chartData = [
-    RevenueData('Jan', 5000),
-    RevenueData('Feb', 6000),
-    RevenueData('Mar', 7000),
-    RevenueData('Apr', 8000),
-    RevenueData('May', 9000),
-    RevenueData('Jun', 10000),
-    RevenueData('Jul', 11000),
-    RevenueData('Aug', 12000),
-    RevenueData('Sep', 13000),
-    RevenueData('Oct', 14000),
-    RevenueData('Nov', 15000),
-    RevenueData('Dec', 16000),
-  ];
-
+  List<RevenueData> chartData = [];
   final List<String> items = [
     'This Year',
     'Previous Year',
   ];
+  String? selectedValue = 'This Year'; // Default selection
+  bool isLoading = true;
 
-  String? selectedValue;
+  @override
+  void initState() {
+    super.initState();
+    fetchChartData(selectedValue);
+  }
+
+  Future<void> fetchChartData(String? year) async {
+    setState(() {
+      isLoading = true;
+    });
+
+   // final url = Uri.parse('http://192.168.1.12:4000/api/payment/monthly-summary');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final url = Uri.parse('$Api_url/api/payment/monthly-summary');
+      final response = await http.get(url,headers: {
+        "id":"CRM $id",
+        "authorization" : "CRM $token"
+      } );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body)['data'];
+        Map<int, double> revenueMap = {};
+
+        // Process data for the selected year
+        if (year == 'This Year') {
+          for (var item in data['currentYear']) {
+            revenueMap[item['month']] = item['totalAmount'].toDouble();
+          }
+        } else if (year == 'Previous Year') {
+          for (var item in data['lastYear']) {
+            revenueMap[item['month']] = item['totalAmount'].toDouble();
+          }
+        }
+
+        // Ensure all months are represented
+        List<RevenueData> newData = [];
+        for (int i = 1; i <= 12; i++) {
+          newData.add(RevenueData(getMonthName(i), revenueMap[i] ?? 0));
+        }
+
+        setState(() {
+          chartData = newData;
+          isLoading = false;
+        });
+      } else {
+        // Handle error response
+        print('Failed to load data');
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      // Handle exception
+      print('Error fetching data: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  String getMonthName(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Colors.white,
-      // color: Colors.deepPurple,
       height: 250,
       padding: EdgeInsets.symmetric(horizontal: 8),
       child: Card(
         elevation: 4,
-        // color: Colors.white.withOpacity(1),
         color: Colors.white,
         surfaceTintColor: Colors.white,
         child: Column(
@@ -91,7 +149,9 @@ class _BarchartState extends State<Barchart> {
                   onChanged: (String? value) {
                     setState(() {
                       selectedValue = value;
+
                     });
+                    fetchChartData(selectedValue);
                   },
                   buttonStyleData: ButtonStyleData(
                     height: 50,
@@ -137,7 +197,9 @@ class _BarchartState extends State<Barchart> {
             ),
             Container(
               height: 190,
-              child: SfCartesianChart(
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : SfCartesianChart(
                 primaryXAxis: CategoryAxis(
                   majorGridLines: MajorGridLines(width: 0),
                   isVisible: true, // Show X-axis labels
@@ -162,8 +224,6 @@ class _BarchartState extends State<Barchart> {
                 series: <CartesianSeries>[
                   ColumnSeries<RevenueData, String>(
                     dataSource: chartData,
-
-                    // xAxisName: "Total Revenue",
                     color: Color.fromRGBO(60, 89, 142, 1),
                     xValueMapper: (RevenueData data, _) => data.month,
                     yValueMapper: (RevenueData data, _) => data.revenue,

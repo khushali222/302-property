@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
@@ -12,6 +13,9 @@ import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
+import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
+import '../../../provider/Plan Purchase/plancheckProvider.dart';
 import 'make_payment.dart';
 
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
@@ -1737,6 +1741,7 @@ class _FinancialTableState extends State<FinancialTable> {
 
   @override
   Widget build(BuildContext context) {
+    bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context).checkplanpurchaseModel?.data?.planDetail?.planName == 'Free Plan';
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -1750,6 +1755,7 @@ class _FinancialTableState extends State<FinancialTable> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        if(!isFreePlan)
                         Container(
                             height: MediaQuery.of(context).size.width < 500
                                 ? 36
