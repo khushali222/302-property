@@ -127,15 +127,23 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     print('entry ${fetchedDetails.entryAllowed}');
     print('Staffff ${fetchedDetails.staffmemberId}');
     print('partt ${fetchedDetails.partsandchargeData}');
+    print('image ${fetchedDetails.workOrderImages}');
     // print('Fetched parts and charge data: ${fetchedDetails.partsandchargeData?.first.account}');
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
       entryAllowedString = fetchedDetails.entryAllowed! ? 'true' : 'false';
     }
+
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       // print(fetchedDetails.rental.rentalAddress);
+      if (fetchedDetails.workOrderImages != null) {
+        _imageUrls = fetchedDetails.workOrderImages!.map((fileName) {
+          return '$fileName'; // Adjust the path as needed
+        }).toList();
+      }
 
+      //_imageUrls = fetchedDetails.workOrderImages ?? [];
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
       _selectedCategory = fetchedDetails.workCategory;
@@ -734,11 +742,14 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
+        _imageUrls.add(fileName!);
       });
     } catch (e) {
       print('Image upload failed: $e');
     }
   }
+
+  List<String> _imageUrls = [];
 
   @override
   Widget build(BuildContext context) {
@@ -849,22 +860,86 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             SizedBox(
                               height: 10,
                             ),
-                            _images.isNotEmpty
+                            // _images.isNotEmpty
+                            //     ? Row(
+                            //   children: [
+                            //     Expanded(
+                            //       child: Container(
+                            //         //color: Colors.blue,
+                            //         child: Wrap(
+                            //
+                            //
+                            //           spacing: 8.0, // Horizontal spacing between items
+                            //           runSpacing: 8.0, // Vertical spacing between rows
+                            //           children: List.generate(
+                            //             _images.length,
+                            //                 (index) {
+                            //               return Container(
+                            //                 // color: Colors.green,
+                            //                 width: 85,
+                            //                 child: Column(
+                            //                   mainAxisAlignment: MainAxisAlignment.start,
+                            //                   crossAxisAlignment: CrossAxisAlignment.start,
+                            //                   children: [
+                            //                     Row(
+                            //                       children: [
+                            //                         SizedBox(
+                            //                           width: 60,
+                            //                         ),
+                            //                         GestureDetector(
+                            //                           onTap: () {
+                            //                             setState(() {
+                            //                               _images.removeAt(index);
+                            //                             });
+                            //                           },
+                            //                           child: Icon(
+                            //                             Icons.close,
+                            //                             color: Colors.grey,
+                            //                           ),
+                            //                         ),
+                            //                       ],
+                            //                     ),
+                            //                     Row(
+                            //                       mainAxisAlignment: MainAxisAlignment.start,
+                            //                       crossAxisAlignment: CrossAxisAlignment.start,
+                            //                       children: [
+                            //                         Container(
+                            //                           // color:Colors.blue,
+                            //                           child: Image.file(
+                            //                             _images[index],
+                            //                             height: 80,
+                            //                             width: 80,
+                            //                             fit: BoxFit.cover,
+                            //                           ),
+                            //                         ),
+                            //
+                            //                       ],
+                            //                     ),
+                            //                   ],
+                            //                 ),
+                            //               );
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // )
+                            //     : Center(
+                            //   child: Text("No images selected."),
+                            // ),
+                            _imageUrls.isNotEmpty
                                 ? Row(
                               children: [
                                 Expanded(
                                   child: Container(
-                                    //color: Colors.blue,
                                     child: Wrap(
-
-
                                       spacing: 8.0, // Horizontal spacing between items
                                       runSpacing: 8.0, // Vertical spacing between rows
                                       children: List.generate(
-                                        _images.length,
+                                        _imageUrls.length,
                                             (index) {
                                           return Container(
-                                            // color: Colors.green,
                                             width: 85,
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.start,
@@ -872,13 +947,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               children: [
                                                 Row(
                                                   children: [
-                                                    SizedBox(
-                                                      width: 60,
-                                                    ),
+                                                    SizedBox(width: 60),
                                                     GestureDetector(
                                                       onTap: () {
                                                         setState(() {
-                                                          _images.removeAt(index);
+                                                          _imageUrls.removeAt(index);
                                                         });
                                                       },
                                                       child: Icon(
@@ -893,15 +966,16 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     Container(
-                                                      // color:Colors.blue,
-                                                      child: Image.file(
-                                                        _images[index],
+                                                      child: Image.network(
+                                                        "$image_url${_imageUrls[index]}",
                                                         height: 80,
                                                         width: 80,
                                                         fit: BoxFit.cover,
+                                                        errorBuilder: (context, error, stackTrace) {
+                                                          return Icon(Icons.error); // Placeholder for errors
+                                                        },
                                                       ),
                                                     ),
-
                                                   ],
                                                 ),
                                               ],
@@ -914,9 +988,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 ),
                               ],
                             )
-                                : Center(
-                              child: Text("No images selected."),
-                            ),
+                                : Center(child: Text("No images selected.")),
                             SizedBox(
                               height: 10,
                             ),
@@ -2149,7 +2221,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         tenant: tenantId,
         rentalid: rentalId,
         unitid: unitId,
-        workOrderImages: [],
+        workOrderImages: _imageUrls,
         //vendorId: vendorId,
         vendorId: finalVendorId,
         vendorNotes: vendornote.text,
@@ -2284,6 +2356,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       // print(fetchedDetails.rental.rentalAddress);
+      if (fetchedDetails.workOrderImages != null) {
+        _imageUrls = fetchedDetails.workOrderImages!.map((fileName) {
+          return '$fileName'; // Adjust the path as needed
+        }).toList();
+      }
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
       _selectedCategory = fetchedDetails.workCategory;
@@ -2880,11 +2957,14 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       setState(() {
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
+        _imageUrls.add(fileName!);
       });
     } catch (e) {
       print('Image upload failed: $e');
     }
   }
+
+  List<String> _imageUrls = [];
 
   @override
   Widget build(BuildContext context) {
@@ -2998,22 +3078,86 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    _images.isNotEmpty
+                                    // _images.isNotEmpty
+                                    //     ? Row(
+                                    //   children: [
+                                    //     Expanded(
+                                    //       child: Container(
+                                    //         //color: Colors.blue,
+                                    //         child: Wrap(
+                                    //
+                                    //
+                                    //           spacing: 8.0, // Horizontal spacing between items
+                                    //           runSpacing: 8.0, // Vertical spacing between rows
+                                    //           children: List.generate(
+                                    //             _images.length,
+                                    //                 (index) {
+                                    //               return Container(
+                                    //                 // color: Colors.green,
+                                    //                 width: 85,
+                                    //                 child: Column(
+                                    //                   mainAxisAlignment: MainAxisAlignment.start,
+                                    //                   crossAxisAlignment: CrossAxisAlignment.start,
+                                    //                   children: [
+                                    //                     Row(
+                                    //                       children: [
+                                    //                         SizedBox(
+                                    //                           width: 60,
+                                    //                         ),
+                                    //                         GestureDetector(
+                                    //                           onTap: () {
+                                    //                             setState(() {
+                                    //                               _images.removeAt(index);
+                                    //                             });
+                                    //                           },
+                                    //                           child: Icon(
+                                    //                             Icons.close,
+                                    //                             color: Colors.grey,
+                                    //                           ),
+                                    //                         ),
+                                    //                       ],
+                                    //                     ),
+                                    //                     Row(
+                                    //                       mainAxisAlignment: MainAxisAlignment.start,
+                                    //                       crossAxisAlignment: CrossAxisAlignment.start,
+                                    //                       children: [
+                                    //                         Container(
+                                    //                           // color:Colors.blue,
+                                    //                           child: Image.file(
+                                    //                             _images[index],
+                                    //                             height: 80,
+                                    //                             width: 80,
+                                    //                             fit: BoxFit.cover,
+                                    //                           ),
+                                    //                         ),
+                                    //
+                                    //                       ],
+                                    //                     ),
+                                    //                   ],
+                                    //                 ),
+                                    //               );
+                                    //             },
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // )
+                                    //     : Center(
+                                    //   child: Text("No images selected."),
+                                    // ),
+                                    _imageUrls.isNotEmpty
                                         ? Row(
                                       children: [
                                         Expanded(
                                           child: Container(
-                                            //color: Colors.blue,
                                             child: Wrap(
-
-
                                               spacing: 8.0, // Horizontal spacing between items
                                               runSpacing: 8.0, // Vertical spacing between rows
                                               children: List.generate(
-                                                _images.length,
+                                                _imageUrls.length,
                                                     (index) {
                                                   return Container(
-                                                    // color: Colors.green,
                                                     width: 85,
                                                     child: Column(
                                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -3021,13 +3165,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       children: [
                                                         Row(
                                                           children: [
-                                                            SizedBox(
-                                                              width: 60,
-                                                            ),
+                                                            SizedBox(width: 60),
                                                             GestureDetector(
                                                               onTap: () {
                                                                 setState(() {
-                                                                  _images.removeAt(index);
+                                                                  _imageUrls.removeAt(index);
                                                                 });
                                                               },
                                                               child: Icon(
@@ -3042,15 +3184,16 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             Container(
-                                                              // color:Colors.blue,
-                                                              child: Image.file(
-                                                                _images[index],
+                                                              child: Image.network(
+                                                                "$image_url${_imageUrls[index]}",
                                                                 height: 80,
                                                                 width: 80,
                                                                 fit: BoxFit.cover,
+                                                                errorBuilder: (context, error, stackTrace) {
+                                                                  return Icon(Icons.error); // Placeholder for errors
+                                                                },
                                                               ),
                                                             ),
-
                                                           ],
                                                         ),
                                                       ],
@@ -3063,9 +3206,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                         ),
                                       ],
                                     )
-                                        : Center(
-                                      child: Text("No images selected."),
-                                    ),
+                                        : Center(child: Text("No images selected.")),
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -5149,7 +5290,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         tenant: tenantId,
         rentalid: rentalId,
         unitid: unitId,
-        workOrderImages: [],
+        workOrderImages: _imageUrls,
         //vendorId: vendorId,
         vendorId: finalVendorId,
         vendorNotes: vendornote.text,
