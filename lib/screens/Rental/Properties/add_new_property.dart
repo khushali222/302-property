@@ -8946,7 +8946,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 11 : 15),
+                                                      MediaQuery.of(context).size.width < 500 ? 9 : 15),
                                                 ),
                                               ],
                                             ),

@@ -135,6 +135,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       // print(fetchedDetails.rental.rentalAddress);
+
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
       _selectedCategory = fetchedDetails.workCategory;

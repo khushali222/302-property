@@ -7622,6 +7622,7 @@ class _Summery_pageState extends State<Summery_page>
                 },
               ),
             //this for add ubit button
+
             if (widget.properties.propertyTypeData!.isMultiunit!)
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -7632,6 +7633,7 @@ class _Summery_pageState extends State<Summery_page>
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
                               'Residential')
+
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -8206,6 +8208,7 @@ class _Summery_pageState extends State<Summery_page>
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
                               'Commercial')
+
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -8658,7 +8661,7 @@ class _Summery_pageState extends State<Summery_page>
                             );
                           },
                         );
-                    },
+                      },
                     child: Material(
                       elevation: 3,
                       borderRadius: BorderRadius.all(
@@ -8691,6 +8694,7 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 ],
               ),
+
             //and this is mutiunit table show this is as it is
             if (!showdetails &&
                 widget.properties.propertyTypeData!.isMultiunit! == true)
@@ -9214,7 +9218,16 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           SharedPreferences prefs = await SharedPreferences.getInstance();
 
                                                                                           String? id = prefs.getString("adminId");
-                                                                                          Properies_summery_Repo().Editunit(rentalunit: unitnum.text, rentalsqft: sqft3.text, rentalunitadress: street3.text, rentalbath: bath3.text, rentalbed: bed3.text, unitId: Propertytype.unitId, adminId: id, rentalId: Propertytype.rentalId).then((value) {
+                                                                                          Properies_summery_Repo().Editunit(
+                                                                                              rentalunit: unitnum.text,
+                                                                                              rentalsqft: sqft3.text,
+                                                                                              rentalunitadress: street3.text,
+                                                                                              rentalbath: bath3.text,
+                                                                                              rentalbed: bed3.text,
+                                                                                              unitId: Propertytype.unitId,
+                                                                                              adminId: id,
+                                                                                              rentalId: Propertytype.rentalId
+                                                                                          ).then((value) {
                                                                                             setState(() {
                                                                                               isLoading = false;
                                                                                             });
@@ -9294,6 +9307,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   },
                                                                 );
                                                               }
+
                                                               if (widget
                                                                       .properties
                                                                       .propertyTypeData!
@@ -9543,12 +9557,14 @@ class _Summery_pageState extends State<Summery_page>
                                                                                             rentalsqft: sqft3.text,
                                                                                             rentalunitadress: street3.text,
                                                                                             unitId: Propertytype.unitId!,
+                                                                                            rentalId: Propertytype.rentalId!,
                                                                                           )
                                                                                               .then((value) {
                                                                                             setState(() {
                                                                                               isLoading = false;
                                                                                             });
                                                                                             Navigator.of(context).pop(true);
+                                                                                            reload_Screen();
                                                                                           }).catchError((e) {
                                                                                             setState(() {
                                                                                               isLoading = false;

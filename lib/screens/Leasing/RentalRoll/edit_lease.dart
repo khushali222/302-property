@@ -79,6 +79,7 @@ class _Edit_leaseState extends State<Edit_lease>
     // });
     print(widget.leaseId);
     fetchDetails(widget.leaseId);
+
   }
 
   Future<void> fetchDetails(String leaseId) async {
@@ -118,6 +119,10 @@ class _Edit_leaseState extends State<Edit_lease>
       print(fetchedDetails.rentCharges!.first!.memo);
       rentNextDueDate.text = fetchedDetails.rentCharges!.first!.date;
       rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
+      //_uploadedFileNames = fetchedDetails.lease.uploadedFile.first;
+      if(fetchedDetails.lease.uploadedFile != "")
+        _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+
      /* securityDepositeAmount.text =
       fetchedDetails.securityCharges!.first!.chargeType ==
           'Security Deposite'
@@ -4223,7 +4228,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 .toList(),
                                             tenantResidentStatus: false,
                                             unitId: unitId,
-                                             memo: rentMemo.text,
+                                            // memo: rentMemo.text,
                                             uploadedFile: _uploadedFileNames,
                                           ),
                                           tenantData: tenantDataList,

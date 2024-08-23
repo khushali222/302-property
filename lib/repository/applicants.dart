@@ -55,7 +55,9 @@ class ApplicantRepository {
       print(applicantJson);
       return applicantJson.map((json) => Datum.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load applicants');
+      print('Failed to fetch applicant: ${response.body}');
+      return [];
+      //throw Exception('Failed to load applicants');
     }
   }
 
