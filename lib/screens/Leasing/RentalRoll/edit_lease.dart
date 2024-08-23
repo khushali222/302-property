@@ -51,6 +51,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
 
   String? rent_entry_id;
+  String? rent_security_id;
 
 
   @override
@@ -119,7 +120,11 @@ class _Edit_leaseState extends State<Edit_lease>
           'Security Deposit'
           ? fetchedDetails.securityCharges!.first!.amount.toString()
           : '';
-
+      if(fetchedDetails.securityCharges != null && fetchedDetails.securityCharges!.length > 0)
+        rent_security_id =  fetchedDetails.securityCharges!.first!.chargeType ==
+            'Security Deposit'
+            ? fetchedDetails.securityCharges!.first.entry_id
+            : '';
       for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
         Provider.of<SelectedTenantsProvider>(context, listen: false)
             .addTenant(fetchedDetails.tenant![i]);
@@ -3828,7 +3833,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         mergedFormDataList.map((data) {
                                           print(data['account']);
                                           return Entry(
-                                            entry_id: data['entry_id'],
+                                            entry_id: data['entry_id'] ??"",
                                             account: data['account'] ?? '',
                                             amount: double.tryParse(
                                                 data['amount'] ?? '0.0') ??
@@ -3853,7 +3858,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                           double.tryParse(rentAmount.text) ??
                                               0.0,
                                           chargeType: 'Rent',
-                                          date: rentNextDueDate.text,
+                                          date: reverseFormatDate(rentNextDueDate.text),
                                           isRepeatable:
                                           false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Last Month\'s Rent',
@@ -3864,12 +3869,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                           // Set default value or adjust as needed
                                         ));
                                         chargeEntries.add(Entry(
+                                          entry_id: rent_security_id,
                                           account: "Security Deposit",
                                           amount: double.tryParse(
                                               securityDepositeAmount.text) ??
                                               0.0,
                                           chargeType: 'Security Deposit',
-                                          date: rentNextDueDate.text,
+                                          date:  reverseFormatDate(rentNextDueDate.text),
                                           isRepeatable:
                                           false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Security Deposit',
@@ -4029,6 +4035,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         mergedFormDataList.map((data) {
                                           print(data['account']);
                                           return Entry(
+                                            entry_id: data['entry_id'] ?? "",
                                             account: data['account'] ?? '',
                                             amount: double.tryParse(
                                                 data['amount'] ?? '0.0') ??
@@ -5317,7 +5324,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
             .map((item) => item['account'] as String)
             .toList();
         _isLoading = false;
-        print( widget.initialData!['account']??null);
+       // print( widget.initialData!['account']??null);
+        if(widget.initialData != null)
         _selectedAccountType = widget.initialData!['account']??null;
         print(items.length);
       });
