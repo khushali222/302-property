@@ -173,7 +173,7 @@ class PaymentService {
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
 
     print("surcharge ${surcharge}");
@@ -259,9 +259,8 @@ class PaymentService {
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -319,7 +318,7 @@ class PaymentService {
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
     print("surcharge ${surcharge}");
     if(future_Date == false){
@@ -401,7 +400,7 @@ class PaymentService {
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
 
     final response = await http.post(
@@ -425,7 +424,7 @@ class PaymentService {
         'response': "SUCCESS",
       }),
     );
-
+    print("payment ${response.body}");
     if (response.statusCode == 200) {
       print(response.body);
       return jsonDecode(response.body);

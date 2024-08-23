@@ -71,6 +71,7 @@ class Entry {
   String memo;
   String? rentCycle;
   String? tenantId;
+  String? entry_id;
 
   Entry({
     required this.account,
@@ -81,6 +82,7 @@ class Entry {
     required this.memo,
     this.rentCycle,
     this.tenantId,
+    this.entry_id
   });
 
   factory Entry.fromJson(Map<String, dynamic> json) {
@@ -97,6 +99,7 @@ class Entry {
       memo: json['memo'] ?? "",
       rentCycle: json['rent_cycle'],
       tenantId: json['tenant_id'],
+      entry_id: json['entry_id']
     );
   }
 
@@ -110,6 +113,7 @@ class Entry {
       'memo': memo,
       'rent_cycle': rentCycle,
       'tenant_id': tenantId,
+      'entry_id':entry_id
     };
   }
 }

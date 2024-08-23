@@ -18,7 +18,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/repository/lease.dart';
 
-import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/drawer_tiles.dart';
@@ -161,13 +161,13 @@ class _MakePaymentState extends State<MakePayment> {
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
     final response = await http.get(
-      Uri.parse('$Api_url/api/leases/get_leases/${widget.tenantId}'),
+      Uri.parse('$Api_url/api/leases/get_leases/$id'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },
     );
-
+    print('$Api_url/api/leases/get_leases/${widget.tenantId}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       print(data);
@@ -186,9 +186,14 @@ class _MakePaymentState extends State<MakePayment> {
       }
       setState(() {
         tenants = fetchedTenants;
+        isLoading = false;
       });
     } else {
+      setState(() {
+        isLoading = false;
+      });
       throw Exception('Failed to load tenants');
+
     }
   }
 
@@ -216,7 +221,7 @@ class _MakePaymentState extends State<MakePayment> {
         fetchedData["Liability Account"] = [
           "Rent Income",
           "Pre-payments",
-          "Security Deposite",
+          "Security Deposit",
           "Rent Late Fee"
         ];
         for (var item in jsonResponse) {
@@ -1643,7 +1648,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
-                                                width: 300,
+                                                width: 350,
                                                 padding: const EdgeInsets.only(
                                                     left: 14, right: 14),
                                                 decoration: BoxDecoration(
@@ -3697,7 +3702,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
-                                            width: 200,
+                                            width: 250,
                                             padding: const EdgeInsets.only(
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
@@ -3787,8 +3792,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                 'Selected payment method: $_selectedHoldertype');
                                           },
                                           buttonStyleData: ButtonStyleData(
-                                            height: 45,
-                                            width: 200,
+                                            height: 50,
+                                            width: 300,
                                             padding: const EdgeInsets.only(
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
@@ -4474,7 +4479,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                 .text.isNotEmpty &&
                                                             (_selectedPaymentMethod ==
                                                                 "ACH")
-                                                        ? finaltotal!
+                                                        ? finaltotal?? 0.0
                                                         : amountController
                                                                 .text.isNotEmpty
                                                             ? double.parse(
@@ -4640,11 +4645,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                   "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
                                               amount:
                                                   "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
-                                              tenantId: selectedTenantId!,
+                                          tenantId: widget.tenantId,
                                               date: _startDate.text,
                                               address1: "",
                                               processorId: "",
-                                              leaseid: widget.leaseId,
+                                          leaseid:selectedTenantId!,
                                               company_name: companyName,
                                               entries: rows,
                                               future_Date: futuredate!,
@@ -4688,11 +4693,11 @@ class _MakePaymentState extends State<MakePayment> {
                                             "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
                                         amount:
                                             "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
-                                        tenantId: selectedTenantId!,
+                                        tenantId: widget.tenantId,
                                         date: _startDate.text,
                                         address1: "",
                                         processorId: "",
-                                        leaseid: widget.leaseId,
+                                        leaseid:selectedTenantId!,
                                         company_name: companyName,
                                         entries: rows,
                                         future_Date: true,
@@ -4733,11 +4738,11 @@ class _MakePaymentState extends State<MakePayment> {
                                             "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
                                         amount:
                                             "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
-                                        tenantId: selectedTenantId!,
+                                        tenantId: widget.tenantId,
                                         date: _startDate.text,
                                         address1: "",
                                         processorId: "",
-                                        leaseid: widget.leaseId,
+                                        leaseid:selectedTenantId!,
                                         company_name: companyName,
                                         entries: rows,
                                         future_Date: true,
@@ -4859,31 +4864,40 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   surge_count() {
-    if (_selectedPaymentMethod == "ACH" &&
-        (surChargeAchper != null || surChargeAchper != 0.0) &&
-        _selectedPaymentMethod == "ACH" &&
-        (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+    try{
+      if (_selectedPaymentMethod == "ACH" &&
+          (surChargeAchper != null || surChargeAchper != 0.0) &&
+          _selectedPaymentMethod == "ACH" &&
+          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+        setState(() {
+          surchargecount =
+              (double.parse(amountController.text) * surChargeAchper / 100) +
+                  surChargeAchflat;
+          finaltotal = double.parse(amountController.text) + surchargecount!;
+        });
+      } else if (_selectedPaymentMethod == "ACH" &&
+          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+        setState(() {
+          surchargecount = double.parse(surChargeAchflat.toString());
+          finaltotal = double.parse(amountController.text) + surchargecount!;
+          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
+        });
+      } else if (_selectedPaymentMethod == "ACH" &&
+          (surChargeAchper != null || surChargeAchper != 0.0)) {
+        setState(() {
+          surchargecount =
+          (double.parse(amountController.text) * surChargeAchper / 100);
+          finaltotal = double.parse(amountController.text) + surchargecount!;
+        });
+      }
+    }
+    catch(e){
       setState(() {
-        surchargecount =
-            (double.parse(amountController.text) * surChargeAchper / 100) +
-                surChargeAchflat;
-        finaltotal = double.parse(amountController.text) + surchargecount!;
-      });
-    } else if (_selectedPaymentMethod == "ACH" &&
-        (surChargeAchflat != null || surChargeAchflat != 0.0)) {
-      setState(() {
-        surchargecount = double.parse(surChargeAchflat.toString());
-        finaltotal = double.parse(amountController.text) + surchargecount!;
-        // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
-      });
-    } else if (_selectedPaymentMethod == "ACH" &&
-        (surChargeAchper != null || surChargeAchper != 0.0)) {
-      setState(() {
-        surchargecount =
-            (double.parse(amountController.text) * surChargeAchper / 100);
-        finaltotal = double.parse(amountController.text) + surchargecount!;
+        surchargecount = 0;
+        finaltotal = 0;
       });
     }
+
   }
 
   Widget buildTextField(

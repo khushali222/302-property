@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,6 +11,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
+import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -404,85 +408,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                   /* const Text('Recieved From *',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey)),
-                    tenants.isEmpty
-                        ? Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 55.0,
-                            ),
-                          )
-                        : DropdownButtonHideUnderline(
-                            child: DropdownButtonFormField2<String>(
-                              decoration:
-                                  InputDecoration(border: InputBorder.none),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select resident';
-                                }
-                                return null;
-                              },
-                              isExpanded: true,
-                              hint: const Text('Select Resident'),
-                              value: selectedTenantId,
-                              items: tenants.map((tenant) {
-                                return DropdownMenuItem<String>(
-                                  value: tenant['tenant_id'],
-                                  child: Text(tenant['tenant_name']!),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedTenantId = value;
-                                  showmessage = false;
-                                });
-                                fetchcreditcard(value!);
-                                print('Selected tenant_id: $selectedTenantId');
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                width: double.infinity,
-                                padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                      MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                            ),
-                          ),
-                    const SizedBox(
-                      height: 8,
-                    ),*/
+
                     const Text('Card Number *',
                         style: TextStyle(
                             fontSize: 13,
@@ -501,8 +427,14 @@ class _AddCardState extends State<AddCard> {
                         }
                         return null;
                       },
+                      formatter: [
+                        CardNumberInputFormatter(),
+                        LengthLimitingTextInputFormatter(19),
+                      ],
+
                       keyboardType: TextInputType.number,
                       hintText: '0000 0000 0000 0000',
+                      label: "Enter card number",
                       controller: cardNumber,
                     ),
                     const SizedBox(
@@ -518,8 +450,13 @@ class _AddCardState extends State<AddCard> {
                             color: Colors.grey)),
                     CustomTextField(
                       keyboardType: TextInputType.text,
-                      hintText: 'Enter Expiration Date',
+                      hintText: 'MM/YYYY',
                       controller: expirationDate,
+                      label: "Enter Expiration Date",
+                      isexpirydate: true,
+                      formatter: [
+                        ExpiryDateInputFormatter()
+                      ],
                     ),
                     const SizedBox(
                       height: 8,
@@ -536,6 +473,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter First Name',
                       controller: firstName,
+
                     ),
                     const SizedBox(
                       height: 8,
@@ -565,8 +503,9 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.emailAddress,
                       hintText: 'Enter Email',
+                      isEmail: true,
                       controller: email,
                     ),
                     const SizedBox(
@@ -616,6 +555,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter City',
                       controller: city,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -632,6 +572,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter State',
                       controller: state,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -648,6 +589,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter Country',
                       controller: country,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -664,6 +606,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter Zip',
                       controller: zip,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -808,8 +751,8 @@ class _AddCardState extends State<AddCard> {
                                     tenantId: selectedTenantId,
                                     billingId: randomNumber,
                                     customerVaultId:
-                                        cardResponse!.customerVaultId,
-                                    responseCode: cardResponse.responseCode,
+                                        cardResponse?.customerVaultId,
+                                    responseCode: cardResponse?.responseCode,
                                   );
 
                                   await addCardService
@@ -1080,6 +1023,294 @@ LinearGradient _getCardGradient(String cardType) {
       colors: [Color(0xFF949BA5), Color(0xFF393B3F)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
+    );
+  }
+}
+class CustomTextField extends StatefulWidget {
+  final String hintText;
+  final TextEditingController? controller;
+  final TextInputType keyboardType;
+  final String? Function(String?)? validator;
+  final bool obscureText;
+  final Function(String)? onChanged;
+  final Function(String)? onChanged2;
+  final Widget? suffixIcon;
+  final IconData? prefixIcon;
+  final void Function()? onSuffixIconPressed;
+  final void Function()? onTap;
+  final String? label;
+  final bool readOnly;
+  final bool? amount_check;
+  final String? max_amount;
+  final String? error_mess;
+  final bool? isEmail;
+  final bool? optional;
+  final bool? isexpirydate;
+  final List<TextInputFormatter>? formatter;
+  final bool? readOnnly;
+
+  CustomTextField({
+    Key? key,
+    this.onChanged,
+    this.controller,
+    required this.hintText,
+    this.obscureText = false,
+    this.keyboardType = TextInputType.emailAddress,
+    this.readOnly = false,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.validator,
+    this.onSuffixIconPressed,
+    this.label,
+    this.onTap,
+    this.onChanged2,
+    this.amount_check,
+    this.max_amount,
+    this.error_mess,
+    this.optional = false,
+    this.isEmail = false,
+    this.isexpirydate = false,
+    this.formatter,
+    this.readOnnly
+  }) : super(key: key);
+
+  @override
+  CustomTextFieldState createState() => CustomTextFieldState();
+}
+
+class CustomTextFieldState extends State<CustomTextField> {
+  String? _errorMessage;
+  late TextEditingController _textController;
+  late FocusNode _focusNode;
+  late FocusNode _focusNode1;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = widget.controller ?? TextEditingController();
+    _focusNode = FocusNode();
+    _focusNode1 = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _focusNode.dispose();
+    _focusNode1.dispose();
+    super.dispose();
+  }
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _focusNode,
+          toolbarButtons: [
+                (node) {
+              return GestureDetector(
+                onTap: () {
+                  if (widget.onChanged2 != null) {
+                    widget.onChanged2!(_textController.text);
+                  }
+                  node.unfocus(); // Dismiss the keyboard
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("Done"),
+                ),
+              );
+            },
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
+
+    Widget textField = Stack(
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        FormField<String>(
+          validator: widget.optional! ? null : (value) {
+            if (widget.controller!.text.isEmpty) {
+              setState(() {
+                _errorMessage = widget.label == null
+                    ? 'Please ${widget.hintText}'
+                    : 'Please ${widget.label}';
+              });
+              return '';
+            } else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!)) {
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+              return '';
+            } else if (widget.isEmail!) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
+            } else if (widget.isexpirydate!) {
+              final RegExp expDateRegExp =
+              RegExp(r'^(0[1-9]|1[0-2])\/\d{4}$');
+              if (!expDateRegExp.hasMatch(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = 'Invalid expiration date format. Use MM/YYYY';
+                });
+                return '';
+              } else {
+                final parts = widget.controller!.text.split('/');
+                final month = int.tryParse(parts[0]);
+                final year = int.tryParse(parts[1]);
+                if (month == null || month < 1 || month > 12) {
+                  _errorMessage = 'Invalid month. Use a value between 01 and 12';
+                }
+                final currentYear = DateTime.now().year;
+                if (year == null || year < currentYear) {
+                  _errorMessage = 'Invalid year. Use the current year or later';
+                }
+                setState(() {});
+                return '';
+              }
+            }
+            return null;
+          },
+          builder: (FormFieldState<String> state) {
+            return Column(
+              children: <Widget>[
+                Material(
+                  elevation: 2,
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: Offset(4, 4),
+                          blurRadius: 3,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      onFieldSubmitted: widget.onChanged2,
+                      inputFormatters: widget.formatter ?? [],
+                      onChanged: (value) {
+                        if (value.isNotEmpty) {
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+                        if (widget.onChanged != null) {
+                          widget.onChanged!(value);
+                        }
+                      },
+                      onTap: widget.onTap,
+                      obscureText: widget.obscureText,
+                      readOnly: widget.readOnly,
+                      keyboardType: widget.keyboardType,
+                      focusNode: _focusNode,
+                      controller: _textController,
+                      decoration: InputDecoration(
+                        suffixIcon: widget.suffixIcon,
+                        hintStyle: TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFFb0b6c3),
+                        ),
+                        border: InputBorder.none,
+                        hintText: widget.hintText,
+                      ),
+                    ),
+                  ),
+                ),
+                if (state.hasError || widget.amount_check != null)
+                  SizedBox(height: 24),
+                // Reserve space for error message
+              ],
+            );
+          },
+        ),
+        if (_errorMessage != null)
+          Positioned(
+            top: 60,
+            left: 8,
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 12.0,
+              ),
+            ),
+          ),
+      ],
+    );
+
+    return shouldUseKeyboardActions
+        ? SizedBox(
+      height: 60,
+          width: MediaQuery.of(context).size.width * .98,
+          child: KeyboardActions(
+                config: _buildConfig(context),
+                child: textField,
+              ),
+        )
+        : textField;
+  }
+}
+class CardNumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    // Remove any existing spaces in the input
+    String newText = newValue.text.replaceAll(' ', '');
+
+    // Add a space after every 4 digits
+    if (newText.length > 4) {
+      final StringBuffer buffer = StringBuffer();
+      for (int i = 0; i < newText.length; i++) {
+        buffer.write(newText[i]);
+        if ((i + 1) % 4 == 0 && i + 1 != newText.length) {
+          buffer.write(' ');
+        }
+      }
+      newText = buffer.toString();
+    }
+
+    // Return the new value with the formatting applied
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+class ExpiryDateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    String newText = newValue.text.replaceAll('/', '');
+
+    if (newText.length > 6) {
+      newText = newText.substring(0, 6);
+    }
+
+    final StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < newText.length; i++) {
+      if (i == 2) {
+        buffer.write('/');
+      }
+      buffer.write(newText[i]);
+    }
+
+    return newValue.copyWith(
+      text: buffer.toString(),
+      selection: TextSelection.collapsed(offset: buffer.length),
     );
   }
 }

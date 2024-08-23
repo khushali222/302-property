@@ -141,7 +141,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       perform.text = fetchedDetails.workPerformed!;
       _selectedStatus = fetchedDetails.status!?? "";
       vendornote.text = fetchedDetails.vendorNotes ?? "";
-      _dateController.text = fetchedDetails.date!;
+      _dateController.text = fetchedDetails.date  !;
       _selectedOption = fetchedDetails.priority ?? "";
       _selectedPropertyId = fetchedDetails.rentalId;
       renderId = fetchedDetails.rentalId!;
@@ -2148,7 +2148,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         rentalid: rentalId,
         unitid: unitId,
         workOrderImages: [],
-        vendorId: vendorId,
+        vendorId: _selectedvendorsId,
         vendorNotes: vendornote.text,
         priority: _selectedOption,
         isBillable: isChecked,
@@ -5116,7 +5116,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       String? token = prefs.getString('token');
       String? rentalId = _selectedPropertyId;
       String? unitId = _selectedUnitId;
-
+      print("$_selectedvendorsId  iddddd");
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
           'parts_id':part['parts_id'],
@@ -5128,7 +5128,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
           "amount": double.tryParse(part['totalController'].text) ?? 0.0,
         };
       }).toList();
-      log(parts.toString());
+     // log(parts.toString());
       print('staff id:${_selectedstaffId}');
       WorkOrderRepository()
           .EditWorkOrder(
@@ -5145,7 +5145,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         rentalid: rentalId,
         unitid: unitId,
         workOrderImages: [],
-        vendorId: vendorId,
+      //  vendorId: vendorId,
+        vendorId: _selectedvendorsId,
         vendorNotes: vendornote.text,
         priority: _selectedOption,
         isBillable: isChecked,

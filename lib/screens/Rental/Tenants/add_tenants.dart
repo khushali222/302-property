@@ -2227,6 +2227,7 @@ class CustomTextField extends StatefulWidget {
   final String? max_amount;
   final String? error_mess;
 
+
   CustomTextField({
     Key? key,
     this.onChanged,

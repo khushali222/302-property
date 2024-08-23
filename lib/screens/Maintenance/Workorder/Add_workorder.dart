@@ -424,7 +424,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           CustomTextField(
             hintText: 'Quantity',
             controller: partsAndLabor[index]['qtyController'],
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           SizedBox(height: 10),
           Text(
@@ -508,7 +508,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           CustomTextField(
             hintText: 'Price',
             controller: partsAndLabor[index]['priceController'],
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           SizedBox(height: 10),
           Text(
@@ -2041,7 +2041,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           date: _dateController.text,
           entry: _selectedEntry == 'yes',
           parts: parts,
-        );
+        ).then((value){
+
+          Navigator.pop(context, true);
+        });
         // Fluttertoast.showToast(
         //     msg: "Work order added successfully",
         //     toastLength: Toast.LENGTH_SHORT,
@@ -2051,7 +2054,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
         //     textColor: Colors.white,
         //     fontSize: 16.0
         // );
-        Navigator.pop(context, true);
+
       } catch (e) {
         Fluttertoast.showToast(
             msg: "Failed to add work order: $e",

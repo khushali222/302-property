@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -48,6 +49,10 @@ class _Edit_leaseState extends State<Edit_lease>
     with SingleTickerProviderStateMixin {
   late Future<List<Rentals>> futureRentalOwners;
 
+
+  String? rent_entry_id;
+
+
   @override
   void initState() {
     super.initState();
@@ -89,19 +94,7 @@ class _Edit_leaseState extends State<Edit_lease>
     // print();
 
     // print(fetchedDetails.re);
-    print(leaseId);
-    print('rental id ${fetchedDetails.rental.rentalId}');
-    print('property id ${fetchedDetails.rental.propertyId}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
-    print('Rent lease type ${fetchedDetails.lease.leaseType}');
-    print('Rent start ${fetchedDetails.lease.startDate}');
-    print('Rent end ${fetchedDetails.lease.endDate}');
-    print('Rent cycle ${fetchedDetails.rentCharges!.first!.rentCycle}');
-    print('Rent memo ${fetchedDetails.rentCharges!.first!.memo}');
-    print('Rent date ${fetchedDetails.rentCharges!.first!.date}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -115,14 +108,17 @@ class _Edit_leaseState extends State<Edit_lease>
 
       _selectedRent = fetchedDetails.rentCharges!.first!.rentCycle;
       rentMemo.text = fetchedDetails.rentCharges!.first!.memo;
+
       print(fetchedDetails.rentCharges!.first!.memo);
+      rent_entry_id = fetchedDetails.rentCharges!.first.entry_id;
       rentNextDueDate.text = fetchedDetails.rentCharges!.first!.date;
       rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
-     /* securityDepositeAmount.text =
+      if(fetchedDetails.securityCharges != null && fetchedDetails.securityCharges!.length > 0)
+      securityDepositeAmount.text =
       fetchedDetails.securityCharges!.first!.chargeType ==
-          'Security Deposite'
+          'Security Deposit'
           ? fetchedDetails.securityCharges!.first!.amount.toString()
-          : '';*/
+          : '';
 
       for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
         Provider.of<SelectedTenantsProvider>(context, listen: false)
@@ -153,6 +149,8 @@ class _Edit_leaseState extends State<Edit_lease>
           }
           return <String, String>{};
         }).toList();
+
+        log(formDataRecurringList.toList().toString());
       }
     });
 
@@ -3823,13 +3821,14 @@ class _Edit_leaseState extends State<Edit_lease>
                                           ...formDataOneTimeList,
                                           ...formDataRecurringList,
                                         ];
-
+                                        log(mergedFormDataList.toString());
                                         // Creating Entry objects from the merged list
 
                                         List<Entry> chargeEntries =
                                         mergedFormDataList.map((data) {
                                           print(data['account']);
                                           return Entry(
+                                            entry_id: data['entry_id'],
                                             account: data['account'] ?? '',
                                             amount: double.tryParse(
                                                 data['amount'] ?? '0.0') ??
@@ -3848,7 +3847,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                         }).toList();
 
                                         chargeEntries.add(Entry(
-                                          account: "Last Month's Rent",
+
+                                          account: "Rent Income",
                                           amount:
                                           double.tryParse(rentAmount.text) ??
                                               0.0,
@@ -3858,18 +3858,21 @@ class _Edit_leaseState extends State<Edit_lease>
                                           false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Last Month\'s Rent',
                                           rentCycle:
-                                          _selectedRent, // Set default value or adjust as needed
+                                          _selectedRent,
+                                          entry_id: rent_entry_id
+
+                                          // Set default value or adjust as needed
                                         ));
                                         chargeEntries.add(Entry(
-                                          account: "Security Deposite",
+                                          account: "Security Deposit",
                                           amount: double.tryParse(
                                               securityDepositeAmount.text) ??
                                               0.0,
-                                          chargeType: 'Security Deposite',
+                                          chargeType: 'Security Deposit',
                                           date: rentNextDueDate.text,
                                           isRepeatable:
                                           false, // Set to false if it's not repeatable, adjust as needed
-                                          memo: 'Last Month\'s Rent',
+                                          memo: 'Security Deposit',
                                           rentCycle:
                                           _selectedRent, // Set default value or adjust as needed
                                         ));
@@ -4160,7 +4163,7 @@ class _Edit_leaseState extends State<Edit_lease>
     bool success = await LeaseRepository().updateLease(lease);
 
     if (success) {
-      Navigator.pop(context); // Replace with the actual navigation logic
+      Navigator.pop(context,true); // Replace with the actual navigation logic
     } else {
       // Handle the failure case, maybe show a message
     }
@@ -4552,7 +4555,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
   void initState() {
     super.initState();
     if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['property'] ?? '';
+      _selectedProperty = widget.initialData!['account'] ?? '';
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
     }
@@ -5137,6 +5140,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         'amount': _amountController.text,
         'memo': _memoController.text,
         'charge_type': 'One Time Charge',
+        'date':DateTime.now().toString()
+
       };
       widget.onSave(formData);
       setState(() {
@@ -5278,9 +5283,11 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   void initState() {
     super.initState();
     if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['property'] ?? '';
+
+      _selectedProperty = widget.initialData!['account'] ?? '';
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
+
     }
     fetchData();
   }
@@ -5310,6 +5317,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
             .map((item) => item['account'] as String)
             .toList();
         _isLoading = false;
+        print( widget.initialData!['account']??null);
+        _selectedAccountType = widget.initialData!['account']??null;
         print(items.length);
       });
     } else {
@@ -5830,6 +5839,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         'amount': _amountController.text,
         'memo': _memoController.text,
         'charge_type': 'Recurring Charge',
+        'date':DateTime.now().toString()
       };
       widget.onSave(formData);
       setState(() {

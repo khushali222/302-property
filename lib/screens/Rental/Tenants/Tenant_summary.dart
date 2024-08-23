@@ -273,7 +273,141 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       ),
     );
   }
+  Widget _buildHeaders_lease() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+        color: blueColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
 
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? const Padding(
+                      padding: EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        "Status ",
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                        : const Text("Status",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        textAlign: TextAlign.center),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 3),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: const Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 5.0),
+                      child: Text("Start Date",
+                          style: TextStyle(color: Colors.white, fontSize: 14)),
+                    ),
+                    SizedBox(width: 5),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: const Row(
+                  children: [
+                    Text(
+                      "End Date",
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(width: 5),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
@@ -2100,7 +2234,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                         child: Column(
                                           children: [
                                             const SizedBox(height: 20),
-                                            _buildHeaders(),
+                                            _buildHeaders_lease(),
                                             const SizedBox(height: 20),
                                             Container(
                                               decoration: BoxDecoration(
@@ -2205,7 +2339,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                   ),
                                                                 ),
                                                                 Expanded(
-                                                                  flex: 4,
+
                                                                   child:
                                                                       InkWell(
                                                                     onTap: () {
@@ -2235,7 +2369,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                   ),
                                                                 ),
                                                                 Expanded(
-                                                                  flex: 2,
+
                                                                   child: Text(
                                                                     '${Propertytype.startDate}',
                                                                     style:
@@ -2254,9 +2388,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                     width: MediaQuery.of(context)
                                                                             .size
                                                                             .width *
-                                                                        .2),
+                                                                        .02),
                                                                 Expanded(
-                                                                  flex: 3,
+
                                                                   child: Text(
                                                                     // '${widget.data.createdAt}',
 
@@ -2322,11 +2456,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               TextSpan(
                                                                                 children: [
                                                                                   TextSpan(
-                                                                                    text: 'Liability Coverage : ',
+                                                                                    text: 'Property : ',
                                                                                     style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                   ),
                                                                                   TextSpan(
-                                                                                    text: '${Propertytype.leaseId ?? ''}',
+                                                                                    text: '${Propertytype.rentalAdress ?? ''}',
                                                                                     style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                   ),
                                                                                 ],
@@ -2336,7 +2470,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               TextSpan(
                                                                                 children: [
                                                                                   TextSpan(
-                                                                                    text: 'Status : ',
+                                                                                    text: 'Type : ',
                                                                                     style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                   ),
                                                                                   TextSpan(
@@ -2350,7 +2484,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               TextSpan(
                                                                                 children: [
                                                                                   TextSpan(
-                                                                                    text: 'Effective Date : ',
+                                                                                    text: 'Rent Amount : ',
                                                                                     style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                   ),
                                                                                   TextSpan(

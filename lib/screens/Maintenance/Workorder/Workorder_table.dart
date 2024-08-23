@@ -296,7 +296,7 @@ class _Workorder_tableState extends State<Workorder_table> {
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this property!",
+      desc: "Once deleted, you will not be able to recover this Workorder!",
       style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -932,14 +932,13 @@ class _Workorder_tableState extends State<Workorder_table> {
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
+
+
                         data = snapshot.data!
                             .where((workorder) =>
                                 workorder.workOrderData!.workSubject!
                                     .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                workorder.rentalAddress!.rentalAdress!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
+                                    .contains(searchvalue!.toLowerCase()) )
                             .toList();
                       } else {
                         data = snapshot.data!

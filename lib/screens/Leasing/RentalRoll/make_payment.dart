@@ -184,9 +184,10 @@ class _MakePaymentState extends State<MakePayment> {
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
         fetchedData["Liability Account"] = [
-          "Last Month's Rent",
+          "Late Fee Income",
           "Pre-payments",
-          "Security Deposit"
+          "Security Deposit",
+          'Rent Income'
 
         ];
         for (var item in jsonResponse) {
