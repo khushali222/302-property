@@ -31,6 +31,7 @@ class unit_properties {
 
   unit_properties.fromJson(Map<String, dynamic> json) {
     print(json);
+    print(json['rental_images']);
     Id = json['_id']??"";
     adminId = json['admin_id']??"";
     unitId = json['unit_id']??"";

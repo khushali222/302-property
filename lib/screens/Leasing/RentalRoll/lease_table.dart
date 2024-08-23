@@ -368,7 +368,7 @@ class _Lease_tableState extends State<Lease_table> {
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this staff member!",
+      desc: "Once deleted, you will not be able to recover this lease!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -477,7 +477,7 @@ class _Lease_tableState extends State<Lease_table> {
       type: AlertType.warning,
       title: "Plan Limitation",
       desc:
-          "The limit for adding rentalowners according to the plan has been reached.",
+          "The limit for adding lease according to the plan has been reached.",
       style: AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)

@@ -108,7 +108,7 @@ class Properies_summery_Repo{
     final response = await http.get(Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     // print(jsonEncode('data'));
-    print(response.body);
+    print('unit responce ${response.body}');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => unit_properties.fromJson(data)).toList();

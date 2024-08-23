@@ -49,10 +49,10 @@ Widget buildListTile(
         if (title == "Dashboard" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Dashboard()));
-        } else if (title == "Add Property Type" && active != true) {
+        } else if (title == "Property Type" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => PropertyTable()));
-        } else if (title == "Add Staff Member" && active != true) {
+        } else if (title == "Staff Member" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => StaffTable()));
         } else if (title == "Reports" && active != true) {

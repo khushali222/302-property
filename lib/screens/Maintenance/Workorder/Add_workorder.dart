@@ -2031,7 +2031,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           tenant: tenantId,
           rentalid: rentalId,
           unitid: unitId,
-          workOrderImages: [],
+          workOrderImages: _uploadedFileNames,
           vendorId: vendorId,
           vendorNotes: vendornote.text,
           priority: _selectedOption,

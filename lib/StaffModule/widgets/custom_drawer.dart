@@ -102,7 +102,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   "Rental Owner",
                   widget.currentpage == "RentalOwner",),
-             /* if(permissions!.tenantView!)
+              if(permissions!.tenantView!)
                 buildListTile(
                   context,
                   Icon(
@@ -111,7 +111,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   "Tenants",
                   widget.currentpage == "Tenants",),
-              if(permissions!.leaseView!)
+            /*  if(permissions!.leaseView!)
               buildListTile(
                   context,
                    Icon(

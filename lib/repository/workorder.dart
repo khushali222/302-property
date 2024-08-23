@@ -34,7 +34,9 @@ class WorkOrderRepository {
       return jsonResponse.map((data) => Data.fromJson(data)).toList();
     } else {
       // Throw an exception if the request failed
-      throw Exception('Failed to load work orders');
+      print('Failed to fetch workorders: ${response.body}');
+      return [];
+      //throw Exception('Failed to load work orders');
     }
   }
 

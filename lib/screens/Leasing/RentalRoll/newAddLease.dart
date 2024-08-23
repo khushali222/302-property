@@ -3598,9 +3598,7 @@ class _addLease3State extends State<addLease3>
                                               await SharedPreferences.getInstance();
                                           String adminId =
                                               prefs.getString("adminId")!;
-
                                           bool _isLeaseAdded = false;
-
                                           // // Printing ChargeData object
                                           //Changes
                                           List<Map<String, String>>
@@ -3608,7 +3606,6 @@ class _addLease3State extends State<addLease3>
                                             ...formDataOneTimeList,
                                             ...formDataRecurringList,
                                           ];
-
                                           String leaseStartDate =
                                               startDateController.text;
                                           String leaseEndDate =
@@ -3694,7 +3691,6 @@ class _addLease3State extends State<addLease3>
                                             rentCycle:
                                             _selectedRent, // Set default value or adjust as needed
                                           ));
-
                                           ChargeData chargeData = ChargeData(
                                             adminId: adminId,
                                             entry: chargeEntries,
@@ -3854,9 +3850,10 @@ class _addLease3State extends State<addLease3>
                                               uploadedFile: _uploadedFileNames,
                                             ),
                                             tenantData: tenantDataList,
-                                          );
-                                          addLeaseAndNavigate(lease);
 
+                                          );
+
+                                          addLeaseAndNavigate(lease);
                                           if (widget.applicantId != null &&
                                               widget.applicantId!.isNotEmpty) {
                                             print(
@@ -3987,6 +3984,8 @@ class _addLease3State extends State<addLease3>
                                           //print( _selectedRent ??"");
                                           print(_selectedRent);
                                         }
+
+
                                       },
                                       child: const Text(
                                         'Create Lease',
@@ -4006,7 +4005,9 @@ class _addLease3State extends State<addLease3>
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8.0))),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
                                       child: const Text(
                                         'Cancel',
                                         style: TextStyle(color: Color(0xFF748097)),
@@ -4035,6 +4036,8 @@ class _addLease3State extends State<addLease3>
       // Handle the failure case, maybe show a message
     }
   }
+
+
 
   Future<void> ifApplicantMoveIn(String applicantId) async {
     bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);

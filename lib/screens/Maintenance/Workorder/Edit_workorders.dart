@@ -135,6 +135,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       // print(fetchedDetails.rental.rentalAddress);
+
       subject.text = fetchedDetails.workSubject!;
       _selectedstaffId = fetchedDetails.staffData?.staffName;
       _selectedCategory = fetchedDetails.workCategory;
@@ -566,8 +567,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
-                height: 45,
-                width: 200,
+                height: 50,
+                width: 250,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
@@ -1305,7 +1306,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             );
                                           }).toList(),
-                                          value: _selectedvendorsId,
+                                          value: vendors.containsKey(_selectedvendorsId)
+                                              ? _selectedvendorsId
+                                              : null,
                                           onChanged: (value) {
                                             setState(() {
                                               // _selectedUnitId = null;
@@ -2114,7 +2117,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         isLoading = true;
       });
-
+      String? finalVendorId = _selectedvendorsId ?? vendorId;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
@@ -2132,7 +2135,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           "amount": double.tryParse(part['totalController'].text) ?? 0.0,
         };
       }).toList();
-
       WorkOrderRepository()
           .EditWorkOrder(
         adminId: id,
@@ -2148,7 +2150,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         rentalid: rentalId,
         unitid: unitId,
         workOrderImages: [],
-        vendorId: vendorId,
+        //vendorId: vendorId,
+        vendorId: finalVendorId,
         vendorNotes: vendornote.text,
         priority: _selectedOption,
         isBillable: isChecked,
@@ -2156,8 +2159,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         date: _dateController.text,
         entry: _selectedEntry == 'yes',
         parts: parts,
-      )
-          .then((value) {
+
+      ).then((value) {
+        print('vendors ${vendorId}');
         setState(() {
           widget.property?.workSubject = subject.text;
         });
@@ -2174,6 +2178,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         Navigator.pop(context, true);
       }).catchError((e) {
         // Error
+        print('vendors ${vendorId}');
         Fluttertoast.showToast(
           msg: "Failed to edit work order: $e",
           toastLength: Toast.LENGTH_SHORT,
@@ -2709,8 +2714,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
-                height: 45,
-                width: 200,
+                height: 50,
+                width: 250,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
@@ -5116,7 +5121,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       String? token = prefs.getString('token');
       String? rentalId = _selectedPropertyId;
       String? unitId = _selectedUnitId;
-
+      String? finalVendorId = _selectedvendorsId ?? vendorId;
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
           'parts_id':part['parts_id'],
@@ -5145,7 +5150,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         rentalid: rentalId,
         unitid: unitId,
         workOrderImages: [],
-        vendorId: vendorId,
+        //vendorId: vendorId,
+        vendorId: finalVendorId,
         vendorNotes: vendornote.text,
         priority: _selectedOption,
         isBillable: isChecked,

@@ -1371,6 +1371,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             primaryemailerror = false;
                                           });
                                         },
+                                        keyboardType: TextInputType.emailAddress,
                                         controller: primaryemail,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
@@ -1479,6 +1480,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: alternativeemail,
+                                        keyboardType: TextInputType.emailAddress,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1586,6 +1588,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: phonenum,
+                                        keyboardType: TextInputType.phone,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1693,6 +1696,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: homenum,
+                                        keyboardType: TextInputType.phone,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1800,6 +1804,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: officenum,
+                                        keyboardType: TextInputType.phone,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(

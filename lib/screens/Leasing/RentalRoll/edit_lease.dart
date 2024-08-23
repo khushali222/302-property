@@ -85,6 +85,7 @@ class _Edit_leaseState extends State<Edit_lease>
     // });
     print(widget.leaseId);
     fetchDetails(widget.leaseId);
+
   }
 
   Future<void> fetchDetails(String leaseId) async {
@@ -95,7 +96,19 @@ class _Edit_leaseState extends State<Edit_lease>
     // print();
 
     // print(fetchedDetails.re);
-
+    print(leaseId);
+    print('rental id ${fetchedDetails.rental.rentalId}');
+    print('property id ${fetchedDetails.rental.propertyId}');
+    print(
+        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+    print('Rent lease type ${fetchedDetails.lease.leaseType}');
+    print('Rent start ${fetchedDetails.lease.startDate}');
+    print('Rent end ${fetchedDetails.lease.endDate}');
+    print('Rent cycle ${fetchedDetails.rentCharges!.first!.rentCycle}');
+    print('Rent amt ${fetchedDetails.securityCharges!.first!.amount}');
+    print('Rent date ${fetchedDetails.rentCharges!.first!.date}');
+    print(
+        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -939,6 +952,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                       value:  units.isNotEmpty && units.any((unit) => unit['unit_id'] == _selectedUnit)
                                           ? _selectedUnit
                                           : null,
+
                                       onChanged: (value) {
                                         setState(() {
                                           unitId = value.toString();
@@ -994,9 +1008,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                             left: 14, right: 14),
                                       ),
                                       validator: (value) {
-                                        if (value == null ||
-                                            value.isEmpty) {
-                                          return 'Please select an option';
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please select unit';
                                         }
                                         return null;
                                       },
@@ -1016,21 +1029,98 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 8,
                               ),
-                              CustomDropdown(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please select a lease';
-                                  }
-                                  return null;
-                                },
-                                labelText: 'Select Lease',
-                                items: leaseTypeitems,
-                                selectedValue: _selectedLeaseType,
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    _selectedLeaseType = value;
-                                  });
-                                },
+                              // CustomDropdown(
+                              //   validator: (value) {
+                              //     if (value == null || value.isEmpty) {
+                              //       return 'Please select a lease';
+                              //     }
+                              //     return null;
+                              //   },
+                              //   labelText: 'Select Lease',
+                              //   items: leaseTypeitems,
+                              //   selectedValue: _selectedLeaseType,
+                              //   onChanged: (String? value) {
+                              //     setState(() {
+                              //       _selectedLeaseType = value;
+                              //     });
+                              //   },
+                              // ),
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  hint: const Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          'Type',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  items: leaseTypeitems
+                                      .map(
+                                          (String item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
+                                      .toList(),
+                                  value: _selectedLeaseType,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedLeaseType = value;
+                                    });
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 50,
+                                    width: 160,
+                                    padding:
+                                    const EdgeInsets.only(left: 14, right: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Colors.black26,
+                                      ),
+                                      color: Colors.white,
+                                    ),
+                                    elevation: 3,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 200,
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      //color: Colors.redAccent,
+                                    ),
+                                    offset: const Offset(-20, 0),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(40),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
                               ),
                               const SizedBox(
                                 height: 8,
@@ -2374,26 +2464,102 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
                                             SizedBox(height: 5),
-                                            CustomDropdown(
-                                              validator: (value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return 'Please select a rent cycle';
-                                                }
-                                                return null;
-                                              },
-                                              labelText: 'Select Rent Cycle',
-                                              items: rentCycleitems,
-                                              selectedValue: _selectedRent,
-                                              onChanged: (String? value) {
-                                                setState(() {
-                                                  _selectedRent = value;
-                                                });
-
-                                                _updateNextDueDate();
-                                              },
+                                            // CustomDropdown(
+                                            //   validator: (value) {
+                                            //     if (value == null || value.isEmpty) {
+                                            //       return 'Please select a rent cycle';
+                                            //     }
+                                            //     return null;
+                                            //   },
+                                            //   labelText: 'Select Rent Cycle',
+                                            //   items: rentCycleitems,
+                                            //   selectedValue: _selectedRent,
+                                            //   onChanged: (String? value) {
+                                            //     setState(() {
+                                            //       _selectedRent = value;
+                                            //     });
+                                            //
+                                            //     _updateNextDueDate();
+                                            //   },
+                                            // ),
+                                            DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                hint: const Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 4,
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        'Rent Cycle',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                items: rentCycleitems
+                                                    .map(
+                                                        (String item) => DropdownMenuItem<String>(
+                                                      value: item,
+                                                      child: Text(
+                                                        item,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ))
+                                                    .toList(),
+                                                value: _selectedRent,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _selectedRent = value;
+                                                  });
+                                                },
+                                                buttonStyleData: ButtonStyleData(
+                                                  height: 50,
+                                                  width: 160,
+                                                  padding:
+                                                  const EdgeInsets.only(left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 3,
+                                                ),
+                                                dropdownStyleData: DropdownStyleData(
+                                                  maxHeight: 200,
+                                                  width: 200,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(14),
+                                                    //color: Colors.redAccent,
+                                                  ),
+                                                  offset: const Offset(-20, 0),
+                                                  scrollbarTheme: ScrollbarThemeData(
+                                                    radius: const Radius.circular(40),
+                                                    thickness: MaterialStateProperty.all(6),
+                                                    thumbVisibility:
+                                                    MaterialStateProperty.all(true),
+                                                  ),
+                                                ),
+                                                menuItemStyleData: const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                                ),
+                                              ),
                                             ),
                                             SizedBox(height: 5),
-
                                           ],
                                         ),
                                       ),
@@ -2492,23 +2658,100 @@ class _Edit_leaseState extends State<Edit_lease>
                                 height: 8,
                               ),
                               if(MediaQuery.of(context).size.width < 500)
-                              CustomDropdown(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please select a rent cycle';
-                                  }
-                                  return null;
-                                },
-                                labelText: 'Select Rent Cycle',
-                                items: rentCycleitems,
-                                selectedValue: _selectedRent,
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    _selectedRent = value;
-                                  });
-
-                                  _updateNextDueDate();
-                                },
+                              // CustomDropdown(
+                              //   validator: (value) {
+                              //     if (value == null || value.isEmpty) {
+                              //       return 'Please select a rent cycle';
+                              //     }
+                              //     return null;
+                              //   },
+                              //   labelText: 'Select Rent Cycle',
+                              //   items: rentCycleitems,
+                              //   selectedValue: _selectedRent,
+                              //   onChanged: (String? value) {
+                              //     setState(() {
+                              //       _selectedRent = value;
+                              //     });
+                              //
+                              //     _updateNextDueDate();
+                              //   },
+                              // ),
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  hint: const Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          'Rent Cycle',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  items: rentCycleitems
+                                      .map(
+                                          (String item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ))
+                                      .toList(),
+                                  value: _selectedRent,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedRent = value;
+                                    });
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 50,
+                                    width: 160,
+                                    padding:
+                                    const EdgeInsets.only(left: 14, right: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Colors.black26,
+                                      ),
+                                      color: Colors.white,
+                                    ),
+                                    elevation: 3,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 200,
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      //color: Colors.redAccent,
+                                    ),
+                                    offset: const Offset(-20, 0),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(40),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
                               ),
                               if(MediaQuery.of(context).size.width < 500)
                               const SizedBox(
@@ -3809,8 +4052,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                             borderRadius:
                                             BorderRadius.circular(8.0))),
                                     onPressed: () async {
-                                      if (_formKey.currentState?.validate() ??
-                                          false) {
+                                      if (_formKey.currentState?.validate() ?? false) {
                                         //charges
                                         SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
@@ -4003,6 +4245,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 .toList(),
                                             tenantResidentStatus: false,
                                             unitId: unitId,
+                                            // memo: rentMemo.text,
                                             uploadedFile: _uploadedFileNames,
                                           ),
                                           tenantData: tenantDataList,
@@ -4147,7 +4390,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                             BorderRadius.circular(8.0))),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
                                     child: const Text(
                                       'Cancel',
                                       style: TextStyle(color: Color(0xFF748097)),
