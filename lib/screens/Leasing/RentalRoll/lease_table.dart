@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +72,25 @@ class _Lease_tableState extends State<Lease_table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
+  void _attemptDeleteLease(BuildContext context, Lease1 lease) {
+    DateTime currentDate = DateTime.now();
+    DateTime startDate = DateTime.parse(lease.startDate!);
+    DateTime endDate = DateTime.parse(lease.endDate!);
 
+    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+      // The lease is active
+      Fluttertoast.showToast(
+        backgroundColor: Colors.amberAccent.shade200,
+        msg: "Active lease cannot be deleted.",
+        toastLength: Toast.LENGTH_SHORT,
+        textColor: Colors.black,
+        gravity: ToastGravity.BOTTOM,
+      );
+    } else {
+      // Lease is not active, proceed with deletion
+      _showDeleteAlert(context, lease.leaseId!);
+    }
+  }
   void sortData(List<Lease1> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
@@ -368,7 +387,7 @@ class _Lease_tableState extends State<Lease_table> {
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this staff member!",
+      desc: "Once deleted, you will not be able to recover this lease!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -420,7 +439,8 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void handleDelete(Lease1 lease) {
-    _showDeleteAlert(context, lease.leaseId!);
+    _attemptDeleteLease(context,lease);
+  //  _showDeleteAlert(context, lease.leaseId!);
     // Handle delete action
     print('Delete ${lease.leaseId}');
   }
@@ -477,7 +497,7 @@ class _Lease_tableState extends State<Lease_table> {
       type: AlertType.warning,
       title: "Plan Limitation",
       desc:
-          "The limit for adding rentalowners according to the plan has been reached.",
+          "The limit for adding lease according to the plan has been reached.",
       style: AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
@@ -1235,11 +1255,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                         1),
                                                               ),
                                                               onPressed: () {
+
+                                                                _attemptDeleteLease(context,lease);
                                                                 //handleDelete(Propertytype);
-                                                                _showDeleteAlert(
-                                                                    context,
-                                                                    lease
-                                                                        .leaseId!);
+
                                                               },
                                                             ),
                                                           ],

@@ -3598,9 +3598,7 @@ class _addLease3State extends State<addLease3>
                                               await SharedPreferences.getInstance();
                                           String adminId =
                                               prefs.getString("adminId")!;
-
                                           bool _isLeaseAdded = false;
-
                                           // // Printing ChargeData object
                                           //Changes
                                           List<Map<String, String>>
@@ -3608,7 +3606,6 @@ class _addLease3State extends State<addLease3>
                                             ...formDataOneTimeList,
                                             ...formDataRecurringList,
                                           ];
-
                                           String leaseStartDate =
                                               startDateController.text;
                                           String leaseEndDate =
@@ -3655,7 +3652,7 @@ class _addLease3State extends State<addLease3>
                                                       data['amount'] ?? '0.0') ??
                                                   0.0,
                                               chargeType: data['charge_type'] ?? '',
-                                              date: rentNextDueDate.text,
+                                              date:  reverseFormatDate(rentNextDueDate.text),
                                               isRepeatable: data['is_repeatable']
                                                       ?.toLowerCase() ==
                                                   'true',
@@ -3674,7 +3671,7 @@ class _addLease3State extends State<addLease3>
                                             double.tryParse(rentAmount.text) ??
                                                 0.0,
                                             chargeType: 'Rent',
-                                            date: rentNextDueDate.text,
+                                            date:  reverseFormatDate(rentNextDueDate.text),
                                             isRepeatable:
                                             false, // Set to false if it's not repeatable, adjust as needed
                                             memo: rentMemo.text,
@@ -3687,14 +3684,13 @@ class _addLease3State extends State<addLease3>
                                                 securityDepositeAmount.text) ??
                                                 0.0,
                                             chargeType: 'Security Deposit',
-                                            date: rentNextDueDate.text,
+                                            date:  reverseFormatDate(rentNextDueDate.text),
                                             isRepeatable:
                                             false, // Set to false if it's not repeatable, adjust as needed
                                             memo: 'Last Month\'s Rent',
                                             rentCycle:
                                             _selectedRent, // Set default value or adjust as needed
                                           ));
-
                                           ChargeData chargeData = ChargeData(
                                             adminId: adminId,
                                             entry: chargeEntries,
@@ -3854,9 +3850,10 @@ class _addLease3State extends State<addLease3>
                                               uploadedFile: _uploadedFileNames,
                                             ),
                                             tenantData: tenantDataList,
-                                          );
-                                          addLeaseAndNavigate(lease);
 
+                                          );
+
+                                          addLeaseAndNavigate(lease);
                                           if (widget.applicantId != null &&
                                               widget.applicantId!.isNotEmpty) {
                                             print(
@@ -3894,7 +3891,7 @@ class _addLease3State extends State<addLease3>
                                                       data['amount'] ?? '0.0') ??
                                                   0.0,
                                               chargeType: data['charge_type'] ?? '',
-                                              date: data['date'] ?? '',
+                                              date: reverseFormatDate(rentNextDueDate.text),
                                               isRepeatable: data['is_repeatable']
                                                       ?.toLowerCase() ==
                                                   'true',
@@ -3987,6 +3984,8 @@ class _addLease3State extends State<addLease3>
                                           //print( _selectedRent ??"");
                                           print(_selectedRent);
                                         }
+
+
                                       },
                                       child: const Text(
                                         'Create Lease',
@@ -4006,7 +4005,9 @@ class _addLease3State extends State<addLease3>
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8.0))),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
                                       child: const Text(
                                         'Cancel',
                                         style: TextStyle(color: Color(0xFF748097)),
@@ -4035,6 +4036,8 @@ class _addLease3State extends State<addLease3>
       // Handle the failure case, maybe show a message
     }
   }
+
+
 
   Future<void> ifApplicantMoveIn(String applicantId) async {
     bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);

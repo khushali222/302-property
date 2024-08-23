@@ -210,7 +210,9 @@ class LeaseRepository {
       List leasesJson = jsonResponse['data'];
       return leasesJson.map((data) => Lease1.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load lease');
+      print('Failed to fetch lease: ${response.body}');
+      return [];
+      //throw Exception('Failed to load lease');
     }
   }
 

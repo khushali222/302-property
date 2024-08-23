@@ -60,7 +60,9 @@ class PropertyTypeRepository {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => propertytype.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load data');
+      print('Failed to fetch property type: ${response.body}');
+      return [];
+      // throw Exception('Failed to load data');
     }
   }
 

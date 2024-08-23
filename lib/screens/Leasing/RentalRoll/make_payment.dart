@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import '../../../model/EnterChargeModel.dart';
 import '../../../model/payments/fetch_payment_table.dart';
 import '../../../model/setting.dart';
+import '../../../provider/Plan Purchase/plancheckProvider.dart';
 import '../../../repository/payment/charge_responce.dart';
 import '../../../repository/payment/payment_service.dart';
 import '../../../repository/setting.dart';
@@ -351,7 +353,8 @@ class _MakePaymentState extends State<MakePayment> {
 
   String? _selectedHoldertype;
   double? surchage_percent;
-  final List<String> _paymentMethods = ['Card', 'Check', 'Cash', 'ACH'];
+  final List<String> _paymentMethods = ['Card', 'Check', 'Cash', 'ACH',];
+  final List<String> _paymentMethodsforfree = [ 'Check', 'Cash' ];
   final List<String> _selecttype = ['Checking', 'Savings'];
   final List<String> _selectholder = ['Business', 'Personal'];
   bool showCardNumberField = false;
@@ -763,6 +766,8 @@ class _MakePaymentState extends State<MakePayment> {
   String? _errorText;
   @override
   Widget build(BuildContext context) {
+    bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context).checkplanpurchaseModel?.data?.planDetail?.planName == 'Free Plan';
+
     return Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
@@ -1208,12 +1213,13 @@ class _MakePaymentState extends State<MakePayment> {
                               const SizedBox(
                                 height: 12,
                               ),
+                              if(isFreePlan)
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
                                   hint: const Text('Select Method'),
                                   value: _selectedPaymentMethod,
-                                  items: _paymentMethods.map((method) {
+                                  items: _paymentMethodsforfree.map((method) {
                                     return DropdownMenuItem<String>(
                                       value: method,
                                       child: Text(method),
@@ -1276,6 +1282,75 @@ class _MakePaymentState extends State<MakePayment> {
                                   ),
                                 ),
                               ),
+                              if(!isFreePlan)
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton2<String>(
+                                    isExpanded: true,
+                                    hint: const Text('Select Method'),
+                                    value: _selectedPaymentMethod,
+                                    items: _paymentMethods.map((method) {
+                                      return DropdownMenuItem<String>(
+                                        value: method,
+                                        child: Text(method),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? newValue) {
+                                      // setState(() {
+                                      //   _selectedPaymentMethod = newValue;
+                                      //   //_selectedPaymentMethod = addRow();
+                                      //   if(_selectedPaymentMethod == 'Card')
+                                      //   addRow();
+                                      //   if(_selectedPaymentMethod == 'Check')
+                                      //    Text("hello");
+                                      //
+                                      // });
+                                      setState(() {
+                                        _selectedPaymentMethod = newValue;
+                                        AddFields();
+                                      });
+                                      print(_selectedPaymentMethod == "Card");
+                                      print(
+                                          'Selected payment method: $_selectedPaymentMethod');
+                                      surge_count();
+                                    },
+                                    buttonStyleData: ButtonStyleData(
+                                      height: MediaQuery.of(context).size.width < 500 ? 46 :55,
+                                      width: MediaQuery.of(context).size.width < 500 ? 200 : 250,
+                                      padding: const EdgeInsets.only(
+                                          left: 14, right: 14),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: Colors.white,
+                                      ),
+                                      elevation: 2,
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                      ),
+                                      iconSize: 24,
+                                      iconEnabledColor: Color(0xFFb0b6c3),
+                                      iconDisabledColor: Colors.grey,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: Colors.white,
+                                      ),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        radius: const Radius.circular(6),
+                                        thickness: MaterialStateProperty.all(6),
+                                        thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                      ),
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      height: 40,
+                                      padding:
+                                      EdgeInsets.only(left: 14, right: 14),
+                                    ),
+                                  ),
+                                ),
                               const SizedBox(
                                 height: 12,
                               ),

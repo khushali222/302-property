@@ -60,7 +60,9 @@ class StaffMemberRepository {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Staffmembers.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load data');
+      print('Failed to fetch staffmember: ${response.body}');
+      return [];
+      // throw Exception('Failed to load data');
     }
   }
   Future<Map<String, dynamic>> Edit_staff_member({

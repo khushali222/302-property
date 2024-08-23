@@ -25,7 +25,9 @@ class PropertiesRepository {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Rentals.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load data');
+      print('Failed to fetch properties: ${response.body}');
+      return [];
+     // throw Exception('Failed to load data');
     }
   }
 

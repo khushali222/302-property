@@ -31,7 +31,9 @@ class DelinquentTenantsSerivce {
         return delinquentTenants.data ?? [];
       } else {
         // If the server did not return a 200 OK response, throw an exception
-        throw Exception('Failed to load delinquent tenants');
+        print('Failed to fetch delinquent tenants: ${response.body}');
+        return [];
+        // throw Exception('Failed to load delinquent tenants');
       }
     } catch (e) {
       // Handle any other exceptions

@@ -29,7 +29,9 @@ class RentalOwnerService {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => RentalOwnerData.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load rental owners');
+      print('Failed to fetch rentalowners: ${response.body}');
+      return [];
+      // throw Exception('Failed to load data');
     }
   }
   // Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {

@@ -28,8 +28,10 @@ class CompletedWorkOrderService {
         return completedWorkOrders.data ?? [];
       } else {
         // Handle non-200 responses
-        throw Exception(
-            'Failed to load data. Status code: ${response.statusCode}');
+        print('Failed to fetch complete workorders: ${response.body}');
+        return [];
+        // throw Exception(
+        //     'Failed to load data. Status code: ${response.statusCode}');
       }
     } catch (e) {
       // Catch all exceptions

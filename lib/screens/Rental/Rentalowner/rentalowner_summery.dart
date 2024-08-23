@@ -285,9 +285,8 @@ class _RentalownersSummeryForMobileState
                                     TableCell(
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
-                                      child: Text(
-                                        '${(rentalownersummery.first.rentalOwnerFirstName ?? '').isEmpty ? '' : rentalownersummery.first.rentalOwnerFirstName} ${(rentalownersummery.first.rentalOwnerLastName ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnerLastName}',
-                                        style: TextStyle(
+                                      child: Text('${(rentalownersummery.first.rentalOwnername ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnername}',
+                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                           color: blueColor,
@@ -384,7 +383,7 @@ class _RentalownersSummeryForMobileState
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Text(
-                                        '${(rentalownersummery.first.state ?? '').isEmpty ? 'N/A' : rentalownersummery.first.state}',
+                                        '${(rentalownersummery.first.country ?? '').isEmpty ? 'N/A' : rentalownersummery.first.country}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -730,7 +729,7 @@ class _RentalownersSummeryForMobileState
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Text(
-                                       '${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}',
+                                       formatDate('${(rentalownersummery.first.startDate ?? '').isEmpty ? 'N/A' : rentalownersummery.first.startDate}'),
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,

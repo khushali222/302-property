@@ -195,6 +195,7 @@ class LeaseData {
   List<String>? tenantId;
   bool? tenantResidentStatus;
   String? unitId;
+  String? memo;
   List<String>? uploadedFile;
 
   LeaseData({
@@ -202,6 +203,7 @@ class LeaseData {
     this.adminId,
     this.companyName,
     this.endDate,
+    this.memo,
     this.entry,
     this.leaseAmount,
     this.leaseType,
@@ -218,6 +220,7 @@ class LeaseData {
       leaseId: json['lease_id'],
       adminId: json['admin_id'],
       companyName: json['company_name'],
+      memo:json['memo'],
       endDate: json['end_date'],
       entry: (json['entry'] as List).map((i) => Entry.fromJson(i)).toList(),
       leaseAmount: json['lease_amount'],
