@@ -950,6 +950,30 @@ class _EditTenantsState extends State<EditTenants> {
                                                   firstName.text;
                                               widget.tenants.tenantLastName =
                                                   lastName.text;
+                                              widget.tenants.tenantPhoneNumber =
+                                                  phoneNumber.text;
+                                              widget.tenants.tenantAlternativeNumber =
+                                                  workNumber.text;
+                                              widget.tenants.tenantAlternativeEmail =
+                                                  alterEmail.text;
+                                              widget.tenants.tenantEmail =
+                                                  email.text;
+                                              widget.tenants.tenantPassword =
+                                                  passWord.text;
+                                              widget.tenants.tenantBirthDate =
+                                                  _dateController.text;
+                                              widget.tenants.taxPayerId =
+                                                  taxPayerId.text;
+                                              widget.tenants.comments =
+                                                  comments.text;
+                                              widget.tenants.emergencyContact?.name =
+                                                  contactName.text;
+                                              widget.tenants.emergencyContact?.relation =
+                                                  relationToTenant.text;
+                                              widget.tenants.emergencyContact?.email =
+                                                  emergencyEmail.text;
+                                              widget.tenants.emergencyContact?.phoneNumber =
+                                                  emergencyPhoneNumber.text;
                                             });
                                             Navigator.of(context).pop(true);
                                           } catch (e) {
@@ -1710,6 +1734,30 @@ class _EditTenantsState extends State<EditTenants> {
                                               firstName.text;
                                           widget.tenants.tenantLastName =
                                               lastName.text;
+                                          widget.tenants.tenantPhoneNumber =
+                                              phoneNumber.text;
+                                          widget.tenants.tenantAlternativeNumber =
+                                              workNumber.text;
+                                          widget.tenants.tenantAlternativeEmail =
+                                              alterEmail.text;
+                                          widget.tenants.tenantEmail =
+                                              email.text;
+                                          widget.tenants.tenantPassword =
+                                              passWord.text;
+                                          widget.tenants.tenantBirthDate =
+                                              _dateController.text;
+                                          widget.tenants.taxPayerId =
+                                              taxPayerId.text;
+                                          widget.tenants.comments =
+                                              comments.text;
+                                          widget.tenants.emergencyContact?.name =
+                                              contactName.text;
+                                          widget.tenants.emergencyContact?.relation =
+                                              relationToTenant.text;
+                                          widget.tenants.emergencyContact?.email =
+                                              emergencyEmail.text;
+                                          widget.tenants.emergencyContact?.phoneNumber =
+                                              emergencyPhoneNumber.text;
                                         });
                                         Navigator.of(context).pop(true);
                                       } catch (e) {
