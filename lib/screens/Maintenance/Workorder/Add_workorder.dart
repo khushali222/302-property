@@ -424,7 +424,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           CustomTextField(
             hintText: 'Quantity',
             controller: partsAndLabor[index]['qtyController'],
-            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
+           keyboardType: TextInputType.number,
+           // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           SizedBox(height: 10),
           Text(
@@ -508,7 +509,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           CustomTextField(
             hintText: 'Price',
             controller: partsAndLabor[index]['priceController'],
-            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
+           keyboardType: TextInputType.number,
+           // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           SizedBox(height: 10),
           Text(

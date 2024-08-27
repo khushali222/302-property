@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -221,6 +222,7 @@ class _AddTenantState extends State<AddTenant> {
                                                                 color: Colors.grey)),
                                                         SizedBox(height: 10),
                                                         CustomTextField(
+
                                                           keyboardType: TextInputType.number,
                                                           hintText: 'Enter phone number',
                                                           controller: phoneNumber,
@@ -1474,9 +1476,11 @@ class _AddTenantState extends State<AddTenant> {
                                   height: 10,
                                 ),
                                 CustomTextField(
+
                                   keyboardType: TextInputType.number,
                                   hintText: 'Enter phone number',
                                   controller: phoneNumber,
+
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'please enter the phone number';
@@ -2257,16 +2261,53 @@ class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
       TextEditingController(); // Add this line
-
+  late FocusNode _focusNode;
   @override
   void dispose() {
     _textController.dispose(); // Dispose the controller when not needed anymore
     super.dispose();
-  }
+    _focusNode.dispose();
 
+  }
+  @override
+  void initState() {
+    super.initState();
+    _textController = widget.controller ?? TextEditingController();
+    _focusNode = FocusNode();
+
+  }
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _focusNode,
+          toolbarButtons: [
+                (node) {
+              return GestureDetector(
+                onTap: () {
+                  if (widget.onChanged2 != null) {
+                    widget.onChanged2!(_textController.text);
+                  }
+                  node.unfocus(); // Dismiss the keyboard
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(14.0),
+                  child: Text("Done",style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold
+                  ),),
+                ),
+              );
+            },
+          ],
+        ),
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
+    Widget textfield = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
@@ -2342,7 +2383,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       print("callllll");
                         },
 
-
+                focusNode: _focusNode,
                       onTap: widget.onTap,
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
@@ -2385,5 +2426,15 @@ class CustomTextFieldState extends State<CustomTextField> {
           ),
       ],
     );
+    return shouldUseKeyboardActions
+        ? SizedBox(
+      height: 60,
+      width: MediaQuery.of(context).size.width * .98,
+      child: KeyboardActions(
+        config: _buildConfig(context),
+        child: textfield,
+      ),
+    )
+        : textfield;
   }
 }

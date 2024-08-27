@@ -227,7 +227,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.emailAddress,
                           hintText: 'Enter email',
                           controller: email,
                         ),
@@ -249,7 +249,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
                         ),
@@ -271,7 +271,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter home number',
                           controller: homeNumber,
                         ),
@@ -293,7 +293,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                         ),
@@ -315,7 +315,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),

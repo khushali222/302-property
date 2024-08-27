@@ -2432,7 +2432,7 @@ class _addLease3State extends State<addLease3>
                                     }
                                     return null;
                                   },
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   hintText: 'Enter Amount',
                                   controller: rentAmount,
                                 ),
@@ -3075,7 +3075,7 @@ class _addLease3State extends State<addLease3>
                                     }
                                     return null;
                                   },
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   hintText: 'Enter Amount',
                                   controller: securityDepositeAmount,
                                 ),
@@ -4931,7 +4931,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.phone,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: _amountController,
                         ),

@@ -9,6 +9,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -775,6 +777,21 @@ class _Edit_propertiesState extends State<Edit_properties> {
   String? processor_id ;
   List<OwnersDetails> OwnersdetailsGroups = [];
   bool hasError = false;
+
+  final FocusNode _nodeText1 = FocusNode();
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+        ),
+
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2257,31 +2274,36 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         child: Stack(
                                           children: [
                                             Positioned.fill(
-                                              child: TextField(
-                                                controller: postalcode,
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                                ),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    postalcodeerror = false;
-                                                  });
-                                                },
-                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                decoration: InputDecoration(
-                                                  enabledBorder: postalcodeerror
-                                                      ? OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color: Colors.red), // Error border color
-                                                  )
-                                                      : InputBorder.none,
-                                                  border: InputBorder.none,
-                                                  contentPadding: EdgeInsets.all(14),
-                                                  hintText: "Enter postal code",
-                                                  hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8),
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                              child: KeyboardActions(
+                                                config:_buildConfig(context),
+                                                child: TextField(
+                                                  focusNode: _nodeText1,
+                                                  controller: postalcode,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                  ),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      postalcodeerror = false;
+                                                    });
+                                                  },
+                                                  keyboardType: TextInputType.number,
+                                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                  decoration: InputDecoration(
+                                                    enabledBorder: postalcodeerror
+                                                        ? OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      borderSide: BorderSide(color: Colors.red), // Error border color
+                                                    )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding: EdgeInsets.all(14),
+                                                    hintText: "Enter postal code",
+                                                    hintStyle: TextStyle(
+                                                      color: Color(0xFF8A95A8),
+                                                      fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                    ),
                                                   ),
                                                 ),
                                               ),

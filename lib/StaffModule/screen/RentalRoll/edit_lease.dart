@@ -2424,7 +2424,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                         }
                                         return null;
                                       },
-                                      keyboardType: TextInputType.text,
+                                      keyboardType: TextInputType.number,
                                       hintText: 'Enter Amount',
                                       controller: rentAmount,
                                     ),
@@ -3024,7 +3024,7 @@ class _Edit_leaseState extends State<Edit_lease>
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: securityDepositeAmount,
                         ),
@@ -5454,7 +5454,7 @@ class _Edit_leaseState extends State<Edit_lease>
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.number,
                         hintText: 'Enter Amount',
                         controller: rentAmount,
                       ),
@@ -6030,7 +6030,7 @@ class _Edit_leaseState extends State<Edit_lease>
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.number,
                         hintText: 'Enter Amount',
                         controller: securityDepositeAmount,
                       ),

@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
@@ -245,6 +246,23 @@ class _enterChargeState extends State<enterCharge> {
   }
 
   final _formKey = GlobalKey<FormState>();
+  final FocusNode _nodeText1 = FocusNode();
+
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+        ),
+
+
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -653,18 +671,22 @@ class _enterChargeState extends State<enterCharge> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: SizedBox(
                                           height:40,
-                                          child: TextField(
-                                            keyboardType: TextInputType.number,
-                                            onChanged: (value) =>
-                                                updateAmount(index, value),
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              hintText: 'Enter amount',
-                                              hintStyle: TextStyle(fontSize: 14),
+                                          child: KeyboardActions(
+                                            config: _buildConfig(context),
+                                            child: TextField(
+                                              focusNode: _nodeText1,
+                                              keyboardType: TextInputType.number,
+                                              onChanged: (value) =>
+                                                  updateAmount(index, value),
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                hintText: 'Enter amount',
+                                                hintStyle: TextStyle(fontSize: 14),
 
-                                              contentPadding: EdgeInsets.only(top: 7,left: 7)
+                                                contentPadding: EdgeInsets.only(top: 7,left: 7)
+                                              ),
+
                                             ),
-
                                           ),
                                         ),
                                       ),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -1823,21 +1824,148 @@ class _EditTenantsState extends State<EditTenants> {
   }
 }
 
+// class CustomTextField extends StatefulWidget {
+//   final String hintText;
+//   final TextEditingController? controller;
+//   final TextInputType keyboardType;
+//   final String? Function(String?)? validator;
+//   final bool obscureText;
+//
+//   final Widget? suffixIcon;
+//   final IconData? prefixIcon;
+//   final void Function()? onSuffixIconPressed;
+//   final void Function()? onTap;
+//   final bool readOnnly;
+//
+//   CustomTextField({
+//     Key? key,
+//     this.controller,
+//     required this.hintText,
+//     this.obscureText = false,
+//     this.keyboardType = TextInputType.emailAddress,
+//     this.readOnnly = false,
+//     this.prefixIcon,
+//     this.suffixIcon,
+//     this.validator,
+//     this.onSuffixIconPressed,
+//     this.onTap, // Initialize onTap
+//   }) : super(key: key);
+//
+//   @override
+//   CustomTextFieldState createState() => CustomTextFieldState();
+// }
+//
+// class CustomTextFieldState extends State<CustomTextField> {
+//   String? _errorMessage;
+//   TextEditingController _textController =
+//       TextEditingController(); // Add this line
+//
+//   @override
+//   void dispose() {
+//     _textController.dispose(); // Dispose the controller when not needed anymore
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Stack(
+//       clipBehavior: Clip.none,
+//       children: <Widget>[
+//         FormField<String>(
+//           validator: (value) {
+//             if (widget.controller!.text.isEmpty) {
+//               setState(() {
+//                 _errorMessage = 'Please ${widget.hintText}';
+//               });
+//               return '';
+//             }
+//             setState(() {
+//               _errorMessage = null;
+//             });
+//             return null;
+//           },
+//           builder: (FormFieldState<String> state) {
+//             return Column(
+//               children: <Widget>[
+//                 Container(
+//                   height: 50,
+//                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+//                   decoration: BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.circular(8.0),
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.black.withOpacity(0.2),
+//                         offset: Offset(4, 4),
+//                         blurRadius: 8,
+//                       ),
+//                     ],
+//                   ),
+//                   child: TextFormField(
+//                     onTap: widget.onTap,
+//                     obscureText: widget.obscureText,
+//                     readOnly: widget.readOnnly,
+//                     keyboardType: widget.keyboardType,
+//                     validator: (value) {
+//                       if (value == null || value.isEmpty) {
+//                         state.validate();
+//                       }
+//                       return null;
+//                     },
+//                     controller: widget.controller,
+//                     decoration: InputDecoration(
+//                       suffixIcon: widget.suffixIcon,
+//                       hintStyle:
+//                           TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+//                       border: InputBorder.none,
+//                       hintText: widget.hintText,
+//                     ),
+//                   ),
+//                 ),
+//                 if (state.hasError)
+//                   SizedBox(height: 24), // Reserve space for error message
+//               ],
+//             );
+//           },
+//         ),
+//         if (_errorMessage != null)
+//           Positioned(
+//             top: 60,
+//             left: 8,
+//             child: Text(
+//               _errorMessage!,
+//               style: TextStyle(
+//                 color: Colors.red,
+//                 fontSize: 12.0,
+//               ),
+//             ),
+//           ),
+//       ],
+//     );
+//   }
+// }
 class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
   final bool obscureText;
-
+  final Function(String)? onChanged;
+  final Function(String)? onChanged2;
   final Widget? suffixIcon;
   final IconData? prefixIcon;
   final void Function()? onSuffixIconPressed;
   final void Function()? onTap;
+  final String? label;
   final bool readOnnly;
+  final bool? amount_check;
+  final String? max_amount;
+  final String? error_mess;
+
 
   CustomTextField({
     Key? key,
+    this.onChanged,
     this.controller,
     required this.hintText,
     this.obscureText = false,
@@ -1847,7 +1975,13 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.validator,
     this.onSuffixIconPressed,
-    this.onTap, // Initialize onTap
+    this.label,
+    this.onTap, this.onChanged2,
+    this.amount_check,
+    this.max_amount,
+    this.error_mess,
+
+    // Initialize onTap
   }) : super(key: key);
 
   @override
@@ -1857,72 +1991,154 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-      TextEditingController(); // Add this line
-
+  TextEditingController(); // Add this line
+  late FocusNode _focusNode;
   @override
   void dispose() {
     _textController.dispose(); // Dispose the controller when not needed anymore
     super.dispose();
-  }
+    _focusNode.dispose();
 
+  }
+  @override
+  void initState() {
+    super.initState();
+    _textController = widget.controller ?? TextEditingController();
+    _focusNode = FocusNode();
+
+  }
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _focusNode,
+          toolbarButtons: [
+                (node) {
+              return GestureDetector(
+                onTap: () {
+                  if (widget.onChanged2 != null) {
+                    widget.onChanged2!(_textController.text);
+                  }
+                  node.unfocus(); // Dismiss the keyboard
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(14.0),
+                  child: Text("Done",style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold
+                  ),),
+                ),
+              );
+            },
+          ],
+        ),
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
+    Widget textfield = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
           validator: (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {
-                _errorMessage = 'Please ${widget.hintText}';
+                if(widget.label == null)
+                  _errorMessage = 'Please ${widget.hintText}';
+                else
+                  _errorMessage = 'Please ${widget.label}';
               });
               return '';
             }
-            setState(() {
-              _errorMessage = null;
-            });
+            else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
             return null;
           },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
-                Container(
-                  height: 50,
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: Offset(4, 4),
-                        blurRadius: 8,
+                Material(
+                  elevation: 2,
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Container(
+                    height: 50,
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                      //border: Border.all(color: blueColor),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: Offset(4, 4),
+                          blurRadius: 3,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      /*    onFieldSubmitted: (value){
+                        if(value.isNotEmpty){
+
+                          if(widget.amount_check != null){
+                            if(int.parse(value) > int.parse(widget.max_amount!)){
+                              setState(() {
+                                _errorMessage = '${widget.error_mess}';
+                              });
+                            }
+                          }
+                          else{
+                            setState(() {
+                              _errorMessage = null;
+                            });
+                          }
+
+                        }
+                        print(value);
+                        widget.onChanged2;
+                      },*/
+                      onFieldSubmitted: widget.onChanged2,
+                      onChanged:(value){
+                        print("object calin $value");
+                        if(value.isNotEmpty){
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+
+                        widget.onChanged;
+                        print("callllll");
+                      },
+
+                      focusNode: _focusNode,
+                      onTap: widget.onTap,
+                      obscureText: widget.obscureText,
+                      readOnly: widget.readOnnly,
+                      keyboardType: widget.keyboardType,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          state.validate();
+                        }
+                        return null;
+                      },
+                      controller: widget.controller,
+                      decoration: InputDecoration(
+                        suffixIcon: widget.suffixIcon,
+                        hintStyle:
+                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        border: InputBorder.none,
+                        hintText: widget.hintText,
                       ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    onTap: widget.onTap,
-                    obscureText: widget.obscureText,
-                    readOnly: widget.readOnnly,
-                    keyboardType: widget.keyboardType,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        state.validate();
-                      }
-                      return null;
-                    },
-                    controller: widget.controller,
-                    decoration: InputDecoration(
-                      suffixIcon: widget.suffixIcon,
-                      hintStyle:
-                          TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
-                      border: InputBorder.none,
-                      hintText: widget.hintText,
                     ),
                   ),
                 ),
-                if (state.hasError)
-                  SizedBox(height: 24), // Reserve space for error message
+                if (state.hasError || widget.amount_check != null)
+                  SizedBox(height: 24),
+                // Reserve space for error message
               ],
             );
           },
@@ -1941,5 +2157,15 @@ class CustomTextFieldState extends State<CustomTextField> {
           ),
       ],
     );
+    return shouldUseKeyboardActions
+        ? SizedBox(
+      height: 60,
+      width: MediaQuery.of(context).size.width * .98,
+      child: KeyboardActions(
+        config: _buildConfig(context),
+        child: textfield,
+      ),
+    )
+        : textfield;
   }
 }

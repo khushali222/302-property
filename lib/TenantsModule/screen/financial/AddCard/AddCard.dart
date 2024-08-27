@@ -520,7 +520,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.number,
                       hintText: 'Enter Phone Number',
                       controller: phoneNumber,
                     ),
@@ -603,7 +603,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.number,
                       hintText: 'Enter Zip',
                       controller: zip,
                       optional: true,
@@ -1132,7 +1132,6 @@ class CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
-
     Widget textField = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
@@ -1256,7 +1255,6 @@ class CustomTextFieldState extends State<CustomTextField> {
           ),
       ],
     );
-
     return shouldUseKeyboardActions
         ? SizedBox(
       height: 60,
