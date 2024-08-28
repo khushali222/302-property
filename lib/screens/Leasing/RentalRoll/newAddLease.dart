@@ -3642,7 +3642,7 @@ class _addLease3State extends State<addLease3>
                                           //   isLeaseAdded: _isLeaseAdded,
                                           // );
                                           print(
-                                              'rent next due date ${rentNextDueDate.text}');
+                                              'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
                                           List<Entry> chargeEntries =
                                               mergedFormDataList.map((data) {
                                             print(data['account']);
@@ -3853,7 +3853,7 @@ class _addLease3State extends State<addLease3>
 
                                           );
 
-                                          addLeaseAndNavigate(lease);
+                                         addLeaseAndNavigate(lease);
                                           if (widget.applicantId != null &&
                                               widget.applicantId!.isNotEmpty) {
                                             print(

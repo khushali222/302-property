@@ -127,6 +127,8 @@ class _Edit_leaseState extends State<Edit_lease>
       rent_entry_id = fetchedDetails.rentCharges!.first.entry_id;
       rentNextDueDate.text = fetchedDetails.rentCharges!.first!.date;
       rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
+      if(fetchedDetails.lease.uploadedFile != "")
+        _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
       if(fetchedDetails.securityCharges != null && fetchedDetails.securityCharges!.length > 0)
       securityDepositeAmount.text =
       fetchedDetails.securityCharges!.first!.chargeType ==
@@ -4250,6 +4252,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                           ),
                                           tenantData: tenantDataList,
                                         );
+
                                         updateLeaseAndNavigate(lease);
 
                                         print('valid');

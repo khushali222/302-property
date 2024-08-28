@@ -128,6 +128,7 @@ class _Summery_pageState extends State<Summery_page>
     // fetchAndSetCounts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
 
+
   }
   String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -170,7 +171,6 @@ class _Summery_pageState extends State<Summery_page>
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
-
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
@@ -195,13 +195,13 @@ class _Summery_pageState extends State<Summery_page>
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
     if (image != null) {
       setState(() {
         _image = File(image.path);
         _images.add(File(image.path));
       });
       _uploadImage(File(image.path));
+
     }
   }
 
@@ -211,11 +211,14 @@ class _Summery_pageState extends State<Summery_page>
       setState(() {
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
+        _imageUrls.add(fileName!);
       });
     } catch (e) {
       print('Image upload failed: $e');
     }
   }
+
+  List<String> _imageUrls = [];
 
   bool showdetails = false;
   @override
@@ -1543,7 +1546,7 @@ class _Summery_pageState extends State<Summery_page>
       ],
     );
   }
-
+  bool isMovedOut = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2993,9 +2996,11 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ],
                 ),
+
               ],
             ),
             const Spacer(),
+
             InkWell(
               onTap: () {
                 showDialog(
@@ -3037,6 +3042,25 @@ class _Summery_pageState extends State<Summery_page>
                 ],
               ),
             ),
+            // if(isMovedOut== false)
+            //   Row(
+            //     children: [
+            //       FaIcon(
+            //         FontAwesomeIcons.check,
+            //         size: 17,
+            //         color: Color.fromRGBO(21, 43, 81, 1),
+            //       ),
+            //       SizedBox(width: 5),
+            //       Text(
+            //         "Moved out",
+            //         style: TextStyle(
+            //           fontSize: 11,
+            //           fontWeight: FontWeight.w500,
+            //           color: Color.fromRGBO(21, 43, 81, 1),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
             const SizedBox(width: 15),
           ],
         ),
@@ -3943,12 +3967,13 @@ class _Summery_pageState extends State<Summery_page>
                         .addMoveoutTenant(
                       adminId: id!,
                       tenantId: tenantId,
-                      leaseId: widget.tenants?.leaseId!,
+                      leaseId: tenant.leaseId,
                       moveoutDate: moveOutDate,
                       moveoutNoticeGivenDate: startdateController.text,
                     ).then((value) {
                       setState(() {
                         isLoading = false;
+                        isMovedOut = true;
                       });
                       Navigator.pop(context, true);
                     }).catchError((e) {
@@ -8890,6 +8915,11 @@ class _Summery_pageState extends State<Summery_page>
                                                               bed3.text =
                                                                   Propertytype
                                                                       .rentalbed!;
+                                                              if (Propertytype.rentalImages != null) {
+                                                                setState(() {
+                                                                  _imageUrls = Propertytype.rentalImages!;
+                                                                });
+                                                              }
                                                               if (widget
                                                                       .properties
                                                                       .propertyTypeData!
@@ -8905,6 +8935,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   builder:
                                                                       (BuildContext
                                                                           context) {
+
                                                                     // Moved isChecked inside the StatefulBuilder
                                                                     return StatefulBuilder(
                                                                       builder: (BuildContext
@@ -9185,20 +9216,82 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 const SizedBox(
                                                                                   height: 10,
                                                                                 ),
-                                                                                _image != null
-                                                                                    ? Column(
-                                                                                        children: [
-                                                                                          Image.file(
-                                                                                            _image!,
-                                                                                            height: 80,
-                                                                                            width: 80,
-                                                                                            fit: BoxFit.cover,
+                                                                                // _image != null
+                                                                                //     ? Column(
+                                                                                //         children: [
+                                                                                //           Image.file(
+                                                                                //             _image!,
+                                                                                //             height: 80,
+                                                                                //             width: 80,
+                                                                                //             fit: BoxFit.cover,
+                                                                                //           ),
+                                                                                //           Text(_uploadedFileName ?? ""),
+                                                                                //         ],
+                                                                                //       )
+                                                                                //     : const Text(''),
+                                                                                _imageUrls.isNotEmpty
+                                                                                    ? Row(
+                                                                                  children: [
+                                                                                    Expanded(
+                                                                                      child: Container(
+                                                                                        child: Wrap(
+                                                                                          spacing: 8.0, // Horizontal spacing between items
+                                                                                          runSpacing: 8.0, // Vertical spacing between rows
+                                                                                          children: List.generate(
+                                                                                            _imageUrls.length,
+                                                                                                (index) {
+                                                                                              return Container(
+                                                                                                width: 85,
+                                                                                                child: Column(
+                                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                  children: [
+                                                                                                    Row(
+                                                                                                      children: [
+                                                                                                        SizedBox(width: 60),
+                                                                                                        GestureDetector(
+                                                                                                          onTap: () {
+                                                                                                            setState(() {
+                                                                                                              _imageUrls.removeAt(index);
+                                                                                                            });
+                                                                                                          },
+                                                                                                          child: Icon(
+                                                                                                            Icons.close,
+                                                                                                            color: Colors.grey,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                    Row(
+                                                                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                      children: [
+                                                                                                        Container(
+                                                                                                          child: Image.network(
+                                                                                                            "$image_url${_imageUrls[index]}",
+                                                                                                            height: 80,
+                                                                                                            width: 80,
+                                                                                                            fit: BoxFit.cover,
+                                                                                                            errorBuilder: (context, error, stackTrace) {
+                                                                                                              return Icon(Icons.error); // Placeholder for errors
+                                                                                                            },
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              );
+                                                                                            },
                                                                                           ),
-                                                                                          Text(_uploadedFileName ?? ""),
-                                                                                        ],
-                                                                                      )
-                                                                                    : const Text(''),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                )
+                                                                                    : Center(child: Text("No images selected.")),
                                                                                 const SizedBox(height: 8.0),
+
                                                                                 Row(
                                                                                   children: [
                                                                                     const SizedBox(
@@ -9226,6 +9319,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               rentalbed: bed3.text,
                                                                                               unitId: Propertytype.unitId,
                                                                                               adminId: id,
+                                                                                              rentalImages: _imageUrls,
                                                                                               rentalId: Propertytype.rentalId
                                                                                           ).then((value) {
                                                                                             setState(() {
@@ -9307,7 +9401,6 @@ class _Summery_pageState extends State<Summery_page>
                                                                   },
                                                                 );
                                                               }
-
                                                               if (widget
                                                                       .properties
                                                                       .propertyTypeData!
@@ -9510,6 +9603,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         _pickImage().then((_) {
                                                                                           setState(() {}); // Rebuild the widget after selecting the image
                                                                                         });
+
                                                                                       },
                                                                                       child: const Text(
                                                                                         '+ Add',
@@ -9518,20 +9612,81 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(height: 8.0),
-                                                                                _image != null
-                                                                                    ? Column(
-                                                                                        children: [
-                                                                                          Image.file(
-                                                                                            _image!,
-                                                                                            height: 80,
-                                                                                            width: 80,
-                                                                                            fit: BoxFit.cover,
+                                                                                // const SizedBox(height: 8.0),
+                                                                                // _image != null
+                                                                                //     ? Column(
+                                                                                //         children: [
+                                                                                //           Image.file(
+                                                                                //             _image!,
+                                                                                //             height: 80,
+                                                                                //             width: 80,
+                                                                                //             fit: BoxFit.cover,
+                                                                                //           ),
+                                                                                //           Text(_uploadedFileName ?? ""),
+                                                                                //         ],
+                                                                                //       )
+                                                                                //     : const Text(''),
+                                                                                _imageUrls.isNotEmpty
+                                                                                    ? Row(
+                                                                                  children: [
+                                                                                    Expanded(
+                                                                                      child: Container(
+                                                                                        child: Wrap(
+                                                                                          spacing: 8.0, // Horizontal spacing between items
+                                                                                          runSpacing: 8.0, // Vertical spacing between rows
+                                                                                          children: List.generate(
+                                                                                            _imageUrls.length,
+                                                                                                (index) {
+                                                                                              return Container(
+                                                                                                width: 85,
+                                                                                                child: Column(
+                                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                  children: [
+                                                                                                    Row(
+                                                                                                      children: [
+                                                                                                        SizedBox(width: 60),
+                                                                                                        GestureDetector(
+                                                                                                          onTap: () {
+                                                                                                            setState(() {
+                                                                                                              _imageUrls.removeAt(index);
+                                                                                                            });
+                                                                                                          },
+                                                                                                          child: Icon(
+                                                                                                            Icons.close,
+                                                                                                            color: Colors.grey,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                    Row(
+                                                                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                      children: [
+                                                                                                        Container(
+                                                                                                          child: Image.network(
+                                                                                                            "$image_url${_imageUrls[index]}",
+                                                                                                            height: 80,
+                                                                                                            width: 80,
+                                                                                                            fit: BoxFit.cover,
+                                                                                                            errorBuilder: (context, error, stackTrace) {
+                                                                                                              return Icon(Icons.error); // Placeholder for errors
+                                                                                                            },
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              );
+                                                                                            },
                                                                                           ),
-                                                                                          Text(_uploadedFileName ?? ""),
-                                                                                        ],
-                                                                                      )
-                                                                                    : const Text(''),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                )
+                                                                                    : Center(child: Text("No images selected.")),
                                                                                 const SizedBox(height: 8.0),
                                                                                 Row(
                                                                                   children: [
@@ -9555,6 +9710,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               .Editunit(
                                                                                             rentalunit: unitnum.text,
                                                                                             rentalsqft: sqft3.text,
+                                                                                            rentalImages: _imageUrls,
                                                                                             rentalunitadress: street3.text,
                                                                                             unitId: Propertytype.unitId!,
                                                                                             rentalId: Propertytype.rentalId!,
