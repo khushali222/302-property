@@ -82,24 +82,24 @@ class _CustomDrawerState extends State<CustomDrawer> {
                FaIcon(
                  FontAwesomeIcons.house,
                  size: 20,
-                 color: widget.currentpage == "Property Type"
+                 color: widget.currentpage == "Add Property Type"
                      ? Colors.white
                      : blueColor,
                ),
                "Property Type",
-               widget.currentpage == "Property Type",
+               widget.currentpage == "Add Property Type",
              ),
              buildListTile(
                context,
                FaIcon(
                  FontAwesomeIcons.userClock,
                  size: 20,
-                 color: widget.currentpage == "Staff Member"
+                 color: widget.currentpage == "Add Staff Member"
                      ? Colors.white
                      : blueColor,
                ),
                "Staff Member",
-               widget.currentpage == "Staff Member",
+               widget.currentpage == "Add Staff Member",
              ),
              buildDropdownListTile(
                context,

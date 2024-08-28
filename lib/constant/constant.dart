@@ -35,9 +35,10 @@ String formatDate(String dateTime) {
   DateTime? parsedDate;
 
   for (String format in dateFormats) {
+    print(dateTime);
     try {
       parsedDate = DateFormat(format).parse(dateTime);
-    //  print(parsedDate);
+      print(parsedDate);
       break;
     } catch (e) {
       continue;

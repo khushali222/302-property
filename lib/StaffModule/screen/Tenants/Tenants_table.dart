@@ -1047,18 +1047,18 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 ),
                                                 Expanded(
                                                   child: InkWell(
-                                                   /* onTap: () {
+                                                    onTap: () {
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  Tenant_summary(
+                                                                  ResponsiveTenantSummary(
                                                                       tenantId:
                                                                           tenants
                                                                               .tenantId!)));
                                                       print(
                                                           'tenantFirstName ,${tenants.id!}');
-                                                    },*/
+                                                    },
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.all(

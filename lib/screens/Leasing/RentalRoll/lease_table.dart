@@ -841,7 +841,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                           children: [
                                                             TextSpan(
                                                               text:
-                                                                  ' ${lease.rentalAddress} \n',
+                                                                  '${lease.rentalAddress}',
                                                               style: TextStyle(
                                                                 color:
                                                                     blueColor,
@@ -851,16 +851,16 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 fontSize: 13,
                                                               ),
                                                             ),
+                                                            if (lease.tenantNames?.isNotEmpty ?? false)
                                                             TextSpan(
-                                                              text: lease
-                                                                  .tenantNames,
+                                                              text:"\n${lease.tenantNames}",
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .lightBlue, // Light blue color for tenant names
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 13,
+                                                                fontSize: 11,
                                                               ),
                                                             ),
                                                           ],
