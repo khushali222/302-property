@@ -647,7 +647,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                     onTap: () async {
                       final result = await Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) => AddWorkorder()));
+                              builder: (context) => ResponsiveAddWorkOrder()));
                       if (result == true) {
                         setState(() {
                           futureworkorders =

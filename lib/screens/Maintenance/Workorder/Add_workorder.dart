@@ -1119,7 +1119,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                   ),
                                 ),
                                 menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
+                                  height: 50,
                                   padding: EdgeInsets.only(left: 14, right: 14),
                                 ),
                               ),
@@ -3211,7 +3211,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                           ),
                                           menuItemStyleData:
                                               const MenuItemStyleData(
-                                            height: 40,
+                                            height: 55,
                                             padding: EdgeInsets.only(
                                                 left: 14, right: 14),
                                           ),

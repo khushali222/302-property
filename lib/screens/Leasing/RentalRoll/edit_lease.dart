@@ -127,8 +127,10 @@ class _Edit_leaseState extends State<Edit_lease>
       rent_entry_id = fetchedDetails.rentCharges!.first.entry_id;
       rentNextDueDate.text = fetchedDetails.rentCharges!.first!.date;
       rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
-      if(fetchedDetails.lease.uploadedFile != "")
-        _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+
+      // if(fetchedDetails.lease.uploadedFile != "")
+      //   _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+
       if(fetchedDetails.securityCharges != null && fetchedDetails.securityCharges!.length > 0)
       securityDepositeAmount.text =
       fetchedDetails.securityCharges!.first!.chargeType ==
@@ -1805,111 +1807,6 @@ class _Edit_leaseState extends State<Edit_lease>
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
-                                // Padding(
-                                //   padding: const EdgeInsets.only(left: 13),
-                                //   child: SingleChildScrollView(
-                                //     scrollDirection: Axis.horizontal,
-                                //     child: Column(
-                                //       crossAxisAlignment: CrossAxisAlignment.start,
-                                //       children: [
-                                //         Container(
-                                //           decoration: BoxDecoration(
-                                //               border: Border.all(color: blueColor)),
-                                //           child: DataTable(
-                                //             columnSpacing: 25,
-                                //             headingRowHeight: 30,
-                                //             dataRowHeight: 30,
-                                //             headingRowColor: MaterialStateColor
-                                //                 .resolveWith((states) =>
-                                //                 Color.fromRGBO(21, 43, 83, 1)),
-                                //             headingTextStyle: TextStyle(
-                                //                 color: Colors.white,
-                                //                 fontWeight: FontWeight.bold),
-                                //             columns: [
-                                //               DataColumn(
-                                //                   label: Text('First Name',
-                                //                       style:
-                                //                       TextStyle(fontSize: 13))),
-                                //               DataColumn(
-                                //                   label: Text('Rent share',
-                                //                       style:
-                                //                       TextStyle(fontSize: 13))),
-                                //               DataColumn(
-                                //                   label: Text('Action',
-                                //                       style:
-                                //                       TextStyle(fontSize: 13))),
-                                //             ],
-                                //             rows: Provider.of<
-                                //                 SelectedTenantsProvider>(
-                                //                 context)
-                                //                 .selectedTenants
-                                //                 .map((tenant) {
-                                //               return DataRow(
-                                //                 cells: [
-                                //                   DataCell(
-                                //                     Text(
-                                //                         '${tenant.tenantFirstName} ${tenant.tenantLastName}',
-                                //                         style: TextStyle(
-                                //                             fontSize: 12)),
-                                //                   ),
-                                //                   DataCell(
-                                //                     Center(
-                                //                       child: Material(
-                                //                         elevation: 3,
-                                //                         child: Container(
-                                //                           height: 30,
-                                //                           width: 60,
-                                //                           decoration: BoxDecoration(
-                                //                             color: Colors.white,
-                                //                             // border: Border.all(color: blueColor),
-                                //                           ),
-                                //                           child: Center(
-                                //                             child: Padding(
-                                //                               padding:
-                                //                               const EdgeInsets
-                                //                                   .all(8.0),
-                                //                               child: TextField(
-                                //                                 controller:rentShareControllers,
-                                //                                 style: TextStyle(
-                                //                                     fontSize: 8),
-                                //                                 keyboardType:
-                                //                                 TextInputType
-                                //                                     .number,
-                                //                                 decoration:
-                                //                                 InputDecoration(
-                                //                                   hintText: "0",
-                                //                                   border:
-                                //                                   InputBorder
-                                //                                       .none,
-                                //                                 ),
-                                //                               ),
-                                //                             ),
-                                //                           ),
-                                //                         ),
-                                //                       ),
-                                //                     ),
-                                //                   ),
-                                //                   DataCell(
-                                //                     InkWell(
-                                //                       onTap: () {
-                                //                         Provider.of<SelectedTenantsProvider>(
-                                //                             context,
-                                //                             listen: false)
-                                //                             .removeTenant(tenant);
-                                //                       },
-                                //                       child: Icon(Icons.delete,
-                                //                           size: 15),
-                                //                     ),
-                                //                   ),
-                                //                 ],
-                                //               );
-                                //             }).toList(),
-                                //           ),
-                                //         ),
-                                //       ],
-                                //     ),
-                                //   ),
-                                // ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 4, right: 4),
                                   child: Column(
@@ -2047,6 +1944,19 @@ class _Edit_leaseState extends State<Edit_lease>
                                                               FontWeight.bold,
                                                               color: Colors.black,
                                                             ),
+                                                            onChanged: (value) {
+                                                              if (value.isNotEmpty) {
+                                                                double? enteredValue = double.tryParse(value);
+                                                                if (enteredValue != null && enteredValue > 100) {
+
+                                                                  rentShareControllers.text = '100';
+                                                                  rentShareControllers.selection = TextSelection.fromPosition(
+                                                                    TextPosition(offset: rentShareControllers.text.length),
+                                                                  );
+                                                                }
+                                                              }
+                                                            },
+
                                                             keyboardType:
                                                             TextInputType
                                                                 .number,

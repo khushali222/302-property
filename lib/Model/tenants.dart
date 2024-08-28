@@ -1,4 +1,6 @@
 
+import 'package:flutter/material.dart';
+
 class TenantResponse {
   int? statusCode;
   List<Tenant>? data;
@@ -40,7 +42,7 @@ class Tenant {
   bool? tenant_residentStatus;
   String? taxPayerId;
   bool? tenantResidentStatus;
-
+  TextEditingController? rentShareController;
   String? comments;
   EmergencyContact? emergencyContact;
   List<TenantLeaseData>? leaseData; // Changed to match JSON field name
@@ -69,6 +71,7 @@ class Tenant {
     this.taxPayerId,
     this.tenantResidentStatus,
     this.comments,
+    this.rentshare,
     this.emergencyContact,
     this.tenant_residentStatus,
     this.createdAt,
@@ -77,7 +80,7 @@ class Tenant {
     this.v,
     this.rentalAddress,
     this.rentalUnit,
-    this.rentshare,
+    this.rentShareController,
     this.leaseData,
     this.enableoverrideFee,
     this.overRideFee,

@@ -35,29 +35,47 @@ class DashboardData {
 
   List<String> icons = [
     "assets/images/Properti-icon.svg",
+    "assets/images/tenant-icon.svg",
+    "assets/images/applicant-icon.svg",
+    "assets/images/vendor-icon.svg",
     "assets/images/workorder-icon.svg"
   ];
 
   List<String> titles = [
     "Properties",
+    "Tenants",
+    "Applicants",
+    "Vendors",
     "Work Orders"
+  ];
+
+  final List<Widget> pages = [
+    PropertiesTable(),
+    PropertiesTable(),
+    PropertiesTable(),
+    PropertiesTable(),
+    /*Tenants_table(),
+    Applicants_table(),
+    Vendor_table(),*/
+    Workorder_table(),
   ];
 
   List<Color> colorc = [
     const Color.fromRGBO(21, 43, 81, 1),
     const Color.fromRGBO(40, 60, 95, 1),
-   /* const Color.fromRGBO(50, 75, 119, 1),
+    const Color.fromRGBO(50, 75, 119, 1),
     const Color.fromRGBO(60, 89, 142, 1),
-    const Color.fromRGBO(90, 134, 213, 1),*/
+    const Color.fromRGBO(90, 134, 213, 1),
   ];
 
   List<Color> colors = [
     const Color.fromRGBO(21, 43, 81, 1),
     const Color.fromRGBO(40, 60, 95, 1),
-   /* const Color.fromRGBO(50, 75, 119, 1),
+    const Color.fromRGBO(50, 75, 119, 1),
     const Color.fromRGBO(60, 89, 142, 1),
-    const Color.fromRGBO(90, 134, 213, 1),*/
+    const Color.fromRGBO(90, 134, 213, 1),
   ];
+
 
   DashboardData({required this.countList, required this.amountList});
 }
@@ -99,10 +117,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       if (jsonData["statusCode"] == 200) {
         setState(() {
           countList[0] = jsonData['property_staffMember'];
-          /*countList[1] = jsonData['rentalCount'];
-          countList[2] = jsonData['vendorCount'];
-          countList[3] = jsonData['applicantCount'];*/
-          countList[1] = jsonData['workorder_staffMember'];
+          countList[1] = jsonData['tenant_staffMember'];
+          countList[2] = jsonData['applicant_staffMember'];
+          countList[3] = jsonData['vendor_staffMember'];
+          countList[4] = jsonData['workorder_staffMember'];
           loading = false;
         });
       } else {
@@ -163,8 +181,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   }
 
   late DashboardData dashboardData;
-  List<int> countList = List.filled(2, 0);
-  List<int> amountList = List.filled(2, 0);
+  List<int> countList = List.filled(5, 0);
+  List<int> amountList = List.filled(5, 0);
 
   @override
   void initState() {
@@ -383,7 +401,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                             padding:
                             const EdgeInsets.only(left: 15, right: 15),
                             child: GridView.builder(
-                              itemCount: 2,
+                              itemCount: 5,
                               padding: EdgeInsets.zero,
                               gridDelegate:
                 
@@ -402,10 +420,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: (){
-                                    if(index  == 0 && permissions!.propertyView!)
+                                   /* if(index  == 0 && permissions!.propertyView!)
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PropertiesTable()));
                                     else if(index ==1 && permissions!.workorderView!)
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));*/
                                   },
                                   child: Material(
                                     elevation: 3,

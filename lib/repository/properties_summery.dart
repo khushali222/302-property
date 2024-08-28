@@ -221,6 +221,7 @@ class Properies_summery_Repo{
       'unit_id': unitId,
       'rental_unit': rentalunit,
       'rental_id': rentalId,
+      'rental_images':rentalImages,
       'rental_unit_adress': rentalunitadress,
       'rental_sqft': rentalsqft,
       'rental_bath': rentalbath,

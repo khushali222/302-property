@@ -9313,13 +9313,14 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           String? id = prefs.getString("adminId");
                                                                                           Properies_summery_Repo().Editunit(
                                                                                               rentalunit: unitnum.text,
+                                                                                              rentalImages: _imageUrls,
                                                                                               rentalsqft: sqft3.text,
                                                                                               rentalunitadress: street3.text,
                                                                                               rentalbath: bath3.text,
                                                                                               rentalbed: bed3.text,
                                                                                               unitId: Propertytype.unitId,
                                                                                               adminId: id,
-                                                                                              rentalImages: _imageUrls,
+                                                                                             // rentalImages: _imageUrls,
                                                                                               rentalId: Propertytype.rentalId
                                                                                           ).then((value) {
                                                                                             setState(() {

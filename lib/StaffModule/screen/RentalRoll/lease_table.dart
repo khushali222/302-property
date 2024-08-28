@@ -777,13 +777,13 @@ class _Lease_tableState extends State<Lease_table> {
                                                     padding: const EdgeInsets.only(left: 8.0),
                                                     child: InkWell(
                                                       onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    SummeryPageLease(
-                                                                        leaseId:
-                                                                        lease.leaseId!)));
+                                                        // Navigator.push(
+                                                        //     context,
+                                                        //     MaterialPageRoute(
+                                                        //         builder: (context) =>
+                                                        //             SummeryPageLease(
+                                                        //                 leaseId:
+                                                        //                 lease.leaseId!)));
                                                       },
                                                       child: Text.rich(
                                                         TextSpan(
