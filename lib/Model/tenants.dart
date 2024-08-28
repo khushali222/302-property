@@ -50,7 +50,7 @@ class Tenant {
   int? v;
   String? rentalAddress;
   String? rentalUnit;
-  String? rentshare;
+  dynamic? rentshare;
   bool? enableoverrideFee;
   double? overRideFee;
 
@@ -97,6 +97,7 @@ class Tenant {
     tenantBirthDate = json['tenant_birthDate'];
     taxPayerId = json['taxPayer_id'];
     comments = json['comments'];
+    rentshare = json['percentage']??"";
     emergencyContact = json['emergency_contact'] != null
         ? EmergencyContact.fromJson(json['emergency_contact'])
         : null;

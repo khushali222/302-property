@@ -14,7 +14,7 @@ import '../../repository/lease.dart';
 import 'SummeryPageLease.dart';
 import '../../model/staffpermission.dart';
 import '../../repository/staffpermission_provider.dart';
-import '../RentalRoll/edit_lease.dart';
+import 'edit_lease.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 import '../../widgets/appbar.dart';
@@ -777,13 +777,13 @@ class _Lease_tableState extends State<Lease_table> {
                                                     padding: const EdgeInsets.only(left: 8.0),
                                                     child: InkWell(
                                                       onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    SummeryPageLease(
-                                                                        leaseId:
-                                                                        lease.leaseId!)));
+                                                        // Navigator.push(
+                                                        //     context,
+                                                        //     MaterialPageRoute(
+                                                        //         builder: (context) =>
+                                                        //             SummeryPageLease(
+                                                        //                 leaseId:
+                                                        //                 lease.leaseId!)));
                                                       },
                                                       child: Text.rich(
                                                         TextSpan(
@@ -1150,7 +1150,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 if (check ==
                                                                     true) {
                                                                   setState(
-                                                                          () {});
+                                                                          () {
+
+                                                                            futureLease = LeaseRepository().fetchLease("");
+                                                                          });
                                                                 }
                                                               },
                                                             ),

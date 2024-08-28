@@ -262,7 +262,7 @@ class _EditApplicantState extends State<EditApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
                         ),
@@ -284,7 +284,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter home number',
                           controller: homeNumber,
                         ),
@@ -306,7 +306,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                         ),
@@ -328,7 +328,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),
@@ -643,6 +643,12 @@ class _EditApplicantState extends State<EditApplicant> {
                                     lastName.text;
                                 widget.applicant.applicant!
                                     .applicantPhoneNumber = mobileNumber.text;
+                                widget.applicant.applicant!.applicantHomeNumber =
+                                    homeNumber.text;
+                                widget.applicant.applicant!.applicantBusinessNumber =
+                                    bussinessNumber.text;
+                                widget.applicant.applicant!.applicantTelephoneNumber =
+                                    telePhoneNumber.text;
                                 widget.applicant.applicant!.applicantEmail =
                                     email.text;
                                 isLoading = false;

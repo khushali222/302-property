@@ -424,7 +424,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           CustomTextField(
             hintText: 'Quantity',
             controller: partsAndLabor[index]['qtyController'],
-            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
+           keyboardType: TextInputType.number,
+           // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           SizedBox(height: 10),
           Text(
@@ -508,7 +509,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           CustomTextField(
             hintText: 'Price',
             controller: partsAndLabor[index]['priceController'],
-            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
+           keyboardType: TextInputType.number,
+           // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           SizedBox(height: 10),
           Text(
@@ -1117,7 +1119,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                   ),
                                 ),
                                 menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
+                                  height: 50,
                                   padding: EdgeInsets.only(left: 14, right: 14),
                                 ),
                               ),
@@ -3209,7 +3211,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                           ),
                                           menuItemStyleData:
                                               const MenuItemStyleData(
-                                            height: 40,
+                                            height: 55,
                                             padding: EdgeInsets.only(
                                                 left: 14, right: 14),
                                           ),

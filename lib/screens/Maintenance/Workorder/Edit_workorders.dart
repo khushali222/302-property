@@ -1308,7 +1308,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                   ),
                                 ),
                                 menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
+                                  height: 50,
                                   padding: EdgeInsets.only(left: 14, right: 14),
                                 ),
                               ),

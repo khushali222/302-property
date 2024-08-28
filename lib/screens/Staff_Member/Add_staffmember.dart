@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/Staffmember.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -37,6 +39,20 @@ class _Add_staffmemberState extends State<Add_staffmember> {
   String passwordmessage = "";
 
   bool isLoading = false;
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+        ),
+
+      ],
+    );
+  }
+  final FocusNode _nodeText1 = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -339,33 +355,37 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 child: Stack(
                                   children: [
                                     Positioned.fill(
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            phonenumbererror = false;
-                                          });
-                                        },
-                                        controller: phonenumber,
-                                        keyboardType: TextInputType.number,
-                                        cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
-                                        decoration: InputDecoration(
-                                          hintText: "Enter phone number",
-                                          hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
-                                            color: Color(0xFF8A95A8),
+                                      child: KeyboardActions(
+                                        config: _buildConfig(context),
+                                        child: TextField(
+                                          focusNode: _nodeText1,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              phonenumbererror = false;
+                                            });
+                                          },
+                                          controller: phonenumber,
+                                          keyboardType: TextInputType.number,
+                                          cursorColor:
+                                              Color.fromRGBO(21, 43, 81, 1),
+                                          decoration: InputDecoration(
+                                            hintText: "Enter phone number",
+                                            hintStyle: TextStyle(
+                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                              color: Color(0xFF8A95A8),
+                                            ),
+                                            enabledBorder: phonenumbererror
+                                                ? OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(2),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.red,
+                                                    ),
+                                                  )
+                                                : InputBorder.none,
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(12),
                                           ),
-                                          enabledBorder: phonenumbererror
-                                              ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                  ),
-                                                )
-                                              : InputBorder.none,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),

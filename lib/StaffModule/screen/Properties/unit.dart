@@ -13,8 +13,10 @@ import '../../../model/properties.dart';
 import '../../../model/properties_summery.dart';
 import '../../../model/unitsummery_propeties.dart';
 import '../../../provider/property_summery.dart';
-import '../../../repository/properties_summery.dart';
-import '../../../repository/unit_data.dart';
+import '../../repository/properties_summery.dart';
+import '../../repository/unit_data.dart';
+import '../Applicants/addApplicant.dart';
+import '../RentalRoll/newAddLease.dart';
 
 // void main() {
 //   runApp(const MaterialApp(home: unitScreen()));
@@ -128,7 +130,7 @@ class _unitScreenState extends State<unitScreen> {
                         child: const Image(
                           image: NetworkImage(
                               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU'),
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -210,7 +212,7 @@ class _unitScreenState extends State<unitScreen> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                  //  Navigator.push(context, MaterialPageRoute(builder: (context)=>addLease3()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>addLease3()));
                                   },
                                   child: const Text(
                                     'Add Lease',
@@ -239,7 +241,7 @@ class _unitScreenState extends State<unitScreen> {
                                 ),
                               ),
                             ),
-                          /*  Padding(
+                            Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
                                 height: 36,
@@ -261,7 +263,7 @@ class _unitScreenState extends State<unitScreen> {
                                               BorderRadius.circular(10.0))),
                                 ),
                               ),
-                            ),*/
+                            ),
                           ],
                         ),
                       ),

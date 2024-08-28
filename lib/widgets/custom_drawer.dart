@@ -87,7 +87,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                      : blueColor,
                ),
                "Property Type",
-               widget.currentpage == "Property Type",
+               widget.currentpage == "Add Property Type",
              ),
              buildListTile(
                context,
@@ -99,7 +99,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                      : blueColor,
                ),
                "Staff Member",
-               widget.currentpage == "Staff Member",
+               widget.currentpage == "Add Staff Member",
              ),
              buildDropdownListTile(
                context,

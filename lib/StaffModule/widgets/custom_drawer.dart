@@ -12,7 +12,8 @@ import 'drawer_tiles.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String currentpage;
-  CustomDrawer({required this.currentpage});
+  bool? dropdown;
+  CustomDrawer({required this.currentpage,this.dropdown});
 
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
@@ -25,14 +26,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   void initState() {
     super.initState();
-   // _loadPermissions();
+    // _loadPermissions();
   }
 
 
 
   @override
   Widget build(BuildContext context) {
- /*   if (isLoading) {
+    /*   if (isLoading) {
       return Center(child: Text(""));
     }
 
@@ -60,22 +61,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               const SizedBox(height: 20),
               buildListTile(
-                  context,
-                   Icon(
-                    CupertinoIcons.circle_grid_3x3,
-                    color:  widget.currentpage == "Dashboard" ?Colors.white:blueColor,
-                  ),
-                  "Dashboard",
+                context,
+                Icon(
+                  CupertinoIcons.circle_grid_3x3,
+                  color:  widget.currentpage == "Dashboard" ?Colors.white:blueColor,
+                ),
+                "Dashboard",
                 widget.currentpage == "Dashboard",),
               buildListTile(
-                  context,
-                   Icon(
-                    CupertinoIcons.person,
-                    color:widget.currentpage == "Profile" ?Colors.white:blueColor,
-                  ),
-                  "Profile",
+                context,
+                Icon(
+                  CupertinoIcons.person,
+                  color:widget.currentpage == "Profile" ?Colors.white:blueColor,
+                ),
+                "Profile",
                 widget.currentpage == "Profile",),
-             /* if(permissions!.propertyView!)
+              /* if(permissions!.propertyView!)
                 buildListTile(
                   context,
                   Icon(
@@ -85,14 +86,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Add Property Type",
                   widget.currentpage == "Add Property Type",),*/
               if(permissions!.propertyView!)
-              buildListTile(
+                buildListTile(
                   context,
-                   Icon(
+                  Icon(
                     CupertinoIcons.building_2_fill,
                     color: widget.currentpage == "Properties" ?Colors.white:blueColor,
                   ),
                   "Properties",
-                widget.currentpage == "Properties",),
+                  widget.currentpage == "Properties",),
               if(permissions!.propertyView!)
                 buildListTile(
                   context,
@@ -111,16 +112,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   "Tenants",
                   widget.currentpage == "Tenants",),
-            /*  if(permissions!.leaseView!)
-              buildListTile(
+              if(permissions!.leaseView!)
+                buildListTile(
                   context,
-                   Icon(
+                  Icon(
                     Icons.wallet,
                     color: widget.currentpage == "Rent Roll" ?Colors.white:blueColor,
                   ),
                   "Rent Roll",
-                widget.currentpage == "Rent Roll",),
-              if(permissions!.leaseView!)
+                  widget.currentpage == "Rent Roll",),
+              /* if(permissions!.leaseView!)
                 buildListTile(
                   context,
                   FaIcon(

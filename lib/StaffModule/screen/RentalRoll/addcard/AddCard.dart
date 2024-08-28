@@ -559,7 +559,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.emailAddress,
                       hintText: 'Enter Email',
                       controller: email,
                     ),
@@ -575,7 +575,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.number,
                       hintText: 'Enter Phone Number',
                       controller: phoneNumber,
                     ),
@@ -655,7 +655,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.number,
                       hintText: 'Enter Zip',
                       controller: zip,
                     ),

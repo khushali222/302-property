@@ -212,12 +212,14 @@ class Properies_summery_Repo{
     String? rentalsqft,
     String? rentalbath,
     String? rentalbed,
+    List<String?>? rentalImages,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
       'unit_id': unitId,
       'rental_unit': rentalunit,
       'rental_id': rentalId,
+      'rental_images':rentalImages,
       'rental_unit_adress': rentalunitadress,
       'rental_sqft': rentalsqft,
       'rental_bath': rentalbath,

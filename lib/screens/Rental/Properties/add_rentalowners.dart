@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -202,6 +203,35 @@ class _AddRentalownersState extends State<AddRentalowners> {
 
   }
 
+  final FocusNode _nodeText1 = FocusNode();
+  final FocusNode _nodeText2 = FocusNode();
+  final FocusNode _nodeText3 = FocusNode();
+  final FocusNode _nodeText4 = FocusNode();
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+        ),
+        KeyboardActionsItem(
+          focusNode: _nodeText2,
+          //  displayCloseWidget: false,
+        ),
+        KeyboardActionsItem(
+          focusNode: _nodeText3,
+
+        ),KeyboardActionsItem(
+          focusNode: _nodeText4,
+
+        ),
+
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -741,12 +771,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                              color: Colors.black,
                                              fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
                                            ),
-                                           keyboardType: TextInputType.text, // Adjust as needed
+                                           keyboardType: TextInputType.emailAddress, // Adjust as needed
                                            onChanged: (value) {
                                              setState(() {
                                                primaryemailerror = false;
                                              });
                                            },
+
                                            controller: primaryemail,
                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
                                            decoration: InputDecoration(
@@ -827,7 +858,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                              color: Colors.black,
                                              fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
                                            ),
-                                           keyboardType: TextInputType.text, // Adjust as needed
+                                           keyboardType: TextInputType.emailAddress, // Adjust as needed
                                            onChanged: (value) {
                                              setState(() {
                                                alternativeerror = false;
@@ -908,33 +939,38 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                    child: Stack(
                                      children: [
                                        Positioned.fill(
-                                         child: TextField(
-                                           style: TextStyle(
-                                             color: Colors.black,
-                                             fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                           ),
-                                           keyboardType: TextInputType.text, // Adjust as needed
-                                           onChanged: (value) {
-                                             setState(() {
-                                               phonenumerror = false;
-                                             });
-                                           },
-                                           controller: phonenum,
-                                           cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                           decoration: InputDecoration(
-                                             enabledBorder: phonenumerror
-                                                 ? OutlineInputBorder(
-                                               borderRadius: BorderRadius.circular(10),
-                                               borderSide: BorderSide(
-                                                   color: Colors.red), // Set border color here
-                                             )
-                                                 : InputBorder.none,
-                                             border: InputBorder.none,
-                                             contentPadding: EdgeInsets.all(14),
-                                             hintText: "Enter phone number",
-                                             hintStyle: TextStyle(
-                                               color: Colors.grey[600],
-                                               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                         child: KeyboardActions(
+                                           config: _buildConfig(context),
+                                           child: TextField(
+                                             focusNode: _nodeText1,
+                                             style: TextStyle(
+
+                                               color: Colors.black,
+                                               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                             ),
+                                             keyboardType: TextInputType.number, // Adjust as needed
+                                             onChanged: (value) {
+                                               setState(() {
+                                                 phonenumerror = false;
+                                               });
+                                             },
+                                             controller: phonenum,
+                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                             decoration: InputDecoration(
+                                               enabledBorder: phonenumerror
+                                                   ? OutlineInputBorder(
+                                                 borderRadius: BorderRadius.circular(10),
+                                                 borderSide: BorderSide(
+                                                     color: Colors.red), // Set border color here
+                                               )
+                                                   : InputBorder.none,
+                                               border: InputBorder.none,
+                                               contentPadding: EdgeInsets.all(14),
+                                               hintText: "Enter phone number",
+                                               hintStyle: TextStyle(
+                                                 color: Colors.grey[600],
+                                                 fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                               ),
                                              ),
                                            ),
                                          ),
@@ -977,33 +1013,37 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                    child: Stack(
                                      children: [
                                        Positioned.fill(
-                                         child: TextField(
-                                           style: TextStyle(
-                                             color: Colors.black,
-                                             fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                           ),
-                                           keyboardType: TextInputType.text, // Adjust as needed
-                                           onChanged: (value) {
-                                             setState(() {
-                                               homenumerror = false;
-                                             });
-                                           },
-                                           controller: homenum,
-                                           cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                           decoration: InputDecoration(
-                                             enabledBorder: homenumerror
-                                                 ? OutlineInputBorder(
-                                               borderRadius: BorderRadius.circular(10),
-                                               borderSide: BorderSide(
-                                                   color: Colors.red), // Set border color here
-                                             )
-                                                 : InputBorder.none,
-                                             border: InputBorder.none,
-                                             contentPadding: EdgeInsets.all(14),
-                                             hintText: "Enter home number",
-                                             hintStyle: TextStyle(
-                                               color: Colors.grey[600],
-                                               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                         child: KeyboardActions(
+                                           config: _buildConfig(context),
+                                           child: TextField(
+                                             focusNode: _nodeText2,
+                                             style: TextStyle(
+                                               color: Colors.black,
+                                               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                             ),
+                                             keyboardType: TextInputType.number, // Adjust as needed
+                                             onChanged: (value) {
+                                               setState(() {
+                                                 homenumerror = false;
+                                               });
+                                             },
+                                             controller: homenum,
+                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                             decoration: InputDecoration(
+                                               enabledBorder: homenumerror
+                                                   ? OutlineInputBorder(
+                                                 borderRadius: BorderRadius.circular(10),
+                                                 borderSide: BorderSide(
+                                                     color: Colors.red), // Set border color here
+                                               )
+                                                   : InputBorder.none,
+                                               border: InputBorder.none,
+                                               contentPadding: EdgeInsets.all(14),
+                                               hintText: "Enter home number",
+                                               hintStyle: TextStyle(
+                                                 color: Colors.grey[600],
+                                                 fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                               ),
                                              ),
                                            ),
                                          ),
@@ -1046,33 +1086,37 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                    child: Stack(
                                      children: [
                                        Positioned.fill(
-                                         child: TextField(
-                                           style: TextStyle(
-                                             color: Colors.black,
-                                             fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                           ),
-                                           keyboardType: TextInputType.text, // Adjust as needed
-                                           onChanged: (value) {
-                                             setState(() {
-                                               businessnumerror = false;
-                                             });
-                                           },
-                                           controller: businessnum,
-                                           cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                           decoration: InputDecoration(
-                                             enabledBorder: businessnumerror
-                                                 ? OutlineInputBorder(
-                                               borderRadius: BorderRadius.circular(10),
-                                               borderSide: BorderSide(
-                                                   color: Colors.red), // Set border color here
-                                             )
-                                                 : InputBorder.none,
-                                             border: InputBorder.none,
-                                             contentPadding: EdgeInsets.all(14),
-                                             hintText: "Enter business number",
-                                             hintStyle: TextStyle(
-                                               color: Colors.grey[600],
-                                               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                         child: KeyboardActions(
+                                           config: _buildConfig(context),
+                                           child: TextField(
+                                             focusNode: _nodeText3,
+                                             style: TextStyle(
+                                               color: Colors.black,
+                                               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                             ),
+                                             keyboardType: TextInputType.number, // Adjust as needed
+                                             onChanged: (value) {
+                                               setState(() {
+                                                 businessnumerror = false;
+                                               });
+                                             },
+                                             controller: businessnum,
+                                             cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                             decoration: InputDecoration(
+                                               enabledBorder: businessnumerror
+                                                   ? OutlineInputBorder(
+                                                 borderRadius: BorderRadius.circular(10),
+                                                 borderSide: BorderSide(
+                                                     color: Colors.red), // Set border color here
+                                               )
+                                                   : InputBorder.none,
+                                               border: InputBorder.none,
+                                               contentPadding: EdgeInsets.all(14),
+                                               hintText: "Enter business number",
+                                               hintStyle: TextStyle(
+                                                 color: Colors.grey[600],
+                                                 fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                               ),
                                              ),
                                            ),
                                          ),
@@ -1437,31 +1481,36 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                          child: Stack(
                                            children: [
                                              Positioned.fill(
-                                               child: TextField(
-                                                 controller: code2,
-                                                 style: TextStyle(
-                                                   color: Colors.black,
-                                                   fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                                 ),
-                                                 onChanged: (value) {
-                                                   setState(() {
-                                                     code2error = false;
-                                                   });
-                                                 },
-                                                 cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                 decoration: InputDecoration(
-                                                   enabledBorder: code2error
-                                                       ? OutlineInputBorder(
-                                                     borderRadius: BorderRadius.circular(10),
-                                                     borderSide: BorderSide(color: Colors.red), // Error border color
-                                                   )
-                                                       : InputBorder.none,
-                                                   border: InputBorder.none,
-                                                   contentPadding: EdgeInsets.all(14),
-                                                   hintText: "Enter postal code",
-                                                   hintStyle: TextStyle(
-                                                     color: Color(0xFF8A95A8),
-                                                     fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                               child: KeyboardActions(
+                                                 config: _buildConfig(context),
+                                                 child: TextField(
+                                                   focusNode: _nodeText4,
+                                                   controller: code2,
+                                                   keyboardType: TextInputType.number,
+                                                   style: TextStyle(
+                                                     color: Colors.black,
+                                                     fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                   ),
+                                                   onChanged: (value) {
+                                                     setState(() {
+                                                       code2error = false;
+                                                     });
+                                                   },
+                                                   cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                   decoration: InputDecoration(
+                                                     enabledBorder: code2error
+                                                         ? OutlineInputBorder(
+                                                       borderRadius: BorderRadius.circular(10),
+                                                       borderSide: BorderSide(color: Colors.red), // Error border color
+                                                     )
+                                                         : InputBorder.none,
+                                                     border: InputBorder.none,
+                                                     contentPadding: EdgeInsets.all(14),
+                                                     hintText: "Enter postal code",
+                                                     hintStyle: TextStyle(
+                                                       color: Color(0xFF8A95A8),
+                                                       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                     ),
                                                    ),
                                                  ),
                                                ),

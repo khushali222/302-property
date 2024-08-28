@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../repository/Property_type.dart';
@@ -35,7 +35,7 @@ class _Add_propertyState extends State<Add_property> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Property Type"),
+      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
       body:
       SingleChildScrollView(
         child: Column(

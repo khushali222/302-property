@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,6 +11,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
+import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -67,7 +71,7 @@ class _AddCardState extends State<AddCard> {
     print("token $token");
     print("Admin $id");
     fetchcreditcard(id!);
-  /*  final response = await http.get(
+    /*  final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_tenant/${id}'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
@@ -164,7 +168,7 @@ class _AddCardState extends State<AddCard> {
       }
 
       CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString());
+      await postBillingCustomerVault(customervaultid.toString());
 
       if (customerData != null) {
         setState(() {
@@ -294,7 +298,7 @@ class _AddCardState extends State<AddCard> {
     return binResults;
   }
 
-  
+
 
   String _formatCardNumber(String cardNumber) {
     if (cardNumber.length != 16) {
@@ -427,8 +431,10 @@ class _AddCardState extends State<AddCard> {
                         CardNumberInputFormatter(),
                         LengthLimitingTextInputFormatter(19),
                       ],
-                      keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
+
+                      keyboardType: TextInputType.number,
                       hintText: '0000 0000 0000 0000',
+                      label: "Enter card number",
                       controller: cardNumber,
                     ),
                     const SizedBox(
@@ -444,8 +450,9 @@ class _AddCardState extends State<AddCard> {
                             color: Colors.grey)),
                     CustomTextField(
                       keyboardType: TextInputType.text,
-                      hintText: 'Enter Expiration Date',
+                      hintText: 'MM/YYYY',
                       controller: expirationDate,
+                      label: "Enter Expiration Date",
                       isexpirydate: true,
                       formatter: [
                         ExpiryDateInputFormatter()
@@ -496,8 +503,9 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.emailAddress,
                       hintText: 'Enter Email',
+                      isEmail: true,
                       controller: email,
                     ),
                     const SizedBox(
@@ -512,7 +520,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.number,
                       hintText: 'Enter Phone Number',
                       controller: phoneNumber,
                     ),
@@ -595,7 +603,7 @@ class _AddCardState extends State<AddCard> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.number,
                       hintText: 'Enter Zip',
                       controller: zip,
                       optional: true,
@@ -609,51 +617,51 @@ class _AddCardState extends State<AddCard> {
               selectedTenantId == null
                   ? Container()
                   : Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: const Text('Cards',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF152b51))),
-                    ),
-             SizedBox(height: 8),
+                padding: const EdgeInsets.only(left: 16.0),
+                child: const Text('Cards',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF152b51))),
+              ),
+              SizedBox(height: 8),
               Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: isLoading
-                          ? const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.black,
-                                size: 55.0,
-                              ),
-                            )
-                          : cardDetails.isEmpty
-                              ? Center(
-                                  child: Text(messageCardAvailable ??
-                                      'No card details available'),
-                                )
-                              : ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: cardDetails.length,
-                                  itemBuilder: (context, index) {
-                                    return Row(
-                                      children: [
-                                        Expanded(
-                                          child: _buildCreditCard(
-                                              cardDetails[index],
-                                              customervaultid.toString()),
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                    ),
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: isLoading
+                    ? const Center(
+                  child: SpinKitFadingCircle(
+                    color: Colors.black,
+                    size: 55.0,
+                  ),
+                )
+                    : cardDetails.isEmpty
+                    ? Center(
+                  child: Text(messageCardAvailable ??
+                      'No card details available'),
+                )
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: cardDetails.length,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: _buildCreditCard(
+                              cardDetails[index],
+                              customervaultid.toString()),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
               SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
@@ -667,20 +675,20 @@ class _AddCardState extends State<AddCard> {
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    const Color.fromRGBO(21, 43, 83, 1),
+                                const Color.fromRGBO(21, 43, 83, 1),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () async {
                               if (_formKey.currentState?.validate() ?? false) {
                                 SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
+                                await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 String? token = prefs.getString('token');
 
                                 String randomNumber = generateRandomNumber(10);
 
                                 String? comapanyName =
-                                    await fetchCompanyName(id!);
+                                await fetchCompanyName(id!);
 
                                 CardModel cardwithOutVaultId = CardModel(
                                   firstName: firstName.text,
@@ -717,10 +725,10 @@ class _AddCardState extends State<AddCard> {
                                     email: email.text,
                                     country: country.text,
                                     customervaultid:
-                                        customervaultid.toString());
+                                    customervaultid.toString());
 
                                 AddCardService addCardService =
-                                    AddCardService();
+                                AddCardService();
 
                                 if (messageCardAvailable ==
                                     "No card found for this tenant") {
@@ -728,8 +736,8 @@ class _AddCardState extends State<AddCard> {
                                   // await addCardService
                                   //     .postCardDetails(cardwithOutVaultId);
                                   CardResponse? cardResponse =
-                                      await addCardService
-                                          .postCardDetails(cardwithOutVaultId);
+                                  await addCardService
+                                      .postCardDetails(cardwithOutVaultId);
 
                                   if (cardResponse != null) {
                                     print(
@@ -743,7 +751,7 @@ class _AddCardState extends State<AddCard> {
                                     tenantId: selectedTenantId,
                                     billingId: randomNumber,
                                     customerVaultId:
-                                        cardResponse?.customerVaultId,
+                                    cardResponse?.customerVaultId,
                                     responseCode: cardResponse?.responseCode,
                                   );
 
@@ -754,8 +762,8 @@ class _AddCardState extends State<AddCard> {
                                       msg: 'Add Card Successfully');
                                 } else {
                                   CardResponse? cardResponses =
-                                      await addCardService
-                                          .postCardWithVaultId(cardwithVaultId);
+                                  await addCardService
+                                      .postCardWithVaultId(cardwithVaultId);
                                   if (cardResponses != null) {
                                     print(
                                         'Customer Vault ID: ${cardResponses.customerVaultId}');
@@ -768,7 +776,7 @@ class _AddCardState extends State<AddCard> {
                                     tenantId: selectedTenantId,
                                     billingId: randomNumber,
                                     customerVaultId:
-                                        cardResponses!.customerVaultId,
+                                    cardResponses!.customerVaultId,
                                     responseCode: cardResponses.responseCode,
                                   );
                                   await addCardService
@@ -929,7 +937,7 @@ class _AddCardState extends State<AddCard> {
                   _buildDetailsBlock(
                     label: 'CARDHOLDER',
                     value:
-                        '${billingData.firstName ?? ''} ${billingData.lastName ?? ''}',
+                    '${billingData.firstName ?? ''} ${billingData.lastName ?? ''}',
                   ),
                   _buildDetailsBlock(
                       label: 'VALID THRU',
@@ -1031,15 +1039,15 @@ class CustomTextField extends StatefulWidget {
   final void Function()? onSuffixIconPressed;
   final void Function()? onTap;
   final String? label;
-  final bool readOnnly;
+  final bool readOnly;
   final bool? amount_check;
   final String? max_amount;
   final String? error_mess;
-  bool? isEmail;
-  bool? optional;
-  bool? isexpirydate;
+  final bool? isEmail;
+  final bool? optional;
+  final bool? isexpirydate;
   final List<TextInputFormatter>? formatter;
-
+  final bool? readOnnly;
 
   CustomTextField({
     Key? key,
@@ -1048,22 +1056,22 @@ class CustomTextField extends StatefulWidget {
     required this.hintText,
     this.obscureText = false,
     this.keyboardType = TextInputType.emailAddress,
-    this.readOnnly = false,
+    this.readOnly = false,
     this.prefixIcon,
     this.suffixIcon,
     this.validator,
     this.onSuffixIconPressed,
     this.label,
-    this.onTap, this.onChanged2,
+    this.onTap,
+    this.onChanged2,
     this.amount_check,
     this.max_amount,
     this.error_mess,
     this.optional = false,
     this.isEmail = false,
     this.isexpirydate = false,
-    this.formatter
-
-    // Initialize onTap
+    this.formatter,
+    this.readOnnly = false
   }) : super(key: key);
 
   @override
@@ -1072,75 +1080,106 @@ class CustomTextField extends StatefulWidget {
 
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
-  TextEditingController _textController =
-  TextEditingController(); // Add this line
+  late TextEditingController _textController;
+  late FocusNode _focusNode;
+  late FocusNode _focusNode1;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = widget.controller ?? TextEditingController();
+    _focusNode = FocusNode();
+    _focusNode1 = FocusNode();
+  }
 
   @override
   void dispose() {
-    _textController.dispose(); // Dispose the controller when not needed anymore
+    _textController.dispose();
+    _focusNode.dispose();
+    _focusNode1.dispose();
     super.dispose();
+  }
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _focusNode,
+          toolbarButtons: [
+                (node) {
+              return GestureDetector(
+                onTap: () {
+                  if (widget.onChanged2 != null) {
+                    widget.onChanged2!(_textController.text);
+                  }
+                  node.unfocus(); // Dismiss the keyboard
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(14.0),
+                  child: Text("Done",style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold
+                  ),),
+                ),
+              );
+            },
+          ],
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
+    Widget textField = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: widget.optional! ? null :(value) {
+          validator: widget.optional! ? null : (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {
-                if(widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
+                _errorMessage = widget.label == null
+                    ? 'Please ${widget.hintText}'
+                    : 'Please ${widget.label}';
               });
               return '';
-            }
-            else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
-            {
+            } else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!)) {
               setState(() {
                 _errorMessage = '${widget.error_mess}';
               });
               return '';
-            }
-
-             else if(widget.isexpirydate!){
-
-              // Regex to match MM/YYYY format
-              final RegExp expDateRegExp = RegExp(r'^(0[1-9]|1[0-2])\/\d{4}$');
-              if (!expDateRegExp.hasMatch(widget.controller!.text!)) {
-                _errorMessage= 'Invalid expiration date format. Use MM/YYYY';
+            } else if (widget.isEmail!) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
                 setState(() {
-
+                  _errorMessage = "Email is not valid";
                 });
                 return '';
               }
-              else{
-                // Extract MM and YYYY from the value
+            } else if (widget.isexpirydate!) {
+              final RegExp expDateRegExp =
+              RegExp(r'^(0[1-9]|1[0-2])\/\d{4}$');
+              if (!expDateRegExp.hasMatch(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = 'Invalid expiration date format. Use MM/YYYY';
+                });
+                return '';
+              } else {
                 final parts = widget.controller!.text.split('/');
                 final month = int.tryParse(parts[0]);
                 final year = int.tryParse(parts[1]);
-                print(month);
-                print(year);
                 if (month == null || month < 1 || month > 12) {
-                  _errorMessage =  'Invalid month. Use a value between 01 and 12';
+                  _errorMessage = 'Invalid month. Use a value between 01 and 12';
                 }
-
-                // Optional: You can add additional logic here to validate the year, for example:
-                // Ensure the expiration year is not in the past.
                 final currentYear = DateTime.now().year;
-
                 if (year == null || year < currentYear) {
-                    print("objectaa");
                   _errorMessage = 'Invalid year. Use the current year or later';
                 }
-                setState(() {
-
-                });
+                setState(() {});
                 return '';
               }
-
             }
             return null;
           },
@@ -1152,12 +1191,10 @@ class CustomTextFieldState extends State<CustomTextField> {
                   borderRadius: BorderRadius.circular(8.0),
                   child: Container(
                     height: 50,
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
-                      //border: Border.all(color: blueColor),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -1167,56 +1204,30 @@ class CustomTextFieldState extends State<CustomTextField> {
                       ],
                     ),
                     child: TextFormField(
-                      /*    onFieldSubmitted: (value){
-                        if(value.isNotEmpty){
-
-                          if(widget.amount_check != null){
-                            if(int.parse(value) > int.parse(widget.max_amount!)){
-                              setState(() {
-                                _errorMessage = '${widget.error_mess}';
-                              });
-                            }
-                          }
-                          else{
-                            setState(() {
-                              _errorMessage = null;
-                            });
-                          }
-
-                        }
-                        print(value);
-                        widget.onChanged2;
-                      },*/
                       onFieldSubmitted: widget.onChanged2,
-                      inputFormatters:widget.formatter ?? [],
-                      onChanged:(value){
-                        print("object calin $value");
-                        if(value.isNotEmpty){
+                      inputFormatters: widget.formatter ?? [],
+                      onChanged: (value) {
+                        if (value.isNotEmpty) {
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
-                        widget.onChanged;
-                        print("callllll");
+                        if (widget.onChanged != null) {
+                          widget.onChanged!(value);
+                        }
                       },
-
-
                       onTap: widget.onTap,
                       obscureText: widget.obscureText,
-                      readOnly: widget.readOnnly,
+                      readOnly: widget.readOnly,
                       keyboardType: widget.keyboardType,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          state.validate();
-                        }
-                        return null;
-                      },
-                      controller: widget.controller,
+                      focusNode: _focusNode,
+                      controller: _textController,
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
-                        hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        hintStyle: TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFFb0b6c3),
+                        ),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
@@ -1244,6 +1255,16 @@ class CustomTextFieldState extends State<CustomTextField> {
           ),
       ],
     );
+    return shouldUseKeyboardActions
+        ? SizedBox(
+      height: 60,
+      width: MediaQuery.of(context).size.width * .98,
+      child: KeyboardActions(
+        config: _buildConfig(context),
+        child: textField,
+      ),
+    )
+        : textField;
   }
 }
 class CardNumberInputFormatter extends TextInputFormatter {
