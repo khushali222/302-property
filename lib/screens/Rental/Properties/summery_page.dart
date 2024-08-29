@@ -128,6 +128,7 @@ class _Summery_pageState extends State<Summery_page>
     // fetchAndSetCounts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
 
+
   }
   String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -170,7 +171,6 @@ class _Summery_pageState extends State<Summery_page>
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
-
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
@@ -195,13 +195,13 @@ class _Summery_pageState extends State<Summery_page>
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
     if (image != null) {
       setState(() {
         _image = File(image.path);
         _images.add(File(image.path));
       });
       _uploadImage(File(image.path));
+
     }
   }
 
@@ -1546,7 +1546,7 @@ class _Summery_pageState extends State<Summery_page>
       ],
     );
   }
-
+  bool isMovedOut = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2996,9 +2996,11 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ],
                 ),
+
               ],
             ),
             const Spacer(),
+
             InkWell(
               onTap: () {
                 showDialog(
@@ -3040,6 +3042,25 @@ class _Summery_pageState extends State<Summery_page>
                 ],
               ),
             ),
+            // if(isMovedOut== false)
+            //   Row(
+            //     children: [
+            //       FaIcon(
+            //         FontAwesomeIcons.check,
+            //         size: 17,
+            //         color: Color.fromRGBO(21, 43, 81, 1),
+            //       ),
+            //       SizedBox(width: 5),
+            //       Text(
+            //         "Moved out",
+            //         style: TextStyle(
+            //           fontSize: 11,
+            //           fontWeight: FontWeight.w500,
+            //           color: Color.fromRGBO(21, 43, 81, 1),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
             const SizedBox(width: 15),
           ],
         ),
@@ -3938,29 +3959,30 @@ class _Summery_pageState extends State<Summery_page>
                   String? tenantId = tenant.tenantId != null && tenant.tenantId!.isNotEmpty
                       ? tenant.tenantId!.first
                       : null;
-                  SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-                  String? id = prefs.getString("adminId");
-                  print(moveOutDate);
-                  LeaseMoveoutRepository()
-                      .addMoveoutTenant(
-                    adminId: id!,
-                    tenantId: tenantId,
-                    leaseId: widget.tenants?.leaseId!,
-                    moveoutDate: moveOutDate,
-                    moveoutNoticeGivenDate: startdateController.text,
-                  ).then((value) {
-                    setState(() {
-                      isLoading = false;
+                    SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                    String? id = prefs.getString("adminId");
+                    print(moveOutDate);
+                    LeaseMoveoutRepository()
+                        .addMoveoutTenant(
+                      adminId: id!,
+                      tenantId: tenantId,
+                      leaseId: tenant.leaseId,
+                      moveoutDate: moveOutDate,
+                      moveoutNoticeGivenDate: startdateController.text,
+                    ).then((value) {
+                      setState(() {
+                        isLoading = false;
+                        isMovedOut = true;
+                      });
+                      Navigator.pop(context, true);
+                    }).catchError((e) {
+                      setState(() {
+                        isLoading = false;
+                      });
                     });
-                    Navigator.pop(context, true);
-                  }).catchError((e) {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
-                },
-                child: Material(
+                  },
+                  child: Material(
                   elevation: 3,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   child: Container(
@@ -8891,9 +8913,9 @@ class _Summery_pageState extends State<Summery_page>
                                                               Propertytype
                                                                   .rentalbath!;
                                                               bed3.text =
-                                                              Propertytype
-                                                                  .rentalbed!;
-                                                              if(Propertytype.rentalImages != null){
+                                                                  Propertytype
+                                                                      .rentalbed!;
+                                                              if (Propertytype.rentalImages != null) {
                                                                 setState(() {
                                                                   _imageUrls = Propertytype.rentalImages!;
                                                                 });
@@ -8912,7 +8934,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                   context,
                                                                   builder:
                                                                       (BuildContext
-                                                                  context) {
+                                                                          context) {
+
                                                                     // Moved isChecked inside the StatefulBuilder
                                                                     return StatefulBuilder(
                                                                       builder: (BuildContext
@@ -9268,6 +9291,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 )
                                                                                     : Center(child: Text("No images selected.")),
                                                                                 const SizedBox(height: 8.0),
+
                                                                                 Row(
                                                                                   children: [
                                                                                     const SizedBox(
@@ -9296,6 +9320,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               rentalbed: bed3.text,
                                                                                               unitId: Propertytype.unitId,
                                                                                               adminId: id,
+                                                                                             // rentalImages: _imageUrls,
                                                                                               rentalId: Propertytype.rentalId
                                                                                           ).then((value) {
                                                                                             setState(() {
@@ -9377,7 +9402,6 @@ class _Summery_pageState extends State<Summery_page>
                                                                   },
                                                                 );
                                                               }
-
                                                               if (widget
                                                                   .properties
                                                                   .propertyTypeData!
@@ -9580,6 +9604,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         _pickImage().then((_) {
                                                                                           setState(() {}); // Rebuild the widget after selecting the image
                                                                                         });
+
                                                                                       },
                                                                                       child: const Text(
                                                                                         '+ Add',
@@ -9588,7 +9613,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                const SizedBox(height: 8.0),
+                                                                                // const SizedBox(height: 8.0),
                                                                                 // _image != null
                                                                                 //     ? Column(
                                                                                 //         children: [

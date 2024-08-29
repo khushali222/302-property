@@ -865,6 +865,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                 Expanded(
                                                   child: InkWell(
                                                     onTap: () {
+
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
@@ -873,6 +874,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                     properties:
                                                                         rentals,
                                                                   )));
+
                                                     },
                                                     child: Padding(
                                                       padding:

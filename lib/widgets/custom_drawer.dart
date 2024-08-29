@@ -82,7 +82,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                FaIcon(
                  FontAwesomeIcons.house,
                  size: 20,
-                 color: widget.currentpage == "Property Type"
+                 color: widget.currentpage == "Add Property Type"
                      ? Colors.white
                      : blueColor,
                ),
@@ -94,7 +94,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                FaIcon(
                  FontAwesomeIcons.userClock,
                  size: 20,
-                 color: widget.currentpage == "Staff Member"
+                 color: widget.currentpage == "Add Staff Member"
                      ? Colors.white
                      : blueColor,
                ),

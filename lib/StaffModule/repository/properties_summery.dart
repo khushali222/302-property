@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 import 'package:three_zero_two_property/model/properties_summery.dart';
-
-import '../../constant/constant.dart';
 import '../../model/properties_workorders.dart';
 import '../model/unitsummery_propeties.dart';
 
@@ -49,7 +48,9 @@ class Properies_summery_Repo{
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => TenantData.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load data');
+      print('Failed to fetch property type: ${response.body}');
+      return [];
+      //throw Exception('Failed to load data');
     }
   }
 
@@ -224,6 +225,7 @@ class Properies_summery_Repo{
       'rental_sqft': rentalsqft,
       'rental_bath': rentalbath,
       'rental_bed': rentalbed,
+      'rental_images':rentalImages
     };
 
    // print('$apiUrl/$id');
