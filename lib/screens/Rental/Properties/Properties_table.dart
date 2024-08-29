@@ -961,49 +961,49 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                            margin: EdgeInsets.only(bottom: 5),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                    children: [
-                                                     SizedBox(width: 20,),
-                                                      Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                              'Primery E-mail: ',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                                  color:
-                                                                  blueColor), // Bold and black
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                              '${(rentals.rentalOwnerData!.rentalOwnerPrimaryEmail ?? "").isEmpty?'N/A' : rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                                  color: grey), // Light and grey
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      // SizedBox(
-                                                      //   height: MediaQuery.of(
-                                                      //       context)
-                                                      //       .size
-                                                      //       .height *
-                                                      //       .01,
-                                                      // ),
-                                                    ],
-                                                  ),
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //   MainAxisAlignment.start,
+                                                  //   children: [
+                                                  //    SizedBox(width: 20,),
+                                                  //     Text.rich(
+                                                  //       TextSpan(
+                                                  //         children: [
+                                                  //           TextSpan(
+                                                  //             text:
+                                                  //             'Primery E-mail: ',
+                                                  //             style: TextStyle(
+                                                  //                 fontWeight:
+                                                  //                 FontWeight
+                                                  //                     .bold,
+                                                  //                 color:
+                                                  //                 blueColor), // Bold and black
+                                                  //           ),
+                                                  //           TextSpan(
+                                                  //             text:
+                                                  //             '${(rentals.rentalOwnerData!.rentalOwnerPrimaryEmail ?? "").isEmpty?'N/A' : rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
+                                                  //             style: TextStyle(
+                                                  //                 fontWeight:
+                                                  //                 FontWeight
+                                                  //                     .w700,
+                                                  //                 color: grey), // Light and grey
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     // SizedBox(
+                                                  //     //   height: MediaQuery.of(
+                                                  //     //       context)
+                                                  //     //       .size
+                                                  //     //       .height *
+                                                  //     //       .01,
+                                                  //     // ),
+                                                  //   ],
+                                                  // ),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -1306,7 +1306,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       Expanded(
                                                         child: Table(
                                                           columnWidths: {
-                                                            0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
+                                                            0: FlexColumnWidth(), // Distribute columns equally
                                                             1: FlexColumnWidth(),
                                                           },
                                                           children: [
@@ -1320,14 +1322,30 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             ),
                                                             _buildTableRow(
                                                                 'Updated At:', formatDate('${rentals.updatedAt}'),
-                                                                '', ''
+                                                                'Primary Email', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail)
                                                             ),
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
-                                                      Column(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      // FaIcon(
+                                                      //   isExpanded
+                                                      //       ? FontAwesomeIcons
+                                                      //       .sortUp
+                                                      //       : FontAwesomeIcons
+                                                      //       .sortDown,
+                                                      //   size: 20,
+                                                      //   color:
+                                                      //   Colors.transparent,
+                                                      // ),
+
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Container(
+                                                  // color:Colors.grey[100],
+                                                        child: Row(
                                                           children: [
                                                             IconButton(
                                                               icon: FaIcon(
@@ -1350,6 +1368,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 }
                                                               },
                                                             ),
+                                                            Text("Edit"),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        child: Row(
+                                                          children: [
                                                             IconButton(
                                                               icon: FaIcon(
                                                                 FontAwesomeIcons.trashCan,
@@ -1360,11 +1385,30 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 _showAlert(context, rentals.rentalId!);
                                                               },
                                                             ),
+                                                            Text("Delete")
                                                           ],
                                                         ),
+                                                      ),
+                                                      Container(
+                                                        child: Row(
+                                                          children: [
+                                                            IconButton(
+                                                              icon: FaIcon(
+                                                                FontAwesomeIcons.trashCan,
+                                                                size: 20,
+                                                                color:blueColor,
+                                                              ),
+                                                              onPressed: () {
+                                                                _showAlert(context, rentals.rentalId!);
+                                                              },
+                                                            ),
+                                                            Text("View Summery")
+                                                          ],
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
-                                                  
+
                                                 ],
                                               ),
                                             ),
