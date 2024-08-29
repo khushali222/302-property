@@ -665,9 +665,12 @@ class _Applicants_tableState extends State<Applicants_table> {
               child: Row(
                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
-                    title: 'Applicants',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Applicants',
+                    ),
                   ),                  GestureDetector(
                     onTap: () async {
                       print(applicantCount);
@@ -865,10 +868,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                             _buildHeaders(),
                             const SizedBox(height: 20),
                             Container(
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(
+                              //         color:
+                              //             const Color.fromRGBO(21, 43, 83, 1))
+                              // ),
                               decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                          const Color.fromRGBO(21, 43, 83, 1))),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -878,10 +884,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                                   bool isExpanded = expandedIndex == index;
                                   Datum applicant = entry.value;
                                   return Container(
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(
+                                    //       color: const Color.fromRGBO(
+                                    //           21, 43, 83, 1)),
+                                    // ),
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              21, 43, 83, 1)),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1056,12 +1066,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                             .applicantPhoneNumber
                                                                             .toString()
                                                                         : 'N/A',
-                                                                    style: const TextStyle(
+                                                                    style:  TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w700,
-                                                                        color: Colors
-                                                                            .grey),
+                                                                        color: grey),
                                                                   ),
                                                                 ],
                                                               ),
