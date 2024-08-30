@@ -1110,7 +1110,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             .sortUp
                                                             : FontAwesomeIcons
                                                             .sortDown,
-                                                        size: 50,
+                                                        size: 30,
                                                         color:
                                                         Colors.transparent,
                                                       ),
@@ -1391,13 +1391,14 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

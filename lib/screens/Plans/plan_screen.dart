@@ -1193,7 +1193,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                         children: [
                                           SizedBox(
                                             height: 40,
-                                            width: MediaQuery.of(context).size.width * .41,
+                                            width: MediaQuery.of(context).size.width * .43,
                                             child: GestureDetector(
                                               onTap: () {
                                                 // Add your onPressed code here
@@ -1216,11 +1216,11 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             ),
                                           ),
                                           const SizedBox(
-                                            width: 10,
+                                            width: 8,
                                           ),
                                           SizedBox(
                                             height: 40,
-                                            width: MediaQuery.of(context).size.width * .41,
+                                            width: MediaQuery.of(context).size.width * .42,
                                             child: GestureDetector(
                                               onTap: () {
                                                 _showEnhancedAlert(context, data.subscriptionId!, data.purchaseId!);
@@ -1254,10 +1254,11 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                       children: [
                                         Container(
                                           height: 55,
-                                          padding: EdgeInsets.all(8),
+                                          padding: EdgeInsets.only(left: 18,right: 8,top: 8,bottom: 8),
                                           width: MediaQuery.of(context).size.width * .89 / 2,
                                           decoration: BoxDecoration(
-                                              border:Border.all(color: blueColor)
+                                              border:Border.all(color: blueColor.withOpacity(.5)),
+                                            borderRadius: BorderRadius.circular(5)
 
                                           ),
                                           child: Column(
@@ -1336,7 +1337,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                           padding: EdgeInsets.all(8),
                                           width: MediaQuery.of(context).size.width * .89 / 2,
                                           decoration: BoxDecoration(
-                                              border:Border.all(color: blueColor)
+                                              border:Border.all(color: blueColor.withOpacity(.5)),
+                                              borderRadius: BorderRadius.circular(5)
 
                                           ),
                                           child: Column(
@@ -2034,15 +2036,15 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: <Widget>[
-                                                                  Row(
+                                                                  Column(
                                                                     children: [
-                                                                      Column(
+                                                                      Row(
                                                                         crossAxisAlignment:
                                                                             CrossAxisAlignment
                                                                                 .start,
                                                                         children: [
                                                                           Text(
-                                                                            'Start Date',
+                                                                            'Start Date :- ',
                                                                             style:
                                                                                 TextStyle(
                                                                               color: workOrder.isActive == true
@@ -2072,13 +2074,13 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                       SizedBox(
                                                                           width: MediaQuery.of(context).size.width *
                                                                               .1),
-                                                                      Column(
+                                                                      Row(
                                                                         crossAxisAlignment:
                                                                             CrossAxisAlignment
                                                                                 .start,
                                                                         children: [
                                                                           Text(
-                                                                            'End Date',
+                                                                            'End Date   :- ',
                                                                             style:
                                                                                 TextStyle(
                                                                               color: workOrder.isActive == true

@@ -547,9 +547,12 @@ class _Lease_tableState extends State<Lease_table> {
               child: Row(
                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
-                    title: 'RentRoll',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'RentRoll',
+                    ),
                   ),
                   GestureDetector(
                     onTap: () async {
@@ -638,8 +641,7 @@ class _Lease_tableState extends State<Lease_table> {
             //     ),
             //   ),
             // ),
-
-            SizedBox(height: 10),
+            //SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.only(left: 19, right: 13),
               child: Row(
@@ -757,12 +759,14 @@ class _Lease_tableState extends State<Lease_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -774,8 +778,12 @@ class _Lease_tableState extends State<Lease_table> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -801,7 +809,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -927,342 +935,433 @@ class _Lease_tableState extends State<Lease_table> {
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //       MainAxisAlignment.start,
+                                                  //   children: [
+                                                  //     FaIcon(
+                                                  //       isExpanded
+                                                  //           ? FontAwesomeIcons
+                                                  //               .sortUp
+                                                  //           : FontAwesomeIcons
+                                                  //               .sortDown,
+                                                  //       size: 50,
+                                                  //       color:
+                                                  //           Colors.transparent,
+                                                  //     ),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //             CrossAxisAlignment
+                                                  //                 .start,
+                                                  //         children: <Widget>[
+                                                  //           SizedBox(
+                                                  //               width: MediaQuery.of(
+                                                  //                           context)
+                                                  //                       .size
+                                                  //                       .width *
+                                                  //                   .08),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Rent Cycle: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${lease.rentCycle ?? ''}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Rent Start: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${lease.rentDueDate}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Rent: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${lease.amount}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Created At: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate(
+                                                  //                       '${lease.createdAt}'),
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     SizedBox(width: 5),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //             CrossAxisAlignment
+                                                  //                 .start,
+                                                  //         children: <Widget>[
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Deposit Held ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${lease.deposit}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Charges: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${lease.recurringCharge}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Updated At: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate(
+                                                  //                       '${lease.updatedAt}'),
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     Container(
+                                                  //       width: 40,
+                                                  //       child: Column(
+                                                  //         children: [
+                                                  //           IconButton(
+                                                  //             icon: FaIcon(
+                                                  //               FontAwesomeIcons
+                                                  //                   .edit,
+                                                  //               size: 20,
+                                                  //               color: Color
+                                                  //                   .fromRGBO(
+                                                  //                       21,
+                                                  //                       43,
+                                                  //                       83,
+                                                  //                       1),
+                                                  //             ),
+                                                  //             onPressed:
+                                                  //                 () async {
+                                                  //               Provider.of<SelectedCosignersProvider>(
+                                                  //                       context,
+                                                  //                       listen:
+                                                  //                           false)
+                                                  //                   .clearCosigner();
+                                                  //               Provider.of<SelectedTenantsProvider>(
+                                                  //                       context,
+                                                  //                       listen:
+                                                  //                           false)
+                                                  //                   .clearTenant();
+                                                  //               // handleEdit(Propertytype);
+                                                  //               var check = await Navigator.push(
+                                                  //                   context,
+                                                  //                   MaterialPageRoute(
+                                                  //                       builder: (context) => Edit_lease(
+                                                  //                             lease: lease,
+                                                  //                             leaseId: lease.leaseId!,
+                                                  //                           )));
+                                                  //               if (check ==
+                                                  //                   true) {
+                                                  //                 setState(() {
+                                                  //                   futureLease = LeaseRepository().fetchLease("");
+                                                  //                   //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                  //                 });
+                                                  //               }
+                                                  //             },
+                                                  //           ),
+                                                  //           IconButton(
+                                                  //             icon: FaIcon(
+                                                  //               FontAwesomeIcons
+                                                  //                   .trashCan,
+                                                  //               size: 20,
+                                                  //               color: Color
+                                                  //                   .fromRGBO(
+                                                  //                       21,
+                                                  //                       43,
+                                                  //                       83,
+                                                  //                       1),
+                                                  //             ),
+                                                  //             onPressed: () {
+                                                  //
+                                                  //               _attemptDeleteLease(context,lease);
+                                                  //               //handleDelete(Propertytype);
+                                                  //
+                                                  //             },
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //   ],
+                                                  // ),
                                                   Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                                .sortUp
+                                                            .sortUp
                                                             : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
+                                                            .sortDown,
+                                                        size: 20,
                                                         color:
-                                                            Colors.transparent,
+                                                        Colors.transparent,
                                                       ),
                                                       Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            SizedBox(
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    .08),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Rent Cycle: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${lease.rentCycle ?? ''}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Rent Start: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${lease.rentDueDate}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Rent: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${lease.amount}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Created At: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${lease.createdAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Deposit Held ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${lease.deposit}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Charges: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${lease.recurringCharge}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Updated At: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${lease.updatedAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
+                                                        child: Table(
+                                                          columnWidths: {
+                                                            0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            1: FlexColumnWidth(),
+                                                          },
                                                           children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                Provider.of<SelectedCosignersProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .clearCosigner();
-                                                                Provider.of<SelectedTenantsProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .clearTenant();
-                                                                // handleEdit(Propertytype);
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_lease(
-                                                                              lease: lease,
-                                                                              leaseId: lease.leaseId!,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(() {
-                                                                    futureLease = LeaseRepository().fetchLease("");
-                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                                  });
-                                                                }
-                                                              },
+                                                            _buildTableRow(
+                                                                'Rent Cycle:', _getDisplayValue(lease.rentCycle),
+                                                                'Deposites Held:', _getDisplayValue(lease.deposit.toString())
                                                             ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-
-                                                                _attemptDeleteLease(context,lease);
-                                                                //handleDelete(Propertytype);
-
-                                                              },
+                                                            _buildTableRow(
+                                                                'Charges:', _getDisplayValue(lease.recurringCharge.toString()),
+                                                                'Rent Start:', formatDate('${lease.rentDueDate}')
+                                                            ),
+                                                            _buildTableRow(
+                                                                'Rent :', _getDisplayValue(lease.rentalUnit),
+                                                                'Created At:', formatDate('${lease.createdAt}')
+                                                            ),
+                                                            _buildTableRow(
+                                                                'Updated At:', formatDate('${lease.updatedAt}'),
+                                                                '', ''
                                                             ),
                                                           ],
                                                         ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Column(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          IconButton(
+                                                            icon: FaIcon(
+                                                              FontAwesomeIcons.edit,
+                                                              size: 20,
+                                                              color:blueColor,
+                                                            ),
+                                                            onPressed: () async {
+                                                              Provider.of<SelectedCosignersProvider>(
+                                                                                        context,
+                                                                                        listen:
+                                                                                            false)
+                                                                                    .clearCosigner();
+                                                                                Provider.of<SelectedTenantsProvider>(
+                                                                                        context,
+                                                                                        listen:
+                                                                                            false)
+                                                                                    .clearTenant();
+                                                                                // handleEdit(Propertytype);
+                                                                                var check = await Navigator.push(
+                                                                                    context,
+                                                                                    MaterialPageRoute(
+                                                                                        builder: (context) => Edit_lease(
+                                                                                              lease: lease,
+                                                                                              leaseId: lease.leaseId!,
+                                                                                            )));
+                                                                                if (check ==
+                                                                                    true) {
+                                                                                  setState(() {
+                                                                                    futureLease = LeaseRepository().fetchLease("");
+                                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                                                  });
+                                                                                }
+                                                            },
+                                                          ),
+                                                          IconButton(
+                                                            icon: FaIcon(
+                                                              FontAwesomeIcons.trashCan,
+                                                              size: 20,
+                                                              color:blueColor,
+                                                            ),
+                                                            onPressed: () {
+                                                              _attemptDeleteLease(context,lease);
+                                                              //               //handleDelete(Propertytype);
+                                                            },
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
@@ -1553,6 +1652,55 @@ class _Lease_tableState extends State<Lease_table> {
         ),
       ),
     );
+  }
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+    return TableRow(
+      children: [
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  leftLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 2.0), // Space between label and value
+                Text(
+                  leftValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  rightLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 2.0), // Space between label and value
+                Text(
+                  rightValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getDisplayValue(String? value) {
+    // Return 'N/A' if the value is null or empty, otherwise return the value
+    return (value == null || value.trim().isEmpty) ? 'N/A' : value;
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,

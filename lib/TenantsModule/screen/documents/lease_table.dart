@@ -172,7 +172,7 @@ class _Lease_TableState extends State<Lease_Table> {
                 },
                 child: Row(
                   children: [
-                    Text("     Lease Start", style: TextStyle(color: Colors.white,fontSize: 14)),
+                    Text("  Lease Start", style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
                    /* ascending2
                         ? Padding(
@@ -221,7 +221,7 @@ class _Lease_TableState extends State<Lease_Table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Lease End", style: TextStyle(color: Colors.white,fontSize: 14)),
+                    Text(" Lease End", style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -987,7 +987,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .04),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
@@ -1049,7 +1049,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                             .sortUp
                                                             : FontAwesomeIcons
                                                             .sortDown,
-                                                        size: 50,
+                                                        size: 30,
                                                         color:
                                                         Colors.transparent,
                                                       ),
@@ -1393,13 +1393,14 @@ class _Lease_TableState extends State<Lease_Table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

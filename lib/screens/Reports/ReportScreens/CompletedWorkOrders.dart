@@ -852,6 +852,8 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(color: blueColor)),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -864,6 +866,9 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                     color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
                                     border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                   ),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(color: blueColor),
+                                  // ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(

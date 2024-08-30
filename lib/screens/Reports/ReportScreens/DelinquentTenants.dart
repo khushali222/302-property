@@ -1699,6 +1699,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(color: blueColor)),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -1712,6 +1714,9 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                     color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
                                     border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                   ),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(color: blueColor),
+                                  // ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(

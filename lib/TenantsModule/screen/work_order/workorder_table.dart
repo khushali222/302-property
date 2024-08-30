@@ -102,7 +102,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
             ),*/
 
             Expanded(
-              flex: 4,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -179,7 +179,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Property", style: TextStyle(color: Colors.white)),
+                    Text("   Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -228,7 +228,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Status", style: TextStyle(color: Colors.white)),
+                    Text("Status", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -400,6 +400,55 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   //     ),
   //   );
   // }
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+    return TableRow(
+      children: [
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  leftLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 4.0), // Space between label and value
+                Text(
+                  leftValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  rightLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 4.0), // Space between label and value
+                Text(
+                  rightValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getDisplayValue(String? value) {
+    // Return 'N/A' if the value is null or empty, otherwise return the value
+    return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+  }
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(WorkOrder d)? getField) {
     return TableCell(
@@ -996,11 +1045,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 4,
+                                                  flex: 3,
                                                   child: InkWell(
                                                     onTap: (){
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
                                                     },
                                                     child: Padding(
                                                       padding: const EdgeInsets.only(left: 8.0),
@@ -1021,7 +1076,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .04),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
@@ -1039,7 +1094,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .04),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
@@ -1065,9 +1120,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                         ),
                                         if (isExpanded)
                                           Container(
+
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 0.0),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1082,134 +1138,31 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                             .sortUp
                                                             : FontAwesomeIcons
                                                             .sortDown,
-                                                        size: 50,
+                                                        size: 30,
                                                         color:
                                                         Colors.transparent,
                                                       ),
                                                       Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Category: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: '${workorder.workCategory}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                        child: Table(
+                                                          columnWidths: {
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
+                                                            0: FlexColumnWidth(), // Distribute columns equally
+                                                            1: FlexColumnWidth(),
+                                                          },
+                                                          children: [
+                                                            _buildTableRow(
+                                                                'Category:', _getDisplayValue(workorder.workCategory),
+                                                                'Assign:', _getDisplayValue(workorder.staffMemberName)
                                                             ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Created At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate('${workorder.createdAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 6),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Assign : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                    '${workorder.staffMemberName}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(height: MediaQuery.of(context).size.height * .0065),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Updated At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:formatDate( '${workorder.updatedAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                            _buildTableRow(
+                                                                'Created At:',formatDate('${workorder.createdAt}'),
+                                                                'Updated At:', formatDate('${workorder.updatedAt}')
                                                             ),
 
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5),
                                                      /* Container(
                                                         width: 40,
                                                         child: Column(
@@ -1268,6 +1221,46 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                       ),*/
                                                     ],
                                                   ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+
+                                                     // SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: InkWell(
+                                                          onTap:(){
+                                                            Navigator.of(context)
+                                                                .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+                                            },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+
                                                 ],
                                               ),
                                             ),

@@ -429,6 +429,7 @@ class NarrowScreenLayout extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
+          SizedBox(height: 10,),
           titleBar(
             title: 'Reports',
             width: MediaQuery.of(context).size.width * .98,
