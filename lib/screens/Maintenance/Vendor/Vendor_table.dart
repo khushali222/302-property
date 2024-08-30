@@ -907,7 +907,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                     child: Row(
                                                       children: [
                                                         SizedBox(
-                                                          width: 20,
+                                                          width: 30,
                                                         ),
                                                         InkWell(
                                                           onTap: () async {
@@ -1167,13 +1167,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

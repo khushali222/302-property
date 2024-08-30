@@ -37,11 +37,12 @@ class _BarchartState extends State<Barchart> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      final url = Uri.parse('$Api_url/api/payment/monthly-summary');
+      final url = Uri.parse('$Api_url/api/payment/monthly-summary/$id');
       final response = await http.get(url,headers: {
         "id":"CRM $id",
         "authorization" : "CRM $token"
       } );
+      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body)['data'];
         Map<int, double> revenueMap = {};

@@ -718,7 +718,7 @@ class _StaffTableState extends State<StaffTable> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -738,7 +738,7 @@ class _StaffTableState extends State<StaffTable> {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    '   ${staffmembers.staffmemberName}',
+                                                    '${staffmembers.staffmemberName}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1149,13 +1149,14 @@ class _StaffTableState extends State<StaffTable> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

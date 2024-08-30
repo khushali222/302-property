@@ -851,7 +851,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                           SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: blueColor)),
+                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -861,7 +861,8 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
                                 return Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: blueColor),
+                                    color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                   ),
                                   child: Column(
                                     children: <Widget>[
@@ -1019,8 +1020,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
-                                                                      color: Colors
-                                                                          .grey), // Light and grey
+                                                                      color: grey), // Light and grey
                                                                 ),
                                                               ],
                                                             ),
@@ -1047,8 +1047,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
-                                                                      color: Colors
-                                                                          .grey), // Light and grey
+                                                                      color: grey), // Light and grey
                                                                 ),
                                                               ],
                                                             ),

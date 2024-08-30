@@ -94,7 +94,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -147,7 +147,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -171,7 +171,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("Status",
+                    const Text("       Status",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending2
@@ -196,6 +196,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -220,7 +221,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("     Billable ",
+                    const Text("        Billable ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     /*ascending3
@@ -764,7 +765,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                     color: const Color(0xFF8A95A8),
                                   ),
                                   contentPadding: const EdgeInsets.only(
-                                      left: 5, bottom: 11, top: 14)),
+                                      left: 5, bottom: 10, top: 14)),
                             ),
                           ),
                         ],
@@ -1020,7 +1021,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   child: Container(
                                                     margin:
                                                         const EdgeInsets.only(
-                                                            left: 5),
+                                                            left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? const EdgeInsets.only(
                                                             bottom: 10)
@@ -1055,7 +1056,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                   )));
                                                     },
                                                     child: Text(
-                                                      '   ${workOrder.workOrderData?.workSubject?.isNotEmpty == true ? workOrder.workOrderData!.workSubject! : 'N/A'}',
+                                                      '${workOrder.workOrderData?.workSubject?.isNotEmpty == true ? workOrder.workOrderData!.workSubject! : 'N/A'}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -1432,13 +1433,14 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

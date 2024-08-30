@@ -639,16 +639,17 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
               height: 20,
             ),
             //add propertytype
-            if(permissions!.documentsAdd)
+
               Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
+                    width: permissions!.documentsAdd ? MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .91 ,
                     title: 'Insurance',
                   ),
+                  if(permissions!.documentsAdd)
                   GestureDetector(
                     onTap: () async {
               final result = await Navigator.of(context).push(
@@ -910,7 +911,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -922,7 +923,8 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1098,8 +1100,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1124,8 +1125,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1150,8 +1150,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),

@@ -801,6 +801,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
             child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    SizedBox(height: 10,),
                     FutureBuilder<getPlanDetailModel?>(
                       future: _futurePlanDetails,
                       builder: (context, snapshot) {
@@ -821,7 +822,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                         return Column(
                           children: [
                             if (MediaQuery.of(context).size.width < 500)
-                              Padding(
+
+                             /* Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
                                   width: double.infinity,
@@ -1160,6 +1162,257 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                       const SizedBox(height: 16)
                                     ],
                                   ),
+                                ),
+                              ),*/
+
+                              Container(
+
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 45,
+                                      width: MediaQuery.of(context).size.width * .91,
+
+
+                                      decoration: BoxDecoration(
+                                          color: blueColor,
+                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5),)
+                                      ),
+                                      child: Center(child: Text("Current Subscription Plan Details",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
+                                    ),
+                                    Container(
+                                      height: 50,
+                                      width: MediaQuery.of(context).size.width * .91,
+
+                                      decoration: BoxDecoration(
+                                        border:Border.all(color: blueColor),
+                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),bottomRight: Radius.circular(5),)
+                                      ),
+                                      child:  Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            height: 40,
+                                            width: MediaQuery.of(context).size.width * .41,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                // Add your onPressed code here
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromRGBO(38, 194, 44, 1),
+                                                //  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Text(
+                                                  'Plan Upgrade',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          SizedBox(
+                                            height: 40,
+                                            width: MediaQuery.of(context).size.width * .41,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                _showEnhancedAlert(context, data.subscriptionId!, data.purchaseId!);
+                                                print(data.subscriptionId);
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromRGBO(255, 0, 0, 1),
+                                                //  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Text(
+                                                  'Cancel Subscription',
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+
+
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: 55,
+                                          padding: EdgeInsets.all(8),
+                                          width: MediaQuery.of(context).size.width * .89 / 2,
+                                          decoration: BoxDecoration(
+                                              border:Border.all(color: blueColor)
+
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Plan Name : ",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "${data.planDetail?.planName}",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Plan Price   :  ",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${data.planDetail?.planPrice}",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 5,),
+                                        Container(
+                                          height: 55,
+                                          padding: EdgeInsets.all(8),
+                                          width: MediaQuery.of(context).size.width * .89 / 2,
+                                          decoration: BoxDecoration(
+                                              border:Border.all(color: blueColor)
+
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Purchase Date : ",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    formatDate(data
+                                                        .purchaseDate!),
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Billing Period : ",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${data.planDetail?.billingInterval}",
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
                               ),
                             if (MediaQuery.of(context).size.width > 500)
@@ -1644,7 +1897,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   const SizedBox(height: 20),
                                   Container(
                                     decoration: BoxDecoration(
-                                        border: Border.all(color: blueColor)),
+                                        border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1656,7 +1909,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
                                         return Container(
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: blueColor),
+                                            color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                            border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                           ),
                                           child: Column(
                                             children: <Widget>[

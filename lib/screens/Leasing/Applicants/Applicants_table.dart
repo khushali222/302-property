@@ -99,6 +99,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -151,6 +152,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -198,6 +200,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -909,7 +912,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   child: Container(
                                                     margin:
                                                         const EdgeInsets.only(
-                                                            left: 5),
+                                                            left: 5,right:
+                                                        5),
                                                     padding: !isExpanded
                                                         ? const EdgeInsets.only(
                                                             bottom: 10)
@@ -929,6 +933,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex: 3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       Navigator.push(
@@ -944,7 +949,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              left: 10.0),
+                                                              left: 0.0),
                                                       child: Text(
                                                         '${applicant.applicantFirstName} ${applicant.applicantLastName}',
                                                         style: const TextStyle(
@@ -963,8 +968,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .02),
                                                 Expanded(
+                                                  flex: 3,
                                                   child: Text(
                                                     '${applicant.applicantEmail}',
                                                     style: const TextStyle(
@@ -981,8 +987,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .05),
                                                 Expanded(
+                                                  flex: 2,
                                                   child: Text(
                                                     '${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
                                                     style: const TextStyle(
@@ -1169,13 +1176,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

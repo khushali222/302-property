@@ -102,6 +102,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -152,6 +153,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -175,7 +177,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Phone", style: TextStyle(color: Colors.white)),
+                    Text("     Phone", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -199,49 +201,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
 
-                    // Sorting logic here
-                  });
-                },
                 child: Row(
                   children: [
                     Text("   Action", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+
                   ],
                 ),
               ),
@@ -562,88 +529,77 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             // ),
 
             SizedBox(height: 10),
-            Padding(
-              padding: EdgeInsets.only(left: 19, right: 13),
-              child: Row(
-                children: [
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 2),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 19),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
-                    child: Container(
-                      height:
-                          (MediaQuery.of(context).size.width < 500) ? 40 : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(2),
-                        border: Border.all(color: Color(0xFF8A95A8)),
+          Padding(
+            padding: EdgeInsets.only(left: 19, right: 13),
+            child: Row(
+              children: [
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 19),
+                Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.circular(2),
+                  child: Container(
+                    height: (MediaQuery.of(context).size.width < 500) ? 40 : 50,
+                    width: MediaQuery.of(context).size.width < 500
+                        ? MediaQuery.of(context).size.width * .45 // Slightly reduced width for search field
+                        : MediaQuery.of(context).size.width * .40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(2),
+                      border: Border.all(color: Color(0xFF8A95A8)),
+                    ),
+                    child: TextField(
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 14,
                       ),
-                      child: TextField(
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 12
-                                : 14),
-                        onChanged: (value) {
-                          setState(() {
-                            searchValue = value;
-                          });
-                        },
-                        cursorColor: Colors.blue,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Search here...",
-                          hintStyle: TextStyle(
-                              color: Color(0xFF8A95A8),
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 14
-                                  : 18),
-                          contentPadding:
-                              (EdgeInsets.only(left: 8, bottom: 13, top: 7)),
+                      onChanged: (value) {
+                        setState(() {
+                          searchValue = value;
+                        });
+                      },
+                      cursorColor: Colors.blue,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Search here...",
+                        hintStyle: TextStyle(
+                          color: Color(0xFF8A95A8),
+                          fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
                         ),
+                        contentPadding: EdgeInsets.only(left: 8, bottom: 13, top: 7),
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Row(
-                    children: [
-                      Text(
-                        'Added : ${rentalownerCount.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                        ),
+                ),
+                Spacer(),
+                Wrap(
+                  spacing: 8, // Space between items horizontally
+                  runSpacing: 4, // Space between items vertically
+                  children: [
+                    Text(
+                      'Added: ${rentalownerCount.toString()}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8A95A8),
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
                       ),
-                      SizedBox(
-                        width: 5,
+                    ),
+                    Text(
+                      'Total: ${rentalOwnerCountLimit.toString()}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8A95A8),
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
                       ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total: ${rentalOwnerCountLimit.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 10),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 25),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 10),
+                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 25),
+              ],
             ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+          ),
+
+          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -740,7 +696,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -759,6 +715,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex:3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       Navigator.push(
@@ -772,7 +729,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                   )));
                                                     },
                                                     child: Text(
-                                                      '   ${rentals.rentalOwnername}',
+                                                      '${rentals.rentalOwnername}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -783,12 +740,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   ),
                                                 ),
                                                 SizedBox(
+
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
                                                             .08),
                                                 Expanded(
+                                                  flex:3,
                                                   child: Text(
                                                     '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
@@ -804,8 +763,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .03),
                                                 Expanded(
+                                                  flex:2,
                                                   child: Container(
                                                     child: Row(
                                                       children: [
@@ -983,13 +943,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

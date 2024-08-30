@@ -21,7 +21,7 @@ import 'make_payment.dart';
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
 
 import '../../../model/LeaseLedgerModel.dart';
-import '../../test_table/card.dart';
+
 
 import 'addcard/AddCard.dart';
 import 'enterCharge.dart';

@@ -24,12 +24,7 @@ import '../screens/Staff_Member/Staffmember_table.dart';
 import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
 import '../screens/Staff_Member/Staffmemvertable.dart';
 
-import '../screens/test_table/Property_table.dart';
-import '../screens/test_table/add_lease.dart';
-import '../screens/test_table/card.dart';
-import '../screens/test_table/properties_table.dart';
-import '../screens/test_table/rentalowners_table.dart';
-import '../screens/test_table/staff_table.dart';
+
 
 Widget buildListTile(
   BuildContext context,
@@ -95,40 +90,42 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
  // }
 }
 
-Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
-    String title, List<String> subTopics,
-    {String? selectedSubtopic, bool? initvalue}) {
+Widget buildDropdownListTile(
+    BuildContext context,
+    Widget leadingIcon,
+    String title,
+    List<String> subTopics,
+    List<Widget> subTopicIcons, {
+      String? selectedSubtopic,
+      bool? initvalue,
+    }) {
   // Check if the selectedSubtopic is in the list of subTopics
   bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     padding: EdgeInsets.symmetric(horizontal: 16),
-    // decoration: BoxDecoration(
-    //   color: subTopics.contains(selectedOption) ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
-    //   borderRadius: BorderRadius.circular(10),
-    // ),
     child: ExpansionTile(
-     // backgroundColor: Color(value),
       initiallyExpanded: isExpanded,
-      //initiallyExpanded: true,
-      // initiallyExpanded: initvalue!,
       leading: leadingIcon,
-      title: Text(title,style: TextStyle(color: blueColor),),
-      children: subTopics.map((
-        subTopic,
-      ) {
+      title: Text(
+        title,
+        style: TextStyle(color: blueColor),
+      ),
+      children: subTopics.asMap().entries.map((entry) {
+        int index = entry.key;
+        String subTopic = entry.value;
         bool active = selectedSubtopic == subTopic;
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
-              color:
-                  active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+              color: active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
-              // tileColor: selectedSubtopic == subTopic ? Colors.red :Colors.transparent ,
+              leading: subTopicIcons[index], // Add icon here
               title: Text(
                 subTopic,
                 style: TextStyle(
@@ -147,3 +144,4 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     ),
   );
 }
+

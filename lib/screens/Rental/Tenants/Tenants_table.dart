@@ -89,6 +89,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -143,6 +144,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -190,6 +192,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -216,25 +219,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                   children: [
                     Text("Created At",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+
                   ],
                 ),
               ),
@@ -835,103 +822,82 @@ class _Tenants_tableState extends State<Tenants_table> {
 
             SizedBox(height: 10),
             //search
-            Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
-              child: Row(
-                children: [
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 24),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
-                    child: Container(
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 12
-                                          : 14),
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                });
-                              },
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                    // fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8A95A8),
-                                    fontSize:
-                                           MediaQuery.of(context).size.width < 500
-                                            ? 14
-                                            : 18),
-                                contentPadding: (EdgeInsets.only(
-                                    left: 8, bottom: 10, top: 14)),
+          Padding(
+            padding: const EdgeInsets.only(left: 13, right: 13),
+            child: Row(
+              children: [
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 5),
+                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 24),
+                Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.circular(2),
+                  child: Container(
+                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width: MediaQuery.of(context).size.width < 500
+                        ? MediaQuery.of(context).size.width * .4
+                        : MediaQuery.of(context).size.width * .49,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(2),
+                      border: Border.all(color: Color(0xFF8A95A8)),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: TextField(
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 14,
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                searchvalue = value;
+                              });
+                            },
+                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Search here...",
+                              hintStyle: TextStyle(
+                                color: Color(0xFF8A95A8),
+                                fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
                               ),
+                              contentPadding: EdgeInsets.only(left: 8, bottom: 10, top: 14),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  Spacer(),
-                  Row(
-                    children: [
-                      Text(
-                        'Added : ${rentalCount.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                        ),
+                ),
+                Spacer(),
+                Wrap(
+                  spacing: 8, // Space between the "Added" and "Total" texts
+                  runSpacing: 4, // Space between lines if they wrap
+                  children: [
+                    Text(
+                      'Added: ${rentalCount.toString()}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8A95A8),
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
                       ),
-                      SizedBox(
-                        width: 5,
+                    ),
+                    Text(
+                      'Total: ${propertyCountLimit.toString()}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8A95A8),
+                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
                       ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total: ${propertyCountLimit.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 10),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 25),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+
+              ],
             ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+          ),
+
+          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               //for phone
               Padding(
@@ -1053,6 +1019,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex:3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       Navigator.push(
@@ -1086,8 +1053,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .05),
+                                                            .03),
                                                 Expanded(
+                                                  flex:3,
                                                   child: Text(
                                                     '${tenants.tenantPhoneNumber}',
                                                     style: TextStyle(
@@ -1103,8 +1071,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .05),
+                                                            .02),
                                                 Expanded(
+                                                  flex:2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
@@ -1344,13 +1313,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

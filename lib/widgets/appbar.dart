@@ -28,7 +28,7 @@ class widget_302 {
   }) {
     return AppBar(
       iconTheme: const IconThemeData(color: Colors.black),
-      elevation: 0,
+      elevation: 1,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       titleSpacing:00,
