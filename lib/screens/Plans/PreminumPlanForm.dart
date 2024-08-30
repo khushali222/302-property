@@ -18,8 +18,9 @@ import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:three_zero_two_property/screens/test_table/add_lease.dart';
+
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import '../../StaffModule/screen/RentalRoll/edit_lease.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
 

@@ -897,7 +897,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -909,7 +909,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1272,13 +1273,14 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

@@ -97,7 +97,7 @@ class _Profile_screenState extends State<Profile_screen> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(currentpage: 'Profile',),
+      drawer: CustomDrawer(currentpage: 'Profile',dropdown: false,),
       body: _isLoading
           ? Center(
         child: SpinKitFadingCircle(

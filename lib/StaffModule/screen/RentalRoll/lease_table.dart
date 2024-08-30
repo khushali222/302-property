@@ -14,7 +14,7 @@ import '../../repository/lease.dart';
 import 'SummeryPageLease.dart';
 import '../../model/staffpermission.dart';
 import '../../repository/staffpermission_provider.dart';
-import '../RentalRoll/edit_lease.dart';
+import 'edit_lease.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/Edit_RentalOwners.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 import '../../widgets/appbar.dart';
@@ -1150,7 +1150,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 if (check ==
                                                                     true) {
                                                                   setState(
-                                                                          () {});
+                                                                          () {
+
+                                                                            futureLease = LeaseRepository().fetchLease("");
+                                                                          });
                                                                 }
                                                               },
                                                             ),
@@ -1219,13 +1222,14 @@ class _Lease_tableState extends State<Lease_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

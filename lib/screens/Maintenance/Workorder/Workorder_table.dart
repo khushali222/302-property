@@ -94,7 +94,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -147,7 +147,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -171,7 +171,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("Status",
+                    const Text("       Status",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending2
@@ -196,6 +196,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -220,7 +221,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("     Billable ",
+                    const Text("   Billable ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     /*ascending3
@@ -764,7 +765,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                     color: const Color(0xFF8A95A8),
                                   ),
                                   contentPadding: const EdgeInsets.only(
-                                      left: 5, bottom: 11, top: 14)),
+                                      left: 5, bottom: 10, top: 14)),
                             ),
                           ),
                         ],
@@ -967,7 +968,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                             const SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -979,8 +982,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                   //return CustomExpansionTile(data: Data, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -1020,7 +1027,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   child: Container(
                                                     margin:
                                                         const EdgeInsets.only(
-                                                            left: 5),
+                                                            left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? const EdgeInsets.only(
                                                             bottom: 10)
@@ -1043,19 +1050,17 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   flex:3,
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  Workorder_summery(
-                                                                    workorder_id:
-                                                                        workOrder
-                                                                            .workOrderData
-                                                                            ?.workOrderId,
-                                                                  )));
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
                                                     },
                                                     child: Text(
-                                                      '   ${workOrder.workOrderData?.workSubject?.isNotEmpty == true ? workOrder.workOrderData!.workSubject! : 'N/A'}',
+                                                      '${workOrder.workOrderData?.workSubject?.isNotEmpty == true ? workOrder.workOrderData!.workSubject! : 'N/A'}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -1088,15 +1093,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .05),
+                                                            .03),
                                                 Expanded(
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+
                                                     children: [
                                                       if (workOrder
                                                               .workOrderData
@@ -1130,267 +1130,473 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
+                                                horizontal: 2.0),
                                             margin: const EdgeInsets.only(
-                                                bottom: 20),
+                                                bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //       MainAxisAlignment.start,
+                                                  //   children: [
+                                                  //     FaIcon(
+                                                  //       isExpanded
+                                                  //           ? FontAwesomeIcons
+                                                  //               .sortUp
+                                                  //           : FontAwesomeIcons
+                                                  //               .sortDown,
+                                                  //       size: 50,
+                                                  //       color:
+                                                  //           Colors.transparent,
+                                                  //     ),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //             CrossAxisAlignment
+                                                  //                 .start,
+                                                  //         children: <Widget>[
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       ' Property : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: workOrder.rentalAddress?.rentalAdress?.isNotEmpty ==
+                                                  //                           true
+                                                  //                       ? workOrder
+                                                  //                           .rentalAddress!
+                                                  //                           .rentalAdress!
+                                                  //                       : 'N/A',
+                                                  //                   style:
+                                                  //                       const TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight
+                                                  //                             .w700,
+                                                  //                     color: Colors
+                                                  //                         .grey,
+                                                  //                   ),
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           const SizedBox(
+                                                  //             height: 5,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       ' Category : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: workOrder.workOrderData?.workCategory?.isNotEmpty ==
+                                                  //                           true
+                                                  //                       ? workOrder
+                                                  //                           .workOrderData!
+                                                  //                           .workCategory!
+                                                  //                       : 'N/A',
+                                                  //                   style:
+                                                  //                       const TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight
+                                                  //                             .w700,
+                                                  //                     color: Colors
+                                                  //                         .grey,
+                                                  //                   ),
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           const SizedBox(
+                                                  //             height: 5,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Created At : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate4(workOrder
+                                                  //                       .workOrderData!
+                                                  //                       .createdAt!),
+                                                  //                   style:
+                                                  //                       const TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight
+                                                  //                             .w700,
+                                                  //                     color: Colors
+                                                  //                         .grey,
+                                                  //                   ),
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     const SizedBox(width: 5),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //             CrossAxisAlignment
+                                                  //                 .start,
+                                                  //         children: <Widget>[
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Assign ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: (workOrder.staffMember?.staffmemberName?.isNotEmpty ==
+                                                  //                           true)
+                                                  //                       ? workOrder
+                                                  //                           .staffMember!
+                                                  //                           .staffmemberName!
+                                                  //                       : 'N/A',
+                                                  //                   style:
+                                                  //                       const TextStyle(
+                                                  //                     fontWeight:
+                                                  //                         FontWeight
+                                                  //                             .w700,
+                                                  //                     color: Colors
+                                                  //                         .grey,
+                                                  //                   ),
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           const SizedBox(
+                                                  //             height: 5,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Updated At : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate3(
+                                                  //                       '${workOrder.workOrderData?.updatedAt}'),
+                                                  //                   style: const TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     Container(
+                                                  //       width: 40,
+                                                  //       child: Column(
+                                                  //         children: [
+                                                  //           IconButton(
+                                                  //             icon:
+                                                  //                 const FaIcon(
+                                                  //               FontAwesomeIcons
+                                                  //                   .edit,
+                                                  //               size: 20,
+                                                  //               color: Color
+                                                  //                   .fromRGBO(
+                                                  //                       21,
+                                                  //                       43,
+                                                  //                       83,
+                                                  //                       1),
+                                                  //             ),
+                                                  //             onPressed:
+                                                  //                 () async {
+                                                  //               // handleEdit(Propertytype);
+                                                  //
+                                                  //               var check = await Navigator.push(
+                                                  //                   context,
+                                                  //                   MaterialPageRoute(
+                                                  //                       builder: (context) => ResponsiveEditWorkOrder(
+                                                  //                             workorderId: workOrder.workOrderData!.workOrderId!,
+                                                  //                           )));
+                                                  //               if (check ==
+                                                  //                   true) {
+                                                  //                 setState(() {
+                                                  //                   futureworkorders =
+                                                  //                       WorkOrderRepository()
+                                                  //                           .fetchWorkOrders();
+                                                  //                 });
+                                                  //               }
+                                                  //             },
+                                                  //           ),
+                                                  //           IconButton(
+                                                  //             icon:
+                                                  //                 const FaIcon(
+                                                  //               FontAwesomeIcons
+                                                  //                   .trashCan,
+                                                  //               size: 20,
+                                                  //               color: Color
+                                                  //                   .fromRGBO(
+                                                  //                       21,
+                                                  //                       43,
+                                                  //                       83,
+                                                  //                       1),
+                                                  //             ),
+                                                  //             onPressed: () {
+                                                  //               //handleDelete(Propertytype);
+                                                  //               _showAlert(
+                                                  //                   context,
+                                                  //                   workOrder
+                                                  //                       .workOrderData!
+                                                  //                       .workOrderId!);
+                                                  //             },
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //   ],
+                                                  // ),
                                                   Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                                .sortUp
+                                                            .sortUp
                                                             : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
+                                                            .sortDown,
+                                                        size: 30,
                                                         color:
-                                                            Colors.transparent,
+                                                        Colors.transparent,
                                                       ),
                                                       Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        ' Property : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: workOrder.rentalAddress?.rentalAdress?.isNotEmpty ==
-                                                                            true
-                                                                        ? workOrder
-                                                                            .rentalAddress!
-                                                                            .rentalAdress!
-                                                                        : 'N/A',
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        ' Category : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: workOrder.workOrderData?.workCategory?.isNotEmpty ==
-                                                                            true
-                                                                        ? workOrder
-                                                                            .workOrderData!
-                                                                            .workCategory!
-                                                                        : 'N/A',
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Created At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate4(workOrder
-                                                                        .workOrderData!
-                                                                        .createdAt!),
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Assign ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: (workOrder.staffMember?.staffmemberName?.isNotEmpty ==
-                                                                            true)
-                                                                        ? workOrder
-                                                                            .staffMember!
-                                                                            .staffmemberName!
-                                                                        : 'N/A',
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Updated At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate3(
-                                                                        '${workOrder.workOrderData?.updatedAt}'),
-                                                                    style: const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
+                                                        child: Table(
+                                                          columnWidths: {
+                                                            0: FlexColumnWidth(), // Distribute columns equally
+                                                            1: FlexColumnWidth(),
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
+                                                          },
                                                           children: [
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
-
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => ResponsiveEditWorkOrder(
-                                                                              workorderId: workOrder.workOrderData!.workOrderId!,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(() {
-                                                                    futureworkorders =
-                                                                        WorkOrderRepository()
-                                                                            .fetchWorkOrders();
-                                                                  });
-                                                                }
-                                                              },
+                                                            _buildTableRow(
+                                                                'Property:', _getDisplayValue(workOrder.rentalAddress?.rentalAdress),
+                                                                'Assign:', _getDisplayValue(workOrder.staffMember?.staffmemberName)
                                                             ),
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    workOrder
-                                                                        .workOrderData!
-                                                                        .workOrderId!);
-                                                              },
+                                                            _buildTableRow(
+                                                                'Category :', _getDisplayValue(workOrder.workOrderData?.workCategory),
+                                                                'Created At:', formatDate('${workOrder.workOrderData?.createdAt}')
+                                                            ),
+                                                            _buildTableRow(
+                                                                'Updated At:', formatDate('${workOrder.workOrderData?.updatedAt}}'),
+                                                                '', ''
                                                             ),
                                                           ],
                                                         ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      // Column(
+                                                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      //   children: [
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.edit,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () async {
+                                                      //         // handleEdit(Propertytype);
+                                                      //
+                                                      //                       var check = await Navigator.push(
+                                                      //                           context,
+                                                      //                           MaterialPageRoute(
+                                                      //                               builder: (context) => ResponsiveEditWorkOrder(
+                                                      //                                     workorderId: workOrder.workOrderData!.workOrderId!,
+                                                      //                                   )));
+                                                      //                       if (check ==
+                                                      //                           true) {
+                                                      //                         setState(() {
+                                                      //                           futureworkorders =
+                                                      //                               WorkOrderRepository()
+                                                      //                                   .fetchWorkOrders();
+                                                      //                         });
+                                                      //                       }
+                                                      //       },
+                                                      //     ),
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.trashCan,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () {
+                                                      //         //handleDelete(Propertytype);
+                                                      //                       _showAlert(
+                                                      //                           context,
+                                                      //                           workOrder
+                                                      //                               .workOrderData!
+                                                      //                               .workOrderId!);
+                                                      //       },
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => ResponsiveEditWorkOrder(
+                                                                      workorderId: workOrder.workOrderData!.workOrderId!,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(() {
+                                                                futureworkorders =
+                                                                    WorkOrderRepository()
+                                                                        .fetchWorkOrders();
+                                                              });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showAlert(
+                                                                context,
+                                                                workOrder
+                                                                    .workOrderData!
+                                                                    .workOrderId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        Workorder_summery(
+                                                                          workorder_id:
+                                                                          workOrder
+                                                                              .workOrderData
+                                                                              ?.workOrderId,
+                                                                        )));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],
@@ -1432,13 +1638,14 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),
@@ -1790,5 +1997,54 @@ class _Workorder_tableState extends State<Workorder_table> {
         ),
       ),
     );
+  }
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+    return TableRow(
+      children: [
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  leftLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 2.0), // Space between label and value
+                Text(
+                  leftValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  rightLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 2.0), // Space between label and value
+                Text(
+                  rightValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getDisplayValue(String? value) {
+    // Return 'N/A' if the value is null or empty, otherwise return the value
+    return (value == null || value.trim().isEmpty) ? 'N/A' : value;
   }
 }

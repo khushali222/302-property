@@ -2562,8 +2562,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           InkWell(
                                                             onTap: () {
                                                             //  final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
-
+                                                           //for edit pur
                                                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>EditRentalowners(rentalId: widget.rentalId,pro_id: processor_id!,)));
+                                                             // Navigator.push(context, MaterialPageRoute(builder: (context)=>AddRentalowners(OwnersDetails: Ownersdetails,isEdit: true,)));
                                                            //   }
 
                                                             },
@@ -2589,7 +2590,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               //     rentalOwnerPhoneNumber: phonenum.text,
                                                               //     rentalOwnerFirstName: firstname.text,
                                                               //   );
-
                                                               print("hello");
                                                               setState(() {
                                                                 RentalOwner?
@@ -3567,7 +3567,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                                      MediaQuery.of(context).size.width < 500 ? 10.5 : 18),
                                                 ),
                                               ],
                                             ),

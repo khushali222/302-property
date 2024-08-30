@@ -99,6 +99,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -151,6 +152,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -174,8 +176,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("Email", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                     Text("    Phone Number", style: TextStyle(color: Colors.white,fontSize: 14)),
+                     SizedBox(width: 5),
                     ascending2
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
@@ -198,6 +200,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -222,6 +225,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
+                    SizedBox(width: 15),
                     const Text("Status", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending3
@@ -665,9 +669,12 @@ class _Applicants_tableState extends State<Applicants_table> {
               child: Row(
                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
-                    title: 'Applicants',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Applicants',
+                    ),
                   ),                  GestureDetector(
                     onTap: () async {
                       print(applicantCount);
@@ -865,10 +872,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                             _buildHeaders(),
                             const SizedBox(height: 20),
                             Container(
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(
+                              //         color:
+                              //             const Color.fromRGBO(21, 43, 83, 1))
+                              // ),
                               decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                          const Color.fromRGBO(21, 43, 83, 1))),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -878,10 +888,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                                   bool isExpanded = expandedIndex == index;
                                   Datum applicant = entry.value;
                                   return Container(
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(
+                                    //       color: const Color.fromRGBO(
+                                    //           21, 43, 83, 1)),
+                                    // ),
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              21, 43, 83, 1)),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -909,7 +923,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   child: Container(
                                                     margin:
                                                         const EdgeInsets.only(
-                                                            left: 5),
+                                                            left: 5,right:
+                                                        5),
                                                     padding: !isExpanded
                                                         ? const EdgeInsets.only(
                                                             bottom: 10)
@@ -929,22 +944,22 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex: 3,
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  applicant_summery(
-                                                                    applicant_id:
-                                                                        applicant
-                                                                            .applicantId,
-                                                                  )));
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
                                                     },
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              left: 10.0),
+                                                              left: 0.0),
                                                       child: Text(
                                                         '${applicant.applicantFirstName} ${applicant.applicantLastName}',
                                                         style: const TextStyle(
@@ -963,10 +978,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .02),
                                                 Expanded(
+                                                  flex: 3,
                                                   child: Text(
-                                                    '${applicant.applicantEmail}',
+                                                    '${applicant.applicantPhoneNumber}',
                                                     style: const TextStyle(
                                                       color: Color.fromRGBO(
                                                           21, 43, 83, 1),
@@ -981,16 +997,20 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .05),
                                                 Expanded(
-                                                  child: Text(
-                                                    '${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  flex: 3,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left:15.0),
+                                                    child: Text(
+                                                      '   ${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 83, 1),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1007,9 +1027,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
+                                                horizontal: 2.0),
                                             margin: const EdgeInsets.only(
-                                                bottom: 20),
+                                                bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1038,7 +1058,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 children: [
                                                                   const TextSpan(
                                                                     text:
-                                                                        'Phone Number : ',
+                                                                        'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1050,18 +1070,17 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                             1)),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: applicant.applicantPhoneNumber !=
+                                                                    text: applicant.applicantEmail !=
                                                                             null
                                                                         ? applicant
-                                                                            .applicantPhoneNumber
+                                                                            .applicantEmail
                                                                             .toString()
                                                                         : 'N/A',
-                                                                    style: const TextStyle(
+                                                                    style:  TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w700,
-                                                                        color: Colors
-                                                                            .grey),
+                                                                        color: grey),
                                                                   ),
                                                                 ],
                                                               ),
@@ -1069,67 +1088,190 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(applicant);
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => EditApplicant(
-                                                                              applicant: applicant,
-                                                                              applicantId: applicant.applicantId!,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
+                                                      // SizedBox(
+                                                      //   width: 40,
+                                                      //   child: Column(
+                                                      //     children: [
+                                                      //       IconButton(
+                                                      //         icon:
+                                                      //             const FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .edit,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed:
+                                                      //             () async {
+                                                      //           // handleEdit(applicant);
+                                                      //           var check = await Navigator.push(
+                                                      //               context,
+                                                      //               MaterialPageRoute(
+                                                      //                   builder: (context) => EditApplicant(
+                                                      //                         applicant: applicant,
+                                                      //                         applicantId: applicant.applicantId!,
+                                                      //                       )));
+                                                      //           if (check ==
+                                                      //               true) {
+                                                      //             setState(
+                                                      //                 () {
+                                                      //              futureApplicantdata =     ApplicantRepository().fetchApplicants();
+                                                      //                 });
+                                                      //           }
+                                                      //         },
+                                                      //       ),
+                                                      //       IconButton(
+                                                      //         icon:
+                                                      //             const FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .trashCan,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed: () {
+                                                      //           // handleDelete(applicant);
+                                                      //           _showDeleteAlert(
+                                                      //               context,
+                                                      //               applicant
+                                                      //                   .applicantId
+                                                      //                   .toString());
+                                                      //         },
+                                                      //       ),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => EditApplicant(
+                                                                      applicant: applicant,
+                                                                      applicantId: applicant.applicantId!,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(
                                                                       () {
-                                                                   futureApplicantdata =     ApplicantRepository().fetchApplicants();
-                                                                      });
-                                                                }
-                                                              },
+                                                                    futureApplicantdata =     ApplicantRepository().fetchApplicants();
+                                                                  });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
                                                             ),
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                // handleDelete(applicant);
-                                                                _showDeleteAlert(
-                                                                    context,
-                                                                    applicant
-                                                                        .applicantId
-                                                                        .toString());
-                                                              },
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showDeleteAlert(
+                                                                context,
+                                                                applicant
+                                                                    .applicantId
+                                                                    .toString());
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        applicant_summery(
+                                                                          applicant_id:
+                                                                          applicant
+                                                                              .applicantId,
+                                                                        )));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],
@@ -1169,13 +1311,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

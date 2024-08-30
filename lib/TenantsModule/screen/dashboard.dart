@@ -173,8 +173,9 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         print(jsonData["totalBalance"]);
         setState(() {
          // countList[0] = jsonData['property_staffMember'];
-          countList[1] = double.parse(jsonData['totalBalance'].toString()).toStringAsFixed(2) ??0;
-        /*  countList[2] = jsonData['vendorCount'];
+          countList[1] = double.parse(jsonData['totalBalance'].toString()).abs().toStringAsFixed(2);
+
+          /*  countList[2] = jsonData['vendorCount'];
           countList[3] = jsonData['applicantCount'];
           countList[1] = jsonData['workorder_staffMember'];*/
           loading = false;
@@ -1456,17 +1457,23 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                             fontWeight: FontWeight.bold,color: Color.fromRGBO(226, 240, 245, 1)
                                         ),),
                                         SizedBox(height: 10,),
-                                        Container(
-                                          height: 30,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(10)
+                                        InkWell(
+                                          onTap: () {
+                                            if(permissions!.workorderView)
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
+                                          },
+                                          child: Container(
+                                            height: 30,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(10)
+                                            ),
+                                            child: Center(child: Text("View All",style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,color: blueColor
+                                            ))),
                                           ),
-                                          child: Center(child: Text("View All",style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,color: blueColor
-                                          ))),
                                         )
                                       ],
                                     ),
@@ -1511,17 +1518,23 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                             fontWeight: FontWeight.bold,color: Color.fromRGBO(226, 240, 245, 1)
                                         ),),
                                         SizedBox(height: 10,),
-                                        Container(
-                                          height: 30,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(10)
+                                        InkWell(
+                                          onTap: () {
+                                            if(permissions!.workorderView)
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
+                                          },
+                                          child: Container(
+                                            height: 30,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(10)
+                                            ),
+                                            child: Center(child: Text("View All",style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,color:  Color.fromRGBO(91, 134, 213, 1)
+                                            ))),
                                           ),
-                                          child: Center(child: Text("View All",style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,color:  Color.fromRGBO(91, 134, 213, 1)
-                                          ))),
                                         )
                                       ],
                                     ),

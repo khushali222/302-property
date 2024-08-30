@@ -211,7 +211,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(currentpage: 'Dashboard',),
+      drawer: CustomDrawer(currentpage: 'Dashboard',dropdown: false,),
       appBar: widget_302.App_Bar(context: context),
       body: Center(
           child: loading

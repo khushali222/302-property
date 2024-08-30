@@ -227,7 +227,7 @@ class _Staff_tableState extends State<Staff_table> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: widget_302.App_Bar(context: context),
-        drawer: Drawer(
+        /*drawer: Drawer(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           child: SingleChildScrollView(
@@ -284,7 +284,7 @@ class _Staff_tableState extends State<Staff_table> {
               ],
             ),
           ),
-        ),
+        ),*/
         body:
         SingleChildScrollView(
           child: Column(

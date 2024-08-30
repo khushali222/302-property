@@ -322,7 +322,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
-          Provider.of<checkPlanPurchaseProiver>(context, listen: false);
+      Provider.of<checkPlanPurchaseProiver>(context, listen: false);
       if (!provider.isLoading) {
         setState(() {
           globalPlanName =
@@ -398,18 +398,18 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   child: ElevatedButton(
                     child: isPlanCancelling
                         ? const Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 25.0,
-                            ),
-                          )
+                      child: SpinKitFadingCircle(
+                        color: Colors.white,
+                        size: 25.0,
+                      ),
+                    )
                         : Text(
-                            "Yes",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
+                      "Yes",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: blueColor,
                       shape: RoundedRectangleBorder(
@@ -422,7 +422,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                       });
                       SubscriptionService service = SubscriptionService();
                       int statusCode =
-                          await service.cancelSubscription(SubscriptionId);
+                      await service.cancelSubscription(SubscriptionId);
                       int statusCode1 = await service
                           .cancelFromDataBaseSubscription(purchaseId);
 
@@ -437,7 +437,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => PlanPurchaseCard()),
-                          (Route<dynamic> route) => false,
+                              (Route<dynamic> route) => false,
                         );
                       } else {
                         setState(() {
@@ -575,10 +575,10 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $totalPages',
@@ -595,10 +595,10 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= totalrecords
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
@@ -662,21 +662,21 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                     const SizedBox(width: 3),
                     ascending1
                         ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -708,21 +708,21 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                     const SizedBox(width: 5),
                     ascending2
                         ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -739,8 +739,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -801,6 +801,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
             child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    SizedBox(height: 10,),
                     FutureBuilder<getPlanDetailModel?>(
                       future: _futurePlanDetails,
                       builder: (context, snapshot) {
@@ -812,16 +813,17 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                           return const Center(child: Text('No data available'));
                         }
 
-                        final data = snapshot.data!.data;
-                        if (data == null) {
-                          return const Center(
-                              child: Text('No plan details found.'));
-                        }
+                  final data = snapshot.data!.data;
+                  if (data == null) {
+                    return const Center(
+                        child: Text('No plan details found.'));
+                  }
 
                         return Column(
                           children: [
                             if (MediaQuery.of(context).size.width < 500)
-                              Padding(
+
+                             /* Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
                                   width: double.infinity,
@@ -1160,6 +1162,276 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                       const SizedBox(height: 16)
                                     ],
                                   ),
+                                ),
+                              ),*/
+
+                              Container(
+
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 45,
+                                      width: MediaQuery.of(context).size.width * .91,
+
+
+                                      decoration: BoxDecoration(
+                                          color: blueColor,
+                                        borderRadius: BorderRadius.circular(5)
+                                      ),
+                                      child: Center(child: Text("Current Subscription Plan Details",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
+                                    ),
+                                    SizedBox(height: 6,),
+                                    Container(
+                                      height: 50,
+                                      width: MediaQuery.of(context).size.width * .91,
+
+                        //               decoration: BoxDecoration(
+                        //                 border:Border.all(color: blueColor),
+                        // borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),bottomRight: Radius.circular(5),)
+                        //               ),
+                                      child:  Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            height: 40,
+                                            width: MediaQuery.of(context).size.width * .9 /2,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                // Add your onPressed code here
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromRGBO(38, 194, 44, 1),
+                                                //  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Text(
+                                                  'Plan Upgrade',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 8,
+                                          ),
+                                          SizedBox(
+                                            height: 40,
+                                            width: MediaQuery.of(context).size.width * .87 /2,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                _showEnhancedAlert(context, data.subscriptionId!, data.purchaseId!);
+                                                print(data.subscriptionId);
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromRGBO(255, 0, 0, 1),
+                                                //  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Text(
+                                                  'Cancel Subscription',
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+
+
+                                    ),
+                                    SizedBox(height: 6,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: 75,
+                                          padding: EdgeInsets.only(left: 18,right: 8,top: 8,bottom: 8),
+                                          width: MediaQuery.of(context).size.width * .86 / 2,
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                left: BorderSide(color: blueColor.withOpacity(.5)),
+                                                top: BorderSide(color: blueColor.withOpacity(.5)),
+                                                bottom: BorderSide(color: blueColor.withOpacity(.5)),
+                                                // No right side border
+                                              ),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(5),
+                                              bottomLeft: Radius.circular(5),
+                                            ),
+
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Plan Name : ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "${data.planDetail?.planName}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 8),
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Plan Price   :  ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${data.planDetail?.planPrice}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+
+                                        ),
+                                      //  SizedBox(width: 5,),
+                                        Container(
+                                          height: 75,
+                                          padding: EdgeInsets.all(8),
+                                          width: MediaQuery.of(context).size.width * .95 / 2,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              right: BorderSide(color: blueColor.withOpacity(.5)),
+                                              top: BorderSide(color: blueColor.withOpacity(.5)),
+                                              bottom: BorderSide(color: blueColor.withOpacity(.5)),
+                                              // No right side border
+                                            ),
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(5),
+                                              bottomRight: Radius.circular(5),
+                                            ),),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Purchase Date : ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    formatDate(data
+                                                        .purchaseDate!),
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 8),
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Billing Period : ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${data.planDetail?.billingInterval}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
                               ),
                             if (MediaQuery.of(context).size.width > 500)
@@ -1547,36 +1819,36 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   child: Text('No data available'));
                             }
 
-                            var data = snapshot.data!;
+                      var data = snapshot.data!;
 
-                            // Apply filtering based on selectedValue and searchvalue
-                            if (selectedValue == null && searchvalue.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchvalue.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((workOrder) =>
-                                      workOrder.planName!
-                                          .toLowerCase()
-                                          .contains(searchvalue.toLowerCase()) ||
-                                      (workOrder.isActive!
-                                              ? 'Active'
-                                              : 'Inactive')
-                                          .toLowerCase()
-                                          .contains(searchvalue.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((workOrder) =>
-                                      workOrder.planName == selectedValue)
-                                  .toList();
-                            }
+                      // Apply filtering based on selectedValue and searchvalue
+                      if (selectedValue == null && searchvalue.isEmpty) {
+                        data = snapshot.data!;
+                      } else if (selectedValue == "All") {
+                        data = snapshot.data!;
+                      } else if (searchvalue.isNotEmpty) {
+                        data = snapshot.data!
+                            .where((workOrder) =>
+                        workOrder.planName!
+                            .toLowerCase()
+                            .contains(searchvalue.toLowerCase()) ||
+                            (workOrder.isActive!
+                                ? 'Active'
+                                : 'Inactive')
+                                .toLowerCase()
+                                .contains(searchvalue.toLowerCase()))
+                            .toList();
+                      } else {
+                        data = snapshot.data!
+                            .where((workOrder) =>
+                        workOrder.planName == selectedValue)
+                            .toList();
+                      }
 
-                            // Sort data if necessary
-                            sortData(data);
+                      // Sort data if necessary
+                      sortData(data);
 
-                            data = data.reversed.toList();
+                      data = data.reversed.toList();
 
                             // Pagination logic
                             final totalPages =
@@ -1644,7 +1916,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   const SizedBox(height: 20),
                                   Container(
                                     decoration: BoxDecoration(
-                                        border: Border.all(color: blueColor)),
+                                        border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1656,7 +1928,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
                                         return Container(
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: blueColor),
+                                            color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                            border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1780,15 +2053,15 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: <Widget>[
-                                                                  Row(
+                                                                  Column(
                                                                     children: [
-                                                                      Column(
+                                                                      Row(
                                                                         crossAxisAlignment:
                                                                             CrossAxisAlignment
                                                                                 .start,
                                                                         children: [
                                                                           Text(
-                                                                            'Start Date',
+                                                                            'Start Date :- ',
                                                                             style:
                                                                                 TextStyle(
                                                                               color: workOrder.isActive == true
@@ -1818,13 +2091,13 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                       SizedBox(
                                                                           width: MediaQuery.of(context).size.width *
                                                                               .1),
-                                                                      Column(
+                                                                      Row(
                                                                         crossAxisAlignment:
                                                                             CrossAxisAlignment
                                                                                 .start,
                                                                         children: [
                                                                           Text(
-                                                                            'End Date',
+                                                                            'End Date   :- ',
                                                                             style:
                                                                                 TextStyle(
                                                                               color: workOrder.isActive == true
@@ -2026,146 +2299,146 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                             return const Center(child: Text('No data available'));
                           }
 
-                          var data = snapshot.data!;
+                    var data = snapshot.data!;
 
-                          // Apply filtering based on selectedValue and searchvalue
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            data = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            data = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            data = snapshot.data!
-                                .where((workOrder) =>
-                                    workOrder.planName!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (workOrder.isActive! ? 'Active' : 'Inactive')
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            data = snapshot.data!
-                                .where((workOrder) =>
-                                    workOrder.planName == selectedValue)
-                                .toList();
-                          }
+                    // Apply filtering based on selectedValue and searchvalue
+                    if (selectedValue == null && searchvalue.isEmpty) {
+                      data = snapshot.data!;
+                    } else if (selectedValue == "All") {
+                      data = snapshot.data!;
+                    } else if (searchvalue.isNotEmpty) {
+                      data = snapshot.data!
+                          .where((workOrder) =>
+                      workOrder.planName!
+                          .toLowerCase()
+                          .contains(searchvalue.toLowerCase()) ||
+                          (workOrder.isActive! ? 'Active' : 'Inactive')
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()))
+                          .toList();
+                    } else {
+                      data = snapshot.data!
+                          .where((workOrder) =>
+                      workOrder.planName == selectedValue)
+                          .toList();
+                    }
 
-                          // Apply pagination
-                          final int itemsPerPage = 10;
-                          final int totalPages =
-                              (data.length / itemsPerPage).ceil();
-                          final int currentPage =
-                              1; // Update this with your pagination logic
-                          final List<pastPlanData> pagedData = data
-                              .skip((currentPage - 1) * itemsPerPage)
-                              .take(itemsPerPage)
-                              .toList();
+                    // Apply pagination
+                    final int itemsPerPage = 10;
+                    final int totalPages =
+                    (data.length / itemsPerPage).ceil();
+                    final int currentPage =
+                    1; // Update this with your pagination logic
+                    final List<pastPlanData> pagedData = data
+                        .skip((currentPage - 1) * itemsPerPage)
+                        .take(itemsPerPage)
+                        .toList();
 
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.95,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
-                                      columnWidths: {
-                                        0: const FlexColumnWidth(),
-                                        1: const FlexColumnWidth(),
-                                        2: const FlexColumnWidth(),
-                                        3: const FlexColumnWidth(),
-                                        // 4: FlexColumnWidth(),
-                                      },
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Table(
+                                defaultColumnWidth:
+                                const IntrinsicColumnWidth(),
+                                columnWidths: {
+                                  0: const FlexColumnWidth(),
+                                  1: const FlexColumnWidth(),
+                                  2: const FlexColumnWidth(),
+                                  3: const FlexColumnWidth(),
+                                  // 4: FlexColumnWidth(),
+                                },
+                                children: [
+                                  TableRow(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                    ),
+                                    children: [
+                                      _buildHeader(
+                                          'Date',
+                                          0,
+                                              (workOrder) =>
+                                          workOrder.planName!),
+                                      _buildHeader('Address', 1,
+                                              (workOrder) => workOrder.status!),
+                                      _buildHeader(
+                                          'Work',
+                                          2,
+                                              (workOrder) =>
+                                          workOrder.createdAt!),
+                                      _buildHeader(
+                                          'Description',
+                                          3,
+                                              (workOrder) =>
+                                          workOrder.expirationDate!),
+                                      // _buildHeader('Note', 5,
+                                      //     (workOrder) => workOrder.vendorNotes!),
+                                    ],
+                                  ),
+                                  TableRow(
+                                    decoration: const BoxDecoration(
+                                      border: Border.symmetric(
+                                          horizontal: BorderSide.none),
+                                    ),
+                                    children: List.generate(
+                                        4,
+                                            (index) => TableCell(
+                                            child: Container(height: 20))),
+                                  ),
+                                  for (var i = 0; i < pagedData.length; i++)
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          right: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          top: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          bottom: i == pagedData.length - 1
+                                              ? const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1))
+                                              : BorderSide.none,
+                                        ),
+                                      ),
                                       children: [
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(color: blueColor),
-                                          ),
-                                          children: [
-                                            _buildHeader(
-                                                'Date',
-                                                0,
-                                                (workOrder) =>
-                                                    workOrder.planName!),
-                                            _buildHeader('Address', 1,
-                                                (workOrder) => workOrder.status!),
-                                            _buildHeader(
-                                                'Work',
-                                                2,
-                                                (workOrder) =>
-                                                    workOrder.createdAt!),
-                                            _buildHeader(
-                                                'Description',
-                                                3,
-                                                (workOrder) =>
-                                                    workOrder.expirationDate!),
-                                            // _buildHeader('Note', 5,
-                                            //     (workOrder) => workOrder.vendorNotes!),
-                                          ],
-                                        ),
-                                        TableRow(
-                                          decoration: const BoxDecoration(
-                                            border: Border.symmetric(
-                                                horizontal: BorderSide.none),
-                                          ),
-                                          children: List.generate(
-                                              4,
-                                              (index) => TableCell(
-                                                  child: Container(height: 20))),
-                                        ),
-                                        for (var i = 0; i < pagedData.length; i++)
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                left: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                right: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                top: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                bottom: i == pagedData.length - 1
-                                                    ? const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1))
-                                                    : BorderSide.none,
-                                              ),
-                                            ),
-                                            children: [
-                                              _buildDataCell(
-                                                  pagedData[i].planName!),
-                                              _buildDataCell(
-                                                  pagedData[i].isActive == true
-                                                      ? 'Active'
-                                                      : 'Inactive'),
-                                              _buildDataCell(formatDate(
-                                                  pagedData[i].purchaseDate!)),
-                                              _buildDataCell(
-                                                  pagedData[i].expirationDate!),
-                                              // _buildDataCell(pagedData[i].vendorNotes!),
-                                            ],
-                                          ),
+                                        _buildDataCell(
+                                            pagedData[i].planName!),
+                                        _buildDataCell(
+                                            pagedData[i].isActive == true
+                                                ? 'Active'
+                                                : 'Inactive'),
+                                        _buildDataCell(formatDate(
+                                            pagedData[i].purchaseDate!)),
+                                        _buildDataCell(
+                                            pagedData[i].expirationDate!),
+                                        // _buildDataCell(pagedData[i].vendorNotes!),
                                       ],
                                     ),
-                                    const SizedBox(height: 25),
-                                    _buildPaginationControls(),
-                                    const SizedBox(height: 25),
-                                  ],
-                                ),
+                                ],
                               ),
-                            ),
-                          );
-                        },
+                              const SizedBox(height: 25),
+                              _buildPaginationControls(),
+                              const SizedBox(height: 25),
+                            ],
+                          ),
+                        ),
                       ),
-                  ],
+                    );
+                  },
                 ),
-              ),
+            ],
           ),
+        ),
+      ),
     );
   }
 }
@@ -2178,7 +2451,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding:
-          const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 16),
+      const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 16),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: blueColor),
@@ -2250,7 +2523,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color:
-                          Colors.grey[300], // Set a different background color
+                      Colors.grey[300], // Set a different background color
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                     height: 100,
@@ -2267,7 +2540,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color:
-                          Colors.grey[300], // Set a different background color
+                      Colors.grey[300], // Set a different background color
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                     height: 100,

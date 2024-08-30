@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import '../../widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/propertytype.dart';
 import '../../../constant/constant.dart';
@@ -22,7 +22,7 @@ class PropertyTable extends StatefulWidget {
 
 class _PropertyTableState extends State<PropertyTable> {
   int totalrecords = 0;
-   Future<List<propertytype>>? futurePropertyTypes;
+  late Future<List<propertytype>>? futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -603,7 +603,7 @@ class _PropertyTableState extends State<PropertyTable> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Property Type",),
+      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -1241,13 +1241,14 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

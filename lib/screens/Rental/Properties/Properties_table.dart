@@ -99,7 +99,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
-    return Container(
+    return
+      Container(
       decoration: BoxDecoration(
         color: blueColor,
         borderRadius: BorderRadius.only(
@@ -142,9 +143,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 },
                 child: Row(
                   children: [
+                    SizedBox(width: 6),
                     width < 400
                         ? Text("Property",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: Colors.white,fontSize: 14))
                         : Text("Property",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -194,9 +196,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Property\n Type",
-                        style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    Text("Property Type",
+                        style: TextStyle(color: Colors.white,fontSize: 14)),
+                    SizedBox(width: 3),
                     ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -243,8 +245,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Property\n  SubType",
-                        style: TextStyle(color: Colors.white)),
+                    Text(" SubType",
+                        style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
@@ -473,7 +475,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -491,9 +492,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
-                    title: 'Properties',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Properties',
+                    ),
                   ),
                   GestureDetector(
                     onTap: () async {
@@ -515,7 +519,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       }
                     },
                     child: Container(
-                      // height: 40,
+                     //  height: 45,
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 50
                           : 45,
@@ -525,6 +529,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0),
+                            blurRadius: 6.0,
+                          ),
+                        ],
                       ),
                       child: Center(
                         child: Row(
@@ -537,7 +548,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
-                                    ? 16
+                                    ? 18
                                     : 20,
                               ),
                             ),
@@ -553,8 +564,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
-
+            // SizedBox(height: 10),
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(
@@ -727,6 +737,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     SizedBox(
                       width: 5,
                     ),
+                     Text("/",style: TextStyle(color: greyColor),),
+                    SizedBox(
+                      width: 5,
+                    ),
                     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
                     Text(
                       'Total: ${propertyCountLimit.toString()}',
@@ -787,12 +801,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 2),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -803,8 +819,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   Rentals rentals = entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -843,8 +863,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     });
                                                   },
                                                   child: Container(
+                                                    //width: 25,
+                                                   // color: Colors.blue,
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 2),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -865,15 +887,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                 Expanded(
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  Summery_page(
-                                                                    properties:
-                                                                        rentals,
-                                                                  )));
-                                                    },
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                      },
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -890,12 +912,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                // SizedBox(
-                                                //     width:
-                                                //         MediaQuery.of(context)
-                                                //                 .size
-                                                //                 .width *
-                                                //             .08),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .01),
                                                 Expanded(
                                                   child: Text(
                                                     '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A':rentals.propertyTypeData!.propertyType}',
@@ -937,338 +959,503 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 2.0),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //   MainAxisAlignment.start,
+                                                  //   children: [
+                                                  //    SizedBox(width: 20,),
+                                                  //     Text.rich(
+                                                  //       TextSpan(
+                                                  //         children: [
+                                                  //           TextSpan(
+                                                  //             text:
+                                                  //             'Primery E-mail: ',
+                                                  //             style: TextStyle(
+                                                  //                 fontWeight:
+                                                  //                 FontWeight
+                                                  //                     .bold,
+                                                  //                 color:
+                                                  //                 blueColor), // Bold and black
+                                                  //           ),
+                                                  //           TextSpan(
+                                                  //             text:
+                                                  //             '${(rentals.rentalOwnerData!.rentalOwnerPrimaryEmail ?? "").isEmpty?'N/A' : rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
+                                                  //             style: TextStyle(
+                                                  //                 fontWeight:
+                                                  //                 FontWeight
+                                                  //                     .w700,
+                                                  //                 color: grey), // Light and grey
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     // SizedBox(
+                                                  //     //   height: MediaQuery.of(
+                                                  //     //       context)
+                                                  //     //       .size
+                                                  //     //       .height *
+                                                  //     //       .01,
+                                                  //     // ),
+                                                  //   ],
+                                                  // ),
+
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //       MainAxisAlignment.start,
+                                                  //   children: [
+                                                  //     FaIcon(
+                                                  //       isExpanded
+                                                  //           ? FontAwesomeIcons
+                                                  //               .sortUp
+                                                  //           : FontAwesomeIcons
+                                                  //               .sortDown,
+                                                  //       size: 50,
+                                                  //       color:
+                                                  //           Colors.transparent,
+                                                  //     ),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //             CrossAxisAlignment
+                                                  //                 .start,
+                                                  //         children: <Widget>[
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Rental Owners Name: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${(rentals.rentalOwnerData!.rentalOwnerName??'').isEmpty ? 'N/A':rentals.rentalOwnerData!.rentalOwnerName}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Locality : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${(rentals.rentalOwnerData!.city ??"").isEmpty ? 'N/A':rentals.rentalOwnerData!.city}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Phone Number : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${(rentals.rentalOwnerData!.rentalOwnerPhoneNumber ??"").isEmpty ? 'N/A' : rentals.rentalOwnerData!.rentalOwnerPhoneNumber}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     SizedBox(width: 7),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //             CrossAxisAlignment
+                                                  //                 .start,
+                                                  //         children: <Widget>[
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Rental Company Name: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       '${(rentals.rentalOwnerData!.rentalOwnerCompanyName ?? "").isEmpty ?'N/A':rentals.rentalOwnerData!.rentalOwnerCompanyName}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                       'Created At: ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .bold,
+                                                  //                       color:
+                                                  //                           blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate(
+                                                  //                       '${rentals.createdAt}'),
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                           FontWeight
+                                                  //                               .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: MediaQuery.of(
+                                                  //                 context)
+                                                  //                 .size
+                                                  //                 .height *
+                                                  //                 .01,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                   'Updated At : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .bold,
+                                                  //                       color:
+                                                  //                       blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate(
+                                                  //                       '${rentals.updatedAt}'),
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     Container(
+                                                  //       width: 40,
+                                                  //       child: Column(
+                                                  //         children: [
+                                                  //           IconButton(
+                                                  //             icon: FaIcon(
+                                                  //               FontAwesomeIcons
+                                                  //                   .edit,
+                                                  //               size: 20,
+                                                  //               color: Color
+                                                  //                   .fromRGBO(
+                                                  //                       21,
+                                                  //                       43,
+                                                  //                       83,
+                                                  //                       1),
+                                                  //             ),
+                                                  //             onPressed:
+                                                  //                 () async {
+                                                  //               // handleEdit(Propertytype);
+                                                  //                   var check = await Navigator.push(
+                                                  //                   context,
+                                                  //                   MaterialPageRoute(
+                                                  //                       builder: (context) => Edit_properties(
+                                                  //                           properties:
+                                                  //                               rentals,
+                                                  //                           rentalId:
+                                                  //                               rentals.rentalId!)));
+                                                  //               if (check ==
+                                                  //                   true) {
+                                                  //                 setState(
+                                                  //                     () {});
+                                                  //               }
+                                                  //             },
+                                                  //           ),
+                                                  //           IconButton(
+                                                  //             icon: FaIcon(
+                                                  //               FontAwesomeIcons
+                                                  //                   .trashCan,
+                                                  //               size: 20,
+                                                  //               color: Color
+                                                  //                   .fromRGBO(
+                                                  //                       21,
+                                                  //                       43,
+                                                  //                       83,
+                                                  //                       1),
+                                                  //             ),
+                                                  //             onPressed: () {
+                                                  //               //handleDelete(Propertytype);
+                                                  //               _showAlert(
+                                                  //                   context,
+                                                  //                   rentals
+                                                  //                       .rentalId!);
+                                                  //             },
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //   ],
+                                                  // ),
                                                   Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                    children: [
-                                                     SizedBox(width: 31,),
-                                                      Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                              'Primery E-mail: ',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                                  color:
-                                                                  blueColor), // Bold and black
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                              '${(rentals.rentalOwnerData!.rentalOwnerPrimaryEmail ?? "").isEmpty?'N/A' : rentals.rentalOwnerData!.rentalOwnerPrimaryEmail}',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                                  color: Colors
-                                                                      .grey), // Light and grey
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      // SizedBox(
-                                                      //   height: MediaQuery.of(
-                                                      //       context)
-                                                      //       .size
-                                                      //       .height *
-                                                      //       .01,
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 20,
+                                                              color:
+                                                                  Colors.transparent,
+                                                            ),
                                                       Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Rental Owners Name: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${(rentals.rentalOwnerData!.rentalOwnerName??'').isEmpty ? 'N/A':rentals.rentalOwnerData!.rentalOwnerName}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Locality : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${(rentals.rentalOwnerData!.city ??"").isEmpty ? 'N/A':rentals.rentalOwnerData!.city}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Phone Number : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${(rentals.rentalOwnerData!.rentalOwnerPhoneNumber ??"").isEmpty ? 'N/A' : rentals.rentalOwnerData!.rentalOwnerPhoneNumber}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 7),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Rental Company Name: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${(rentals.rentalOwnerData!.rentalOwnerCompanyName ?? "").isEmpty ?'N/A':rentals.rentalOwnerData!.rentalOwnerCompanyName}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Created At: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${rentals.createdAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(
-                                                                  context)
-                                                                  .size
-                                                                  .height *
-                                                                  .01,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Updated At : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: formatDate(
-                                                                        '${rentals.updatedAt}'),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
+                                                        child: Table(
+                                                          columnWidths: {
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
+                                                            0: FlexColumnWidth(), // Distribute columns equally
+                                                            1: FlexColumnWidth(),
+                                                          },
                                                           children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
-                                                                    var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_properties(
-                                                                            properties:
-                                                                                rentals,
-                                                                            rentalId:
-                                                                                rentals.rentalId!)));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
-                                                                      () {});
-                                                                }
-                                                              },
+                                                            _buildTableRow(
+                                                                'RentalOwners Name:', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerName),
+                                                                'Phone Number:', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerPhoneNumber)
                                                             ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    rentals
-                                                                        .rentalId!);
-                                                              },
+                                                            _buildTableRow(
+                                                                'Rental Company Name:', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerCompanyName),
+                                                                'Primary Email', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail)
+                                                            ),
+                                                            _buildTableRow(
+                                                                'Locality:', _getDisplayValue(rentals.rentalOwnerData?.city),
+                                                                'Created At:', formatDate('${rentals.createdAt}')
+
+                                                            ),
+                                                            _buildTableRow(
+                                                              'Updated At:', formatDate('${rentals.updatedAt}'),
+                                                                '', '',
                                                             ),
                                                           ],
                                                         ),
                                                       ),
+                                                      // FaIcon(
+                                                      //   isExpanded
+                                                      //       ? FontAwesomeIcons
+                                                      //       .sortUp
+                                                      //       : FontAwesomeIcons
+                                                      //       .sortDown,
+                                                      //   size: 20,
+                                                      //   color:
+                                                      //   Colors.transparent,
+                                                      // ),
+
                                                     ],
                                                   ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => Edit_properties(
+                                                                  properties: rentals,
+                                                                  rentalId: rentals.rentalId!,
+                                                                ),
+                                                              ),
+                                                            );
+                                                            if (check == true) {
+                                                              // Update State
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                             decoration: BoxDecoration(
+                                                               color: Colors.grey[350]
+                                                             ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showAlert(context, rentals.rentalId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        Summery_page(
+                                                                          properties:
+                                                                          rentals,
+                                                                        )));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+
                                                 ],
                                               ),
                                             ),
@@ -1308,13 +1495,21 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            // onChanged: (newValue) {
+                                            //   setState(() {
+                                            //     itemsPerPage = newValue!;
+                                            //     currentPage =
+                                            //         0; // Reset to first page when items per page change
+                                            //   });
+                                            // },
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),
@@ -1598,6 +1793,56 @@ class _PropertiesTableState extends State<PropertiesTable> {
   //     ),
   //   );
   // }
+
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+    return TableRow(
+      children: [
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  leftLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 4.0), // Space between label and value
+                Text(
+                  leftValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  rightLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 4.0), // Space between label and value
+                Text(
+                  rightValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getDisplayValue(String? value) {
+    // Return 'N/A' if the value is null or empty, otherwise return the value
+    return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+  }
 
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Rentals d)? getField) {

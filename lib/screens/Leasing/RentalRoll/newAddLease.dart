@@ -555,6 +555,7 @@ class _addLease3State extends State<addLease3>
 
   String renderId = '';
   String unitId = '';
+ //for rentshare
 
   @override
   Widget build(BuildContext context) {
@@ -1845,7 +1846,8 @@ class _addLease3State extends State<addLease3>
                                                           ),
                                                         ),
                                                         child: Center(
-                                                          child: Padding(
+                                                          child:
+                                                          Padding(
                                                             padding:
                                                             const EdgeInsets.only(
                                                                 left: 10,
@@ -1859,6 +1861,19 @@ class _addLease3State extends State<addLease3>
                                                                 FontWeight.bold,
                                                                 color: Colors.black,
                                                               ),
+                                                              onChanged: (value) {
+                                                                if (value.isNotEmpty) {
+                                                                  double? enteredValue = double.tryParse(value);
+                                                                  if (enteredValue != null && enteredValue > 100) {
+                                                                    // If the entered value is greater than 100, reset it to 100
+                                                                    rentShareControllers.text = '100';
+                                                                    rentShareControllers.selection = TextSelection.fromPosition(
+                                                                      TextPosition(offset: rentShareControllers.text.length),
+                                                                    );
+                                                                  }
+                                                                }
+                                                              },
+
                                                               keyboardType:
                                                               TextInputType
                                                                   .number,
@@ -3612,7 +3627,6 @@ class _addLease3State extends State<addLease3>
                                               endDateController.text;
                                           print(
                                               'ends date : ${endDateController.text}');
-
                                           // Creating Entry objects from the merged list
                                           // List<Entry> chargeEntries =
                                           //     mergedFormDataList.map((data) {
@@ -3642,7 +3656,7 @@ class _addLease3State extends State<addLease3>
                                           //   isLeaseAdded: _isLeaseAdded,
                                           // );
                                           print(
-                                              'rent next due date ${rentNextDueDate.text}');
+                                              'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
                                           List<Entry> chargeEntries =
                                               mergedFormDataList.map((data) {
                                             print(data['account']);
@@ -3696,11 +3710,8 @@ class _addLease3State extends State<addLease3>
                                             entry: chargeEntries,
                                             isLeaseAdded: _isLeaseAdded,
                                           );
-
                                           print('${chargeEntries}');
-
                                           //Tenant
-
                                           List<TenantData> tenants = [];
                                           Map<String, String>? firstCosigner =
                                           cosignersMap.isNotEmpty
@@ -3852,7 +3863,6 @@ class _addLease3State extends State<addLease3>
                                             tenantData: tenantDataList,
 
                                           );
-
                                           addLeaseAndNavigate(lease);
                                           if (widget.applicantId != null &&
                                               widget.applicantId!.isNotEmpty) {
@@ -5795,6 +5805,7 @@ class _AddTenantState extends State<AddTenant> {
   final TextEditingController emergencyEmail = TextEditingController();
   final TextEditingController emergencyPhoneNumber = TextEditingController();
   TextEditingController searchController = TextEditingController();
+  TextEditingController rentShareControllers = TextEditingController();
   bool _obscureText = true;
   //bool _ischecked = false;
   final TextEditingController _dateController = TextEditingController();
@@ -6711,7 +6722,7 @@ class _AddTenantState extends State<AddTenant> {
                       tenantBirthDate: _dateController.text,
                       taxPayerId: taxPayerId.text,
                       comments: comments.text,
-                      rentshare: "",
+                      rentshare: rentShareControllers.text,
                       emergencyContact: EmergencyContact(
                         name: contactName.text,
                         relation: relationToTenant.text,

@@ -101,17 +101,28 @@ class _CustomDrawerState extends State<CustomDrawer> {
                "Staff Member",
                widget.currentpage == "Add Staff Member",
              ),
-             buildDropdownListTile(
-               context,
-               FaIcon(
-                 FontAwesomeIcons.key,
-                 size: 20,
-                 color: blueColor,
-               ),
-               "Rental",
-               ["Properties", "RentalOwner", "Tenants"],
-               selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
-             ),
+         buildDropdownListTile(
+           context,
+           FaIcon(
+             FontAwesomeIcons.key,
+             size: 20,
+             color: blueColor,
+           ),
+           "Rental",
+           ["Properties", "RentalOwner", "Tenants"],
+           [
+             FaIcon(FontAwesomeIcons.buildingUser, size: 20, color: widget.currentpage == "Properties"
+                 ? Colors.white
+                 : blueColor,), // Icon for Properties
+             FaIcon(FontAwesomeIcons.houseChimneyUser, size: 20,  color: widget.currentpage == "RentalOwner"
+                 ? Colors.white
+                 : blueColor,), // Icon for RentalOwner
+             FaIcon(FontAwesomeIcons.users, size: 20,  color: widget.currentpage == "Tenants"
+                 ? Colors.white
+                 : blueColor,), // Icon for Tenants
+           ],
+           selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+         ),
              buildDropdownListTile(
                context,
                FaIcon(
@@ -121,14 +132,31 @@ class _CustomDrawerState extends State<CustomDrawer> {
                ),
                "Leasing",
                ["Rent Roll", "Applicants"],
+               [
+                 FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Rent Roll"
+                     ? Colors.white
+                     : blueColor,), // Icon for Properties
+                 FaIcon(FontAwesomeIcons.addressCard, size: 20,  color: widget.currentpage == "Applicants"
+                     ? Colors.white
+                     : blueColor,), // Icon for RentalOwner
+               //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+               ],
                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
              ),
              buildDropdownListTile(
                context,
-               Image.asset("assets/icons/maintence.png",
-                   height: 20, width: 20),
+               FaIcon(FontAwesomeIcons.screwdriverWrench, size: 20,  color:  blueColor,),
                "Maintenance",
                ["Vendor", "Work Order"],
+               [
+                 FaIcon(FontAwesomeIcons.solidCircleUser, size: 20,  color: widget.currentpage == "Vendor"
+                     ? Colors.white
+                     : blueColor,), // Icon for Properties
+                 FaIcon(FontAwesomeIcons.bookBookmark, size: 20, color: widget.currentpage == "Work Order"
+                     ? Colors.white
+                     : blueColor,), // Icon for RentalOwner
+               //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+               ],
                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
              ),
              buildListTile(

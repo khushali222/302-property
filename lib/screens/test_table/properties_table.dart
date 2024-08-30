@@ -233,7 +233,7 @@ class _Properties_tableState extends State<Properties_table> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: widget_302.App_Bar(context: context),
-        drawer: Drawer(
+       /* drawer: Drawer(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           child: SingleChildScrollView(
@@ -290,7 +290,7 @@ class _Properties_tableState extends State<Properties_table> {
               ],
             ),
           ),
-        ),
+        ),*/
         body:
         SingleChildScrollView(
           child: Column(

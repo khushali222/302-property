@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 import 'package:three_zero_two_property/model/properties_summery.dart';
-
-import '../constant/constant.dart';
-import '../model/properties_workorders.dart';
+import '../../model/properties_workorders.dart';
 import '../model/unitsummery_propeties.dart';
 
 // class Properies_summery_Repo{

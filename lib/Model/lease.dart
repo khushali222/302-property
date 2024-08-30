@@ -348,6 +348,7 @@ class TenantData {
   String? tenantPassword;
   String? tenantPhoneNumber;
   String? updatedAt;
+  String? rentShare;
   int? v;
   String? id;
 
@@ -371,6 +372,7 @@ class TenantData {
     this.tenantPassword,
     this.tenantPhoneNumber,
     this.updatedAt,
+    this.rentShare,
     this.v,
     this.id,
   });
@@ -396,6 +398,7 @@ class TenantData {
       tenant_residentStatus: json['tenant_residentStatus'] ?? '',
       tenantPhoneNumber: json['tenant_phoneNumber'],
       updatedAt: json['updatedAt'],
+      rentShare: json['percentage'] ?? "",
       v: json['__v'],
       id: json['_id'],
     );
@@ -421,6 +424,7 @@ class TenantData {
       'tenant_lastName': tenantLastName,
       'tenant_password': tenantPassword,
       'tenant_phoneNumber': tenantPhoneNumber,
+      'percentage':rentShare
     };
   }
 }

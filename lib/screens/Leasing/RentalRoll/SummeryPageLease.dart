@@ -1489,9 +1489,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
   String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   bool isLoading = false;
+  bool isMovedOut = false;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
@@ -1621,7 +1623,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   int? expandedIndex;
   bool isExpanded = false;
 
-  String determineStatus(String? startDate, String? endDate) {
+  String  determineStatus(String? startDate, String? endDate) {
     if (startDate == null || endDate == null) return 'Unknown';
 
     DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
@@ -2220,6 +2222,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Tenant(context) {
+
     return LayoutBuilder(
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
@@ -2234,6 +2237,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               } else if (!snapshot.hasData || snapshot.data == null) {
                 return Center(child: Text('No data found.'));
               } else {
+                String status = determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate);
                 return isTablet
                     ? SingleChildScrollView(
                   scrollDirection: Axis.vertical,
@@ -2269,7 +2273,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               child: Column(
                                 children: [
                                   const SizedBox(height: 10),
-                                  Row(
+
+                                    Row(
                                     children: [
                                       const SizedBox(width: 15),
                                       Container(
@@ -2370,6 +2375,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   Row(
                                     children: [
                                       const SizedBox(width: 65),
+
                                       Text(
                                         '${snapshot.data!.data!.startDate} to',
                                         style: const TextStyle(
@@ -2526,6 +2532,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         ],
                                       ),
                                       const Spacer(),
+                                      if (isMovedOut == true || status != 'Expired' )
                                        InkWell(
                                          onTap: () {
                                            showDialog(
@@ -2547,7 +2554,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                              },
                                            );
                                          },
-                                         child: Row(
+                                         child:
+                                         Row(
                                           children: [
                                             FaIcon(
                                               FontAwesomeIcons.rightFromBracket,
@@ -2565,6 +2573,25 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             ),
                                           ],
                                                                                ),
+                                       ),
+                                     if(isMovedOut || status == 'Expired')
+                                       Row(
+                                         children: [
+                                           FaIcon(
+                                             FontAwesomeIcons.check,
+                                             size: 17,
+                                             color: Color.fromRGBO(21, 43, 81, 1),
+                                           ),
+                                           SizedBox(width: 5),
+                                           Text(
+                                             "Moved out",
+                                             style: TextStyle(
+                                               fontSize: 11,
+                                               fontWeight: FontWeight.w500,
+                                               color: Color.fromRGBO(21, 43, 81, 1),
+                                             ),
+                                           ),
+                                         ],
                                        ),
                                       const SizedBox(width: 15),
                                     ],
@@ -2869,6 +2896,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ).then((value) {
                     setState(() {
                       isLoading = false;
+                      isMovedOut = true;
                     });
                     Navigator.pop(context, true);
                   }).catchError((e) {

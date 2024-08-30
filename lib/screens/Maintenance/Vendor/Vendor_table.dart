@@ -142,7 +142,7 @@ class _Vendor_tableState extends State<Vendor_table> {
               ),
             ),
             Expanded(
-              flex: 4,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -189,55 +189,55 @@ class _Vendor_tableState extends State<Vendor_table> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Action", style: TextStyle(color: Colors.white)),
-                    /* SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),*/
-                  ],
-                ),
-              ),
-            ),
+            // Expanded(
+            //   flex: 2,
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting3) {
+            //           sorting1 = false;
+            //           sorting2 = false;
+            //           sorting3 = sorting3;
+            //           ascending3 = sorting3 ? !ascending3 : true;
+            //           ascending2 = false;
+            //           ascending1 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = false;
+            //           sorting3 = !sorting3;
+            //           ascending3 = sorting3 ? !ascending3 : true;
+            //           ascending2 = false;
+            //           ascending1 = false;
+            //         }
+            //
+            //         // Sorting logic here
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text("Action", style: TextStyle(color: Colors.white)),
+            //         /* SizedBox(width: 5),
+            //         ascending3
+            //             ? Padding(
+            //           padding: const EdgeInsets.only(top: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortUp,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         )
+            //             : Padding(
+            //           padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortDown,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         ),*/
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -795,7 +795,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -807,8 +809,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -866,15 +872,27 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(left: 8.0),
-                                                    child: Text(
-                                                      '${Propertytype.vendorName}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap:(){
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      child: Text(
+                                                        '${Propertytype.vendorName}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -896,83 +914,83 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                Expanded(
-                                                  child: Container(
-                                                    child: Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                            var check = await Navigator
-                                                                .push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            edit_vendor(
-                                                                              vender_id: Propertytype.vendorId,
-                                                                            )));
-                                                            if (check == true) {
-                                                              setState(() {
-                                                                futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
-                                                              });
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            child: FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .edit,
-                                                              size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            _showAlert(
-                                                                context,
-                                                                Propertytype
-                                                                    .vendorId!);
-                                                          },
-                                                          child: Container(
-                                                            child: FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .trashCan,
-                                                              size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
+                                                // SizedBox(
+                                                //     width:
+                                                //         MediaQuery.of(context)
+                                                //                 .size
+                                                //                 .width *
+                                                //             .08),
+                                                // Expanded(
+                                                //   child: Container(
+                                                //     child: Row(
+                                                //       children: [
+                                                //         SizedBox(
+                                                //           width: 20,
+                                                //         ),
+                                                //         InkWell(
+                                                //           onTap: () async {
+                                                //             var check = await Navigator
+                                                //                 .push(
+                                                //                     context,
+                                                //                     MaterialPageRoute(
+                                                //                         builder: (context) =>
+                                                //                             edit_vendor(
+                                                //                               vender_id: Propertytype.vendorId,
+                                                //                             )));
+                                                //             if (check == true) {
+                                                //               setState(() {
+                                                //                 futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+                                                //               });
+                                                //             }
+                                                //           },
+                                                //           child: Container(
+                                                //             child: FaIcon(
+                                                //               FontAwesomeIcons
+                                                //                   .edit,
+                                                //               size: 20,
+                                                //               color: Color
+                                                //                   .fromRGBO(
+                                                //                       21,
+                                                //                       43,
+                                                //                       83,
+                                                //                       1),
+                                                //             ),
+                                                //           ),
+                                                //         ),
+                                                //         SizedBox(
+                                                //           width: 10,
+                                                //         ),
+                                                //         InkWell(
+                                                //           onTap: () {
+                                                //             _showAlert(
+                                                //                 context,
+                                                //                 Propertytype
+                                                //                     .vendorId!);
+                                                //           },
+                                                //           child: Container(
+                                                //             child: FaIcon(
+                                                //               FontAwesomeIcons
+                                                //                   .trashCan,
+                                                //               size: 20,
+                                                //               color: Color
+                                                //                   .fromRGBO(
+                                                //                       21,
+                                                //                       43,
+                                                //                       83,
+                                                //                       1),
+                                                //             ),
+                                                //           ),
+                                                //         ),
+                                                //       ],
+                                                //     ),
+                                                //   ),
+                                                // ),
+                                                // SizedBox(
+                                                //     width:
+                                                //         MediaQuery.of(context)
+                                                //                 .size
+                                                //                 .width *
+                                                //             .02),
                                               ],
                                             ),
                                           ),
@@ -980,8 +998,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 2.0),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1025,8 +1043,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1128,6 +1145,88 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                       ),*/
                                                     ],
                                                   ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator
+                                                                .push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        edit_vendor(
+                                                                          vender_id: Propertytype.vendorId,
+                                                                        )));
+                                                            if (check == true) {
+                                                              setState(() {
+                                                                futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+                                                              });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showAlert(
+                                                                context,
+                                                                Propertytype
+                                                                    .vendorId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+
+                                                    ],
+                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -1167,13 +1266,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),
