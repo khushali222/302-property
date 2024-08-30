@@ -744,10 +744,8 @@ class _Applicants_tableState extends State<Applicants_table> {
             ),
             const SizedBox(height: 10),
 
-
-            const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.only(left: 19, right: 13),
+              padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
@@ -756,17 +754,17 @@ class _Applicants_tableState extends State<Applicants_table> {
                     const SizedBox(width: 19),
                   Material(
                     elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .45
                           : MediaQuery.of(context).size.width * .4,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: const Color(0xFF8A95A8)),
                       ),
                       child: TextField(
@@ -780,7 +778,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                           border: InputBorder.none,
                           hintText: "Search here...",
                           hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                           contentPadding: EdgeInsets.all(10),
+                           contentPadding: EdgeInsets.all(11),
                         ),
                       ),
                     ),
@@ -815,7 +813,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                     ],
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 25),
                 ],
@@ -868,7 +866,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             _buildHeaders(),
                             const SizedBox(height: 20),
                             Container(

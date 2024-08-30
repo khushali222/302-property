@@ -883,11 +883,17 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                         width: 30,
                       ),
                       Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${tenantsummery.first.tenantFirstName}',
-                            style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold),
+                          Row(
+                            children: [
+                              Text(
+                                '${tenantsummery.first.tenantFirstName}',
+                                style: TextStyle(
+                                    color: blueColor, fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             height: 10,
@@ -991,7 +997,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(25.0),
+                    padding: const EdgeInsets.only(left: 25,right: 25,top: 10,bottom: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(5.0),
                       child: Container(
@@ -1063,13 +1069,13 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                               Table(
                                 children: [
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Name',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
@@ -1082,18 +1088,18 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Phone Number',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
@@ -1106,31 +1112,31 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Email',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.tenantEmail ?? '').isEmpty ? 'N/A' : tenantsummery.first.tenantEmail}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
@@ -1191,74 +1197,74 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                               Table(
                                 children: [
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Birth Date',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.tenantBirthDate ?? '').isEmpty ? 'N/A' : tenantsummery.first.tenantBirthDate}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'TaxPayer Id',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color:blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.taxPayerId ?? '').isEmpty ? 'N/A' : tenantsummery.first.taxPayerId}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Comments',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.comments ?? '').isEmpty ? 'N/A' : tenantsummery.first.comments}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
@@ -1273,7 +1279,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                   const SizedBox(
                     height: 10,
                   ),
-//Emergency Contact
+                  //Emergency Contact
                   Padding(
                     padding: const EdgeInsets.only(left: 25, right: 25),
                     child: Material(
@@ -1318,98 +1324,98 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                               Table(
                                 children: [
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Contact Name',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.emergencyContact?.name ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.name}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Relation With Tenants',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.emergencyContact?.relation ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.relation}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Emergency Email',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.emergencyContact?.email ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.email}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
                                   TableRow(children: [
-                                    const TableCell(
+                                     TableCell(
                                         child: Padding(
                                       padding: EdgeInsets.all(12.0),
                                       child: Text(
                                         'Emergency Phone',
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     )),
                                     TableCell(
                                         child: Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding:  EdgeInsets.only(top: 12),
                                       child: Text(
                                         '${(tenantsummery.first.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.phoneNumber}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
-                                            color: blueColor),
+                                            color: grey),
                                       ),
                                     )),
                                   ]),
@@ -1427,7 +1433,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                   const SizedBox(
                     height: 10,
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(left: 25, right: 25),
                     child: Container(
@@ -1443,9 +1448,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
+
                               //add propertytype
                               Text(
                                 'Renters Insurance Policy',
@@ -1495,7 +1498,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                 ? MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.4
+                                                    0.35
                                                 : MediaQuery.of(context)
                                                         .size
                                                         .width *
@@ -1544,7 +1547,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 ),
                               ),
                               // const SizedBox(height: 10),
-
                               if (MediaQuery.of(context).size.width > 500)
                                 const SizedBox(height: 25),
                               if (MediaQuery.of(context).size.width < 500)
@@ -1616,8 +1618,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                               const SizedBox(height: 20),
                                               Container(
                                                 decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: blueColor)),
+                                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                                // decoration: BoxDecoration(
+                                                //     border: Border.all(
+                                                //         color: blueColor)),
                                                 child: Column(
                                                   children: currentPageData
                                                       .asMap()
@@ -1632,8 +1636,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     //return CustomExpansionTile(data: Propertytype, index: index);
                                                     return Container(
                                                       decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: blueColor),
+                                                        color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+
                                                       ),
                                                       child: Column(
                                                         children: <Widget>[

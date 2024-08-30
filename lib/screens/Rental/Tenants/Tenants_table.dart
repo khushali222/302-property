@@ -836,28 +836,28 @@ class _Tenants_tableState extends State<Tenants_table> {
             //   ),
             // ),
 
-            SizedBox(height: 10),
+            // SizedBox(height: 10),
             //search
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 24),
                   Material(
                     elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(8),
                           // border: Border.all(color: Colors.grey),
                           border: Border.all(color: Color(0xFF8A95A8))),
                       child: Stack(
@@ -892,7 +892,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                             ? 14
                                             : 18),
                                 contentPadding: (EdgeInsets.only(
-                                    left: 8, bottom: 10, top: 14)),
+                                    left: 8, bottom: 10, top: 5)),
                               ),
                             ),
                           ),
@@ -901,34 +901,47 @@ class _Tenants_tableState extends State<Tenants_table> {
                     ),
                   ),
                   Spacer(),
-                  Row(
-                    children: [
-                      Text(
-                        'Added : ${rentalCount.toString()}',
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       'Added : ${rentalCount.toString()}',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 5,
+                  //     ),
+                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                  //     Text(
+                  //       'Total: ${propertyCountLimit.toString()}',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  Expanded(
+                    child: Container(
+                      child: Text(
+                        'Added : ${rentalCount.toString()} Total: ${propertyCountLimit.toString()}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                          MediaQuery.of(context).size.width < 500 ? 13 : 21,
                         ),
                       ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total: ${propertyCountLimit.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 10),
+                    SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 25),
                 ],
@@ -980,7 +993,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
