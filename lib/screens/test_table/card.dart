@@ -388,7 +388,7 @@ class _CardpaymentState extends State<Cardpayment> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: widget_302.App_Bar(context: context),
-      drawer: Drawer(
+     /* drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
@@ -454,7 +454,7 @@ class _CardpaymentState extends State<Cardpayment> {
             ],
           ),
         ),
-      ),
+      ),*/
       body: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.vertical,

@@ -746,13 +746,25 @@ class _StaffTableState extends State<StaffTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    '   ${staffmembers.staffmemberName}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap:(){
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      '   ${staffmembers.staffmemberName}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -985,113 +997,153 @@ class _StaffTableState extends State<StaffTable> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.only(left: 2,right: 2),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Container(
                                                 //color: Colors.blue,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                child: Column(
                                                   children: [
                                                     Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment.start,
-                                                            children: [
-                                                              FaIcon(
-                                                                isExpanded
-                                                                    ? FontAwesomeIcons
-                                                                        .sortUp
-                                                                    : FontAwesomeIcons
-                                                                        .sortDown,
-                                                                size: 50,
-                                                                color:
-                                                                    Colors.transparent,
-                                                              ),
-                                                ],
-                                              ),
-                                                    Column(
                                                       mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            children: [
+                                                        Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment.start,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    isExpanded
+                                                                        ? FontAwesomeIcons
+                                                                            .sortUp
+                                                                        : FontAwesomeIcons
+                                                                            .sortDown,
+                                                                    size: 50,
+                                                                    color:
+                                                                        Colors.transparent,
+                                                                  ),
+                                                    ],
+                                                                                                  ),
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text.rich(
                                                               TextSpan(
-                                                                text: 'Mail-Id: ',
-                                                                style: TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: blueColor, // Bold and blue
-                                                                ),
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text: 'Mail-Id: ',
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: blueColor, // Bold and blue
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: '${staffmembers.staffmemberEmail}',
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.w700,
+                                                                      color: grey, // Light and grey
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
+                                                            ),
+                                                            SizedBox(
+                                                                height:
+                                                                    5),
+                                                            Text.rich(
                                                               TextSpan(
-                                                                text: '${staffmembers.staffmemberEmail}',
-                                                                style: TextStyle(
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: grey, // Light and grey
-                                                                ),
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text: 'Created At: ',
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: blueColor, // Bold and blue
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: formatDate('${staffmembers.createdAt}'),
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.w700,
+                                                                      color: grey, // Light and grey
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            height:
+                                                            ),
+                                                            SizedBox(
+                                                                height:
                                                                 5),
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            children: [
+                                                            Text.rich(
                                                               TextSpan(
-                                                                text: 'Created At: ',
-                                                                style: TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: blueColor, // Bold and blue
-                                                                ),
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text: 'Updated At: ',
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: blueColor, // Bold and blue
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: formatDate('${staffmembers.updatedAt}'),
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.w700,
+                                                                      color: grey, // Light and grey
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                              TextSpan(
-                                                                text: formatDate('${staffmembers.createdAt}'),
-                                                                style: TextStyle(
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: grey, // Light and grey
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        SizedBox(
-                                                            height:
-                                                            5),
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text: 'Updated At: ',
-                                                                style: TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: blueColor, // Bold and blue
-                                                                ),
-                                                              ),
-                                                              TextSpan(
-                                                                text: formatDate('${staffmembers.updatedAt}'),
-                                                                style: TextStyle(
-                                                                  fontWeight: FontWeight.w700,
-                                                                  color: grey, // Light and grey
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
+                                                        Spacer(),
+                                                        // Container(
+                                                        //   width: 40,
+                                                        //   child: Column(
+                                                        //     children: [
+                                                        //       IconButton(
+                                                        //         icon: FaIcon(
+                                                        //           FontAwesomeIcons.edit,
+                                                        //           size: 20,
+                                                        //           color: Color.fromRGBO(21, 43, 83, 1),
+                                                        //         ),
+                                                        //         onPressed: () async {
+                                                        //           var check = await Navigator.push(
+                                                        //             context,
+                                                        //             MaterialPageRoute(
+                                                        //               builder: (context) => Edit_staff_member(
+                                                        //                 staff: staffmembers,
+                                                        //               ),
+                                                        //             ),
+                                                        //           );
+                                                        //           if (check == true) {
+                                                        //             setState(() {});
+                                                        //           }
+                                                        //         },
+                                                        //       ),
+                                                        //       IconButton(
+                                                        //         icon: FaIcon(
+                                                        //           FontAwesomeIcons.trashCan,
+                                                        //           size: 20,
+                                                        //           color: Color.fromRGBO(21, 43, 83, 1),
+                                                        //         ),
+                                                        //         onPressed: () {
+                                                        //           _showDeleteAlert(context, staffmembers.staffmemberId!);
+                                                        //         },
+                                                        //       ),
+                                                        //     ],
+                                                        //   ),
+                                                        // ),
+                                                        SizedBox(width: 5),
                                                       ],
                                                     ),
-                                                    Spacer(),
-                                                    Container(
-                                                      width: 40,
-                                                      child: Column(
-                                                        children: [
-                                                          IconButton(
-                                                            icon: FaIcon(
-                                                              FontAwesomeIcons.edit,
-                                                              size: 20,
-                                                              color: Color.fromRGBO(21, 43, 83, 1),
-                                                            ),
-                                                            onPressed: () async {
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap:()async{
                                                               var check = await Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
@@ -1104,21 +1156,62 @@ class _StaffTableState extends State<StaffTable> {
                                                                 setState(() {});
                                                               }
                                                             },
-                                                          ),
-                                                          IconButton(
-                                                            icon: FaIcon(
-                                                              FontAwesomeIcons.trashCan,
-                                                              size: 20,
-                                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                                            child: Container(
+                                                              height:40,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors.grey[350]
+                                                              ),                                               // color:Colors.grey[100],
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment.center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons.edit,
+                                                                    size: 15,
+                                                                    color:blueColor,
+                                                                  ),
+                                                                  SizedBox(width: 10,),
+                                                                  Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                ],
+                                                              ),
                                                             ),
-                                                            onPressed: () {
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5,),
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap:(){
                                                               _showDeleteAlert(context, staffmembers.staffmemberId!);
                                                             },
+                                                            child: Container(
+                                                              height:40,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors.grey[350]
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment.center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons.trashCan,
+                                                                    size: 15,
+                                                                    color:blueColor,
+                                                                  ),
+                                                                  SizedBox(width: 10,),
+                                                                  Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                ],
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+
+
+                                                      ],
                                                     ),
-                                                    SizedBox(width: 5),
                                                   ],
                                                 ),
                                               ),

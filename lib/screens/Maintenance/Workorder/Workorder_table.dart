@@ -220,7 +220,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("     Billable ",
+                    const Text("   Billable ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     /*ascending3
@@ -1049,19 +1049,17 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   flex:3,
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  Workorder_summery(
-                                                                    workorder_id:
-                                                                        workOrder
-                                                                            .workOrderData
-                                                                            ?.workOrderId,
-                                                                  )));
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
                                                     },
                                                     child: Text(
-                                                      '   ${workOrder.workOrderData?.workSubject?.isNotEmpty == true ? workOrder.workOrderData!.workSubject! : 'N/A'}',
+                                                      '${workOrder.workOrderData?.workSubject?.isNotEmpty == true ? workOrder.workOrderData!.workSubject! : 'N/A'}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -1094,15 +1092,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .05),
+                                                            .03),
                                                 Expanded(
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+
                                                     children: [
                                                       if (workOrder
                                                               .workOrderData
@@ -1136,9 +1129,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
+                                                horizontal: 2.0),
                                             margin: const EdgeInsets.only(
-                                                bottom: 20),
+                                                bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1407,15 +1400,17 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             .sortUp
                                                             : FontAwesomeIcons
                                                             .sortDown,
-                                                        size: 20,
+                                                        size: 30,
                                                         color:
                                                         Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Table(
                                                           columnWidths: {
-                                                            0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            0: FlexColumnWidth(), // Distribute columns equally
                                                             1: FlexColumnWidth(),
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
                                                           },
                                                           children: [
                                                             _buildTableRow(
@@ -1434,51 +1429,173 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          IconButton(
-                                                            icon: FaIcon(
-                                                              FontAwesomeIcons.edit,
-                                                              size: 20,
-                                                              color:blueColor,
+                                                      // Column(
+                                                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      //   children: [
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.edit,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () async {
+                                                      //         // handleEdit(Propertytype);
+                                                      //
+                                                      //                       var check = await Navigator.push(
+                                                      //                           context,
+                                                      //                           MaterialPageRoute(
+                                                      //                               builder: (context) => ResponsiveEditWorkOrder(
+                                                      //                                     workorderId: workOrder.workOrderData!.workOrderId!,
+                                                      //                                   )));
+                                                      //                       if (check ==
+                                                      //                           true) {
+                                                      //                         setState(() {
+                                                      //                           futureworkorders =
+                                                      //                               WorkOrderRepository()
+                                                      //                                   .fetchWorkOrders();
+                                                      //                         });
+                                                      //                       }
+                                                      //       },
+                                                      //     ),
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.trashCan,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () {
+                                                      //         //handleDelete(Propertytype);
+                                                      //                       _showAlert(
+                                                      //                           context,
+                                                      //                           workOrder
+                                                      //                               .workOrderData!
+                                                      //                               .workOrderId!);
+                                                      //       },
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => ResponsiveEditWorkOrder(
+                                                                      workorderId: workOrder.workOrderData!.workOrderId!,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(() {
+                                                                futureworkorders =
+                                                                    WorkOrderRepository()
+                                                                        .fetchWorkOrders();
+                                                              });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
                                                             ),
-                                                            onPressed: () async {
-                                                              // handleEdit(Propertytype);
-
-                                                                            var check = await Navigator.push(
-                                                                                context,
-                                                                                MaterialPageRoute(
-                                                                                    builder: (context) => ResponsiveEditWorkOrder(
-                                                                                          workorderId: workOrder.workOrderData!.workOrderId!,
-                                                                                        )));
-                                                                            if (check ==
-                                                                                true) {
-                                                                              setState(() {
-                                                                                futureworkorders =
-                                                                                    WorkOrderRepository()
-                                                                                        .fetchWorkOrders();
-                                                                              });
-                                                                            }
-                                                            },
                                                           ),
-                                                          IconButton(
-                                                            icon: FaIcon(
-                                                              FontAwesomeIcons.trashCan,
-                                                              size: 20,
-                                                              color:blueColor,
-                                                            ),
-                                                            onPressed: () {
-                                                              //handleDelete(Propertytype);
-                                                                            _showAlert(
-                                                                                context,
-                                                                                workOrder
-                                                                                    .workOrderData!
-                                                                                    .workOrderId!);
-                                                            },
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showAlert(
+                                                                context,
+                                                                workOrder
+                                                                    .workOrderData!
+                                                                    .workOrderId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        Workorder_summery(
+                                                                          workorder_id:
+                                                                          workOrder
+                                                                              .workOrderData
+                                                                              ?.workOrderId,
+                                                                        )));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],

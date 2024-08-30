@@ -415,7 +415,7 @@ class _MakePaymentState extends State<MakePayment> {
     return Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: Drawer(
+        /*drawer: Drawer(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           child: SingleChildScrollView(
@@ -481,7 +481,7 @@ class _MakePaymentState extends State<MakePayment> {
               ],
             ),
           ),
-        ),
+        ),*/
         body: SingleChildScrollView(
           child:
           Column(

@@ -165,7 +165,7 @@ class _ExpandTableState extends State<ExpandTable> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: widget_302.App_Bar(context: context),
-        drawer: Drawer(
+        /*drawer: Drawer(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           child: SingleChildScrollView(
@@ -222,7 +222,7 @@ class _ExpandTableState extends State<ExpandTable> {
               ],
             ),
           ),
-        ),
+        ),*/
         body:
         SingleChildScrollView(
           child: Column(

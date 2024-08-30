@@ -126,8 +126,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name", style: TextStyle(color: Colors.white))
-                        : Text("Name", style: TextStyle(color: Colors.white)),
+                        ? Text("Name", style: TextStyle(color: Colors.white,fontSize: 18))
+                        : Text("Name", style: TextStyle(color: Colors.white,fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -175,7 +175,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Phone", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 15),
+                    Text("Phone", style: TextStyle(color: Colors.white,fontSize: 18)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -198,54 +199,54 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 ),
               ),
             ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("   Action", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
+            // Expanded(
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting3) {
+            //           sorting1 = false;
+            //           sorting2 = false;
+            //           sorting3 = sorting3;
+            //           ascending3 = sorting3 ? !ascending3 : true;
+            //           ascending2 = false;
+            //           ascending1 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = false;
+            //           sorting3 = !sorting3;
+            //           ascending3 = sorting3 ? !ascending3 : true;
+            //           ascending2 = false;
+            //           ascending1 = false;
+            //         }
+            //
+            //         // Sorting logic here
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text("   Action", style: TextStyle(color: Colors.white)),
+            //         SizedBox(width: 5),
+            //         ascending3
+            //             ? Padding(
+            //                 padding: const EdgeInsets.only(top: 7, left: 2),
+            //                 child: FaIcon(
+            //                   FontAwesomeIcons.sortUp,
+            //                   size: 20,
+            //                   color: Colors.white,
+            //                 ),
+            //               )
+            //             : Padding(
+            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //                 child: FaIcon(
+            //                   FontAwesomeIcons.sortDown,
+            //                   size: 20,
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -770,15 +771,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 Expanded(
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  ResponsiveRentalSummary(
-                                                                    rentalOwnersid:
-                                                                        rentals
-                                                                            .rentalownerId!,
-                                                                  )));
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
                                                     },
                                                     child: Text(
                                                       '   ${rentals.rentalOwnername}',
@@ -786,7 +786,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                         color: blueColor,
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: 13,
+                                                        fontSize: 15,
                                                       ),
                                                     ),
                                                   ),
@@ -804,85 +804,85 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                       color: blueColor,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 12,
+                                                      fontSize: 15,
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                Expanded(
-                                                  child: Container(
-                                                    child: Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                            var check = await Navigator
-                                                                .push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            Edit_rentalowners(
-                                                                              rentalOwner: rentals,
-                                                                            )));
-                                                            if (check == true) {
-                                                              setState(() {});
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            child: FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .edit,
-                                                              size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            _showDeleteAlert(
-                                                                context,
-                                                                rentals
-                                                                    .rentalownerId!);
-                                                          },
-                                                          child: Container(
-                                                            child: FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .trashCan,
-                                                              size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
+                                                // SizedBox(
+                                                //     width:
+                                                //         MediaQuery.of(context)
+                                                //                 .size
+                                                //                 .width *
+                                                //             .08),
+                                                // Expanded(
+                                                //   child: Container(
+                                                //     child: Row(
+                                                //       children: [
+                                                //         SizedBox(
+                                                //           width: 10,
+                                                //         ),
+                                                //         InkWell(
+                                                //           onTap: () async {
+                                                //             var check = await Navigator
+                                                //                 .push(
+                                                //                     context,
+                                                //                     MaterialPageRoute(
+                                                //                         builder: (context) =>
+                                                //                             Edit_rentalowners(
+                                                //                               rentalOwner: rentals,
+                                                //                             )));
+                                                //             if (check == true) {
+                                                //               setState(() {});
+                                                //             }
+                                                //           },
+                                                //           child: Container(
+                                                //             child: FaIcon(
+                                                //               FontAwesomeIcons
+                                                //                   .edit,
+                                                //               size: 20,
+                                                //               color: Color
+                                                //                   .fromRGBO(
+                                                //                       21,
+                                                //                       43,
+                                                //                       83,
+                                                //                       1),
+                                                //             ),
+                                                //           ),
+                                                //         ),
+                                                //         SizedBox(
+                                                //           width: 10,
+                                                //         ),
+                                                //         InkWell(
+                                                //           onTap: () {
+                                                //             _showDeleteAlert(
+                                                //                 context,
+                                                //                 rentals
+                                                //                     .rentalownerId!);
+                                                //           },
+                                                //           child: Container(
+                                                //             child: FaIcon(
+                                                //               FontAwesomeIcons
+                                                //                   .trashCan,
+                                                //               size: 20,
+                                                //               color: Color
+                                                //                   .fromRGBO(
+                                                //                       21,
+                                                //                       43,
+                                                //                       83,
+                                                //                       1),
+                                                //             ),
+                                                //           ),
+                                                //         ),
+                                                //       ],
+                                                //     ),
+                                                //   ),
+                                                // ),
+                                                // SizedBox(
+                                                //     width:
+                                                //         MediaQuery.of(context)
+                                                //                 .size
+                                                //                 .width *
+                                                //             .02),
                                               ],
                                             ),
                                           ),
@@ -890,8 +890,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 2),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -905,7 +905,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                 .sortUp
                                                             : FontAwesomeIcons
                                                                 .sortDown,
-                                                        size: 50,
+                                                        size: 40,
                                                         color:
                                                             Colors.transparent,
                                                       ),
@@ -950,6 +950,125 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           ],
                                                         ),
                                                       ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator
+                                                                .push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        Edit_rentalowners(
+                                                                          rentalOwner: rentals,
+                                                                        )));
+                                                            if (check == true) {
+                                                              setState(() {});
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showDeleteAlert(
+                                                                context,
+                                                                rentals
+                                                                    .rentalownerId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        ResponsiveRentalSummary(
+                                                                          rentalOwnersid:
+                                                                          rentals
+                                                                              .rentalownerId!,
+                                                                        )));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],

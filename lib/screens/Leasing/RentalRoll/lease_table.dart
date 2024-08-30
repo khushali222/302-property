@@ -836,13 +836,14 @@ class _Lease_tableState extends State<Lease_table> {
                                                             left: 8.0),
                                                     child: InkWell(
                                                       onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    SummeryPageLease(
-                                                                        leaseId:
-                                                                            lease.leaseId!)));
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex = null;
+                                                          } else {
+                                                            expandedIndex = index;
+                                                          }
+                                                        });
                                                       },
                                                       child: Text.rich(
                                                         TextSpan(
@@ -930,8 +931,8 @@ class _Lease_tableState extends State<Lease_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 2.0),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1282,15 +1283,17 @@ class _Lease_tableState extends State<Lease_table> {
                                                             .sortUp
                                                             : FontAwesomeIcons
                                                             .sortDown,
-                                                        size: 20,
+                                                        size: 40,
                                                         color:
                                                         Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Table(
                                                           columnWidths: {
-                                                            0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            0: FlexColumnWidth(), // Distribute columns equally
                                                             1: FlexColumnWidth(),
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
                                                           },
                                                           children: [
                                                             _buildTableRow(
@@ -1313,56 +1316,184 @@ class _Lease_tableState extends State<Lease_table> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
-                                                      Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          IconButton(
-                                                            icon: FaIcon(
-                                                              FontAwesomeIcons.edit,
-                                                              size: 20,
-                                                              color:blueColor,
+                                                      // Column(
+                                                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      //   children: [
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.edit,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () async {
+                                                      //         Provider.of<SelectedCosignersProvider>(
+                                                      //                                   context,
+                                                      //                                   listen:
+                                                      //                                       false)
+                                                      //                               .clearCosigner();
+                                                      //                           Provider.of<SelectedTenantsProvider>(
+                                                      //                                   context,
+                                                      //                                   listen:
+                                                      //                                       false)
+                                                      //                               .clearTenant();
+                                                      //                           // handleEdit(Propertytype);
+                                                      //                           var check = await Navigator.push(
+                                                      //                               context,
+                                                      //                               MaterialPageRoute(
+                                                      //                                   builder: (context) => Edit_lease(
+                                                      //                                         lease: lease,
+                                                      //                                         leaseId: lease.leaseId!,
+                                                      //                                       )));
+                                                      //                           if (check ==
+                                                      //                               true) {
+                                                      //                             setState(() {
+                                                      //                               futureLease = LeaseRepository().fetchLease("");
+                                                      //                               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                      //                             });
+                                                      //                           }
+                                                      //       },
+                                                      //     ),
+                                                      //     IconButton(
+                                                      //       icon: FaIcon(
+                                                      //         FontAwesomeIcons.trashCan,
+                                                      //         size: 20,
+                                                      //         color:blueColor,
+                                                      //       ),
+                                                      //       onPressed: () {
+                                                      //         _attemptDeleteLease(context,lease);
+                                                      //         //               //handleDelete(Propertytype);
+                                                      //       },
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            Provider.of<SelectedCosignersProvider>(
+                                                                context,
+                                                                listen:
+                                                                false)
+                                                                .clearCosigner();
+                                                            Provider.of<SelectedTenantsProvider>(
+                                                                context,
+                                                                listen:
+                                                                false)
+                                                                .clearTenant();
+                                                            // handleEdit(Propertytype);
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => Edit_lease(
+                                                                      lease: lease,
+                                                                      leaseId: lease.leaseId!,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(() {
+                                                                futureLease = LeaseRepository().fetchLease("");
+                                                                //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                              });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
                                                             ),
-                                                            onPressed: () async {
-                                                              Provider.of<SelectedCosignersProvider>(
-                                                                                        context,
-                                                                                        listen:
-                                                                                            false)
-                                                                                    .clearCosigner();
-                                                                                Provider.of<SelectedTenantsProvider>(
-                                                                                        context,
-                                                                                        listen:
-                                                                                            false)
-                                                                                    .clearTenant();
-                                                                                // handleEdit(Propertytype);
-                                                                                var check = await Navigator.push(
-                                                                                    context,
-                                                                                    MaterialPageRoute(
-                                                                                        builder: (context) => Edit_lease(
-                                                                                              lease: lease,
-                                                                                              leaseId: lease.leaseId!,
-                                                                                            )));
-                                                                                if (check ==
-                                                                                    true) {
-                                                                                  setState(() {
-                                                                                    futureLease = LeaseRepository().fetchLease("");
-                                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                                                  });
-                                                                                }
-                                                            },
                                                           ),
-                                                          IconButton(
-                                                            icon: FaIcon(
-                                                              FontAwesomeIcons.trashCan,
-                                                              size: 20,
-                                                              color:blueColor,
-                                                            ),
-                                                            onPressed: () {
-                                                              _attemptDeleteLease(context,lease);
-                                                              //               //handleDelete(Propertytype);
-                                                            },
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _attemptDeleteLease(context,lease);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        SummeryPageLease(
+                                                                            leaseId:
+                                                                            lease.leaseId!)));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],

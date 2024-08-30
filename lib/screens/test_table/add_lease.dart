@@ -628,7 +628,7 @@ class _addLease4State extends State<addLease4>
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: Drawer(
+     /* drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
@@ -694,7 +694,7 @@ class _addLease4State extends State<addLease4>
             ],
           ),
         ),
-      ),
+      ),*/
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
