@@ -114,10 +114,10 @@ class _Tenants_tableState extends State<Tenants_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Tenants\nName ",
+                        ? Text("Name ",
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white))
-                        : Text("Tenants\nName",
+                        : Text("Name",
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -1031,14 +1031,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   flex:3,
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  ResponsiveTenantSummary(
-                                                                      tenantId:
-                                                                          tenants
-                                                                              .tenantId!)));
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
 
                                                     },
                                                     child: Padding(
@@ -1108,8 +1108,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 2.0),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1223,62 +1223,181 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                       //     ],
                                                       //   ),
                                                       // ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => EditTenants(
-                                                                              tenants: tenants,
-                                                                              tenantId: '',
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
+                                                      // Container(
+                                                      //   width: 40,
+                                                      //   child: Column(
+                                                      //     children: [
+                                                      //       IconButton(
+                                                      //         icon: FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .edit,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed:
+                                                      //             () async {
+                                                      //           // handleEdit(Propertytype);
+                                                      //           var check = await Navigator.push(
+                                                      //               context,
+                                                      //               MaterialPageRoute(
+                                                      //                   builder: (context) => EditTenants(
+                                                      //                         tenants: tenants,
+                                                      //                         tenantId: '',
+                                                      //                       )));
+                                                      //           if (check ==
+                                                      //               true) {
+                                                      //             setState(
+                                                      //                 () {});
+                                                      //           }
+                                                      //         },
+                                                      //       ),
+                                                      //       IconButton(
+                                                      //         icon: FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .trashCan,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed: () {
+                                                      //           //handleDelete(Propertytype);
+                                                      //           _showDeleteAlert(
+                                                      //               context,
+                                                      //               tenants
+                                                      //                   .tenantId!);
+                                                      //         },
+                                                      //       ),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => EditTenants(
+                                                                      tenants: tenants,
+                                                                      tenantId: '',
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(
                                                                       () {});
-                                                                }
-                                                              },
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
                                                             ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showDeleteAlert(
-                                                                    context,
-                                                                    tenants
-                                                                        .tenantId!);
-                                                              },
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showDeleteAlert(
+                                                                context,
+                                                                tenants
+                                                                    .tenantId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        ResponsiveTenantSummary(
+                                                                            tenantId:
+                                                                            tenants
+                                                                                .tenantId!)));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],

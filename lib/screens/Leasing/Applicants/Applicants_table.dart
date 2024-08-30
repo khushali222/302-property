@@ -99,7 +99,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -176,8 +176,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("Email", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                     Text("    Phone Number", style: TextStyle(color: Colors.white,fontSize: 14)),
+                     SizedBox(width: 5),
                     ascending2
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
@@ -225,6 +225,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
+                    SizedBox(width: 15),
                     const Text("Status", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending3
@@ -946,15 +947,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   flex: 3,
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  applicant_summery(
-                                                                    applicant_id:
-                                                                        applicant
-                                                                            .applicantId,
-                                                                  )));
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
                                                     },
                                                     child: Padding(
                                                       padding:
@@ -982,7 +982,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    '${applicant.applicantEmail}',
+                                                    '${applicant.applicantPhoneNumber}',
                                                     style: const TextStyle(
                                                       color: Color.fromRGBO(
                                                           21, 43, 83, 1),
@@ -999,15 +999,18 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 .width *
                                                             .05),
                                                 Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    '${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left:15.0),
+                                                    child: Text(
+                                                      '${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 83, 1),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1024,9 +1027,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                         if (isExpanded)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
+                                                horizontal: 2.0),
                                             margin: const EdgeInsets.only(
-                                                bottom: 20),
+                                                bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1055,7 +1058,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 children: [
                                                                   const TextSpan(
                                                                     text:
-                                                                        'Phone Number : ',
+                                                                        'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -1067,10 +1070,10 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                             1)),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: applicant.applicantPhoneNumber !=
+                                                                    text: applicant.applicantEmail !=
                                                                             null
                                                                         ? applicant
-                                                                            .applicantPhoneNumber
+                                                                            .applicantEmail
                                                                             .toString()
                                                                         : 'N/A',
                                                                     style:  TextStyle(
@@ -1085,67 +1088,190 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(applicant);
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => EditApplicant(
-                                                                              applicant: applicant,
-                                                                              applicantId: applicant.applicantId!,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
+                                                      // SizedBox(
+                                                      //   width: 40,
+                                                      //   child: Column(
+                                                      //     children: [
+                                                      //       IconButton(
+                                                      //         icon:
+                                                      //             const FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .edit,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed:
+                                                      //             () async {
+                                                      //           // handleEdit(applicant);
+                                                      //           var check = await Navigator.push(
+                                                      //               context,
+                                                      //               MaterialPageRoute(
+                                                      //                   builder: (context) => EditApplicant(
+                                                      //                         applicant: applicant,
+                                                      //                         applicantId: applicant.applicantId!,
+                                                      //                       )));
+                                                      //           if (check ==
+                                                      //               true) {
+                                                      //             setState(
+                                                      //                 () {
+                                                      //              futureApplicantdata =     ApplicantRepository().fetchApplicants();
+                                                      //                 });
+                                                      //           }
+                                                      //         },
+                                                      //       ),
+                                                      //       IconButton(
+                                                      //         icon:
+                                                      //             const FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .trashCan,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed: () {
+                                                      //           // handleDelete(applicant);
+                                                      //           _showDeleteAlert(
+                                                      //               context,
+                                                      //               applicant
+                                                      //                   .applicantId
+                                                      //                   .toString());
+                                                      //         },
+                                                      //       ),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => EditApplicant(
+                                                                      applicant: applicant,
+                                                                      applicantId: applicant.applicantId!,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(
                                                                       () {
-                                                                   futureApplicantdata =     ApplicantRepository().fetchApplicants();
-                                                                      });
-                                                                }
-                                                              },
+                                                                    futureApplicantdata =     ApplicantRepository().fetchApplicants();
+                                                                  });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
                                                             ),
-                                                            IconButton(
-                                                              icon:
-                                                                  const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                // handleDelete(applicant);
-                                                                _showDeleteAlert(
-                                                                    context,
-                                                                    applicant
-                                                                        .applicantId
-                                                                        .toString());
-                                                              },
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showDeleteAlert(
+                                                                context,
+                                                                applicant
+                                                                    .applicantId
+                                                                    .toString());
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        applicant_summery(
+                                                                          applicant_id:
+                                                                          applicant
+                                                                              .applicantId,
+                                                                        )));
+
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                SizedBox(width: 5,),
+                                                                Image.asset('assets/icons/view.png'),
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons.trashCan,
+                                                                //   size: 15,
+                                                                //   color:blueColor,
+                                                                // ),
+                                                                SizedBox(width: 8,),
+                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],

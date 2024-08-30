@@ -955,13 +955,25 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    ' ${Propertytype.propertyType}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap:(){
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      ' ${Propertytype.propertyType}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1015,8 +1027,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 2.0),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1152,62 +1164,140 @@ class _PropertyTableState extends State<PropertyTable> {
                                                       //     ],
                                                       //   ),
                                                       // ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
+                                                      // Container(
+                                                      //   width: 40,
+                                                      //   child: Column(
+                                                      //     children: [
+                                                      //       IconButton(
+                                                      //         icon: FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .edit,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed:
+                                                      //             () async {
+                                                      //           // handleEdit(Propertytype);
+                                                      //
+                                                      //           var check = await Navigator.push(
+                                                      //               context,
+                                                      //               MaterialPageRoute(
+                                                      //                   builder: (context) => Edit_property_type(
+                                                      //                         property: Propertytype,
+                                                      //                       )));
+                                                      //           if (check ==
+                                                      //               true) {
+                                                      //             setState(
+                                                      //                 () {});
+                                                      //           }
+                                                      //         },
+                                                      //       ),
+                                                      //       IconButton(
+                                                      //         icon: FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .trashCan,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed: () {
+                                                      //           //handleDelete(Propertytype);
+                                                      //           _showAlert(
+                                                      //               context,
+                                                      //               Propertytype
+                                                      //                   .propertyId!);
+                                                      //         },
+                                                      //       ),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
 
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_property_type(
-                                                                              property: Propertytype,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => Edit_property_type(
+                                                                      property: Propertytype,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(
                                                                       () {});
-                                                                }
-                                                              },
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
                                                             ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .propertyId!);
-                                                              },
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showAlert(
+                                                                context,
+                                                                Propertytype
+                                                                    .propertyId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+
                                                     ],
                                                   ),
                                                 ],

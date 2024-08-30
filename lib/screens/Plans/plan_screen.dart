@@ -322,7 +322,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
-          Provider.of<checkPlanPurchaseProiver>(context, listen: false);
+      Provider.of<checkPlanPurchaseProiver>(context, listen: false);
       if (!provider.isLoading) {
         setState(() {
           globalPlanName =
@@ -398,18 +398,18 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   child: ElevatedButton(
                     child: isPlanCancelling
                         ? const Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 25.0,
-                            ),
-                          )
+                      child: SpinKitFadingCircle(
+                        color: Colors.white,
+                        size: 25.0,
+                      ),
+                    )
                         : Text(
-                            "Yes",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
+                      "Yes",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: blueColor,
                       shape: RoundedRectangleBorder(
@@ -422,7 +422,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                       });
                       SubscriptionService service = SubscriptionService();
                       int statusCode =
-                          await service.cancelSubscription(SubscriptionId);
+                      await service.cancelSubscription(SubscriptionId);
                       int statusCode1 = await service
                           .cancelFromDataBaseSubscription(purchaseId);
 
@@ -437,7 +437,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => PlanPurchaseCard()),
-                          (Route<dynamic> route) => false,
+                              (Route<dynamic> route) => false,
                         );
                       } else {
                         setState(() {
@@ -575,10 +575,10 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $totalPages',
@@ -595,10 +595,10 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= totalrecords
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
@@ -662,21 +662,21 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                     const SizedBox(width: 3),
                     ascending1
                         ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -708,21 +708,21 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                     const SizedBox(width: 5),
                     ascending2
                         ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -739,8 +739,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -813,11 +813,11 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                           return const Center(child: Text('No data available'));
                         }
 
-                        final data = snapshot.data!.data;
-                        if (data == null) {
-                          return const Center(
-                              child: Text('No plan details found.'));
-                        }
+                  final data = snapshot.data!.data;
+                  if (data == null) {
+                    return const Center(
+                        child: Text('No plan details found.'));
+                  }
 
                         return Column(
                           children: [
@@ -1802,36 +1802,36 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   child: Text('No data available'));
                             }
 
-                            var data = snapshot.data!;
+                      var data = snapshot.data!;
 
-                            // Apply filtering based on selectedValue and searchvalue
-                            if (selectedValue == null && searchvalue.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchvalue.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((workOrder) =>
-                                      workOrder.planName!
-                                          .toLowerCase()
-                                          .contains(searchvalue.toLowerCase()) ||
-                                      (workOrder.isActive!
-                                              ? 'Active'
-                                              : 'Inactive')
-                                          .toLowerCase()
-                                          .contains(searchvalue.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((workOrder) =>
-                                      workOrder.planName == selectedValue)
-                                  .toList();
-                            }
+                      // Apply filtering based on selectedValue and searchvalue
+                      if (selectedValue == null && searchvalue.isEmpty) {
+                        data = snapshot.data!;
+                      } else if (selectedValue == "All") {
+                        data = snapshot.data!;
+                      } else if (searchvalue.isNotEmpty) {
+                        data = snapshot.data!
+                            .where((workOrder) =>
+                        workOrder.planName!
+                            .toLowerCase()
+                            .contains(searchvalue.toLowerCase()) ||
+                            (workOrder.isActive!
+                                ? 'Active'
+                                : 'Inactive')
+                                .toLowerCase()
+                                .contains(searchvalue.toLowerCase()))
+                            .toList();
+                      } else {
+                        data = snapshot.data!
+                            .where((workOrder) =>
+                        workOrder.planName == selectedValue)
+                            .toList();
+                      }
 
-                            // Sort data if necessary
-                            sortData(data);
+                      // Sort data if necessary
+                      sortData(data);
 
-                            data = data.reversed.toList();
+                      data = data.reversed.toList();
 
                             // Pagination logic
                             final totalPages =
@@ -2282,146 +2282,146 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                             return const Center(child: Text('No data available'));
                           }
 
-                          var data = snapshot.data!;
+                    var data = snapshot.data!;
 
-                          // Apply filtering based on selectedValue and searchvalue
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            data = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            data = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            data = snapshot.data!
-                                .where((workOrder) =>
-                                    workOrder.planName!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (workOrder.isActive! ? 'Active' : 'Inactive')
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            data = snapshot.data!
-                                .where((workOrder) =>
-                                    workOrder.planName == selectedValue)
-                                .toList();
-                          }
+                    // Apply filtering based on selectedValue and searchvalue
+                    if (selectedValue == null && searchvalue.isEmpty) {
+                      data = snapshot.data!;
+                    } else if (selectedValue == "All") {
+                      data = snapshot.data!;
+                    } else if (searchvalue.isNotEmpty) {
+                      data = snapshot.data!
+                          .where((workOrder) =>
+                      workOrder.planName!
+                          .toLowerCase()
+                          .contains(searchvalue.toLowerCase()) ||
+                          (workOrder.isActive! ? 'Active' : 'Inactive')
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()))
+                          .toList();
+                    } else {
+                      data = snapshot.data!
+                          .where((workOrder) =>
+                      workOrder.planName == selectedValue)
+                          .toList();
+                    }
 
-                          // Apply pagination
-                          final int itemsPerPage = 10;
-                          final int totalPages =
-                              (data.length / itemsPerPage).ceil();
-                          final int currentPage =
-                              1; // Update this with your pagination logic
-                          final List<pastPlanData> pagedData = data
-                              .skip((currentPage - 1) * itemsPerPage)
-                              .take(itemsPerPage)
-                              .toList();
+                    // Apply pagination
+                    final int itemsPerPage = 10;
+                    final int totalPages =
+                    (data.length / itemsPerPage).ceil();
+                    final int currentPage =
+                    1; // Update this with your pagination logic
+                    final List<pastPlanData> pagedData = data
+                        .skip((currentPage - 1) * itemsPerPage)
+                        .take(itemsPerPage)
+                        .toList();
 
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.95,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Table(
-                                      defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
-                                      columnWidths: {
-                                        0: const FlexColumnWidth(),
-                                        1: const FlexColumnWidth(),
-                                        2: const FlexColumnWidth(),
-                                        3: const FlexColumnWidth(),
-                                        // 4: FlexColumnWidth(),
-                                      },
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Table(
+                                defaultColumnWidth:
+                                const IntrinsicColumnWidth(),
+                                columnWidths: {
+                                  0: const FlexColumnWidth(),
+                                  1: const FlexColumnWidth(),
+                                  2: const FlexColumnWidth(),
+                                  3: const FlexColumnWidth(),
+                                  // 4: FlexColumnWidth(),
+                                },
+                                children: [
+                                  TableRow(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                    ),
+                                    children: [
+                                      _buildHeader(
+                                          'Date',
+                                          0,
+                                              (workOrder) =>
+                                          workOrder.planName!),
+                                      _buildHeader('Address', 1,
+                                              (workOrder) => workOrder.status!),
+                                      _buildHeader(
+                                          'Work',
+                                          2,
+                                              (workOrder) =>
+                                          workOrder.createdAt!),
+                                      _buildHeader(
+                                          'Description',
+                                          3,
+                                              (workOrder) =>
+                                          workOrder.expirationDate!),
+                                      // _buildHeader('Note', 5,
+                                      //     (workOrder) => workOrder.vendorNotes!),
+                                    ],
+                                  ),
+                                  TableRow(
+                                    decoration: const BoxDecoration(
+                                      border: Border.symmetric(
+                                          horizontal: BorderSide.none),
+                                    ),
+                                    children: List.generate(
+                                        4,
+                                            (index) => TableCell(
+                                            child: Container(height: 20))),
+                                  ),
+                                  for (var i = 0; i < pagedData.length; i++)
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          right: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          top: const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1)),
+                                          bottom: i == pagedData.length - 1
+                                              ? const BorderSide(
+                                              color: Color.fromRGBO(
+                                                  21, 43, 81, 1))
+                                              : BorderSide.none,
+                                        ),
+                                      ),
                                       children: [
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(color: blueColor),
-                                          ),
-                                          children: [
-                                            _buildHeader(
-                                                'Date',
-                                                0,
-                                                (workOrder) =>
-                                                    workOrder.planName!),
-                                            _buildHeader('Address', 1,
-                                                (workOrder) => workOrder.status!),
-                                            _buildHeader(
-                                                'Work',
-                                                2,
-                                                (workOrder) =>
-                                                    workOrder.createdAt!),
-                                            _buildHeader(
-                                                'Description',
-                                                3,
-                                                (workOrder) =>
-                                                    workOrder.expirationDate!),
-                                            // _buildHeader('Note', 5,
-                                            //     (workOrder) => workOrder.vendorNotes!),
-                                          ],
-                                        ),
-                                        TableRow(
-                                          decoration: const BoxDecoration(
-                                            border: Border.symmetric(
-                                                horizontal: BorderSide.none),
-                                          ),
-                                          children: List.generate(
-                                              4,
-                                              (index) => TableCell(
-                                                  child: Container(height: 20))),
-                                        ),
-                                        for (var i = 0; i < pagedData.length; i++)
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                left: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                right: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                top: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                bottom: i == pagedData.length - 1
-                                                    ? const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1))
-                                                    : BorderSide.none,
-                                              ),
-                                            ),
-                                            children: [
-                                              _buildDataCell(
-                                                  pagedData[i].planName!),
-                                              _buildDataCell(
-                                                  pagedData[i].isActive == true
-                                                      ? 'Active'
-                                                      : 'Inactive'),
-                                              _buildDataCell(formatDate(
-                                                  pagedData[i].purchaseDate!)),
-                                              _buildDataCell(
-                                                  pagedData[i].expirationDate!),
-                                              // _buildDataCell(pagedData[i].vendorNotes!),
-                                            ],
-                                          ),
+                                        _buildDataCell(
+                                            pagedData[i].planName!),
+                                        _buildDataCell(
+                                            pagedData[i].isActive == true
+                                                ? 'Active'
+                                                : 'Inactive'),
+                                        _buildDataCell(formatDate(
+                                            pagedData[i].purchaseDate!)),
+                                        _buildDataCell(
+                                            pagedData[i].expirationDate!),
+                                        // _buildDataCell(pagedData[i].vendorNotes!),
                                       ],
                                     ),
-                                    const SizedBox(height: 25),
-                                    _buildPaginationControls(),
-                                    const SizedBox(height: 25),
-                                  ],
-                                ),
+                                ],
                               ),
-                            ),
-                          );
-                        },
+                              const SizedBox(height: 25),
+                              _buildPaginationControls(),
+                              const SizedBox(height: 25),
+                            ],
+                          ),
+                        ),
                       ),
-                  ],
+                    );
+                  },
                 ),
-              ),
+            ],
           ),
+        ),
+      ),
     );
   }
 }
@@ -2434,7 +2434,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding:
-          const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 16),
+      const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 16),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: blueColor),
@@ -2506,7 +2506,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color:
-                          Colors.grey[300], // Set a different background color
+                      Colors.grey[300], // Set a different background color
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                     height: 100,
@@ -2523,7 +2523,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color:
-                          Colors.grey[300], // Set a different background color
+                      Colors.grey[300], // Set a different background color
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                     height: 100,
