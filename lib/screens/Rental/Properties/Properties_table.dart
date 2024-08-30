@@ -568,28 +568,28 @@ class _PropertiesTableState extends State<PropertiesTable> {
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(
-                left: 15,
-                right: 20,
+                left: 11,
+                right: 11,
               ),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 22),
                   Material(
                     elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(8),
                           // border: Border.all(color: Colors.grey),
                           border: Border.all(color: Color(0xFF8A95A8))),
                       child: Stack(
@@ -623,7 +623,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             ? 14
                                             : 18),
                                 contentPadding: (EdgeInsets.only(
-                                    left: 5, bottom: 12, top: 8)),
+                                    left: 5, bottom: 12, top: 5)),
                               ),
                             ),
                           ),
@@ -635,6 +635,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
                       child: DropdownButton2<String>(
                         isExpanded: true,
                         hint: const Row(
@@ -678,13 +679,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         buttonStyleData: ButtonStyleData(
                           // height: 40,
                           height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
                           width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .33
+                              ? MediaQuery.of(context).size.width * .38
                               : MediaQuery.of(context).size.width * .4,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               // color: Colors.black26,
                               color: Color(0xFF8A95A8),
@@ -718,7 +719,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               ),
             ),
             SizedBox(
-              height: 15,
+              height: 10,
             ),
             Row(
               children: [
@@ -754,7 +755,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   ],
                 ),
                 if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(width: 22),
+                  SizedBox(width: 15),
                 if (MediaQuery.of(context).size.width > 500)
                   SizedBox(width: 39),
               ],
@@ -1342,6 +1343,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
                                                     ],
                                                   ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
@@ -1455,7 +1459,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
                                                     ],
                                                   ),
-
                                                 ],
                                               ),
                                             ),

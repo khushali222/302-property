@@ -1493,7 +1493,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
@@ -1808,18 +1807,18 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 padding: const EdgeInsets.only(
                     left: 25, right: 25, top: 25, bottom: 25),
                 child: Material(
-                  elevation: 6,
-                  borderRadius: BorderRadius.circular(10),
+                  //elevation: 6,
+                  //borderRadius: BorderRadius.circular(10),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 81, 1)),
+                      // border: Border.all(
+                      //     color: const Color.fromRGBO(21, 43, 81, 1)),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          left: 8, right: 8, top: 20, bottom: 30),
+                          left: 2, right: 2, top: 5, bottom: 30),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1936,8 +1935,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: blueColor),
-                                  ),
+                                     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(color: blueColor),
+                                  // ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(
@@ -1957,6 +1959,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   });
                                                 },
                                                 child: Container(
+
                                                   margin: const EdgeInsets.only(
                                                       left: 5),
                                                   padding: !isExpanded
@@ -2159,7 +2162,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           ),
                           if (MediaQuery.of(context).size.width > 500)
                             Padding(
-                              padding: const EdgeInsets.only(left: 16),
+                              padding: const EdgeInsets.only(left: 5),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Expanded(

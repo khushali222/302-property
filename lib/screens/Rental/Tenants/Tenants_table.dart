@@ -823,84 +823,118 @@ class _Tenants_tableState extends State<Tenants_table> {
             //   ),
             // ),
 
-            SizedBox(height: 10),
+            // SizedBox(height: 10),
             //search
-          Padding(
-            padding: const EdgeInsets.only(left: 13, right: 13),
-            child: Row(
-              children: [
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 5),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 24),
-                Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(2),
-                  child: Container(
-                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width: MediaQuery.of(context).size.width < 500
-                        ? MediaQuery.of(context).size.width * .4
-                        : MediaQuery.of(context).size.width * .49,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(2),
-                      border: Border.all(color: Color(0xFF8A95A8)),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: TextField(
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 14,
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                searchvalue = value;
-                              });
-                            },
-                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Search here...",
-                              hintStyle: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+            Padding(
+              padding: const EdgeInsets.only(left: 11, right: 11),
+              child: Row(
+                children: [
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 2),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 24),
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      // height: 40,
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                      width: MediaQuery.of(context).size.width < 500
+                          ? MediaQuery.of(context).size.width * .52
+                          : MediaQuery.of(context).size.width * .49,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          // border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Color(0xFF8A95A8))),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: TextField(
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14),
+                              // onChanged: (value) {
+                              //   setState(() {
+                              //     cvverror = false;
+                              //   });
+                              // },
+                              // controller: cvv,
+                              onChanged: (value) {
+                                setState(() {
+                                  searchvalue = value;
+                                });
+                              },
+                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search here...",
+                                hintStyle: TextStyle(
+                                    // fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8A95A8),
+                                    fontSize:
+                                           MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18),
+                                contentPadding: (EdgeInsets.only(
+                                    left: 8, bottom: 10, top: 5)),
                               ),
-                              contentPadding: EdgeInsets.only(left: 8, bottom: 10, top: 14),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Spacer(),
-                Wrap(
-                  spacing: 8, // Space between the "Added" and "Total" texts
-                  runSpacing: 4, // Space between lines if they wrap
-                  children: [
-                    Text(
-                      'Added: ${rentalCount.toString()}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF8A95A8),
-                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                  Spacer(),
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       'Added : ${rentalCount.toString()}',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 5,
+                  //     ),
+                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                  //     Text(
+                  //       'Total: ${propertyCountLimit.toString()}',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  Expanded(
+                    child: Container(
+                      child: Text(
+                        'Added : ${rentalCount.toString()} Total: ${propertyCountLimit.toString()}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF8A95A8),
+                          fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
                       ),
                     ),
-                    Text(
-                      'Total: ${propertyCountLimit.toString()}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF8A95A8),
-                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                      ),
-                    ),
-                  ],
-                ),
-
-              ],
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 25),
+                ],
+              ),
             ),
-          ),
-
-          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               //for phone
               Padding(
@@ -946,7 +980,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(

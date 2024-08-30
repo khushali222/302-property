@@ -643,7 +643,7 @@ class _Lease_tableState extends State<Lease_table> {
             // ),
             //SizedBox(height: 10),
             Padding(
-              padding: EdgeInsets.only(left: 19, right: 13),
+              padding: EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
@@ -652,7 +652,7 @@ class _Lease_tableState extends State<Lease_table> {
                     SizedBox(width: 19),
                   Material(
                     elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       height:
                           (MediaQuery.of(context).size.width < 500) ? 45 : 50,
@@ -661,7 +661,7 @@ class _Lease_tableState extends State<Lease_table> {
                           : MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Color(0xFF8A95A8)),
                       ),
                       child: TextField(
@@ -708,7 +708,7 @@ class _Lease_tableState extends State<Lease_table> {
                     ],
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 10),
+                    SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 25),
                 ],
